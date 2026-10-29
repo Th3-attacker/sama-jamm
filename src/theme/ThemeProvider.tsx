@@ -1,0 +1,52 @@
+import { StatusBar } from 'expo-status-bar';
+import * as SystemUI from 'expo-system-ui';
+import { createContext, useEffect, useMemo, type ReactNode } from 'react';
+import { useColorScheme } from 'react-native';
+
+import { cible, espace, rayon, themes, type Couleurs, type NomTheme, type Ombres } from './tokens.generated';
+import { typographie } from './typographie';
+import { themeCourant, type ChoixTheme } from './veille';
+
+export type Theme = {
+  nom: NomTheme;
+  couleurs: Couleurs;
+  ombres: Ombres;
+  espace: typeof espace;
+  rayon: typeof rayon;
+  cible: typeof cible;
+  typographie: typeof typographie;
+};
+
+export const ThemeContext = createContext<Theme | null>(null);
+
+type Props = {
+  children: ReactNode;
+  // Réglages persistés plus tard dans utilisateur.db ; valeurs par défaut du design system.
+  choix?: ChoixTheme;
+  veilleAuto?: boolean;
+  nuitDePriere?: boolean;
+};
+
+export function ThemeProvider({ children, choix = 'auto', veilleAuto = false, nuitDePriere = false }: Props) {
+  const systeme = useColorScheme();
+  const nom = themeCourant({ choix, systeme, veilleAuto, nuitDePriere });
+
+  const theme = useMemo<Theme>(
+    () => ({ nom, ...themes[nom], espace, rayon, cible, typographie }),
+    [nom]
+  );
+
+  // Fond racine natif : évite le flash blanc entre deux écrans.
+  useEffect(() => {
+    SystemUI.setBackgroundColorAsync(theme.couleurs.fond).catch((erreur: unknown) => {
+      console.warn('Fond système non appliqué', erreur);
+    });
+  }, [theme.couleurs.fond]);
+
+  return (
+    <ThemeContext value={theme}>
+      <StatusBar style={nom === 'jour' ? 'dark' : 'light'} />
+      {children}
+    </ThemeContext>
+  );
+}
