@@ -1,0 +1,65 @@
+{
+  "_meta": {
+    "langue": "wo",
+    "statut": "brouillon à relire par un locuteur wolof avant publication",
+    "repli": "fr : toute clé absente s'affiche en français (fallbackLng de i18next)"
+  },
+  "commun": {
+    "retour": "Dellu",
+    "fermer": "Tëj",
+    "annuler": "Neenal",
+    "enregistrer": "Denc",
+    "rechercher": "Seet",
+    "partager": "Séddoo",
+    "ecouter": "Déglu",
+    "oui": "Waaw",
+    "non": "Déedéet"
+  },
+  "formules": {
+    "signature": "Jàng, déglu, julli ci jàmm.",
+    "signatureTrad": "Lire, écouter, prier dans la paix.",
+    "accueillir": "Dalal ak jàmm.",
+    "accueillirTrad": "Bienvenue, installez-vous en paix.",
+    "saluer": "Jàmm nga am ?",
+    "saluerTrad": "Êtes-vous en paix ?",
+    "appel": "Waxtu julli jot na.",
+    "appelTrad": "L'heure de la prière est arrivée.",
+    "regularite": "Ndank-ndank mooy jàpp golo ci ñaay.",
+    "regulariteTrad": "Un peu chaque jour vaut mieux qu'un grand effort d'un seul jour.",
+    "entraide": "Benn loxo du tàccu.",
+    "entraideTrad": "Une seule main ne peut pas applaudir.",
+    "partage": "Nit nittay garabam.",
+    "partageTrad": "L'homme est le remède de l'homme.",
+    "effort": "Ku bëgg lem, ñemeel yamb.",
+    "effortTrad": "Qui veut le miel affronte les abeilles.",
+    "gratitude": "Sant Yàlla.",
+    "gratitudeTrad": "Rendez grâce à Dieu.",
+    "repos": "Fanaanal ak jàmm.",
+    "reposTrad": "Passez la nuit en paix.",
+    "serenite": "Jàmm rekk.",
+    "sereniteTrad": "La paix, seulement."
+  },
+  "onglets": {
+    "accueil": "Kër",
+    "lire": "Jàng",
+    "ecouter": "Déglu",
+    "priere": "Julli",
+    "budget": "Xaalis"
+  },
+  "priere": {
+    "nomsLocaux": {
+      "fajr": "Fajar",
+      "dhuhr": "Tisbaar",
+      "asr": "Tàkkusaan",
+      "maghrib": "Timis",
+      "isha": "Gée"
+    }
+  },
+  "bienvenue": {
+    "langueTitre": "Dalal ak jàmm.",
+    "rappelsTitre": "Waxtu julli jot na."
+  },
+  "accueil": {
+    "sagesse": "Wax ju rafet"
+  }
+}
