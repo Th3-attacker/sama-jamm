@@ -1,5 +1,6 @@
 // Galerie des composants, en développement seulement. Textes d'exemple en dur : outil interne, jamais livré.
 import { Redirect } from 'expo-router';
+import { useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -7,6 +8,10 @@ import { useTheme } from '@/theme/useTheme';
 import { Button } from '@/ui/Button';
 import { Icon } from '@/ui/Icon';
 import { IconButton } from '@/ui/IconButton';
+import { ListGroup } from '@/ui/ListGroup';
+import { ListItem } from '@/ui/ListItem';
+import { SegmentedControl } from '@/ui/SegmentedControl';
+import { Switch } from '@/ui/Switch';
 import { TopBar } from '@/ui/TopBar';
 import type { IconName } from '@/ui/types';
 
@@ -32,6 +37,8 @@ function Section({ titre, children }: { titre: string; children: React.ReactNode
 
 export default function Composants() {
   const { nom, couleurs, espace } = useTheme();
+  const [veille, setVeille] = useState(true);
+  const [segment, setSegment] = useState('auto');
 
   if (!__DEV__) return <Redirect href="/" />;
 
@@ -71,6 +78,36 @@ export default function Composants() {
         <Section titre="TopBar">
           <TopBar retour onRetour={rien} titre="Al-Kahf" sousTitre="Sourate 18 · 110 versets" actions={[{ icone: 'bookmark', label: 'Favori', onPress: rien }, { icone: 'more', label: 'Plus', onPress: rien }]} />
           <TopBar grand titre="Lire" sousTitre="Coran, xassaïdes, invocations" actions={[{ icone: 'search', label: 'Rechercher', onPress: rien }, { icone: 'more', label: 'Plus', onPress: rien }]} />
+        </Section>
+
+        <Section titre="ListGroup et ListItem">
+          <ListGroup titre="Lecture" note="Les réglages s'appliquent tout de suite.">
+            <ListItem icone="globe" ton="emeraude" titre="Langue de l'interface" valeur="Français" onPress={rien} />
+            <ListItem icone="moon" titre="Veille automatique" sousTitre="Écran adouci entre Isha et Fajr" droite={<Switch label="Veille automatique" active={veille} onChange={setVeille} />} />
+            <ListItem titre="Wolof" fin="coche" onPress={rien} />
+          </ListGroup>
+          <ListGroup titre="Coran">
+            <ListItem numero={18} prefixe="Sourate" titre="Al-Kahf" sousTitre="110 versets · Mecquoise" arabe="الكهف" onPress={rien} />
+            <ListItem icone="trash" titre="Effacer l'historique" danger onPress={rien} />
+          </ListGroup>
+        </Section>
+
+        <Section titre="Switch et SegmentedControl">
+          <View style={styles.ligne}>
+            <Switch label="Rappels" active={veille} onChange={setVeille} />
+            <Switch label="Désactivé" active={false} onChange={rien} disabled />
+          </View>
+          <SegmentedControl
+            label="Thème"
+            options={[
+              { id: 'auto', label: 'Auto' },
+              { id: 'jour', label: 'Jour' },
+              { id: 'nuit', label: 'Nuit' },
+              { id: 'veille', label: 'Veille' },
+            ]}
+            valeur={segment}
+            onChange={setSegment}
+          />
         </Section>
 
         <Section titre="Icon">
