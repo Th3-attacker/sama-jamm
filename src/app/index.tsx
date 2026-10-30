@@ -1,6 +1,9 @@
 import { Redirect } from 'expo-router';
 
-// Premier lancement : bienvenue. L'état « bienvenue terminée » sera lu dans utilisateur.db (étape 3).
+import { useReglages } from '@/stores/reglages';
+
+// Premier lancement : bienvenue ; ensuite, directement l'Accueil.
 export default function Index() {
-  return <Redirect href="/langue" />;
+  const bienvenueTerminee = useReglages((s) => s.bienvenueTerminee);
+  return <Redirect href={bienvenueTerminee ? '/accueil' : '/langue'} />;
 }

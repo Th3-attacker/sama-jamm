@@ -5,6 +5,7 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 
+import { useReglages } from '@/stores/reglages';
 import { polices } from '@/theme/polices';
 import { ThemeProvider } from '@/theme/ThemeProvider';
 import { ToastProvider } from '@/ui/Toast';
@@ -15,6 +16,8 @@ SplashScreen.preventAutoHideAsync().catch((erreur: unknown) => {
 
 export default function RootLayout() {
   const [policesChargees, erreurPolices] = useFonts(polices);
+  const theme = useReglages((s) => s.theme);
+  const veilleAuto = useReglages((s) => s.veilleAuto);
   const pret = policesChargees || erreurPolices !== null;
 
   useEffect(() => {
@@ -28,7 +31,7 @@ export default function RootLayout() {
   if (!pret) return null;
 
   return (
-    <ThemeProvider>
+    <ThemeProvider choix={theme} veilleAuto={veilleAuto}>
       <ToastProvider>
         <Stack screenOptions={{ headerShown: false }} />
       </ToastProvider>
