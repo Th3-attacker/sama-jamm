@@ -433,7 +433,8 @@
     "aPropos": "حول التطبيق",
     "aide": "المساعدة والتواصل",
     "confidentialite": "سياسة الخصوصية",
-    "version": "الإصدار {{version}}"
+    "version": "الإصدار {{version}}",
+    "veilleSiAuto": "فقط مع المظهر التلقائي"
   },
   "aPropos": {
     "titre": "حول التطبيق",

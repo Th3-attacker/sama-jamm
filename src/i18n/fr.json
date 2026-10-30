@@ -405,7 +405,8 @@
     "aPropos": "À propos",
     "aide": "Aide et contact",
     "confidentialite": "Politique de confidentialité",
-    "version": "Version {{version}}"
+    "version": "Version {{version}}",
+    "veilleSiAuto": "Seulement avec le thème Auto"
   },
   "aPropos": {
     "titre": "À propos",
