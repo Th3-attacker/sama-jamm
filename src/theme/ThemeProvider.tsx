@@ -4,7 +4,7 @@ import { createContext, useEffect, useMemo, type ReactNode } from 'react';
 import { useColorScheme } from 'react-native';
 
 import { cible, espace, rayon, themes, type Couleurs, type NomTheme, type Ombres } from './tokens.generated';
-import { typographie } from './typographie';
+import { typographie, typographieArabe, type Typographie } from './typographie';
 import { themeCourant, type ChoixTheme } from './veille';
 
 export type Theme = {
@@ -14,7 +14,10 @@ export type Theme = {
   espace: typeof espace;
   rayon: typeof rayon;
   cible: typeof cible;
-  typographie: typeof typographie;
+  /** Styles de texte de la langue de l'interface. */
+  typographie: Typographie;
+  /** Styles latins, pour les formules wolof et les noms propres en interface arabe. */
+  latin: typeof typographie;
 };
 
 export const ThemeContext = createContext<Theme | null>(null);
@@ -25,15 +28,16 @@ type Props = {
   choix?: ChoixTheme;
   veilleAuto?: boolean;
   nuitDePriere?: boolean;
+  interfaceArabe?: boolean;
 };
 
-export function ThemeProvider({ children, choix = 'auto', veilleAuto = false, nuitDePriere = false }: Props) {
+export function ThemeProvider({ children, choix = 'auto', veilleAuto = false, nuitDePriere = false, interfaceArabe = false }: Props) {
   const systeme = useColorScheme();
   const nom = themeCourant({ choix, systeme, veilleAuto, nuitDePriere });
 
   const theme = useMemo<Theme>(
-    () => ({ nom, ...themes[nom], espace, rayon, cible, typographie }),
-    [nom]
+    () => ({ nom, ...themes[nom], espace, rayon, cible, typographie: interfaceArabe ? typographieArabe : typographie, latin: typographie }),
+    [nom, interfaceArabe]
   );
 
   // Fond racine natif : évite le flash blanc entre deux écrans.

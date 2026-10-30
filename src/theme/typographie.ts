@@ -30,6 +30,25 @@ export const typographie = {
 } as const satisfies Record<string, StyleTexte>;
 
 export type NomStyleTexte = keyof typeof typographie;
+export type Typographie = { [K in NomStyleTexte]: StyleTexte };
+
+/**
+ * Interface en arabe : Cormorant et Source Sans n'ont pas de lettres arabes.
+ * Titres en Amiri gras, interface en Noto Sans Arabic ; chiffres, lecture, translittération,
+ * Coran et arabe inchangés. Les formules wolof gardent la typographie latine (voir `latin` du thème).
+ */
+export const typographieArabe: Typographie = {
+  ...typographie,
+  display: typographie.titreAr,
+  titre1: { fontFamily: 'Amiri_700Bold', fontSize: 28, lineHeight: 42 },
+  titre2: { fontFamily: 'Amiri_700Bold', fontSize: 24, lineHeight: 36 },
+  titre3: typographie.titre3Ar,
+  corps: typographie.corpsAr,
+  libelle: typographie.libelleAr,
+  legende: typographie.legendeAr,
+  // Les traductions des formules wolof sont en arabe : pas d'italique, police arabe.
+  translitteration: typographie.corpsAr,
+};
 
 // Plafonds de maxFontSizeMultiplier : 2 pour le texte courant, 1.3 pour les grands chiffres, 1.5 pour les onglets.
 export const echelleMax = { courant: 2, grand: 1.3, onglets: 1.5 } as const;

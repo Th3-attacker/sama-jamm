@@ -34,7 +34,7 @@ async function demanderAutorisation(): Promise<boolean> {
 
 export default function Rappels() {
   const { t } = useTranslation();
-  const { couleurs, typographie } = useTheme();
+  const { couleurs, typographie, latin } = useTheme();
   const rappels = useReglages((s) => s.rappels);
   const veilleAuto = useReglages((s) => s.veilleAuto);
   const definirRappel = useReglages((s) => s.definirRappel);
@@ -81,7 +81,7 @@ export default function Rappels() {
           </Button>
         </>
       }>
-      <Text accessibilityRole="header" accessibilityLanguage="wo" maxFontSizeMultiplier={echelleMax.courant} style={[typographie.titre1, { color: couleurs.emeraude }]}>
+      <Text accessibilityRole="header" accessibilityLanguage="wo" maxFontSizeMultiplier={echelleMax.courant} style={[latin.titre1, { color: couleurs.emeraude, writingDirection: 'ltr' }]}>
         {t('bienvenue.rappelsTitre')}
       </Text>
       <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.translitteration, { color: couleurs.encre2 }]}>

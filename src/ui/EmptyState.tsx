@@ -24,7 +24,7 @@ export type EmptyStateProps = {
 const TAILLE_ETOILE = 72;
 
 export function EmptyState({ titre, lang = 'wo', sousTitre, texte, icone = 'book', action }: EmptyStateProps) {
-  const { couleurs, espace, typographie } = useTheme();
+  const { couleurs, espace, typographie, latin } = useTheme();
 
   return (
     <View style={[styles.vide, { gap: espace.espace3, padding: espace.espace6 }]}>
@@ -38,7 +38,7 @@ export function EmptyState({ titre, lang = 'wo', sousTitre, texte, icone = 'book
         accessibilityRole="header"
         accessibilityLanguage={lang}
         maxFontSizeMultiplier={echelleMax.courant}
-        style={[typographie.titre2, styles.centre, { color: couleurs.emeraude }]}>
+        style={[lang === 'wo' ? latin.titre2 : typographie.titre2, styles.centre, { color: couleurs.emeraude }]}>
         {titre}
       </Text>
       {sousTitre ? (

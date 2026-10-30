@@ -27,7 +27,7 @@ export function SearchField({ label, placeholder, valeur, onChange, autoFocus }:
         {
           minHeight: cible.cibleAndroid,
           gap: espace.espace2,
-          paddingLeft: espace.espace4,
+          paddingStart: espace.espace4,
           borderRadius: rayon.rayonCarte,
           backgroundColor: couleurs.surfaceCreux,
           borderColor: couleurs.ligneForte,

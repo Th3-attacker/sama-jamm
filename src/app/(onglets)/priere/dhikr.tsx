@@ -25,7 +25,7 @@ const SANS = 'sans';
 export default function Dhikr() {
   useKeepAwake();
   const { t } = useTranslation();
-  const { couleurs, espace, typographie } = useTheme();
+  const { couleurs, espace, typographie, latin } = useTheme();
   const { afficher } = useToast();
   const formuleId = useDhikr((s) => s.formule);
   const comptes = useDhikr((s) => s.comptes);
@@ -78,7 +78,7 @@ export default function Dhikr() {
             <Text accessibilityLanguage="ar" maxFontSizeMultiplier={echelleMax.courant} style={[typographie.arabe, styles.arabe, { color: couleurs.encre }]}>
               {formule.arabe}
             </Text>
-            <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.translitteration, { color: couleurs.encre2 }]}>
+            <Text maxFontSizeMultiplier={echelleMax.courant} style={[latin.translitteration, { color: couleurs.encre2 }]}>
               {formule.translitteration}
             </Text>
           </View>
