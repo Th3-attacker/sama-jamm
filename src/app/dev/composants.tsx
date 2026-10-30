@@ -7,6 +7,7 @@ import { useTheme } from '@/theme/useTheme';
 import { Button } from '@/ui/Button';
 import { Icon } from '@/ui/Icon';
 import { IconButton } from '@/ui/IconButton';
+import { TopBar } from '@/ui/TopBar';
 import type { IconName } from '@/ui/types';
 
 const ICONES: IconName[] = [
@@ -65,6 +66,11 @@ export default function Composants() {
             <IconButton icone="share" label="Partager" onPress={rien} />
             <IconButton icone="arrow-left" label="Retour" taille={22} onPress={rien} />
           </View>
+        </Section>
+
+        <Section titre="TopBar">
+          <TopBar retour onRetour={rien} titre="Al-Kahf" sousTitre="Sourate 18 · 110 versets" actions={[{ icone: 'bookmark', label: 'Favori', onPress: rien }, { icone: 'more', label: 'Plus', onPress: rien }]} />
+          <TopBar grand titre="Lire" sousTitre="Coran, xassaïdes, invocations" actions={[{ icone: 'search', label: 'Rechercher', onPress: rien }, { icone: 'more', label: 'Plus', onPress: rien }]} />
         </Section>
 
         <Section titre="Icon">

@@ -1,22 +1,42 @@
 import { Tabs } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 
-import { useTheme } from '@/theme/useTheme';
+import { TabBar, type Onglet } from '@/ui/TabBar';
 
-// Barre provisoire sans icônes : remplacée par le TabBar du design system (étape 2).
 export default function OngletsLayout() {
   const { t } = useTranslation();
-  const { couleurs, typographie } = useTheme();
+
+  const onglets: Onglet[] = [
+    { id: 'accueil', label: t('onglets.accueil'), icone: 'home' },
+    { id: 'lire', label: t('onglets.lire'), icone: 'book' },
+    { id: 'ecouter', label: t('onglets.ecouter'), icone: 'headphones' },
+    { id: 'priere', label: t('onglets.priere'), icone: 'clock' },
+    { id: 'budget', label: t('onglets.budget'), icone: 'wallet' },
+  ];
 
   return (
     <Tabs
-      screenOptions={{
-        headerShown: false,
-        tabBarActiveTintColor: couleurs.emeraude,
-        tabBarInactiveTintColor: couleurs.encre2,
-        tabBarStyle: { backgroundColor: couleurs.surface, borderTopColor: couleurs.ligne },
-        tabBarLabelStyle: typographie.libelle,
-        tabBarIconStyle: { display: 'none' },
+      screenOptions={{ headerShown: false }}
+      tabBar={({ state, emitter, navigateToTab }) => {
+        const routeActive = state.routes[state.index];
+        const cle = (id: string) => state.routes.find((r) => r.name === id)?.key;
+        return (
+          <TabBar
+            onglets={onglets}
+            actif={routeActive?.name ?? 'accueil'}
+            // Même logique que la barre par défaut : l'événement tabPress permet aux écrans de remonter en haut.
+            onChange={(id) => {
+              const target = cle(id);
+              if (!target) return;
+              const event = emitter.emit({ type: 'tabPress', target, canPreventDefault: true });
+              if (target !== routeActive?.key && !event.defaultPrevented) navigateToTab(target);
+            }}
+            onAppuiLong={(id) => {
+              const target = cle(id);
+              if (target) emitter.emit({ type: 'tabLongPress', target });
+            }}
+          />
+        );
       }}>
       <Tabs.Screen name="accueil" options={{ title: t('onglets.accueil') }} />
       <Tabs.Screen name="lire" options={{ title: t('onglets.lire') }} />
