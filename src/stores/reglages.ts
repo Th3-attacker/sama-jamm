@@ -38,6 +38,8 @@ type Donnees = {
   /** Ajustement en minutes, de −15 à +15. */
   ajustements: ParPriere<number>;
   veilleAuto: boolean;
+  /** Vibrations légères (grains du dhikr, boutons principaux). */
+  haptique: boolean;
   /** Nuit pour laquelle le bandeau « Veille activée » a été fermé (« 2026-10-29 »). */
   veilleVue: string | null;
   theme: ChoixTheme;
@@ -55,6 +57,7 @@ type Actions = {
   definirEcoleAsr: (ecole: EcoleAsr) => void;
   ajuster: (priere: NomPriere, delta: number) => void;
   definirVeilleAuto: (actif: boolean) => void;
+  definirHaptique: (actif: boolean) => void;
   marquerVeilleVue: (nuit: string) => void;
   definirTheme: (theme: ChoixTheme) => void;
   terminerBienvenue: () => void;
@@ -75,6 +78,7 @@ const parDefaut: Donnees = {
   ecoleAsr: 'standard',
   ajustements: tout(0),
   veilleAuto: true,
+  haptique: true,
   veilleVue: null,
   theme: 'auto',
   bienvenueTerminee: false,
@@ -100,17 +104,18 @@ export const useReglages = create<Donnees & Actions>()(
           },
         })),
       definirVeilleAuto: (veilleAuto) => set({ veilleAuto }),
+      definirHaptique: (haptique) => set({ haptique }),
       marquerVeilleVue: (veilleVue) => set({ veilleVue }),
       definirTheme: (theme) => set({ theme }),
       terminerBienvenue: () => set({ bienvenueTerminee: true }),
     }),
     {
       name: 'reglages',
-      version: 2,
+      version: 3,
       storage: createJSONStorage(() => stockage),
-      // v1 → v2 : réglages de prière ajoutés, valeurs par défaut pour les clés absentes.
+      // v1 → v2 : réglages de prière ; v2 → v3 : vibrations. Valeurs par défaut pour les clés absentes.
       migrate: (etat, version) => {
-        if (version < 2 && etat && typeof etat === 'object') return { ...parDefaut, ...etat };
+        if (version < 3 && etat && typeof etat === 'object') return { ...parDefaut, ...etat };
         return etat;
       },
       partialize: (s) => ({
@@ -124,6 +129,7 @@ export const useReglages = create<Donnees & Actions>()(
         ecoleAsr: s.ecoleAsr,
         ajustements: s.ajustements,
         veilleAuto: s.veilleAuto,
+        haptique: s.haptique,
         veilleVue: s.veilleVue,
         theme: s.theme,
         bienvenueTerminee: s.bienvenueTerminee,
