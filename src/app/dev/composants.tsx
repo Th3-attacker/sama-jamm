@@ -179,10 +179,20 @@ export default function Composants() {
             Choisir un récitateur
           </Button>
           <BottomSheet ouvert={feuille} titre="Choisir un récitateur" onFermer={() => setFeuille(false)}>
-            <ListGroup>
-              <ListItem titre="Mishary Alafasy" fin={recitateur === 'alafasy' ? 'coche' : undefined} onPress={() => setRecitateur('alafasy')} />
-              <ListItem titre="Abdul Basit" fin={recitateur === 'basit' ? 'coche' : undefined} onPress={() => setRecitateur('basit')} />
-            </ListGroup>
+            <RadioGroup
+              label="Récitateur"
+              encadre={false}
+              options={[
+                { id: 'alafasy', label: 'Mishary Alafasy', description: 'Murattal' },
+                { id: 'basit', label: 'Abdul Basit', description: 'Mujawwad' },
+                { id: 'husary', label: 'Mahmoud Al-Husary', description: 'Murattal' },
+                { id: 'minshawi', label: 'Al-Minshawi', description: 'Murattal' },
+                { id: 'sudais', label: 'Abdul Rahman Al-Sudais', description: 'Murattal' },
+                { id: 'shuraim', label: 'Saud Al-Shuraim', description: 'Murattal' },
+              ]}
+              valeur={recitateur}
+              onChange={setRecitateur}
+            />
           </BottomSheet>
         </Section>
 

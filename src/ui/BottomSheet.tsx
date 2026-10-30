@@ -1,7 +1,9 @@
 import { BottomSheet as FeuilleNative } from '@expo/ui';
+import { preferredColorScheme } from '@expo/ui/swift-ui/modifiers';
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, Text, View, useWindowDimensions } from 'react-native';
+import { Platform, ScrollView, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
@@ -17,12 +19,16 @@ export type BottomSheetProps = {
 };
 
 const HAUTEUR_MAX = 0.9;
+// Poignée native et en-tête de la feuille, retirés de la hauteur laissée au contenu.
+const ENTETE = 96;
 
 // Feuille native d'@expo/ui (SwiftUI sur iOS, Material 3 sur Android) : poignée et arrondi du système.
 export function BottomSheet({ ouvert, titre, onFermer, children }: BottomSheetProps) {
   const { t } = useTranslation();
   const { height } = useWindowDimensions();
-  const { couleurs, espace, typographie } = useTheme();
+  const insets = useSafeAreaInsets();
+  const { nom, couleurs, espace, typographie } = useTheme();
+  const hauteurContenu = (height - insets.top - insets.bottom) * HAUTEUR_MAX - ENTETE;
 
   return (
     <FeuilleNative
@@ -30,8 +36,10 @@ export function BottomSheet({ ouvert, titre, onFermer, children }: BottomSheetPr
       onDismiss={onFermer}
       containerColor={couleurs.surface}
       scrimColor={couleurs.voile}
-      contentPadding={{ left: espace.espace5, right: espace.espace5, bottom: espace.espace6 }}>
-      <View accessibilityViewIsModal style={{ maxHeight: height * HAUTEUR_MAX, gap: espace.espace3 }}>
+      // iOS : la feuille suit le thème de l'app, pas le mode du téléphone.
+      modifiers={Platform.OS === 'ios' ? [preferredColorScheme(nom === 'jour' ? 'light' : 'dark')] : undefined}
+      contentPadding={{ top: espace.espace2, left: espace.espace5, right: espace.espace5, bottom: espace.espace6 }}>
+      <View accessibilityViewIsModal style={{ gap: espace.espace2 }}>
         <View style={styles.entete}>
           <Text
             accessibilityRole="header"
@@ -41,7 +49,10 @@ export function BottomSheet({ ouvert, titre, onFermer, children }: BottomSheetPr
           </Text>
           <IconButton icone="close" label={t('commun.fermer')} onPress={onFermer} />
         </View>
-        {children}
+        {/* Contenu court : hauteur naturelle ; contenu long : défilement dans la feuille. */}
+        <ScrollView style={{ maxHeight: hauteurContenu }} contentContainerStyle={{ gap: espace.espace5 }}>
+          {children}
+        </ScrollView>
       </View>
     </FeuilleNative>
   );

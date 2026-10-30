@@ -77,10 +77,11 @@ export default function AppelEtRappels() {
 
       <BottomSheet ouvert={ouverte !== null} titre={ouverte ? t(`priere.noms.${ouverte}`) : ''} onFermer={() => setOuverte(null)}>
         {ouverte ? (
-          <ScrollView contentContainerStyle={{ gap: espace.espace5 }}>
+          <>
             <RadioGroup
               label={t('priere.son')}
               options={sons.map((s) => ({ id: s, label: t(`priere.sons.${s}`) }))}
+              encadre={false}
               valeur={sonsChoisis[ouverte]}
               onChange={(id) => {
                 const s = sons.find((x) => x === id);
@@ -93,10 +94,11 @@ export default function AppelEtRappels() {
                 { id: 'aucun', label: t('priere.sansRappel') },
                 ...AVANCES.map((m) => ({ id: String(m), label: t('priere.rappelAvant', { minutes: m }) })),
               ]}
+              encadre={false}
               valeur={rappelAvant[ouverte] ? String(rappelAvant[ouverte]) : 'aucun'}
               onChange={(id) => definirRappelAvant(ouverte, id === 'aucun' ? null : Number(id))}
             />
-          </ScrollView>
+          </>
         ) : null}
       </BottomSheet>
     </View>
