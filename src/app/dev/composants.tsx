@@ -6,6 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useTheme } from '@/theme/useTheme';
 import { Banner } from '@/ui/Banner';
+import { BottomSheet } from '@/ui/BottomSheet';
 import { Button } from '@/ui/Button';
 import { Dialog } from '@/ui/Dialog';
 import { EmptyState } from '@/ui/EmptyState';
@@ -44,6 +45,8 @@ export default function Composants() {
   const [veille, setVeille] = useState(true);
   const [segment, setSegment] = useState('auto');
   const [dialogue, setDialogue] = useState(false);
+  const [feuille, setFeuille] = useState(false);
+  const [recitateur, setRecitateur] = useState('alafasy');
   const { afficher } = useToast();
 
   if (!__DEV__) return <Redirect href="/" />;
@@ -149,6 +152,18 @@ export default function Composants() {
             onAnnuler={() => setDialogue(false)}>
             Vos favoris synchronisés seront effacés. Vos textes téléchargés restent sur ce téléphone.
           </Dialog>
+        </Section>
+
+        <Section titre="BottomSheet">
+          <Button variant="secondaire" onPress={() => setFeuille(true)}>
+            Choisir un récitateur
+          </Button>
+          <BottomSheet ouvert={feuille} titre="Choisir un récitateur" onFermer={() => setFeuille(false)}>
+            <ListGroup>
+              <ListItem titre="Mishary Alafasy" fin={recitateur === 'alafasy' ? 'coche' : undefined} onPress={() => setRecitateur('alafasy')} />
+              <ListItem titre="Abdul Basit" fin={recitateur === 'basit' ? 'coche' : undefined} onPress={() => setRecitateur('basit')} />
+            </ListGroup>
+          </BottomSheet>
         </Section>
 
         <Section titre="EmptyState">
