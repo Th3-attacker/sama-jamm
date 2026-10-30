@@ -1,10 +1,12 @@
-import { useState } from 'react';
+import * as Notifications from 'expo-notifications';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { prieres, sons, useReglages, type NomPriere } from '@/stores/reglages';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
+import { Banner } from '@/ui/Banner';
 import { BottomSheet } from '@/ui/BottomSheet';
 import { ListGroup } from '@/ui/ListGroup';
 import { ListItem } from '@/ui/ListItem';
@@ -24,6 +26,21 @@ export default function AppelEtRappels() {
   const definirSon = useReglages((s) => s.definirSon);
   const definirRappelAvant = useReglages((s) => s.definirRappelAvant);
   const [ouverte, setOuverte] = useState<NomPriere | null>(null);
+  const [alarmesRefusees, setAlarmesRefusees] = useState(false);
+
+  // Android 12+ : sans alarmes exactes, l'appel peut arriver avec quelques minutes de retard.
+  useEffect(() => {
+    if (Platform.OS !== 'android') return;
+    Notifications.getExactAlarmPermissionsAsync()
+      .then((p) => setAlarmesRefusees(!p.granted))
+      .catch((erreur: unknown) => console.warn('Statut des alarmes exactes inconnu', erreur));
+  }, []);
+
+  const autoriserAlarmes = () => {
+    Notifications.requestExactAlarmPermissionsAsync()
+      .then((p) => setAlarmesRefusees(!p.granted))
+      .catch((erreur: unknown) => console.warn('Réglage des alarmes exactes inaccessible', erreur));
+  };
 
   const resume = (p: NomPriere) => {
     const avant = rappelAvant[p];
@@ -38,6 +55,11 @@ export default function AppelEtRappels() {
         <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, { color: couleurs.encre2 }]}>
           {t('priere.rappelsSousTitre')}
         </Text>
+        {alarmesRefusees ? (
+          <Banner ton="attention" titre={t('autorisations.alarmesTitre')} action={{ label: t('autorisations.ouvrirReglages'), onPress: autoriserAlarmes }}>
+            {t('autorisations.alarmesTexte')}
+          </Banner>
+        ) : null}
         {prieres.map((p) => {
           const nom = t(`priere.noms.${p}`);
           return (

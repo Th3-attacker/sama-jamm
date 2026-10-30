@@ -8,7 +8,8 @@ import { useReglages } from '@/stores/reglages';
 import { useTheme } from '@/theme/useTheme';
 import { Banner } from '@/ui/Banner';
 
-import { nuitDePriere, useOptionsCalcul } from './horaires';
+import { nuitDePriere } from './horaires';
+import { useOptionsCalcul } from './useOptionsCalcul';
 
 /** Nuit de prière en cours, ou null sans lieu enregistré. */
 export function useNuitDePriere() {

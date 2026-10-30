@@ -1,11 +1,11 @@
 import * as Notifications from 'expo-notifications';
-import { AndroidImportance } from 'expo-notifications';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Linking, Platform, Text } from 'react-native';
+import { Linking, Text } from 'react-native';
 
 import { MiseEnPage } from '@/features/bienvenue/MiseEnPage';
+import { creerCanaux, replanifier } from '@/features/priere/notifications';
 import { prieres, useReglages } from '@/stores/reglages';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
@@ -15,19 +15,15 @@ import { ListGroup } from '@/ui/ListGroup';
 import { ListItem } from '@/ui/ListItem';
 import { Switch } from '@/ui/Switch';
 
-// Android 13+ : un canal doit exister avant la demande d'autorisation. Les canaux par son viennent à l'étape Prière.
-const CANAL = 'priere-defaut';
-
 function ouvrirReglagesTelephone() {
   Linking.openSettings().catch((erreur: unknown) => {
     console.warn('Réglages du téléphone inaccessibles', erreur);
   });
 }
 
-async function demanderAutorisation(nomCanal: string): Promise<boolean> {
-  if (Platform.OS === 'android') {
-    await Notifications.setNotificationChannelAsync(CANAL, { name: nomCanal, importance: AndroidImportance.HIGH });
-  }
+async function demanderAutorisation(): Promise<boolean> {
+  // Android 13+ : les canaux doivent exister avant la demande d'autorisation.
+  await creerCanaux();
   const actuel = await Notifications.getPermissionsAsync();
   if (actuel.granted) return true;
   // Jamais de nouvelle demande système si l'utilisateur a déjà refusé.
@@ -60,8 +56,10 @@ export default function Rappels() {
     }
     setEnCours(true);
     try {
-      if (await demanderAutorisation(t('priere.rappelsTitre'))) terminer();
-      else setRefusees(true);
+      if (await demanderAutorisation()) {
+        replanifier().catch((erreur: unknown) => console.error('Programmation des notifications impossible', erreur));
+        terminer();
+      } else setRefusees(true);
     } catch (erreur: unknown) {
       console.warn('Autorisation des notifications impossible', erreur);
       setRefusees(true);

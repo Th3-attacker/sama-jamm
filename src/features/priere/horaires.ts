@@ -1,10 +1,8 @@
 // Horaires calculés sur le téléphone avec adhan, sans serveur.
 // Réglages par défaut du design system, à faire valider par le référent religieux avant publication.
 import { CalculationMethod, Coordinates, Madhab, PrayerTimes, Qibla, Rounding, type CalculationParameters } from 'adhan';
-import { useMemo } from 'react';
-import { useShallow } from 'zustand/react/shallow';
 
-import { useReglages, type Methode, type NomPriere, type OptionsCalcul } from '@/stores/reglages';
+import type { Methode, NomPriere, OptionsCalcul } from '@/stores/reglages';
 
 export type Horaires = Record<NomPriere, Date> & { lever: Date; coucher: Date };
 
@@ -79,12 +77,4 @@ export function nuitDePriere(lieu: Point, maintenant: Date, options?: OptionsCal
 /** Relèvement de la Kaaba en degrés depuis le nord vrai. */
 export function relevementQibla(lieu: Point): number {
   return Qibla(new Coordinates(lieu.latitude, lieu.longitude));
-}
-
-/** Options de calcul enregistrées, stables d'un rendu à l'autre. */
-export function useOptionsCalcul(): OptionsCalcul {
-  const { methode, ecoleAsr, ajustements } = useReglages(
-    useShallow((s) => ({ methode: s.methode, ecoleAsr: s.ecoleAsr, ajustements: s.ajustements }))
-  );
-  return useMemo(() => ({ methode, ecoleAsr, ajustements }), [methode, ecoleAsr, ajustements]);
 }
