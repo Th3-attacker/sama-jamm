@@ -10,6 +10,7 @@
     "@expo-google-fonts/source-sans-3": "^0.4.2",
     "@expo-google-fonts/source-serif-4": "^0.4.2",
     "@expo/ui": "~58.0.25",
+    "adhan": "4.4.6",
     "expo": "~58.0.21",
     "expo-constants": "~58.0.14",
     "expo-device": "~58.0.5",
