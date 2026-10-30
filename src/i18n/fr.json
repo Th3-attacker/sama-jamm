@@ -311,7 +311,27 @@
     "ecart": "écart {{degres}}°",
     "calibration": "Boussole imprécise ? Éloignez-vous des objets métalliques et dessinez un 8 avec le téléphone.",
     "sansBoussole": "Ce téléphone n'a pas de boussole",
-    "sansBoussoleTexte": "La qibla est à {{degres}}° du nord ({{direction}}). Repérez le nord, puis tournez de cet angle vers la droite."
+    "sansBoussoleTexte": "La qibla est à {{degres}}° du nord ({{direction}}). Repérez le nord, puis tournez de cet angle vers la droite.",
+    "directions": {
+      "0": "nord",
+      "1": "nord-nord-est",
+      "2": "nord-est",
+      "3": "est-nord-est",
+      "4": "est",
+      "5": "est-sud-est",
+      "6": "sud-est",
+      "7": "sud-sud-est",
+      "8": "sud",
+      "9": "sud-sud-ouest",
+      "10": "sud-ouest",
+      "11": "ouest-sud-ouest",
+      "12": "ouest",
+      "13": "ouest-nord-ouest",
+      "14": "nord-ouest",
+      "15": "nord-nord-ouest"
+    },
+    "boussole": "Boussole",
+    "nord": "N"
   },
   "dhikr": {
     "titre": "Dhikr",
