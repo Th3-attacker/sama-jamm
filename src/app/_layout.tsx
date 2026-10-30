@@ -7,6 +7,7 @@ import { useEffect } from 'react';
 
 import { polices } from '@/theme/polices';
 import { ThemeProvider } from '@/theme/ThemeProvider';
+import { ToastProvider } from '@/ui/Toast';
 
 SplashScreen.preventAutoHideAsync().catch((erreur: unknown) => {
   console.warn("Écran de démarrage non retenu", erreur);
@@ -28,7 +29,9 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider>
-      <Stack screenOptions={{ headerShown: false }} />
+      <ToastProvider>
+        <Stack screenOptions={{ headerShown: false }} />
+      </ToastProvider>
     </ThemeProvider>
   );
 }

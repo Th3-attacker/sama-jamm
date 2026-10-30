@@ -5,13 +5,17 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useTheme } from '@/theme/useTheme';
+import { Banner } from '@/ui/Banner';
 import { Button } from '@/ui/Button';
+import { Dialog } from '@/ui/Dialog';
+import { EmptyState } from '@/ui/EmptyState';
 import { Icon } from '@/ui/Icon';
 import { IconButton } from '@/ui/IconButton';
 import { ListGroup } from '@/ui/ListGroup';
 import { ListItem } from '@/ui/ListItem';
 import { SegmentedControl } from '@/ui/SegmentedControl';
 import { Switch } from '@/ui/Switch';
+import { useToast } from '@/ui/Toast';
 import { TopBar } from '@/ui/TopBar';
 import type { IconName } from '@/ui/types';
 
@@ -39,6 +43,8 @@ export default function Composants() {
   const { nom, couleurs, espace } = useTheme();
   const [veille, setVeille] = useState(true);
   const [segment, setSegment] = useState('auto');
+  const [dialogue, setDialogue] = useState(false);
+  const { afficher } = useToast();
 
   if (!__DEV__) return <Redirect href="/" />;
 
@@ -107,6 +113,51 @@ export default function Composants() {
             ]}
             valeur={segment}
             onChange={setSegment}
+          />
+        </Section>
+
+        <Section titre="Banner">
+          <Banner ton="attention" titre="Pas de réseau" onFermer={rien}>
+            Les horaires et vos sourates téléchargées restent disponibles.
+          </Banner>
+          <Banner ton="veille" titre="Veille activée" action={{ label: 'Réglages', onPress: rien }}>
+            Fanaanal ak jàmm. Passez la nuit en paix.
+          </Banner>
+          <Banner ton="info">Nouvelle traduction disponible.</Banner>
+          <Banner ton="erreur" titre="Position refusée">
+            Choisissez votre ville pour calculer les horaires.
+          </Banner>
+          <Banner ton="succes">Téléchargé : disponible sans connexion.</Banner>
+        </Section>
+
+        <Section titre="Toast et Dialog">
+          <Button
+            variant="secondaire"
+            onPress={() => afficher({ texte: 'Ajouté aux favoris', icone: 'bookmark', action: { label: 'Annuler', onPress: rien } })}>
+            Afficher un toast
+          </Button>
+          <Button variant="secondaire" onPress={() => setDialogue(true)}>
+            Ouvrir une boîte de dialogue
+          </Button>
+          <Dialog
+            ouvert={dialogue}
+            titre="Supprimer votre compte ?"
+            confirmer="Supprimer définitivement"
+            danger
+            icone="trash"
+            onConfirmer={() => setDialogue(false)}
+            onAnnuler={() => setDialogue(false)}>
+            Vos favoris synchronisés seront effacés. Vos textes téléchargés restent sur ce téléphone.
+          </Dialog>
+        </Section>
+
+        <Section titre="EmptyState">
+          <EmptyState
+            titre="Jàmm rekk"
+            sousTitre="La paix, seulement."
+            icone="bookmark"
+            texte="Touchez le signet d'un verset pour le retrouver ici, même hors ligne."
+            action={{ label: 'Ouvrir la bibliothèque', icone: 'book', onPress: rien }}
           />
         </Section>
 
