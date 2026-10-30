@@ -1,5 +1,5 @@
 import * as Updates from 'expo-updates';
-import { DevSettings, I18nManager } from 'react-native';
+import { I18nManager } from 'react-native';
 
 import type { Langue } from '@/i18n/langues';
 
@@ -17,10 +17,9 @@ export async function appliquerSensEtRedemarrer(langue: Langue): Promise<boolean
   I18nManager.allowRTL(rtl);
   I18nManager.forceRTL(rtl);
 
-  if (__DEV__) {
-    DevSettings.reload();
-    return true;
-  }
+  // En développement (Expo Go, build de dev), recharger le code ne change pas le sens de lecture :
+  // il faut fermer et rouvrir l'app.
+  if (__DEV__) return false;
   try {
     await Updates.reloadAsync();
     return true;

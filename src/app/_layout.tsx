@@ -4,6 +4,7 @@ import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { useReplanification } from '@/features/priere/useReplanification';
 import { useNuitDePriere } from '@/features/priere/veille';
@@ -21,6 +22,7 @@ export default function RootLayout() {
   const theme = useReglages((s) => s.theme);
   const veilleAuto = useReglages((s) => s.veilleAuto);
   const nuit = useNuitDePriere();
+  const { i18n } = useTranslation();
   useReplanification();
   const pret = policesChargees || erreurPolices !== null;
 
@@ -35,7 +37,7 @@ export default function RootLayout() {
   if (!pret) return null;
 
   return (
-    <ThemeProvider choix={theme} veilleAuto={veilleAuto} nuitDePriere={nuit?.active ?? false}>
+    <ThemeProvider choix={theme} veilleAuto={veilleAuto} nuitDePriere={nuit?.active ?? false} interfaceArabe={i18n.language === 'ar'}>
       <ToastProvider>
         <Stack screenOptions={{ headerShown: false }} />
       </ToastProvider>

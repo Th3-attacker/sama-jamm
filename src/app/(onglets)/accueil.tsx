@@ -26,7 +26,7 @@ function joursDuMois(maintenant: Date): JourFil[] {
 
 export default function Accueil() {
   const { t, i18n } = useTranslation();
-  const { couleurs, espace, rayon, typographie } = useTheme();
+  const { couleurs, espace, rayon, typographie, latin } = useTheme();
   const maintenant = useMaintenant();
   const lieu = useReglages((s) => s.lieu);
   const options = useOptionsCalcul();
@@ -65,7 +65,7 @@ export default function Accueil() {
       <ScrollView contentContainerStyle={{ paddingHorizontal: espace.espace6, paddingBottom: espace.espace8, gap: espace.espace5 }}>
         <BandeauVeille />
         <View>
-          <Text accessibilityRole="header" accessibilityLanguage="wo" maxFontSizeMultiplier={echelleMax.courant} style={[typographie.titre1, { color: couleurs.emeraude }]}>
+          <Text accessibilityRole="header" accessibilityLanguage="wo" maxFontSizeMultiplier={echelleMax.courant} style={[latin.titre1, { color: couleurs.emeraude, writingDirection: 'ltr' }]}>
             {t('formules.saluer')}
           </Text>
           <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.translitteration, { color: couleurs.encre2 }]}>

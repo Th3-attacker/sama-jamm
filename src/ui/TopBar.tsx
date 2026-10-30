@@ -32,7 +32,7 @@ export function TopBar({ retour, onRetour, titre, sousTitre, actions, grand = fa
   const { t } = useTranslation();
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { couleurs, espace, typographie } = useTheme();
+  const { couleurs, espace, typographie, latin } = useTheme();
   const avecRetour = retour !== undefined && retour !== false;
 
   return (
@@ -78,7 +78,7 @@ export function TopBar({ retour, onRetour, titre, sousTitre, actions, grand = fa
             accessibilityRole="header"
             accessibilityLanguage={lang}
             maxFontSizeMultiplier={echelleMax.courant}
-            style={[typographie.titre1, { color: couleurs.emeraude }]}>
+            style={[lang === 'wo' ? latin.titre1 : typographie.titre1, { color: couleurs.emeraude }]}>
             {titre}
           </Text>
           {sousTitre ? (

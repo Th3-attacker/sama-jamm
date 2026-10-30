@@ -57,7 +57,7 @@ export function PrayerTimes({ prieres, onBasculerAppel }: PrayerTimesProps) {
               {
                 minHeight: prochaine ? 60 : 52,
                 gap: espace.espace3,
-                paddingLeft: espace.espace3,
+                paddingStart: espace.espace3,
                 borderRadius: rayon.rayonCarte,
                 backgroundColor: prochaine ? couleurs.emeraudeDoux : 'transparent',
               },

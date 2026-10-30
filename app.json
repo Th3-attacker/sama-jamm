@@ -37,7 +37,12 @@
           "imageWidth": 76
         }
       ],
-      "expo-localization",
+      [
+        "expo-localization",
+        {
+          "supportsRTL": true
+        }
+      ],
       "expo-sqlite",
       [
         "expo-location",

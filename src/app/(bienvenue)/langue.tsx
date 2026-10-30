@@ -23,7 +23,7 @@ const OPTIONS: { id: Langue; label: string; arabe?: boolean }[] = [
 
 export default function EcranLangue() {
   const { t, i18n } = useTranslation();
-  const { couleurs, espace, rayon, cible, typographie } = useTheme();
+  const { couleurs, espace, rayon, cible, typographie, latin } = useTheme();
   const langueEnregistree = useReglages((s) => s.langue);
   const definirLangue = useReglages((s) => s.definirLangue);
   const definirTraduction = useReglages((s) => s.definirTraduction);
@@ -41,7 +41,8 @@ export default function EcranLangue() {
 
   const continuer = () => {
     if (!langueEnregistree) choisir(choisie);
-    if (demandeRedemarrage(choisie)) setConfirmation(true);
+    // Après l'annonce du redémarrage manuel, on peut poursuivre : le sens s'appliquera à la réouverture.
+    if (demandeRedemarrage(choisie) && !redemarrageManuel) setConfirmation(true);
     else router.push('/position');
   };
 
@@ -59,7 +60,7 @@ export default function EcranLangue() {
     <SafeAreaView style={[styles.ecran, { backgroundColor: couleurs.marqueEmeraude, padding: espace.espace6 }]}>
       <StatusBar style="light" />
       <View style={[styles.haut, { gap: espace.espace3, paddingTop: espace.espace12 }]}>
-        <Text accessibilityRole="header" accessibilityLanguage="wo" maxFontSizeMultiplier={echelleMax.grand} style={[typographie.display, { color: ivoire, fontSize: 52, lineHeight: 56 }]}>
+        <Text accessibilityRole="header" accessibilityLanguage="wo" maxFontSizeMultiplier={echelleMax.grand} style={[latin.display, styles.wolof, { color: ivoire, fontSize: 52, lineHeight: 56 }]}>
           {t('bienvenue.langueTitre')}
         </Text>
         <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.translitteration, { color: ivoire, fontSize: 18, lineHeight: 28, opacity: 0.85 }]}>
@@ -93,7 +94,7 @@ export default function EcranLangue() {
               ]}>
               <Text
                 maxFontSizeMultiplier={echelleMax.courant}
-                style={[o.arabe ? typographie.arabe : typographie.titre3, { color: on ? couleurs.marqueEmeraude : ivoire, lineHeight: o.arabe ? 34 : 24 }]}>
+                style={[o.arabe ? typographie.arabe : latin.titre3, { color: on ? couleurs.marqueEmeraude : ivoire, lineHeight: o.arabe ? 34 : 24 }]}>
                 {o.label}
               </Text>
             </Pressable>
@@ -138,6 +139,8 @@ export default function EcranLangue() {
 const styles = StyleSheet.create({
   ecran: { flex: 1 },
   haut: { flex: 1 },
+  // Formule wolof : bloc de gauche à droite, même en interface arabe.
+  wolof: { writingDirection: 'ltr' },
   option: { justifyContent: 'center', borderWidth: 1 },
   bas: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   continuer: { alignItems: 'center', justifyContent: 'center' },
