@@ -14,6 +14,9 @@ import { Icon } from '@/ui/Icon';
 import { IconButton } from '@/ui/IconButton';
 import { ListGroup } from '@/ui/ListGroup';
 import { ListItem } from '@/ui/ListItem';
+import { PageDots } from '@/ui/PageDots';
+import { RadioGroup } from '@/ui/RadioGroup';
+import { SearchField } from '@/ui/SearchField';
 import { SegmentedControl } from '@/ui/SegmentedControl';
 import { Switch } from '@/ui/Switch';
 import { useToast } from '@/ui/Toast';
@@ -47,6 +50,8 @@ export default function Composants() {
   const [dialogue, setDialogue] = useState(false);
   const [feuille, setFeuille] = useState(false);
   const [recitateur, setRecitateur] = useState('alafasy');
+  const [langue, setLangue] = useState('fr');
+  const [recherche, setRecherche] = useState('');
   const { afficher } = useToast();
 
   if (!__DEV__) return <Redirect href="/" />;
@@ -117,6 +122,21 @@ export default function Composants() {
             valeur={segment}
             onChange={setSegment}
           />
+        </Section>
+
+        <Section titre="PageDots, RadioGroup, SearchField">
+          <PageDots total={3} actif={1} />
+          <RadioGroup
+            label="Dans quelle langue voulez-vous l'app ?"
+            options={[
+              { id: 'fr', label: 'Français' },
+              { id: 'wo', label: 'Wolof', description: 'Traduction en cours' },
+              { id: 'ar', label: 'العربية', fin: 'RTL' },
+            ]}
+            valeur={langue}
+            onChange={setLangue}
+          />
+          <SearchField placeholder="Rechercher une ville" valeur={recherche} onChange={setRecherche} />
         </Section>
 
         <Section titre="Banner">
