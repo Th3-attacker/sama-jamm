@@ -4,7 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { ChoixVille } from '@/features/priere/ChoixVille';
-import { calculerHoraires, prochainePriere, useOptionsCalcul } from '@/features/priere/horaires';
+import { calculerHoraires, prochainePriere } from '@/features/priere/horaires';
+import { useOptionsCalcul } from '@/features/priere/useOptionsCalcul';
 import { BandeauVeille } from '@/features/priere/veille';
 import { useMaintenant } from '@/hooks/useMaintenant';
 import { formatDuree, formatHeure, formatJour, minutesDuJour } from '@/lib/dates';

@@ -5,6 +5,7 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 
+import { useReplanification } from '@/features/priere/useReplanification';
 import { useNuitDePriere } from '@/features/priere/veille';
 import { useReglages } from '@/stores/reglages';
 import { polices } from '@/theme/polices';
@@ -20,6 +21,7 @@ export default function RootLayout() {
   const theme = useReglages((s) => s.theme);
   const veilleAuto = useReglages((s) => s.veilleAuto);
   const nuit = useNuitDePriere();
+  useReplanification();
   const pret = policesChargees || erreurPolices !== null;
 
   useEffect(() => {

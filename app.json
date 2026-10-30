@@ -18,7 +18,10 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.samajamm.app"
+      "package": "com.samajamm.app",
+      "permissions": [
+        "android.permission.SCHEDULE_EXACT_ALARM"
+      ]
     },
     "web": {
       "output": "server",
@@ -42,7 +45,8 @@
           "locationWhenInUsePermission": "Pour calculer vos horaires de prière et la direction de la qibla sur ce téléphone."
         }
       ],
-      "expo-notifications"
+      "expo-notifications",
+      "expo-background-task"
     ],
     "experiments": {
       "typedRoutes": true,
