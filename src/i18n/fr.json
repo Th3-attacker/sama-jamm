@@ -274,7 +274,8 @@
     "positionRefuseeTexte": "Choisissez votre ville : les horaires et la qibla seront calculés pour elle.",
     "chercherVille": "Chercher une ville",
     "positionApprox": "Position approximative",
-    "positionApproxTexte": "Les horaires sont calculés pour {{ville}}."
+    "positionApproxTexte": "Les horaires sont calculés pour {{ville}}.",
+    "maPosition": "Ma position"
   },
   "notifications": {
     "appelTitre": "{{priere}} · {{heure}}",

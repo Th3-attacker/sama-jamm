@@ -3,7 +3,8 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import { calculerHoraires, prochainePriere } from '@/features/priere/horaires';
+import { calculerHoraires, prochainePriere, useOptionsCalcul } from '@/features/priere/horaires';
+import { BandeauVeille } from '@/features/priere/veille';
 import { useMaintenant } from '@/hooks/useMaintenant';
 import { formatDuree, formatHegirien, formatHeure, formatJour, minutesDuJour } from '@/lib/dates';
 import { prieres, useReglages } from '@/stores/reglages';
@@ -27,11 +28,12 @@ export default function Accueil() {
   const { couleurs, espace, rayon, typographie } = useTheme();
   const maintenant = useMaintenant();
   const lieu = useReglages((s) => s.lieu);
+  const options = useOptionsCalcul();
 
   const arc = useMemo(() => {
     if (!lieu) return null;
-    const h = calculerHoraires(lieu, maintenant);
-    const suivante = prochainePriere(lieu, maintenant);
+    const h = calculerHoraires(lieu, maintenant, options);
+    const suivante = prochainePriere(lieu, maintenant, options);
     const liste: PriereArc[] = prieres.map((p) => ({
       nom: t(`priere.noms.${p}`),
       heure: formatHeure(h[p]),
@@ -46,7 +48,7 @@ export default function Accueil() {
       nom: t(`priere.noms.${suivante.nom}`),
       heure: formatHeure(suivante.heure),
     };
-  }, [lieu, maintenant, t]);
+  }, [lieu, maintenant, options, t]);
 
   const jour = formatJour(maintenant, i18n.language);
   const hegirien = formatHegirien(maintenant, i18n.language);
@@ -60,6 +62,7 @@ export default function Accueil() {
         ]}
       />
       <ScrollView contentContainerStyle={{ paddingHorizontal: espace.espace6, paddingBottom: espace.espace8, gap: espace.espace5 }}>
+        <BandeauVeille />
         <View>
           <Text accessibilityRole="header" accessibilityLanguage="wo" maxFontSizeMultiplier={echelleMax.courant} style={[typographie.titre1, { color: couleurs.emeraude }]}>
             {t('formules.saluer')}
