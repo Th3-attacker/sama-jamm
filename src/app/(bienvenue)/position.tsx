@@ -5,30 +5,21 @@ import { useTranslation } from 'react-i18next';
 import { Text } from 'react-native';
 
 import { MiseEnPage } from '@/features/bienvenue/MiseEnPage';
-import { chercherVilles, type Ville } from '@/features/priere/villes';
+import { ChoixVille } from '@/features/priere/ChoixVille';
+import type { Ville } from '@/features/priere/villes';
 import { useReglages } from '@/stores/reglages';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { Banner } from '@/ui/Banner';
 import { Button } from '@/ui/Button';
-import { ListGroup } from '@/ui/ListGroup';
-import { ListItem } from '@/ui/ListItem';
-import { SearchField } from '@/ui/SearchField';
 
 type Etat = { mode: 'explication' } | { mode: 'ville'; raison: 'choix' | 'refus' | 'introuvable' };
 
-function coordonnees(v: Ville): string {
-  const lat = `${Math.abs(v.lat).toFixed(2)}° ${v.lat >= 0 ? 'N' : 'S'}`;
-  const lon = `${Math.abs(v.lon).toFixed(2)}° ${v.lon >= 0 ? 'E' : 'O'}`;
-  return `${v.paysNom} · ${lat}, ${lon}`;
-}
-
 export default function Position() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const { couleurs, typographie } = useTheme();
   const definirLieu = useReglages((s) => s.definirLieu);
   const [etat, setEtat] = useState<Etat>({ mode: 'explication' });
-  const [recherche, setRecherche] = useState('');
   const [enCours, setEnCours] = useState(false);
 
   const suivant = () => router.push('/rappels');
@@ -58,7 +49,6 @@ export default function Position() {
   };
 
   if (etat.mode === 'ville') {
-    const resultats = chercherVilles(recherche);
     return (
       <MiseEnPage
         etape={1}
@@ -76,18 +66,7 @@ export default function Position() {
           </Banner>
         ) : null}
         {etat.raison === 'introuvable' ? <Banner ton="erreur">{t('bienvenue.positionIntrouvable')}</Banner> : null}
-        <SearchField label={t('priere.chercherVille')} placeholder={t('priere.chercherVille')} valeur={recherche} onChange={setRecherche} />
-        <ListGroup>
-          {resultats.map((v) => (
-            <ListItem
-              key={v.id}
-              icone="pin"
-              titre={i18n.language === 'ar' ? v.nomAr : v.nom}
-              sousTitre={coordonnees(v)}
-              onPress={() => choisirVille(v)}
-            />
-          ))}
-        </ListGroup>
+        <ChoixVille onChoisir={choisirVille} />
       </MiseEnPage>
     );
   }

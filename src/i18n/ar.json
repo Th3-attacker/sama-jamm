@@ -298,7 +298,8 @@
     "positionRefuseeTexte": "اختر مدينتك: ستُحسب المواقيت والقبلة لها.",
     "chercherVille": "ابحث عن مدينة",
     "positionApprox": "موقع تقريبي",
-    "positionApproxTexte": "المواقيت محسوبة لـ{{ville}}."
+    "positionApproxTexte": "المواقيت محسوبة لـ{{ville}}.",
+    "maPosition": "موقعي"
   },
   "notifications": {
     "appelTitre": "{{priere}} · {{heure}}",
