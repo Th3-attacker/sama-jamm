@@ -1,4 +1,4 @@
-import { BottomSheet as FeuilleNative } from '@expo/ui';
+import { BottomSheet as FeuilleNative, RNHostView } from '@expo/ui';
 import { preferredColorScheme } from '@expo/ui/swift-ui/modifiers';
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -39,21 +39,24 @@ export function BottomSheet({ ouvert, titre, onFermer, children }: BottomSheetPr
       // iOS : la feuille suit le thème de l'app, pas le mode du téléphone.
       modifiers={Platform.OS === 'ios' ? [preferredColorScheme(nom === 'jour' ? 'light' : 'dark')] : undefined}
       contentPadding={{ top: espace.espace2, left: espace.espace5, right: espace.espace5, bottom: espace.espace6 }}>
-      <View accessibilityViewIsModal style={{ gap: espace.espace2 }}>
-        <View style={styles.entete}>
-          <Text
-            accessibilityRole="header"
-            maxFontSizeMultiplier={echelleMax.courant}
-            style={[typographie.titre3, styles.titre, { color: couleurs.encre }]}>
-            {titre}
-          </Text>
-          <IconButton icone="close" label={t('commun.fermer')} onPress={onFermer} />
+      {/* Sans RNHostView, le contenu prend sa largeur naturelle, collé à gauche : largeur de la feuille, hauteur du contenu. */}
+      <RNHostView matchContents={{ vertical: true }}>
+        <View accessibilityViewIsModal style={{ gap: espace.espace2 }}>
+          <View style={styles.entete}>
+            <Text
+              accessibilityRole="header"
+              maxFontSizeMultiplier={echelleMax.courant}
+              style={[typographie.titre3, styles.titre, { color: couleurs.encre }]}>
+              {titre}
+            </Text>
+            <IconButton icone="close" label={t('commun.fermer')} onPress={onFermer} />
+          </View>
+          {/* Contenu court : hauteur naturelle ; contenu long : défilement dans la feuille. */}
+          <ScrollView style={{ maxHeight: hauteurContenu }} contentContainerStyle={{ gap: espace.espace5 }}>
+            {children}
+          </ScrollView>
         </View>
-        {/* Contenu court : hauteur naturelle ; contenu long : défilement dans la feuille. */}
-        <ScrollView style={{ maxHeight: hauteurContenu }} contentContainerStyle={{ gap: espace.espace5 }}>
-          {children}
-        </ScrollView>
-      </View>
+      </RNHostView>
     </FeuilleNative>
   );
 }
