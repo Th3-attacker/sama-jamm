@@ -95,7 +95,12 @@
     "rappelsTexte": "اختر الصلوات التي تريد التذكير بها. يمكنك التغيير لاحقًا.",
     "veilleAuto": "الوضع الليلي التلقائي",
     "veilleAutoDetail": "شاشة هادئة بين العشاء والفجر",
-    "commencer": "ابدأ"
+    "commencer": "ابدأ",
+    "positionIntrouvable": "تعذّر تحديد الموقع. اختر مدينتك لحساب المواقيت.",
+    "notificationsRefusees": "تم رفض الإشعارات. يمكنك السماح بها لاحقًا من إعدادات الهاتف.",
+    "langueRedemarrageLtr": "ستعود الواجهة من اليسار إلى اليمين: سيُعاد تشغيل التطبيق.",
+    "redemarrer": "إعادة التشغيل",
+    "redemarrerManuel": "أغلق Sama Jàmm ثم أعد فتحه لإتمام تغيير اللغة."
   },
   "autorisations": {
     "positionTitre": "موقعك، لمواقيتك",

@@ -87,7 +87,12 @@
     "rappelsTexte": "Choisissez les prières pour lesquelles vous voulez un rappel. Vous pourrez changer plus tard.",
     "veilleAuto": "Veille automatique",
     "veilleAutoDetail": "Écran adouci entre Isha et Fajr",
-    "commencer": "Commencer"
+    "commencer": "Commencer",
+    "positionIntrouvable": "Position introuvable. Choisissez votre ville pour calculer les horaires.",
+    "notificationsRefusees": "Notifications refusées. Vous pourrez les autoriser dans les réglages du téléphone.",
+    "langueRedemarrageLtr": "L'interface va repasser de gauche à droite : l'app va redémarrer.",
+    "redemarrer": "Redémarrer",
+    "redemarrerManuel": "Fermez puis rouvrez Sama Jàmm pour terminer le changement de langue."
   },
   "autorisations": {
     "positionTitre": "Votre position, pour vos horaires",
