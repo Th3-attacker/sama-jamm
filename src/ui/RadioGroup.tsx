@@ -17,13 +17,15 @@ export type RadioGroupProps = {
   options: RadioOption[];
   valeur: string | null;
   onChange: (id: string) => void;
+  /** false : simples lignes séparées par un filet, pour une feuille ou une carte déjà encadrée. */
+  encadre?: boolean;
 };
 
-export function RadioGroup({ label, options, valeur, onChange }: RadioGroupProps) {
+export function RadioGroup({ label, options, valeur, onChange, encadre = true }: RadioGroupProps) {
   const { couleurs, espace, rayon, typographie } = useTheme();
 
   return (
-    <View accessibilityRole="radiogroup" accessibilityLabel={label} style={{ gap: espace.espace2 }}>
+    <View accessibilityRole="radiogroup" accessibilityLabel={label} style={{ gap: encadre ? espace.espace2 : 0 }}>
       <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, { color: couleurs.encre2 }]}>
         {label}
       </Text>
@@ -37,13 +39,16 @@ export function RadioGroup({ label, options, valeur, onChange }: RadioGroupProps
             onPress={() => onChange(o.id)}
             style={[
               styles.option,
-              {
-                gap: espace.espace3,
-                padding: espace.espace4,
-                borderRadius: rayon.rayonCarte,
-                backgroundColor: couleurs.surface,
-                borderColor: on ? couleurs.emeraude : couleurs.ligne,
-              },
+              { gap: espace.espace3 },
+              encadre
+                ? {
+                    padding: espace.espace4,
+                    borderWidth: 1,
+                    borderRadius: rayon.rayonCarte,
+                    backgroundColor: couleurs.surface,
+                    borderColor: on ? couleurs.emeraude : couleurs.ligne,
+                  }
+                : { paddingVertical: espace.espace3, borderBottomWidth: StyleSheet.hairlineWidth, borderColor: couleurs.ligne },
             ]}>
             <View style={[styles.cercle, { borderColor: on ? couleurs.emeraude : couleurs.ligneForte }]}>
               {on ? <View style={[styles.point, { backgroundColor: couleurs.emeraude }]} /> : null}
@@ -71,7 +76,7 @@ export function RadioGroup({ label, options, valeur, onChange }: RadioGroupProps
 }
 
 const styles = StyleSheet.create({
-  option: { flexDirection: 'row', alignItems: 'center', minHeight: 56, borderWidth: 1 },
+  option: { flexDirection: 'row', alignItems: 'center', minHeight: 56 },
   cercle: { width: 24, height: 24, borderRadius: 12, borderWidth: 2, alignItems: 'center', justifyContent: 'center' },
   point: { width: 12, height: 12, borderRadius: 6 },
   textes: { flex: 1 },
