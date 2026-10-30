@@ -299,7 +299,10 @@
     "chercherVille": "ابحث عن مدينة",
     "positionApprox": "موقع تقريبي",
     "positionApproxTexte": "المواقيت محسوبة لـ{{ville}}.",
-    "maPosition": "موقعي"
+    "maPosition": "موقعي",
+    "sansRappel": "بدون تذكير مسبق",
+    "son": "صوت الأذان",
+    "rappelAvantTitre": "تذكير قبل الصلاة"
   },
   "notifications": {
     "appelTitre": "{{priere}} · {{heure}}",

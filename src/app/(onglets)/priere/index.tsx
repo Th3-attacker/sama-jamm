@@ -1,3 +1,4 @@
+import { router } from 'expo-router';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -28,6 +29,7 @@ export default function Priere() {
   const rappels = useReglages((s) => s.rappels);
   const definirRappel = useReglages((s) => s.definirRappel);
   const definirLieu = useReglages((s) => s.definirLieu);
+  const methode = useReglages((s) => s.methode);
   const tAr = i18n.getFixedT('ar');
 
   const donnees = useMemo(() => {
@@ -47,7 +49,12 @@ export default function Priere() {
 
   return (
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
-      <TopBar grand titre={t('priere.titre')} sousTitre={t('priere.sousTitre')} />
+      <TopBar
+        grand
+        titre={t('priere.titre')}
+        sousTitre={t('priere.sousTitre')}
+        actions={[{ icone: 'bell', label: t('priere.rappelsTitre'), onPress: () => router.push('/priere/rappels') }]}
+      />
       <ScrollView contentContainerStyle={{ paddingHorizontal: espace.espace5, paddingBottom: espace.espace8, gap: espace.espace4 }}>
         <BandeauVeille />
 
@@ -99,6 +106,14 @@ export default function Priere() {
                 if (p) definirRappel(p, !rappels[p]);
               }}
             />
+            <ListGroup>
+              <ListItem
+                icone="settings"
+                titre={t('priere.methodeTitre')}
+                sousTitre={t(`priere.methodes.${methode}`)}
+                onPress={() => router.push('/priere/methode')}
+              />
+            </ListGroup>
             <ListGroup titre={t('priere.semaine')}>
               {donnees.semaine.map(({ jour, horaires }) => (
                 <ListItem

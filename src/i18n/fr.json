@@ -275,7 +275,10 @@
     "chercherVille": "Chercher une ville",
     "positionApprox": "Position approximative",
     "positionApproxTexte": "Les horaires sont calculés pour {{ville}}.",
-    "maPosition": "Ma position"
+    "maPosition": "Ma position",
+    "sansRappel": "Sans rappel avant",
+    "son": "Son de l'appel",
+    "rappelAvantTitre": "Rappel avant la prière"
   },
   "notifications": {
     "appelTitre": "{{priere}} · {{heure}}",
