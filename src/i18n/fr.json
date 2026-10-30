@@ -342,7 +342,8 @@
     "confirmerZeroTitre": "Remettre le compteur à zéro ?",
     "confirmerZeroTexte": "Vous en êtes à {{n}}.",
     "objectif": "Objectif",
-    "formuleLibre": "Formule libre"
+    "formuleLibre": "Formule libre",
+    "sansObjectif": "Sans objectif"
   },
   "recherche": {
     "titre": "Recherche",

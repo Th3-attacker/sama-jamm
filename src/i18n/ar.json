@@ -366,7 +366,8 @@
     "confirmerZeroTitre": "إعادة العدّاد إلى الصفر؟",
     "confirmerZeroTexte": "وصلت إلى {{n}}.",
     "objectif": "الهدف",
-    "formuleLibre": "ذكر حرّ"
+    "formuleLibre": "ذكر حرّ",
+    "sansObjectif": "بدون هدف"
   },
   "recherche": {
     "titre": "بحث",

@@ -1,10 +1,11 @@
 // Réglages de l'utilisateur, gardés sur le téléphone (SQLite, clé-valeur). Rien n'est envoyé.
-import Storage from 'expo-sqlite/kv-store';
 import { create } from 'zustand';
-import { createJSONStorage, persist, type StateStorage } from 'zustand/middleware';
+import { createJSONStorage, persist } from 'zustand/middleware';
 
 import type { Langue } from '@/i18n/langues';
 import type { ChoixTheme } from '@/theme/veille';
+
+import { stockage } from './stockage';
 
 export const prieres = ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha'] as const;
 export type NomPriere = (typeof prieres)[number];
@@ -77,15 +78,6 @@ const parDefaut: Donnees = {
   veilleVue: null,
   theme: 'auto',
   bienvenueTerminee: false,
-};
-
-// Accès synchrone : les réglages sont prêts dès le premier rendu, sans écran clair au démarrage.
-const stockage: StateStorage = {
-  getItem: (cle) => Storage.getItemSync(cle),
-  setItem: (cle, valeur) => Storage.setItemSync(cle, valeur),
-  removeItem: (cle) => {
-    Storage.removeItemSync(cle);
-  },
 };
 
 export const useReglages = create<Donnees & Actions>()(
