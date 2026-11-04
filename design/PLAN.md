@@ -24,7 +24,8 @@ Ordre : **A → B1 → B2 → C2 → C3 → C4 → B4 → C1 → C5 → D → E 
 | D1 | Écran d'erreur (repli des écrans qui plantent), mise à jour bloquante via `version.json` | #67 |
 | D2 | Explication avant les demandes de position (qibla) et de notifications (zakat), raisons dans la bienvenue | #68 |
 | D3 | Démarrage animé (relais du démarrage natif, signature, fondu ; réduit si « Réduire les animations ») | #69 |
-| D4 | Journal local des erreurs (sans données personnelles), partagé par l'utilisateur depuis À propos | cette PR |
+| D4 | Journal local des erreurs (sans données personnelles), partagé par l'utilisateur depuis À propos | #70 |
+| E3 | Partage d'un verset : image (fond émeraude ou nuit, traduction au choix) ou texte avec lien | cette PR |
 
 ## A. Vérifier sur un téléphone (bloquant)
 
@@ -69,7 +70,7 @@ Ordre : **A → B1 → B2 → C2 → C3 → C4 → B4 → C1 → C5 → D → E 
 
 ## E. Contenus de lecture (après les droits)
 
-E1 licences du texte et de la traduction · E2 translittération, juz, hizb, prosternation · E3 partage d'un verset · E4 xassaïdes et invocations.
+E1 licences du texte et de la traduction · E2 translittération, juz, hizb, prosternation · E4 xassaïdes et invocations.
 
 ## F. Écouter (après les droits audio)
 

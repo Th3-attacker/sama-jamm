@@ -408,7 +408,12 @@
     "ajouterTraduction": "Ajouter la traduction",
     "ajouterTraductionDetail": "En français, sous le texte arabe",
     "partagerImage": "Partager l'image",
-    "copierTexte": "Copier le texte et le lien"
+    "copierTexte": "Copier le texte et le lien",
+    "titreFeuille": "Partager un verset",
+    "reference": "{{sourate}} · verset {{verset}}",
+    "source": "Traduction de Muhammad Hamidullah · Sama Jàmm",
+    "marque": "Sama Jàmm",
+    "copie": "Verset copié"
   },
   "reglages": {
     "titre": "Réglages",

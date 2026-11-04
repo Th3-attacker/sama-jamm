@@ -436,7 +436,12 @@
     "ajouterTraduction": "إضافة الترجمة",
     "ajouterTraductionDetail": "بالفرنسية، تحت النص العربي",
     "partagerImage": "مشاركة الصورة",
-    "copierTexte": "نسخ النص والرابط"
+    "copierTexte": "نسخ النص والرابط",
+    "titreFeuille": "مشاركة آية",
+    "reference": "{{sourate}} · الآية {{verset}}",
+    "source": "ترجمة محمد حميد الله · سما جام",
+    "marque": "سما جام",
+    "copie": "تم نسخ الآية"
   },
   "reglages": {
     "titre": "الإعدادات",
