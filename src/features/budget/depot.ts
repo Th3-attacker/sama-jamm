@@ -9,6 +9,7 @@ import { methodesDettes } from './depotDettes.ts';
 import { methodesDevises } from './depotDevises.ts';
 import { methodesEpargne } from './depotEpargne.ts';
 import { methodesZakat } from './depotZakat.ts';
+import type { LigneExport } from './exportCsv.ts';
 
 // Les parties du dépôt gardent leurs types ici : les écrans importent tout depuis `depot`.
 export { SaisieInvalide, type Parametre, type Sql } from './depotCommun.ts';
@@ -814,6 +815,21 @@ export function creerDepot(sql: Sql, outils: Outils) {
         v.vers,
         v.note?.trim() ? v.note.trim() : null,
         outils.horodatage(),
+      );
+    },
+
+    /** Toutes les opérations du carnet pour l'export CSV, de la plus ancienne à la plus récente. */
+    async operationsExport(carnet: Carnet): Promise<LigneExport[]> {
+      return sql.tous<LigneExport>(
+        `SELECT o.date, o.type, e.nom AS enveloppe, c.nom AS compte, cd.nom AS compteDestination,
+                ob.nom AS objectif, o.montant, o.note
+         FROM operations o
+         LEFT JOIN enveloppes e ON e.id = o.enveloppe_id
+         LEFT JOIN comptes c ON c.id = o.compte_id
+         LEFT JOIN comptes cd ON cd.id = o.compte_dest_id
+         LEFT JOIN objectifs ob ON ob.id = o.objectif_id
+         WHERE o.carnet_id = ? ORDER BY o.date, o.cree_le`,
+        carnet.id,
       );
     },
 

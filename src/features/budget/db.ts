@@ -2,7 +2,8 @@
 // Rien ici ne s'exécute dans Expo Go : SQLCipher demande un build natif (plugin `expo-sqlite` avec `useSQLCipher`).
 import * as Crypto from 'expo-crypto';
 import * as SecureStore from 'expo-secure-store';
-import { deleteDatabaseAsync, openDatabaseAsync, type SQLiteDatabase } from 'expo-sqlite';
+import { File } from 'expo-file-system';
+import { defaultDatabaseDirectory, deleteDatabaseAsync, openDatabaseAsync, type SQLiteDatabase } from 'expo-sqlite';
 
 import { devisesIntegrees } from '@/lib/montant';
 
@@ -23,7 +24,7 @@ export class BudgetIllisible extends Error {
 const versHex = (octets: Uint8Array) => Array.from(octets, (o) => o.toString(16).padStart(2, '0')).join('');
 
 /** Clé du trousseau, créée à la première ouverture. Elle ne quitte jamais ce téléphone. */
-async function cleDuBudget(): Promise<string> {
+export async function cleDuBudget(): Promise<string> {
   const existante = await SecureStore.getItemAsync(CLE_TROUSSEAU);
   if (existante !== null) {
     if (!FORMAT_CLE.test(existante)) throw new BudgetIllisible(new Error('Clé du trousseau illisible.'));
@@ -105,4 +106,43 @@ export async function reinitialiserBudget(): Promise<void> {
   if (courante) await courante.then((db) => db.closeAsync()).catch(() => undefined);
   await deleteDatabaseAsync(NOM_BASE);
   await SecureStore.deleteItemAsync(CLE_TROUSSEAU);
+}
+
+/** Chemin de fichier (sans « file:// ») d'une base du dossier SQLite, pour `ATTACH`. */
+export function cheminDansDossierBase(nom: string): string {
+  const dossier = String(defaultDatabaseDirectory).replace(/^file:\/\//, '');
+  return `${decodeURIComponent(dossier).replace(/\/$/, '')}/${nom}`;
+}
+
+const fichierDuDossier = (nom: string) => new File(`file://${cheminDansDossierBase(nom)}`);
+
+/**
+ * Remplace le budget par la base `nom` du même dossier (déjà chiffrée avec la clé de ce téléphone), puis la rouvre.
+ * L'ancienne base est gardée de côté jusqu'à ce que la nouvelle s'ouvre : en cas d'échec, elle reprend sa place.
+ */
+export async function remplacerBudget(nom: string): Promise<void> {
+  const courante = ouverture;
+  ouverture = undefined;
+  if (courante) await courante.then((db) => db.closeAsync()).catch(() => undefined);
+  const actuelle = fichierDuDossier(NOM_BASE);
+  const ancienne = fichierDuDossier(`${NOM_BASE}.ancienne`);
+  const nouvelle = fichierDuDossier(nom);
+  if (ancienne.exists) ancienne.delete();
+  if (actuelle.exists) await actuelle.move(ancienne);
+  // Fichiers de journal laissés par l'ancienne base : ils ne doivent jamais s'appliquer à la nouvelle.
+  for (const suffixe of ['-wal', '-shm', '-journal']) {
+    const journal = fichierDuDossier(`${NOM_BASE}${suffixe}`);
+    if (journal.exists) journal.delete();
+  }
+  try {
+    await nouvelle.move(fichierDuDossier(NOM_BASE));
+    await budgetDb();
+  } catch (erreur: unknown) {
+    ouverture = undefined;
+    const ratee = fichierDuDossier(NOM_BASE);
+    if (ratee.exists) ratee.delete();
+    if (ancienne.exists) await ancienne.move(fichierDuDossier(NOM_BASE));
+    throw erreur;
+  }
+  if (ancienne.exists) ancienne.delete();
 }
