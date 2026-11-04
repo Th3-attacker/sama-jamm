@@ -125,7 +125,29 @@ BEGIN
 END;
 `;
 
+// Version 2 : un seul cycle par carnet et par jour de début. Des cycles ont pu être créés en double par deux
+// lectures simultanées au changement de cycle : on garde le plus ancien, on lui rattache les opérations et les
+// plafonds des doublons (le plafond du cycle gardé l'emporte), puis l'index unique empêche toute récidive.
+const V2 = `
+CREATE TEMP TABLE cycles_garde AS
+  SELECT c.id AS id,
+         (SELECT k.id FROM cycles k WHERE k.carnet_id = c.carnet_id AND k.debut = c.debut ORDER BY k.rowid LIMIT 1) AS garde
+  FROM cycles c;
+UPDATE operations SET cycle_id = (SELECT g.garde FROM cycles_garde g WHERE g.id = operations.cycle_id)
+  WHERE cycle_id IN (SELECT id FROM cycles_garde WHERE id <> garde);
+INSERT OR IGNORE INTO plafonds (cycle_id, enveloppe_id, montant, report)
+  SELECT g.garde, p.enveloppe_id, p.montant, p.report
+  FROM plafonds p JOIN cycles_garde g ON g.id = p.cycle_id WHERE g.id <> g.garde;
+DELETE FROM plafonds WHERE cycle_id IN (SELECT id FROM cycles_garde WHERE id <> garde);
+-- Un doublon clos ferme le cycle gardé : le bilan a déjà été fait.
+UPDATE cycles SET clos = 1
+  WHERE id IN (SELECT g.garde FROM cycles_garde g JOIN cycles d ON d.id = g.id WHERE g.id <> g.garde AND d.clos = 1);
+DELETE FROM cycles WHERE id IN (SELECT id FROM cycles_garde WHERE id <> garde);
+DROP TABLE cycles_garde;
+CREATE UNIQUE INDEX cycles_carnet_debut ON cycles (carnet_id, debut);
+`;
+
 /** Version 1 à la première, puis une entrée par évolution du schéma. */
-export const migrations: readonly string[] = [V1];
+export const migrations: readonly string[] = [V1, V2];
 
 export const VERSION_SCHEMA = migrations.length;

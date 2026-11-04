@@ -159,6 +159,26 @@ type LigneCarnet = {
   personnelle: number;
 };
 
+/**
+ * Fait passer chaque fonction publique du dépôt l'une après l'autre : la connexion SQLite est partagée, et deux
+ * appels entremêlés pourraient se glisser dans la transaction de l'autre. Une erreur ne bloque pas la suite.
+ * Les fonctions internes appelées depuis une fonction publique ne repassent pas par la file (sinon elles
+ * s'attendraient elles-mêmes).
+ */
+function enFileUnique<T extends Record<string, (...args: never[]) => Promise<unknown>>>(api: T): T {
+  let derniere: Promise<unknown> = Promise.resolve();
+  const enFile = {} as Record<string, unknown>;
+  for (const [nom, fonction] of Object.entries(api)) {
+    enFile[nom] = (...args: never[]) => {
+      const resultat = derniere.then(() => fonction(...args));
+      derniere = resultat.catch(() => undefined);
+      return resultat;
+    };
+  }
+  // Mêmes clés et mêmes signatures que `api` : seule l'exécution change.
+  return enFile as T;
+}
+
 export function creerDepot(sql: Sql, outils: Outils) {
   /** Cycle qui contient aujourd'hui ; créé s'il n'existe pas, avec les plafonds du cycle précédent. */
   async function cycleCourant(carnet: Carnet): Promise<CycleBudget> {
@@ -172,21 +192,29 @@ export function creerDepot(sql: Sql, outils: Outils) {
     if (existant) return existant;
     const bornes = cycleDe(jour, carnet.jourPaie);
     const id = outils.nouvelId();
+    let cycle: CycleBudget = { id, debut: bornes.debut, fin: bornes.fin };
     await sql.transaction(async () => {
       const precedent = await sql.premier<{ id: string }>(
         'SELECT id FROM cycles WHERE carnet_id = ? AND debut < ? ORDER BY debut DESC LIMIT 1',
         carnet.id,
         bornes.debut,
       );
+      // L'index unique (carnet, début) garantit un seul cycle : si un autre appel l'a créé, on relit le sien.
       await sql.executer(
-        'INSERT INTO cycles (id, carnet_id, debut, fin, clos) VALUES (?, ?, ?, ?, 0)',
+        'INSERT OR IGNORE INTO cycles (id, carnet_id, debut, fin, clos) VALUES (?, ?, ?, ?, 0)',
         id,
         carnet.id,
         bornes.debut,
         bornes.fin,
       );
+      const enregistre = await sql.premier<CycleBudget>(
+        'SELECT id, debut, fin FROM cycles WHERE carnet_id = ? AND debut = ?',
+        carnet.id,
+        bornes.debut,
+      );
+      if (enregistre) cycle = enregistre;
       // La répartition reprend celle du cycle précédent (section Budget du foyer) ; le bilan viendra la corriger.
-      if (precedent) {
+      if (precedent && cycle.id === id) {
         await sql.executer(
           `INSERT INTO plafonds (cycle_id, enveloppe_id, montant, report)
            SELECT ?, p.enveloppe_id, p.montant, 0 FROM plafonds p
@@ -197,7 +225,7 @@ export function creerDepot(sql: Sql, outils: Outils) {
         );
       }
     });
-    return { id, debut: bornes.debut, fin: bornes.fin };
+    return cycle;
   }
 
   async function enveloppesDuCycle(
@@ -229,7 +257,7 @@ export function creerDepot(sql: Sql, outils: Outils) {
     return lignes.map((l) => ({ ...l, fixe: l.fixe === 1, archivee: l.archivee === 1 }));
   }
 
-  return {
+  return enFileUnique({
     cycleCourant,
 
     /** Premier carnet du téléphone, ou null avant le premier budget. */
@@ -806,7 +834,7 @@ export function creerDepot(sql: Sql, outils: Outils) {
         outils.horodatage(),
       );
     },
-  };
+  });
 }
 
 export type Depot = ReturnType<typeof creerDepot>;

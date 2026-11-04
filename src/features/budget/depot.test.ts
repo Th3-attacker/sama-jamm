@@ -645,3 +645,62 @@ test('virement : soldes des deux comptes, enveloppes et totaux inchangés', asyn
   await assert.rejects(depot.virement(carnet, { de: wave, vers: 'absent', montant: 1, note: null }), SaisieInvalide);
   await assert.rejects(depot.virement(carnet, { de: wave, vers: especes.id, montant: 0, note: null }), SaisieInvalide);
 });
+
+test('concurrence : dix lectures et écritures simultanées au changement de cycle, un seul cycle', async () => {
+  const w = monde();
+  const carnet = await carnetExemple(w.depot);
+  const env = (await w.depot.mois(carnet)).enveloppes[0];
+  assert.ok(env);
+  w.allerAu('2026-11-26');
+  const appels: Promise<unknown>[] = [];
+  for (let i = 0; i < 5; i++) {
+    appels.push(w.depot.mois(carnet));
+    appels.push(
+      w.depot.ajouterDepense(carnet, {
+        carnetId: carnet.id,
+        montant: 100,
+        enveloppeId: env.id,
+        compteId: null,
+        note: null,
+      }),
+    );
+  }
+  await Promise.all(appels);
+  const { n } = (await w.sql.premier<{ n: number }>("SELECT COUNT(*) AS n FROM cycles WHERE debut = '2026-11-25'")) ?? {
+    n: -1,
+  };
+  assert.equal(n, 1);
+  const mois = await w.depot.mois(carnet);
+  assert.equal(mois.depense, 500);
+  assert.equal(mois.enveloppes[0]?.depense, 500);
+  // Les plafonds n'ont été repris qu'une fois.
+  const { p } = (await w.sql.premier<{ p: number }>(
+    'SELECT COUNT(*) AS p FROM plafonds WHERE cycle_id = ?',
+    mois.cycle.id,
+  )) ?? { p: -1 };
+  assert.equal(p, 3);
+});
+
+test("file d'attente : une erreur n'empêche pas les opérations suivantes", async () => {
+  const { depot } = monde();
+  const carnet = await carnetExemple(depot);
+  const env = (await depot.mois(carnet)).enveloppes[0];
+  assert.ok(env);
+  const ratee = depot.ajouterDepense(carnet, {
+    carnetId: carnet.id,
+    montant: 0,
+    enveloppeId: env.id,
+    compteId: null,
+    note: null,
+  });
+  const reussie = depot.ajouterDepense(carnet, {
+    carnetId: carnet.id,
+    montant: 700,
+    enveloppeId: env.id,
+    compteId: null,
+    note: null,
+  });
+  await assert.rejects(ratee, SaisieInvalide);
+  await reussie;
+  assert.equal((await depot.mois(carnet)).depense, 700);
+});

@@ -108,3 +108,56 @@ test('un jour de paie hors de 1 à 31 et une devise à 3 décimales sont refusé
   assert.throws(() => db.exec("INSERT INTO carnets VALUES ('c2','X','XOF',32)"));
   assert.throws(() => db.exec("INSERT INTO devises VALUES ('ZZZ','Z','Z','apres',3,1000,1)"));
 });
+
+test('migration v2 : les cycles en double sont fusionnés sans rien perdre, puis interdits', () => {
+  const db = new DatabaseSync(':memory:');
+  db.exec('PRAGMA foreign_keys = ON');
+  const [v1, v2] = migrations;
+  assert.ok(v1 && v2);
+  db.exec(v1);
+  db.exec(`
+    INSERT INTO devises VALUES ('XOF','Franc CFA','F CFA','apres',0,1,0);
+    INSERT INTO carnets VALUES ('c1','Foyer','XOF',25);
+    INSERT INTO enveloppes VALUES ('e1','c1','Quotidien','cart',0,0,0);
+    INSERT INTO enveloppes VALUES ('e2','c1','Transport','car',0,1,0);
+    INSERT INTO cycles VALUES ('a','c1','2026-11-25','2026-12-24',0);
+    INSERT INTO cycles VALUES ('b','c1','2026-11-25','2026-12-24',1);
+    INSERT INTO cycles VALUES ('z','c1','2026-10-25','2026-11-24',0);
+    INSERT INTO plafonds VALUES ('a','e1',100,0);
+    INSERT INTO plafonds VALUES ('b','e1',999,0);
+    INSERT INTO plafonds VALUES ('b','e2',50,0);
+    INSERT INTO operations (id, carnet_id, cycle_id, type, montant, date, enveloppe_id, cree_le)
+      VALUES ('o1','c1','a','depense',10,'2026-11-26','e1','x'), ('o2','c1','b','depense',20,'2026-11-27','e2','x');
+  `);
+  db.exec(v2);
+  const cycles = db.prepare('SELECT id, clos FROM cycles ORDER BY debut, id').all() as { id: string; clos: number }[];
+  assert.deepEqual(
+    cycles.map((c) => [c.id, c.clos]),
+    [
+      ['z', 0],
+      ['a', 1],
+    ],
+  );
+  const ops = db.prepare('SELECT id, cycle_id FROM operations ORDER BY id').all() as { id: string; cycle_id: string }[];
+  assert.deepEqual(
+    ops.map((o) => [o.id, o.cycle_id]),
+    [
+      ['o1', 'a'],
+      ['o2', 'a'],
+    ],
+  );
+  const plafonds = db
+    .prepare("SELECT enveloppe_id, montant FROM plafonds WHERE cycle_id = 'a' ORDER BY enveloppe_id")
+    .all() as {
+    enveloppe_id: string;
+    montant: number;
+  }[];
+  assert.deepEqual(
+    plafonds.map((p) => [p.enveloppe_id, p.montant]),
+    [
+      ['e1', 100],
+      ['e2', 50],
+    ],
+  );
+  assert.throws(() => db.exec("INSERT INTO cycles VALUES ('c','c1','2026-11-25','2026-12-24',0)"));
+});
