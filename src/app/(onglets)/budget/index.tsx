@@ -191,6 +191,12 @@ export default function Budget() {
             sousTitre={t('budget.voirComptes')}
             onPress={() => router.push('/budget/comptes')}
           />
+          <ListItem
+            icone="users"
+            titre={t('dettes.titre')}
+            sousTitre={t('dettes.voir')}
+            onPress={() => router.push('/budget/dettes')}
+          />
         </ListGroup>
 
         <View>

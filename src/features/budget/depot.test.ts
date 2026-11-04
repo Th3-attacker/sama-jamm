@@ -704,3 +704,136 @@ test("file d'attente : une erreur n'empêche pas les opérations suivantes", asy
   await reussie;
   assert.equal((await depot.mois(carnet)).depense, 700);
 });
+
+// --- Dettes entre proches ---
+
+const detteDe = (
+  personne: string,
+  montant: number,
+  sens: 'prete' | 'emprunte' = 'prete',
+  echeance: string | null = null,
+) => ({
+  sens,
+  personne,
+  montant,
+  echeance,
+  note: null,
+});
+
+test('dettes : ajout, liste ouverte triée par échéance, détail', async () => {
+  const { depot } = monde('2026-11-04');
+  const carnet = await carnetExemple(depot);
+  await depot.ajouterDette(carnet, detteDe('Awa', 60_000, 'prete', '2026-11-30'));
+  const oncle = await depot.ajouterDette(carnet, detteDe('  Oncle Mamadou  ', 30_000, 'emprunte'));
+  await depot.ajouterDette(carnet, detteDe('Ibrahima', 40_000, 'prete', '2026-10-23'));
+  assert.deepEqual(
+    (await depot.dettes(carnet, 'ouvertes')).map((d) => d.personne),
+    ['Ibrahima', 'Awa', 'Oncle Mamadou'],
+  );
+  const detail = await depot.dette(carnet, oncle);
+  assert.ok(detail);
+  assert.equal(detail.personne, 'Oncle Mamadou');
+  assert.equal(detail.sens, 'emprunte');
+  assert.equal(detail.reste, 30_000);
+  assert.equal(detail.date, '2026-11-04');
+  assert.deepEqual(detail.paiements, []);
+});
+
+test('dettes : saisies refusées (nom, montant, échéance)', async () => {
+  const { depot } = monde();
+  const carnet = await carnetExemple(depot);
+  const cle = (e: unknown) => (e instanceof SaisieInvalide ? e.cle : String(e));
+  await assert.rejects(depot.ajouterDette(carnet, detteDe('   ', 1000)), (e) => cle(e) === 'personneInvalide');
+  await assert.rejects(depot.ajouterDette(carnet, detteDe('x'.repeat(61), 1000)), (e) => cle(e) === 'personneInvalide');
+  await assert.rejects(depot.ajouterDette(carnet, detteDe('Awa', 0)), (e) => cle(e) === 'montantInvalide');
+  await assert.rejects(
+    depot.ajouterDette(carnet, detteDe('Awa', 1000, 'prete', '2026-02-30')),
+    (e) => cle(e) === 'dateInvalide',
+  );
+  assert.deepEqual(await depot.dettes(carnet, 'ouvertes'), []);
+});
+
+test('dettes : remboursements jusqu’au solde, jamais plus que le reste', async () => {
+  const { depot } = monde('2026-11-04');
+  const carnet = await carnetExemple(depot);
+  const id = await depot.ajouterDette(carnet, detteDe('Ibrahima', 40_000));
+  await depot.ajouterPaiement(carnet, id, { type: 'remboursement', montant: 5_000, date: '2026-10-24', note: null });
+  await depot.ajouterPaiement(carnet, id, { type: 'remboursement', montant: 10_000, date: '2026-11-08', note: null });
+  let d = await depot.dette(carnet, id);
+  assert.ok(d);
+  assert.equal(d.rembourse, 15_000);
+  assert.equal(d.reste, 25_000);
+  assert.deepEqual(
+    d.paiements.map((p) => p.montant),
+    [10_000, 5_000],
+  );
+  await assert.rejects(
+    depot.ajouterPaiement(carnet, id, { type: 'remboursement', montant: 25_001, date: '2026-11-09', note: null }),
+    (e) => e instanceof SaisieInvalide && e.cle === 'paiementTropGrand',
+  );
+  await depot.ajouterPaiement(carnet, id, { type: 'remboursement', montant: 25_000, date: '2026-11-09', note: null });
+  d = await depot.dette(carnet, id);
+  assert.equal(d?.statut, 'soldee');
+  assert.equal(d?.reste, 0);
+  assert.deepEqual(await depot.dettes(carnet, 'ouvertes'), []);
+  assert.deepEqual(
+    (await depot.dettes(carnet, 'closes')).map((x) => x.id),
+    [id],
+  );
+  await assert.rejects(
+    depot.ajouterPaiement(carnet, id, { type: 'remboursement', montant: 1, date: '2026-11-09', note: null }),
+    (e) => e instanceof SaisieInvalide && e.cle === 'detteFermee',
+  );
+});
+
+test('dettes : remise du reste, puis suppression du paiement qui rouvre la dette', async () => {
+  const { depot } = monde();
+  const carnet = await carnetExemple(depot);
+  const id = await depot.ajouterDette(carnet, detteDe('Awa', 60_000));
+  await depot.ajouterPaiement(carnet, id, { type: 'remboursement', montant: 20_000, date: '2026-10-29', note: null });
+  // Le montant donné est ignoré : une remise efface exactement le reste.
+  await depot.ajouterPaiement(carnet, id, { type: 'remise', montant: 1, date: '2026-10-29', note: null });
+  let d = await depot.dette(carnet, id);
+  assert.equal(d?.statut, 'soldee');
+  const remise = d?.paiements.find((p) => p.type === 'remise');
+  assert.equal(remise?.montant, 40_000);
+  assert.ok(remise);
+  await depot.supprimerPaiement(carnet, remise.id);
+  d = await depot.dette(carnet, id);
+  assert.equal(d?.statut, 'ouverte');
+  assert.equal(d?.reste, 40_000);
+});
+
+test('dettes : modification, montant jamais sous le déjà remboursé', async () => {
+  const { depot } = monde();
+  const carnet = await carnetExemple(depot);
+  const id = await depot.ajouterDette(carnet, detteDe('Awa', 60_000));
+  await depot.ajouterPaiement(carnet, id, { type: 'remboursement', montant: 20_000, date: '2026-10-29', note: null });
+  await assert.rejects(
+    depot.modifierDette(carnet, id, detteDe('Awa', 19_999)),
+    (e) => e instanceof SaisieInvalide && e.cle === 'montantSousRembourse',
+  );
+  await depot.modifierDette(carnet, id, { ...detteDe('Awa Diop', 50_000, 'prete', '2026-12-15'), note: ' École ' });
+  let d = await depot.dette(carnet, id);
+  assert.equal(d?.personne, 'Awa Diop');
+  assert.equal(d?.reste, 30_000);
+  assert.equal(d?.echeance, '2026-12-15');
+  assert.equal(d?.note, 'École');
+  // Ramener le montant au déjà remboursé solde la dette.
+  await depot.modifierDette(carnet, id, detteDe('Awa Diop', 20_000));
+  d = await depot.dette(carnet, id);
+  assert.equal(d?.statut, 'soldee');
+});
+
+test('dettes : annulation, et aucune dette d’un autre carnet n’est visible', async () => {
+  const { depot } = monde();
+  const carnet = await carnetExemple(depot);
+  const id = await depot.ajouterDette(carnet, detteDe('Awa', 60_000));
+  await depot.annulerDette(carnet, id);
+  assert.equal((await depot.dette(carnet, id))?.statut, 'annulee');
+  await assert.rejects(depot.annulerDette(carnet, id), (e) => e instanceof SaisieInvalide && e.cle === 'detteFermee');
+  const autre: Carnet = { ...carnet, id: 'autre-carnet' };
+  assert.equal(await depot.dette(autre, id), null);
+  assert.deepEqual(await depot.dettes(autre, 'closes'), []);
+  await assert.rejects(depot.annulerDette(autre, id), (e) => e instanceof SaisieInvalide && e.cle === 'detteInconnue');
+});
