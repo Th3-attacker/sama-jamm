@@ -1,7 +1,7 @@
 // Fenêtre glissante des notifications de prière : calcul pur, sans dépendance native.
 import type { NomPriere, OptionsCalcul, Son } from '@/stores/reglages';
 
-import { calculerHoraires } from './horaires';
+import { calculerHoraires } from './horaires.ts';
 
 /** iOS garde 64 notifications programmées par app ; 4 places restent pour le khatm, la zakat et la régularité. */
 export const PLACES = 60;
