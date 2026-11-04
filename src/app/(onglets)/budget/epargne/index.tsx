@@ -69,7 +69,7 @@ export default function EcranEpargne() {
             {formatMontant(e.total, devise)}
           </Text>
           <Text
-            lang="wo"
+            accessibilityLanguage="wo"
             maxFontSizeMultiplier={echelleMax.courant}
             style={[typographie.titre3, { color: couleurs.emeraude, marginTop: espace.espace2 }]}>
             {t('epargne.proverbe')}
