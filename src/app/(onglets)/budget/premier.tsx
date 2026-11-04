@@ -1,19 +1,21 @@
 import { router } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { SaisieInvalide } from '@/features/budget/depot';
+import { apercuDevise } from '@/features/budget/devises';
 import { postesDeDepart } from '@/features/budget/enveloppesDeDepart';
+import { FormulaireDevise, useLibelleDevise } from '@/features/budget/FormulaireDevise';
 import { budgetModifie, depotBudget } from '@/features/budget/useBudget';
-import { devisesIntegrees, lireMontantFacultatif } from '@/lib/montant';
+import { devisesIntegrees, lireMontantFacultatif, type Devise } from '@/lib/montant';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { Banner } from '@/ui/Banner';
+import { BottomSheet } from '@/ui/BottomSheet';
 import { Button } from '@/ui/Button';
 import { ListGroup } from '@/ui/ListGroup';
 import { ListItem } from '@/ui/ListItem';
-import { SegmentedControl } from '@/ui/SegmentedControl';
 import { Switch } from '@/ui/Switch';
 import { TextField } from '@/ui/TextField';
 import { TopBar } from '@/ui/TopBar';
@@ -32,8 +34,25 @@ export default function PremierBudget() {
   );
   const [envoi, setEnvoi] = useState(false);
   const [erreurGenerale, setErreurGenerale] = useState(false);
+  const [devises, setDevises] = useState<readonly Devise[]>(devisesIntegrees);
+  const [ajoutDevise, setAjoutDevise] = useState(false);
+  const libelle = useLibelleDevise();
 
-  const devise = devisesIntegrees.find((d) => d.code === codeDevise) ?? devisesIntegrees[0];
+  // Devises personnelles déjà enregistrées (ajoutées lors d'un essai précédent) : la liste intégrée en attendant.
+  useEffect(() => {
+    let actif = true;
+    depotBudget()
+      .then((depot) => depot.devises())
+      .then((liste) => {
+        if (actif && liste.length > 0) setDevises(liste);
+      })
+      .catch((erreur: unknown) => console.warn('Devises non lues', erreur));
+    return () => {
+      actif = false;
+    };
+  }, []);
+
+  const devise = devises.find((d) => d.code === codeDevise) ?? devises[0];
   const jour = Number(jourPaie);
   const jourValide = /^\d{1,2}$/.test(jourPaie) && jour >= 1 && jour <= 31;
   const minimes = (saisie: string) => (devise ? lireMontantFacultatif(saisie, devise) : null);
@@ -91,12 +110,25 @@ export default function PremierBudget() {
             {t('budget.premierTexte')}
           </Text>
 
-          <SegmentedControl
-            label={t('budget.premierDevise')}
-            options={devisesIntegrees.map((d) => ({ id: d.code, label: d.symbole }))}
-            valeur={codeDevise}
-            onChange={setCodeDevise}
-          />
+          <View style={{ gap: espace.espace2 }}>
+            <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, { color: couleurs.encre }]}>
+              {t('budget.premierDevise')}
+            </Text>
+            <ListGroup>
+              {devises.map((d) => (
+                <ListItem
+                  key={d.code}
+                  titre={libelle(d).nom}
+                  valeur={apercuDevise(d)}
+                  fin={d.code === devise?.code ? 'coche' : undefined}
+                  onPress={() => setCodeDevise(d.code)}
+                />
+              ))}
+            </ListGroup>
+            <Button variant="discret" icone="plus" onPress={() => setAjoutDevise(true)}>
+              {t('devise.ajouter')}
+            </Button>
+          </View>
 
           <TextField
             label={t('budget.premierJourPaie')}
@@ -113,7 +145,7 @@ export default function PremierBudget() {
             label={t('budget.premierRevenu')}
             valeur={revenu}
             onChange={setRevenu}
-            clavier="number-pad"
+            clavier={devise && devise.decimales > 0 ? 'decimal-pad' : 'number-pad'}
             suffixe={devise?.symbole}
             aide={t('budget.premierRevenuAide')}
             erreur={revenuMinimes === null ? t('budget.montantInvalide') : undefined}
@@ -154,7 +186,7 @@ export default function PremierBudget() {
                     label={`${t('budget.plafond')} · ${nom}`}
                     valeur={poste.plafond}
                     onChange={(plafond) => changerPoste(p.cle, { plafond })}
-                    clavier="number-pad"
+                    clavier={devise && devise.decimales > 0 ? 'decimal-pad' : 'number-pad'}
                     suffixe={devise?.symbole}
                     placeholder="0"
                     erreur={minimes(poste.plafond) === null ? t('budget.montantInvalide') : undefined}
@@ -175,6 +207,18 @@ export default function PremierBudget() {
           </Button>
         </ScrollView>
       </KeyboardAvoidingView>
+
+      <BottomSheet ouvert={ajoutDevise} titre={t('devise.ajouter')} onFermer={() => setAjoutDevise(false)}>
+        {ajoutDevise ? (
+          <FormulaireDevise
+            onAjoutee={(d) => {
+              setDevises((liste) => [...liste, d]);
+              setCodeDevise(d.code);
+              setAjoutDevise(false);
+            }}
+          />
+        ) : null}
+      </BottomSheet>
     </View>
   );
 }

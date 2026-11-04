@@ -18,7 +18,8 @@ Ordre : **A → B1 → B2 → C2 → C3 → C4 → B4 → C1 → C5 → D → E 
 | Lecture | Mode page plein écran, taille dans les réglages | #58 |
 | C2 · C3 · C4 | Dettes, épargne avec intention, zakat indicative | #59 à #62 |
 | B4 | Découpage du dépôt, aides partagées des écrans du budget | #63 |
-| B4 (fin) | Montant facultatif partagé, traductions obsolètes, minuteries nettoyées, config web retirée | cette PR |
+| B4 (fin) | Montant facultatif partagé, traductions obsolètes, minuteries nettoyées, config web retirée | #64 |
+| C1 | Devise personnalisée, changement de devise avec conversion par un taux | cette PR |
 
 ## A. Vérifier sur un téléphone (bloquant)
 
@@ -51,7 +52,6 @@ Ordre : **A → B1 → B2 → C2 → C3 → C4 → B4 → C1 → C5 → D → E 
 
 | Lot | Contenu |
 | --- | --- |
-| C1 | Devise personnalisée et changement de devise |
 | C2 | Dettes entre proches (section 17 du design) |
 | C3 | Épargne : objectifs avec intention |
 | C4 | Zakat : base, nisab, année lunaire, biens |
