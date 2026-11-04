@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Text } from 'react-native';
 
+import { RaisonsAutorisation } from '@/features/autorisation/AvantAutorisation';
 import { MiseEnPage } from '@/features/bienvenue/MiseEnPage';
 import { ChoixVille } from '@/features/priere/ChoixVille';
 import type { Ville } from '@/features/priere/villes';
@@ -89,6 +90,10 @@ export default function Position() {
       </Text>
       <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, { color: couleurs.encre, fontSize: 17, lineHeight: 26 }]}>
         {t('bienvenue.positionTexte')}
+      </Text>
+      <RaisonsAutorisation type="position" />
+      <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre2 }]}>
+        {t('autorisations.avant.position.demande')}
       </Text>
     </MiseEnPage>
   );

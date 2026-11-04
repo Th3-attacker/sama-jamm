@@ -3,12 +3,14 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { useAvantAutorisation } from '@/features/autorisation/AvantAutorisation';
 import { lireSaisieDate, masqueDate, versSaisieDate } from '@/features/budget/dettes';
 import { EcranBudgetIncomplet } from '@/features/budget/EcranBudgetIncomplet';
 import { annulerRappelZakat, programmerRappelZakat } from '@/features/budget/rappelZakat';
 import { budgetModifie, useBudget } from '@/features/budget/useBudget';
 import { useFormatMontant } from '@/features/budget/verrou';
 import { baseDeCalcul } from '@/features/budget/zakat';
+import { creerCanaux } from '@/features/priere/notifications';
 import { formatHegirien, formatJourCle } from '@/lib/dates';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
@@ -29,6 +31,7 @@ export default function Zakat() {
   const formatMontant = useFormatMontant();
   const { couleurs, espace, rayon, typographie } = useTheme();
   const { afficher } = useToast();
+  const autorisation = useAvantAutorisation('notifications');
   const etat = useBudget((depot, carnet) => depot.zakat(carnet));
   const [versee, setVersee] = useState(false);
   const [feuilleDate, setFeuilleDate] = useState(false);
@@ -83,7 +86,10 @@ export default function Zakat() {
   const rappeler = async () => {
     if (e.type !== 'due') return;
     try {
-      const resultat = await programmerRappelZakat(e.echeance);
+      // Canal créé avant la demande : Android 13 et plus l'exige pour proposer l'autorisation.
+      await creerCanaux();
+      const accorde = await autorisation.demander();
+      const resultat = accorde ? await programmerRappelZakat(e.echeance) : 'refuse';
       afficher({
         texte:
           resultat === 'programme'
@@ -184,6 +190,7 @@ export default function Zakat() {
           {t('zakat.indicatif')}
         </Text>
       </ScrollView>
+      {autorisation.feuille}
 
       <Dialog
         ouvert={versee}

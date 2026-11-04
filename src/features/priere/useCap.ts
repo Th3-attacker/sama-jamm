@@ -3,6 +3,8 @@ import { useEffect, useRef, useState } from 'react';
 
 export type EtatCap =
   | { etat: 'attente' }
+  /** Position jamais demandée : l'écran explique avant de la demander, puis relance avec `essai` + 1. */
+  | { etat: 'autorisation' }
   | { etat: 'indisponible' }
   | { etat: 'actif'; cap: number; imprecis: boolean };
 
@@ -19,24 +21,27 @@ function ecart(de: number, vers: number): number {
  * Cap du téléphone, lissé sur 200 ms pour que l'étoile ne tremble pas.
  * Nord vrai quand il est disponible (trueHeading ≥ 0), sinon nord magnétique.
  */
-export function useCap(): EtatCap {
+export function useCap(essai = 0): EtatCap {
   const [etat, setEtat] = useState<EtatCap>({ etat: 'attente' });
   const lisse = useRef<{ cap: number; temps: number } | null>(null);
 
   useEffect(() => {
     let abonnement: Location.LocationSubscription | undefined;
     let fini = false;
-    const delai = setTimeout(() => {
-      if (!lisse.current && !fini) setEtat({ etat: 'indisponible' });
-    }, DELAI_SANS_BOUSSOLE);
+    let delai: ReturnType<typeof setTimeout> | undefined;
 
     (async () => {
-      let permission = await Location.getForegroundPermissionsAsync();
-      if (!permission.granted && permission.canAskAgain) permission = await Location.requestForegroundPermissionsAsync();
+      // La demande elle-même se fait depuis l'écran, après l'explication (voir `useAvantAutorisation`).
+      const permission = await Location.getForegroundPermissionsAsync();
+      if (fini) return;
       if (!permission.granted) {
-        setEtat({ etat: 'indisponible' });
+        setEtat({ etat: permission.canAskAgain ? 'autorisation' : 'indisponible' });
         return;
       }
+      setEtat({ etat: 'attente' });
+      delai = setTimeout(() => {
+        if (!lisse.current && !fini) setEtat({ etat: 'indisponible' });
+      }, DELAI_SANS_BOUSSOLE);
       abonnement = await Location.watchHeadingAsync(
         (mesure) => {
           const brut = mesure.trueHeading >= 0 ? mesure.trueHeading : mesure.magHeading;
@@ -64,7 +69,7 @@ export function useCap(): EtatCap {
       clearTimeout(delai);
       abonnement?.remove();
     };
-  }, []);
+  }, [essai]);
 
   return etat;
 }

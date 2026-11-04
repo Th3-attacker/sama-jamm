@@ -1,8 +1,9 @@
 import * as Haptics from 'expo-haptics';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { useAvantAutorisation } from '@/features/autorisation/AvantAutorisation';
 import { ChoixVille } from '@/features/priere/ChoixVille';
 import { relevementQibla } from '@/features/priere/horaires';
 import { useCap } from '@/features/priere/useCap';
@@ -24,8 +25,21 @@ export default function Qibla() {
   const { couleurs, espace, typographie } = useTheme();
   const lieu = useReglages((s) => s.lieu);
   const definirLieu = useReglages((s) => s.definirLieu);
-  const cap = useCap();
+  const [essai, setEssai] = useState(0);
+  const cap = useCap(essai);
   const dejaVibre = useRef(false);
+  const autorisation = useAvantAutorisation('position');
+  const dejaExplique = useRef(false);
+
+  // Boussole jamais autorisée : une seule explication par visite, puis la demande du téléphone et un nouvel essai.
+  const { demander } = autorisation;
+  useEffect(() => {
+    if (cap.etat !== 'autorisation' || dejaExplique.current) return;
+    dejaExplique.current = true;
+    demander()
+      .then(() => setEssai((n) => n + 1))
+      .catch((erreur: unknown) => console.warn('Autorisation de la boussole non obtenue', erreur));
+  }, [cap.etat, demander]);
 
   const qibla = lieu ? relevementQibla(lieu) : null;
   const nomLieu = lieu ? (lieu.type === 'ville' ? lieu.nom : t('priere.maPosition')) : '';
@@ -57,7 +71,7 @@ export default function Qibla() {
             </Banner>
             <ChoixVille onChoisir={(v) => definirLieu({ type: 'ville', id: v.id, nom: v.nom, latitude: v.lat, longitude: v.lon })} />
           </>
-        ) : cap.etat === 'indisponible' ? (
+        ) : cap.etat === 'indisponible' || (cap.etat === 'autorisation' && essai > 0) ? (
           <Banner ton="info" titre={t('qibla.sansBoussole')}>
             {t('qibla.sansBoussoleTexte', { degres: Math.round(qibla), direction })}
           </Banner>
@@ -71,6 +85,7 @@ export default function Qibla() {
           </>
         )}
       </ScrollView>
+      {autorisation.feuille}
     </View>
   );
 }
