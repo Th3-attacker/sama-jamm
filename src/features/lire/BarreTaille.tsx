@@ -1,10 +1,12 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
+import { basmalaDe } from '@/features/lire/coran';
 import { useReglages } from '@/stores/reglages';
+import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 
-/** Coefficients de taille du texte, du plus petit au plus grand ; l'échelon 2 (1) est la taille d'origine. */
+/** Coefficients de taille du texte, du plus petit au plus grand ; l'échelon 2 (1) est la taille d'origine, le 1 (0,9) le défaut. */
 export const ECHELONS_TAILLE = [0.8, 0.9, 1, 1.15, 1.3, 1.5, 1.75] as const;
 const MAX = ECHELONS_TAILLE.length - 1;
 
@@ -37,7 +39,7 @@ export function BarreTaille() {
       accessibilityValue={{ min: 0, max: MAX, now: echelon }}
       accessibilityActions={[{ name: 'increment' }, { name: 'decrement' }]}
       onAccessibilityAction={(e) => definir(echelon + (e.nativeEvent.actionName === 'increment' ? 1 : -1))}
-      style={[styles.barre, { gap: espace.espace2, paddingHorizontal: espace.espace5, paddingBottom: espace.espace3 }]}>
+      style={[styles.barre, { gap: espace.espace2 }]}>
       <Pressable
         accessibilityRole="button"
         accessibilityLabel={t('lire.reduireTexte')}
@@ -76,7 +78,34 @@ export function BarreTaille() {
   );
 }
 
+/**
+ * Réglage « Taille de l'écriture » (écran Réglages) : la barre et un aperçu de la basmala à la taille choisie.
+ * Il sert à la lecture verset par verset ; en mode page, l'écriture s'ajuste à l'écran.
+ */
+export function ReglageTaille() {
+  const { t } = useTranslation();
+  const { couleurs, espace, typographie } = useTheme();
+  const { tailleArabe } = useTaillesLecture();
+
+  return (
+    <View style={{ padding: espace.espace4, gap: espace.espace2 }}>
+      <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, { color: couleurs.encre }]}>
+        {t('reglages.tailleEcriture')}
+      </Text>
+      <BarreTaille />
+      <Text
+        accessibilityLanguage="ar"
+        accessibilityLabel={t('reglages.apercu')}
+        maxFontSizeMultiplier={echelleMax.grand}
+        style={[typographie.coran, tailleArabe, styles.apercu, { color: couleurs.encre }]}>
+        {basmalaDe(2)?.arabe ?? ''}
+      </Text>
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
+  apercu: { textAlign: 'center', writingDirection: 'rtl' },
   barre: { flexDirection: 'row', alignItems: 'center' },
   bouton: { minHeight: 44, alignItems: 'center', justifyContent: 'center' },
   piste: { flex: 1, flexDirection: 'row', alignItems: 'center' },

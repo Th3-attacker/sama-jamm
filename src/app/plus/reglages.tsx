@@ -8,6 +8,7 @@ import {
   demandeRedemarrage,
 } from "@/features/bienvenue/sensDeLecture";
 import { authentifier, verrouPossible } from "@/features/budget/verrou";
+import { ReglageTaille } from "@/features/lire/BarreTaille";
 import { estLangue, langues, type Langue } from "@/i18n/langues";
 import { useReglages } from "@/stores/reglages";
 import { echelleMax } from "@/theme/typographie";
@@ -175,13 +176,14 @@ export default function Reglages() {
           </ListGroup>
         </View>
 
-        <ListGroup titre={t("reglages.lecture")}>
+        <ListGroup titre={t("reglages.lecture")} note={t("reglages.tailleNote")}>
           <ListItem
             icone="globe"
             titre={t("reglages.langueApp")}
             valeur={NOMS_LANGUES[langue]}
             onPress={() => setFeuilleLangue(true)}
           />
+          <ReglageTaille />
         </ListGroup>
 
         <ListGroup titre={t("reglages.priere")}>
