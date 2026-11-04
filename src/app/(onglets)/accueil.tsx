@@ -59,7 +59,7 @@ export default function Accueil() {
       <TopBar
         actions={[
           { icone: 'search', label: t('menuPlus.rechercher') },
-          { icone: 'more', label: t('menuPlus.titre'), onPress: () => router.push('/plus/reglages') },
+          { icone: 'settings', label: t('menuPlus.reglages'), onPress: () => router.push('/plus/reglages') },
         ]}
       />
       <ScrollView contentContainerStyle={{ paddingHorizontal: espace.espace6, paddingBottom: espace.espace8, gap: espace.espace5 }}>
