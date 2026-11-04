@@ -608,7 +608,18 @@
     "jours_many": "{{count}} يومًا",
     "jours_other": "{{count}} يوم",
     "enveloppeIntrouvable": "هذا الظرف لم يعد موجودًا.",
-    "resteTitre": "المتبقي"
+    "resteTitre": "المتبقي",
+    "renommer": "إعادة التسمية",
+    "nomEnveloppe": "اسم الظرف",
+    "nomInvalide": "أدخل اسمًا من 1 إلى 40 حرفًا.",
+    "archiverTitre": "أرشفة هذا الظرف؟",
+    "archiverTexte": "يختفي من قوائمك. تبقى مصروفاته السابقة ضمن مجاميعك.",
+    "nouvelleEnveloppe": "إضافة ظرف",
+    "operationIntrouvable": "هذه العملية لم تعد موجودة.",
+    "revenusTitre": "مداخيل هذه الدورة",
+    "aucunRevenu": "لا مداخيل مسجلة لهذه الدورة.",
+    "modificationEnregistree": "تم حفظ التعديل",
+    "voirRevenus": "عرض المداخيل"
   },
   "epargne": {
     "titre": "الادخار",

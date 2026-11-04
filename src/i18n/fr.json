@@ -576,7 +576,18 @@
     "jours_one": "{{count}} jour",
     "jours_other": "{{count}} jours",
     "enveloppeIntrouvable": "Cette enveloppe n'existe plus.",
-    "resteTitre": "Reste"
+    "resteTitre": "Reste",
+    "renommer": "Renommer",
+    "nomEnveloppe": "Nom de l'enveloppe",
+    "nomInvalide": "Donnez un nom de 1 à 40 caractères.",
+    "archiverTitre": "Archiver cette enveloppe ?",
+    "archiverTexte": "Elle disparaît de vos listes. Ses dépenses passées restent dans vos totaux.",
+    "nouvelleEnveloppe": "Ajouter une enveloppe",
+    "operationIntrouvable": "Cette opération n'existe plus.",
+    "revenusTitre": "Revenus de ce cycle",
+    "aucunRevenu": "Aucun revenu enregistré pour ce cycle.",
+    "modificationEnregistree": "Modification enregistrée",
+    "voirRevenus": "Voir les revenus"
   },
   "epargne": {
     "titre": "Épargne",

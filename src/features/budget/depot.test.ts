@@ -204,3 +204,129 @@ test('ouguiya : le carnet garde sa devise et ses sous-unités', async () => {
   assert.equal(carnet?.devise.sousUnites, 5);
   assert.equal(carnet && (await depot.mois(carnet)).recu, 92_500);
 });
+
+test('modifier une dépense : montant, enveloppe et note ; les deux enveloppes suivent', async () => {
+  const { depot } = monde();
+  const carnet = await carnetExemple(depot);
+  const [quotidien, , transport] = (await depot.mois(carnet)).enveloppes;
+  assert.ok(quotidien && transport);
+  await depot.ajouterDepense(carnet, {
+    carnetId: carnet.id,
+    montant: 2_500,
+    enveloppeId: quotidien.id,
+    compteId: null,
+    note: 'Pain',
+  });
+  const [op] = (await depot.detailEnveloppe(carnet, quotidien.id))?.operations ?? [];
+  assert.ok(op);
+  await depot.modifierOperation(carnet, op.id, {
+    montant: 3_000,
+    enveloppeId: transport.id,
+    compteId: null,
+    note: '  Taxi ',
+  });
+  const mois = await depot.mois(carnet);
+  assert.equal(mois.depense, 3_000);
+  assert.equal(mois.enveloppes[0]?.depense, 0);
+  assert.equal(mois.enveloppes[2]?.depense, 3_000);
+  const relue = await depot.operation(carnet, op.id);
+  assert.deepEqual(
+    [relue?.type, relue?.montant, relue?.note, relue?.enveloppeId],
+    ['depense', 3_000, 'Taxi', transport.id],
+  );
+});
+
+test('modifier : montant invalide, enveloppe manquante ou opération inconnue refusés', async () => {
+  const { depot } = monde();
+  const carnet = await carnetExemple(depot);
+  const env = (await depot.mois(carnet)).enveloppes[0];
+  assert.ok(env);
+  await depot.ajouterDepense(carnet, {
+    carnetId: carnet.id,
+    montant: 1_000,
+    enveloppeId: env.id,
+    compteId: null,
+    note: null,
+  });
+  const [op] = (await depot.detailEnveloppe(carnet, env.id))?.operations ?? [];
+  assert.ok(op);
+  const m = { montant: 500, enveloppeId: env.id, compteId: null, note: null };
+  await assert.rejects(depot.modifierOperation(carnet, op.id, { ...m, montant: 0 }), SaisieInvalide);
+  await assert.rejects(depot.modifierOperation(carnet, op.id, { ...m, enveloppeId: null }), SaisieInvalide);
+  await assert.rejects(depot.modifierOperation(carnet, 'absente', m), SaisieInvalide);
+  assert.equal((await depot.operation(carnet, op.id))?.montant, 1_000);
+});
+
+test('revenu : modifié sans enveloppe, puis supprimé', async () => {
+  const { depot } = monde();
+  const carnet = await carnetExemple(depot);
+  const { revenus } = await depot.revenusDuCycle(carnet);
+  assert.deepEqual(
+    revenus.map((r) => [r.montant, r.compte]),
+    [[350_000, 'Espèces']],
+  );
+  const revenu = revenus[0];
+  assert.ok(revenu);
+  await depot.modifierOperation(carnet, revenu.id, {
+    montant: 360_000,
+    enveloppeId: 'ignoree',
+    compteId: null,
+    note: 'Salaire',
+  });
+  assert.equal((await depot.mois(carnet)).recu, 360_000);
+  assert.equal((await depot.operation(carnet, revenu.id))?.enveloppeId, null);
+  await depot.supprimerOperation(carnet, revenu.id);
+  assert.equal((await depot.mois(carnet)).recu, 0);
+  assert.equal(await depot.operation(carnet, revenu.id), null);
+  await assert.rejects(depot.supprimerOperation(carnet, revenu.id), SaisieInvalide);
+});
+
+test('enveloppes : ajouter à la fin, renommer, archiver sans perdre les dépenses', async () => {
+  const { depot } = monde();
+  const carnet = await carnetExemple(depot);
+  const id = await depot.ajouterEnveloppe(carnet, { nom: '  Cadeaux ', icone: 'heart', fixe: false, plafond: 20_000 });
+  let mois = await depot.mois(carnet);
+  assert.deepEqual(mois.enveloppes.at(-1) && [mois.enveloppes.at(-1)?.nom, mois.enveloppes.at(-1)?.plafond], [
+    'Cadeaux',
+    20_000,
+  ]);
+  await depot.renommerEnveloppe(carnet, id, 'Cadeaux et fêtes');
+  await depot.ajouterDepense(carnet, {
+    carnetId: carnet.id,
+    montant: 5_000,
+    enveloppeId: id,
+    compteId: null,
+    note: null,
+  });
+  await depot.archiverEnveloppe(carnet, id);
+  mois = await depot.mois(carnet);
+  assert.equal(
+    mois.enveloppes.some((e) => e.id === id),
+    false,
+  );
+  assert.equal(mois.depense, 5_000);
+  // Une enveloppe archivée ne reçoit plus de dépense.
+  await assert.rejects(
+    depot.ajouterDepense(carnet, { carnetId: carnet.id, montant: 100, enveloppeId: id, compteId: null, note: null }),
+    SaisieInvalide,
+  );
+});
+
+test('enveloppes : nom vide ou trop long, plafond négatif, enveloppe inconnue refusés', async () => {
+  const { depot } = monde();
+  const carnet = await carnetExemple(depot);
+  await assert.rejects(
+    depot.ajouterEnveloppe(carnet, { nom: '   ', icone: 'cart', fixe: false, plafond: 0 }),
+    SaisieInvalide,
+  );
+  await assert.rejects(
+    depot.ajouterEnveloppe(carnet, { nom: 'x'.repeat(41), icone: 'cart', fixe: false, plafond: 0 }),
+    SaisieInvalide,
+  );
+  await assert.rejects(
+    depot.ajouterEnveloppe(carnet, { nom: 'X', icone: 'cart', fixe: false, plafond: -1 }),
+    SaisieInvalide,
+  );
+  await assert.rejects(depot.renommerEnveloppe(carnet, 'absente', 'Nom'), SaisieInvalide);
+  await assert.rejects(depot.archiverEnveloppe(carnet, 'absente'), SaisieInvalide);
+});

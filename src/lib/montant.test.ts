@@ -2,7 +2,16 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { formatMontant, MONTANT_MAX_UNITES, MRU, versMinimes, versPrincipal, XOF, type Devise } from './montant.ts';
+import {
+  formatMontant,
+  MONTANT_MAX_UNITES,
+  MRU,
+  versMinimes,
+  versPrincipal,
+  versSaisie,
+  XOF,
+  type Devise,
+} from './montant.ts';
 
 const DH: Devise = {
   code: 'MAD',
@@ -83,5 +92,22 @@ test('aller-retour saisie, stockage, affichage sans écart', () => {
     const minimes = versMinimes(saisie, XOF);
     assert.notEqual(minimes, null);
     assert.equal(formatMontant(minimes ?? 0, XOF).replace(/[^\d]/g, ''), saisie.replace(/^0+(?=\d)/, ''));
+  }
+});
+
+test('versSaisie : inverse exact de versMinimes', () => {
+  assert.equal(versSaisie(2500, XOF), '2500');
+  assert.equal(versSaisie(92500, MRU), '18500');
+  assert.equal(versSaisie(92501, MRU), null);
+  assert.equal(versSaisie(1250, DH), '12,50');
+  assert.equal(versSaisie(5, DH), '0,05');
+  assert.equal(versSaisie(-1, XOF), null);
+  for (const [m, d] of [
+    [2500, XOF],
+    [92500, MRU],
+    [1250, DH],
+    [999, USD],
+  ] as const) {
+    assert.equal(versMinimes(versSaisie(m, d) ?? '', d), m);
   }
 });

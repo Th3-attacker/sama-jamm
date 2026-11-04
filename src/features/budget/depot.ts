@@ -37,6 +37,24 @@ export type Mois = {
   enveloppes: EnveloppeDuMois[];
 };
 export type Operation = { id: string; montant: number; date: Jour; note: string | null; compte: string | null };
+export type TypeOperation = 'depense' | 'revenu' | 'virement' | 'epargne' | 'sadaqa';
+export type DetailOperation = {
+  id: string;
+  type: TypeOperation;
+  montant: number;
+  date: Jour;
+  note: string | null;
+  enveloppeId: string | null;
+  compteId: string | null;
+};
+export type ModificationOperation = {
+  montant: number;
+  /** Obligatoire pour une dépense ; ignoré pour les autres opérations. */
+  enveloppeId: string | null;
+  compteId: string | null;
+  note: string | null;
+};
+export type NouvelleEnveloppe = { nom: string; icone: string; fixe: boolean; plafond: number };
 export type DetailEnveloppe = { enveloppe: EnveloppeDuMois; cycle: CycleBudget; operations: Operation[] };
 
 export type EnveloppeDeDepart = { nom: string; icone: string; fixe: boolean; plafond: number };
@@ -58,10 +76,15 @@ export type NouvelleDepense = {
   note: string | null;
 };
 
+type CleSaisie = 'montantInvalide' | 'jourPaieInvalide' | 'enveloppeInconnue' | 'operationInconnue' | 'nomInvalide';
+
+/** Nom d'enveloppe : 1 à 40 caractères, espaces autour retirés. */
+export const NOM_ENVELOPPE_MAX = 40;
+
 /** Erreur de saisie que l'écran peut expliquer (clé i18n dans `cle`). */
 export class SaisieInvalide extends Error {
-  readonly cle: 'montantInvalide' | 'jourPaieInvalide' | 'enveloppeInconnue';
-  constructor(cle: 'montantInvalide' | 'jourPaieInvalide' | 'enveloppeInconnue') {
+  readonly cle: CleSaisie;
+  constructor(cle: CleSaisie) {
     super(cle);
     this.name = 'SaisieInvalide';
     this.cle = cle;
@@ -332,6 +355,127 @@ export function creerDepot(sql: Sql, outils: Outils) {
         enveloppeId,
         montant,
       );
+    },
+
+    /** Une opération du carnet, quel que soit son cycle ; null si elle n'existe pas. */
+    async operation(carnet: Carnet, id: string): Promise<DetailOperation | null> {
+      return sql.premier<DetailOperation>(
+        `SELECT id, type, montant, date, note, enveloppe_id AS enveloppeId, compte_id AS compteId
+         FROM operations WHERE id = ? AND carnet_id = ?`,
+        id,
+        carnet.id,
+      );
+    },
+
+    /** Corrige une opération : montant, enveloppe (dépense), compte, note. Le jour et le cycle ne changent pas. */
+    async modifierOperation(carnet: Carnet, id: string, m: ModificationOperation): Promise<void> {
+      if (!montantValide(m.montant)) throw new SaisieInvalide('montantInvalide');
+      const actuelle = await sql.premier<{ type: TypeOperation }>(
+        'SELECT type FROM operations WHERE id = ? AND carnet_id = ?',
+        id,
+        carnet.id,
+      );
+      if (!actuelle) throw new SaisieInvalide('operationInconnue');
+      let enveloppeId: string | null = null;
+      if (actuelle.type === 'depense') {
+        const env = m.enveloppeId
+          ? await sql.premier<{ id: string }>(
+              'SELECT id FROM enveloppes WHERE id = ? AND carnet_id = ? AND archivee = 0',
+              m.enveloppeId,
+              carnet.id,
+            )
+          : null;
+        if (!env) throw new SaisieInvalide('enveloppeInconnue');
+        enveloppeId = env.id;
+      }
+      const note = m.note?.trim() ? m.note.trim() : null;
+      await sql.executer(
+        'UPDATE operations SET montant = ?, enveloppe_id = ?, compte_id = ?, note = ? WHERE id = ? AND carnet_id = ?',
+        m.montant,
+        enveloppeId,
+        m.compteId,
+        note,
+        id,
+        carnet.id,
+      );
+    },
+
+    /** Supprime définitivement une opération (après confirmation de l'utilisateur). */
+    async supprimerOperation(carnet: Carnet, id: string): Promise<void> {
+      const existe = await sql.premier<{ id: string }>(
+        'SELECT id FROM operations WHERE id = ? AND carnet_id = ?',
+        id,
+        carnet.id,
+      );
+      if (!existe) throw new SaisieInvalide('operationInconnue');
+      await sql.executer('DELETE FROM operations WHERE id = ? AND carnet_id = ?', id, carnet.id);
+    },
+
+    /** Revenus du cycle en cours, les plus récents d'abord. */
+    async revenusDuCycle(carnet: Carnet): Promise<{ cycle: CycleBudget; revenus: Operation[] }> {
+      const cycle = await cycleCourant(carnet);
+      const revenus = await sql.tous<Operation>(
+        `SELECT o.id, o.montant, o.date, o.note, c.nom AS compte
+         FROM operations o LEFT JOIN comptes c ON c.id = o.compte_id
+         WHERE o.cycle_id = ? AND o.type = 'revenu'
+         ORDER BY o.date DESC, o.cree_le DESC`,
+        cycle.id,
+      );
+      return { cycle, revenus };
+    },
+
+    /** Nouvelle enveloppe, placée après les autres, avec son plafond pour le cycle en cours. */
+    async ajouterEnveloppe(carnet: Carnet, e: NouvelleEnveloppe): Promise<string> {
+      const nom = e.nom.trim();
+      if (nom.length < 1 || nom.length > NOM_ENVELOPPE_MAX) throw new SaisieInvalide('nomInvalide');
+      if (!Number.isSafeInteger(e.plafond) || e.plafond < 0) throw new SaisieInvalide('montantInvalide');
+      const cycle = await cycleCourant(carnet);
+      const id = outils.nouvelId();
+      await sql.transaction(async () => {
+        const dernier = await sql.premier<{ ordre: number | null }>(
+          'SELECT MAX(ordre) AS ordre FROM enveloppes WHERE carnet_id = ?',
+          carnet.id,
+        );
+        await sql.executer(
+          'INSERT INTO enveloppes (id, carnet_id, nom, icone, fixe, ordre, archivee) VALUES (?, ?, ?, ?, ?, ?, 0)',
+          id,
+          carnet.id,
+          nom,
+          e.icone,
+          e.fixe ? 1 : 0,
+          (dernier?.ordre ?? -1) + 1,
+        );
+        await sql.executer(
+          'INSERT INTO plafonds (cycle_id, enveloppe_id, montant, report) VALUES (?, ?, ?, 0)',
+          cycle.id,
+          id,
+          e.plafond,
+        );
+      });
+      return id;
+    },
+
+    async renommerEnveloppe(carnet: Carnet, id: string, nouveauNom: string): Promise<void> {
+      const nom = nouveauNom.trim();
+      if (nom.length < 1 || nom.length > NOM_ENVELOPPE_MAX) throw new SaisieInvalide('nomInvalide');
+      const existe = await sql.premier<{ id: string }>(
+        'SELECT id FROM enveloppes WHERE id = ? AND carnet_id = ?',
+        id,
+        carnet.id,
+      );
+      if (!existe) throw new SaisieInvalide('enveloppeInconnue');
+      await sql.executer('UPDATE enveloppes SET nom = ? WHERE id = ? AND carnet_id = ?', nom, id, carnet.id);
+    },
+
+    /** Retire l'enveloppe des listes ; ses dépenses passées restent dans les totaux et l'historique. */
+    async archiverEnveloppe(carnet: Carnet, id: string): Promise<void> {
+      const existe = await sql.premier<{ id: string }>(
+        'SELECT id FROM enveloppes WHERE id = ? AND carnet_id = ?',
+        id,
+        carnet.id,
+      );
+      if (!existe) throw new SaisieInvalide('enveloppeInconnue');
+      await sql.executer('UPDATE enveloppes SET archivee = 1 WHERE id = ? AND carnet_id = ?', id, carnet.id);
     },
   };
 }
