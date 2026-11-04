@@ -11,6 +11,7 @@ import { useReplanification } from '@/features/priere/useReplanification';
 import { useSurveillanceVerrou } from '@/features/budget/verrou';
 import { DemarrageAnime } from '@/features/demarrage/DemarrageAnime';
 import { ErreurDeRoute } from '@/features/erreur/ErreurDeRoute';
+import { installerJournalGlobal } from '@/features/erreur/journal';
 import { EcranMiseAJour } from '@/features/miseAJour/EcranMiseAJour';
 import { useMiseAJour } from '@/features/miseAJour/useMiseAJour';
 import { useNuitDePriere } from '@/features/priere/veille';
@@ -28,6 +29,8 @@ export function ErrorBoundary(props: ErrorBoundaryProps) {
     </ThemeProvider>
   );
 }
+
+installerJournalGlobal();
 
 SplashScreen.preventAutoHideAsync().catch((erreur: unknown) => {
   console.warn("Écran de démarrage non retenu", erreur);

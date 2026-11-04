@@ -484,7 +484,11 @@
     "polices": "الخطوط: Cormorant Garamond وSource Serif 4 وSource Sans 3 وAmiri وAmiri Quran (رخصة SIL للخطوط المفتوحة).",
     "remerciements": "شكر وتقدير",
     "contact": "راسل الفريق",
-    "noter": "قيّم التطبيق في المتجر"
+    "noter": "قيّم التطبيق في المتجر",
+    "signaler": "الإبلاغ عن مشكلة",
+    "signalerAide": "يشارك قائمة آخر الأخطاء: رموز وإصدارات، دون بياناتك أبدًا",
+    "signalerEntete": "سما جام · الأخطاء الأخيرة",
+    "aucuneErreur": "لا توجد أخطاء مسجّلة."
   },
   "compte": {
     "titre": "الحساب",

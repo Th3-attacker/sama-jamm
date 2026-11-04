@@ -3,12 +3,14 @@ import type { ErrorBoundaryProps } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { codeErreur } from '@/lib/codeErreur';
 import { EcranErreur } from '@/ui/EcranErreur';
+
+import { journaliser } from './journal';
 
 export function ErreurDeRoute({ error, retry }: ErrorBoundaryProps) {
   const { t } = useTranslation();
-  const [code] = useState(() => codeErreur(error, new Date()));
+  // Journalisée une fois, au premier rendu de l'écran d'erreur.
+  const [code] = useState(() => journaliser(error, 'ecran'));
   useEffect(() => {
     console.error('Écran interrompu par une erreur', error);
   }, [error]);
