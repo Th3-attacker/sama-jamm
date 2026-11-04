@@ -629,7 +629,13 @@
     "comptesIdentiques": "Choisissez deux comptes différents.",
     "epargneOperation": "Épargne",
     "sadaqaOperation": "Sadaqa",
-    "virementOperation": "Virement"
+    "virementOperation": "Virement",
+    "verrouIndisponible": "Activez un code, un schéma ou une empreinte dans les réglages du téléphone pour verrouiller le budget.",
+    "verrouCaptures": "Sur Android, les captures d'écran de l'app sont alors bloquées.",
+    "verrouPrompt": "Déverrouiller votre budget",
+    "masquerLesMontants": "Masquer les montants",
+    "montrerLesMontants": "Montrer les montants",
+    "verrouEchec": "Déverrouillage annulé. Réessayez quand vous voulez."
   },
   "epargne": {
     "titre": "Épargne",

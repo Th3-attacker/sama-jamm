@@ -51,6 +51,10 @@ type Donnees = {
   tailleLecture: number;
   /** Ce que la lecture affiche : arabe seul, arabe et traduction, ou traduction seule. */
   affichage: AffichageLecture;
+  /** Budget protégé par l'empreinte, le visage ou le code du téléphone. */
+  verrouBudget: boolean;
+  /** Montants du budget remplacés par « ••• » à l'ouverture de l'app. */
+  masquerMontants: boolean;
 };
 
 type Actions = {
@@ -70,6 +74,8 @@ type Actions = {
   terminerBienvenue: () => void;
   definirTailleLecture: (echelon: number) => void;
   definirAffichage: (affichage: AffichageLecture) => void;
+  definirVerrouBudget: (actif: boolean) => void;
+  definirMasquerMontants: (actif: boolean) => void;
 };
 
 export const AJUSTEMENT_MAX = 15;
@@ -93,6 +99,8 @@ const parDefaut: Donnees = {
   bienvenueTerminee: false,
   tailleLecture: 2,
   affichage: 'arabeTrad',
+  verrouBudget: false,
+  masquerMontants: false,
 };
 
 export const useReglages = create<Donnees & Actions>()(
@@ -121,6 +129,8 @@ export const useReglages = create<Donnees & Actions>()(
       terminerBienvenue: () => set({ bienvenueTerminee: true }),
       definirTailleLecture: (echelon) => set({ tailleLecture: Math.max(0, Math.min(6, Math.round(echelon))) }),
       definirAffichage: (affichage) => set({ affichage }),
+      definirVerrouBudget: (verrouBudget) => set({ verrouBudget }),
+      definirMasquerMontants: (masquerMontants) => set({ masquerMontants }),
     }),
     {
       name: 'reglages',
@@ -144,6 +154,8 @@ export const useReglages = create<Donnees & Actions>()(
         veilleAuto: s.veilleAuto,
         haptique: s.haptique,
         veilleVue: s.veilleVue,
+        verrouBudget: s.verrouBudget,
+        masquerMontants: s.masquerMontants,
         theme: s.theme,
         bienvenueTerminee: s.bienvenueTerminee,
         tailleLecture: s.tailleLecture,

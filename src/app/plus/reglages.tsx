@@ -7,6 +7,7 @@ import {
   appliquerSensEtRedemarrer,
   demandeRedemarrage,
 } from "@/features/bienvenue/sensDeLecture";
+import { authentifier, verrouPossible } from "@/features/budget/verrou";
 import { estLangue, langues, type Langue } from "@/i18n/langues";
 import { useReglages } from "@/stores/reglages";
 import { echelleMax } from "@/theme/typographie";
@@ -43,6 +44,31 @@ export default function Reglages() {
   const definirHaptique = useReglages((s) => s.definirHaptique);
   const definirLangue = useReglages((s) => s.definirLangue);
   const definirTraduction = useReglages((s) => s.definirTraduction);
+  const verrouBudget = useReglages((s) => s.verrouBudget);
+  const masquerMontants = useReglages((s) => s.masquerMontants);
+  const definirVerrouBudget = useReglages((s) => s.definirVerrouBudget);
+  const definirMasquerMontants = useReglages((s) => s.definirMasquerMontants);
+  const [verrouImpossible, setVerrouImpossible] = useState(false);
+
+  // Activer le verrou demande d'abord une authentification réussie : on ne s'enferme pas dehors.
+  const changerVerrou = (actif: boolean) => {
+    if (!actif) {
+      definirVerrouBudget(false);
+      return;
+    }
+    (async () => {
+      if (!(await verrouPossible())) {
+        setVerrouImpossible(true);
+        return;
+      }
+      setVerrouImpossible(false);
+      if (await authentifier(t("budget.verrouPrompt")))
+        definirVerrouBudget(true);
+    })().catch((erreur: unknown) => {
+      console.warn("Verrou du budget indisponible", erreur);
+      setVerrouImpossible(true);
+    });
+  };
   const [feuilleLangue, setFeuilleLangue] = useState(false);
   const [aRedemarrer, setARedemarrer] = useState<Langue | null>(null);
   const [redemarrageManuel, setRedemarrageManuel] = useState(false);
@@ -169,6 +195,35 @@ export default function Reglages() {
             onPress={() => router.push("/priere/rappels")}
           />
         </ListGroup>
+
+        <ListGroup titre={t("reglages.budget")}>
+          <ListItem
+            icone="lock"
+            titre={t("reglages.verrouBudget")}
+            sousTitre={`${t("reglages.verrouBudgetDetail")}. ${t("budget.verrouCaptures")}`}
+            droite={
+              <Switch
+                label={t("reglages.verrouBudget")}
+                active={verrouBudget}
+                onChange={changerVerrou}
+              />
+            }
+          />
+          <ListItem
+            icone="eye-off"
+            titre={t("reglages.masquerMontants")}
+            droite={
+              <Switch
+                label={t("reglages.masquerMontants")}
+                active={masquerMontants}
+                onChange={definirMasquerMontants}
+              />
+            }
+          />
+        </ListGroup>
+        {verrouImpossible ? (
+          <Banner ton="info">{t("budget.verrouIndisponible")}</Banner>
+        ) : null}
 
         <ListGroup>
           <ListItem

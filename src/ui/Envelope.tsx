@@ -1,8 +1,9 @@
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { useFormatMontant } from '@/features/budget/verrou';
 import { etatEnveloppe } from '@/features/budget/cycle';
-import { formatMontant, type Devise } from '@/lib/montant';
+import { type Devise } from '@/lib/montant';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 
@@ -25,6 +26,7 @@ export type EnvelopeProps = {
  */
 export function Envelope({ nom, icone, depense, plafond, fixe, devise, onPress }: EnvelopeProps) {
   const { t } = useTranslation();
+  const formatMontant = useFormatMontant();
   const { couleurs, espace, typographie } = useTheme();
   const etat = etatEnveloppe(depense, plafond, fixe);
   const f = (m: number) => formatMontant(m, devise);

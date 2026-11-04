@@ -3,11 +3,11 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { useFormatMontant } from '@/features/budget/verrou';
 import { EtatsBudget } from '@/features/budget/EtatsBudget';
 import { FeuilleRevenu } from '@/features/budget/FeuilleRevenu';
 import { useBudget } from '@/features/budget/useBudget';
 import { formatJourCle } from '@/lib/dates';
-import { formatMontant } from '@/lib/montant';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { Button } from '@/ui/Button';
@@ -18,6 +18,7 @@ import { TopBar } from '@/ui/TopBar';
 /** Revenus du cycle en cours ; toucher un revenu ouvre sa correction. */
 export default function Revenus() {
   const { t, i18n } = useTranslation();
+  const formatMontant = useFormatMontant();
   const { couleurs, espace, typographie } = useTheme();
   const etat = useBudget(async (depot, carnet) => ({
     ...(await depot.revenusDuCycle(carnet)),

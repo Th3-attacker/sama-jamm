@@ -61,7 +61,13 @@
       ],
       "expo-notifications",
       "expo-background-task",
-      "expo-secure-store"
+      "expo-secure-store",
+      [
+        "expo-local-authentication",
+        {
+          "faceIDPermission": "Pour déverrouiller votre budget avec Face ID. Rien ne quitte ce téléphone."
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

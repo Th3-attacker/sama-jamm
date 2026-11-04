@@ -4,9 +4,10 @@ import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { EcranVerrou } from '@/features/budget/EcranVerrou';
 import { EtatsBudget } from '@/features/budget/EtatsBudget';
+import { useFormatMontant, useVerrouBudget } from '@/features/budget/verrou';
 import { budgetModifie, useBudget } from '@/features/budget/useBudget';
-import { formatMontant } from '@/lib/montant';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { AmountDisplay } from '@/ui/AmountDisplay';
@@ -19,8 +20,17 @@ import { TextField } from '@/ui/TextField';
 import { useToast } from '@/ui/Toast';
 
 /** Ajouter une dépense : montant au pavé, enveloppe, compte, note. Feuille ouverte depuis le budget. */
+/** La feuille s'ouvre hors de l'onglet Budget : elle applique le verrou elle-même, avant toute lecture. */
 export default function AjoutDepense() {
   const { t } = useTranslation();
+  const { verrouille, deverrouiller } = useVerrouBudget(t('budget.verrouPrompt'));
+  if (verrouille) return <EcranVerrou deverrouiller={deverrouiller} />;
+  return <ContenuAjout />;
+}
+
+function ContenuAjout() {
+  const { t } = useTranslation();
+  const formatMontant = useFormatMontant();
   const { couleurs, espace, typographie } = useTheme();
   const insets = useSafeAreaInsets();
   const { afficher } = useToast();

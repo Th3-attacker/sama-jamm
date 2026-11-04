@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { basculerMontants, useEtatVerrou, useFormatMontant } from '@/features/budget/verrou';
 import { depassement, depenseDuJour, joursRestants, pasArrondi, resteAVivre } from '@/features/budget/cycle';
 import { iconeEnveloppe } from '@/features/budget/enveloppesDeDepart';
 import { NOM_ENVELOPPE_MAX } from '@/features/budget/depot';
@@ -10,7 +11,7 @@ import { EtatsBudget } from '@/features/budget/EtatsBudget';
 import { FeuilleRevenu } from '@/features/budget/FeuilleRevenu';
 import { budgetModifie, useBudget } from '@/features/budget/useBudget';
 import { cleJour, formatJourCle } from '@/lib/dates';
-import { formatMontant, versMinimes } from '@/lib/montant';
+import { versMinimes } from '@/lib/montant';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { AmountDisplay } from '@/ui/AmountDisplay';
@@ -25,6 +26,15 @@ import { TopBar } from '@/ui/TopBar';
 
 export default function Budget() {
   const { t, i18n } = useTranslation();
+  const formatMontant = useFormatMontant();
+  const masques = useEtatVerrou((s) => s.montantsMasques);
+  // Icône œil : masque ou montre tous les montants du budget (« ••• »).
+  const oeil = {
+    icone: masques ? ('eye' as const) : ('eye-off' as const),
+    label: masques ? t('budget.montrerLesMontants') : t('budget.masquerLesMontants'),
+    actif: masques,
+    onPress: basculerMontants,
+  };
   const { couleurs, espace, rayon, typographie } = useTheme();
   const etat = useBudget(async (depot, carnet) => ({
     mois: await depot.mois(carnet),
@@ -90,7 +100,7 @@ export default function Budget() {
 
   return (
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
-      <TopBar grand titre={t('budget.titre')} sousTitre={sousTitre} />
+      <TopBar grand titre={t('budget.titre')} sousTitre={sousTitre} actions={[oeil]} />
       <ScrollView
         contentContainerStyle={{
           paddingHorizontal: espace.espace5,

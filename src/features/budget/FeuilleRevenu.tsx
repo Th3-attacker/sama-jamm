@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, Text, View } from 'react-native';
 
-import { formatMontant, versMinimes } from '@/lib/montant';
+import { useFormatMontant } from '@/features/budget/verrou';
+import { versMinimes } from '@/lib/montant';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { Banner } from '@/ui/Banner';
@@ -20,6 +21,7 @@ type Props = { ouvert: boolean; onFermer: () => void; carnet: Carnet; depot: Dep
 /** Ajouter un revenu au cycle en cours (salaire, aide…) : le reçu et la dépense du jour se recalculent. */
 export function FeuilleRevenu({ ouvert, onFermer, carnet, depot, comptes }: Props) {
   const { t } = useTranslation();
+  const formatMontant = useFormatMontant();
   const { couleurs, espace, typographie } = useTheme();
   const [compteId, setCompteId] = useState<string | null>(null);
   const { afficher } = useToast();
