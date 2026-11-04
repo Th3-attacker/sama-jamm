@@ -866,7 +866,10 @@
     "miseAJourTitre": "Une nouvelle version est prête",
     "miseAJourTexte": "Cette version de Sama Jàmm n'est plus prise en charge. Mettez-la à jour pour continuer.",
     "miseAJour": "Mettre à jour",
-    "maintenance": "Le service revient bientôt. Vos textes et votre budget restent accessibles."
+    "maintenance": "Le service revient bientôt. Vos textes et votre budget restent accessibles.",
+    "erreurCode": "Code à donner au support : {{code}}",
+    "miseAJourNote": "Votre budget, vos favoris et vos réglages sont conservés.",
+    "miseAJourVersions": "Version installée {{installee}} · minimum {{minimum}}"
   },
   "accessibilite": {
     "marque": "Sama Jàmm",

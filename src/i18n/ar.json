@@ -906,7 +906,10 @@
     "miseAJourTitre": "إصدار جديد جاهز",
     "miseAJourTexte": "هذا الإصدار من Sama Jàmm لم يعد مدعومًا. حدّثه للمتابعة.",
     "miseAJour": "تحديث",
-    "maintenance": "تعود الخدمة قريبًا. نصوصك وميزانيتك تبقى متاحة."
+    "maintenance": "تعود الخدمة قريبًا. نصوصك وميزانيتك تبقى متاحة.",
+    "erreurCode": "الرمز الذي تعطيه للدعم: {{code}}",
+    "miseAJourNote": "ميزانيتك ومفضلاتك وإعداداتك محفوظة.",
+    "miseAJourVersions": "الإصدار المثبّت {{installee}} · الحد الأدنى {{minimum}}"
   },
   "accessibilite": {
     "marque": "Sama Jàmm",

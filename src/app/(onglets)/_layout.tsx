@@ -1,7 +1,11 @@
 import { Tabs } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 
+import { ErreurDeRoute } from '@/features/erreur/ErreurDeRoute';
 import { TabBar, type Onglet } from '@/ui/TabBar';
+
+/** Un onglet qui plante affiche l'écran d'erreur à sa place, sans fermer l'app. */
+export const ErrorBoundary = ErreurDeRoute;
 
 export default function OngletsLayout() {
   const { t } = useTranslation();
