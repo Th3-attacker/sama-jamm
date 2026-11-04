@@ -6,10 +6,10 @@ import { AppState } from 'react-native';
 import { useReglages } from '@/stores/reglages';
 
 import { creerCanaux, enregistrerTacheQuotidienne, replanifier, URL_PRIERE, URL_ZAKAT } from './notifications';
-
+// Notification reçue app ouverte : bannière et son du canal (l'adhan sonne aussi quand l'app est ouverte).
 // Notification reçue app ouverte : bannière sans son, l'utilisateur est déjà là.
 Notifications.setNotificationHandler({
-  handleNotification: async () => ({ shouldShowBanner: true, shouldShowList: true, shouldPlaySound: false, shouldSetBadge: false }),
+  handleNotification: async () => ({ shouldShowBanner: true, shouldShowList: true, shouldPlaySound: true, shouldSetBadge: false }),
 });
 
 const DELAI = 500;
