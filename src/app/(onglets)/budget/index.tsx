@@ -198,6 +198,12 @@ export default function Budget() {
             onPress={() => router.push('/budget/epargne')}
           />
           <ListItem
+            icone="balance"
+            titre={t('zakat.titre')}
+            sousTitre={t('zakat.voir')}
+            onPress={() => router.push('/budget/zakat')}
+          />
+          <ListItem
             icone="users"
             titre={t('dettes.titre')}
             sousTitre={t('dettes.voir')}
