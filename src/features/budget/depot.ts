@@ -5,6 +5,7 @@ import type { Devise } from '../../lib/montant.ts';
 
 import { cycleDe, type Jour } from './cycle.ts';
 import { lireSaisieDate, PERSONNE_MAX, versSaisieDate, type SensDette, type StatutDette } from './dettes.ts';
+import { INTENTION_MAX, NOM_OBJECTIF_MAX } from './epargne.ts';
 
 export type Parametre = string | number | null;
 
@@ -38,10 +39,41 @@ export type JourDePaie = {
   /** Revenu reçu ce jour-là ; 0 pour seulement revoir la répartition. */
   revenu: number;
   compteId: string | null;
+  /** Épargne sans objectif (« Autre épargne »). */
   epargne: number;
   sadaqa: number;
   /** Nouveaux plafonds (hors report) des enveloppes touchées. */
   plafonds: { enveloppeId: string; montant: number }[];
+  /** Versements aux objectifs actifs. */
+  versements?: { objectifId: string; montant: number }[];
+};
+
+/** Objectif d'épargne : ce qu'on vise, pourquoi, et ce qui y a déjà été versé. */
+export type Objectif = {
+  id: string;
+  nom: string;
+  intention: string | null;
+  cible: number | null;
+  versementMensuel: number | null;
+  icone: string;
+  /** Objectif utilisé (le mouton est acheté) : il sort du total mis de côté. */
+  utilise: boolean;
+  verse: number;
+};
+export type Epargne = {
+  /** Tout ce qui est mis de côté : épargne libre et objectifs actifs. */
+  total: number;
+  /** Épargne sans objectif (jour de paie, bilan). */
+  libre: number;
+  objectifs: Objectif[];
+  utilises: Objectif[];
+};
+export type DetailObjectif = Objectif & { versements: Operation[] };
+export type SaisieObjectif = {
+  nom: string;
+  intention: string | null;
+  cible: number | null;
+  versementMensuel: number | null;
 };
 
 /** Pas encore réparti : reçu − mis de côté − plafonds du cycle (hors report, venu d'un cycle précédent). */
@@ -127,7 +159,8 @@ type CleSaisie =
   | 'detteFermee'
   | 'paiementTropGrand'
   | 'montantSousRembourse'
-  | 'dateInvalide';
+  | 'dateInvalide'
+  | 'objectifInconnu';
 
 /** Dette entre proches, avec ce qui a déjà été remboursé (ou remis) et ce qui reste. */
 export type Dette = {
@@ -296,6 +329,16 @@ export function creerDepot(sql: Sql, outils: Outils) {
       ...[cycleId, cycleId, carnetId, ...(enveloppeId ? [enveloppeId] : [])],
     );
     return lignes.map((l) => ({ ...l, fixe: l.fixe === 1, archivee: l.archivee === 1 }));
+  }
+
+  async function changerArchive(carnet: Carnet, id: string, archive: 0 | 1): Promise<void> {
+    const existe = await sql.premier<{ id: string }>(
+      'SELECT id FROM objectifs WHERE id = ? AND carnet_id = ?',
+      id,
+      carnet.id,
+    );
+    if (!existe) throw new SaisieInvalide('objectifInconnu');
+    await sql.executer('UPDATE objectifs SET archive = ? WHERE id = ?', archive, id);
   }
 
   return enFileUnique({
@@ -739,16 +782,22 @@ export function creerDepot(sql: Sql, outils: Outils) {
     /** Jour de paie, tout ou rien : revenu reçu, mise de côté d'abord (épargne, sadaqa), puis répartition. */
     async jourDePaie(carnet: Carnet, p: JourDePaie): Promise<void> {
       const entier = (m: number) => Number.isSafeInteger(m) && m >= 0;
-      if (![p.revenu, p.epargne, p.sadaqa, ...p.plafonds.map((x) => x.montant)].every(entier))
+      const versements = p.versements ?? [];
+      const montants = [p.revenu, p.epargne, p.sadaqa, ...p.plafonds.map((x) => x.montant)];
+      if (![...montants, ...versements.map((v) => v.montant)].every(entier))
         throw new SaisieInvalide('montantInvalide');
       // Hors transaction : `cycleCourant` peut en ouvrir une pour créer le cycle.
       const cycle = await cycleCourant(carnet);
       const jour = outils.aujourdhui();
       await sql.transaction(async () => {
-        const operation = async (type: 'revenu' | 'epargne' | 'sadaqa', montant: number) => {
+        const operation = async (
+          type: 'revenu' | 'epargne' | 'sadaqa',
+          montant: number,
+          objectifId: string | null = null,
+        ) => {
           if (montant <= 0) return;
           await sql.executer(
-            'INSERT INTO operations (id, carnet_id, cycle_id, type, montant, date, compte_id, cree_le) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+            'INSERT INTO operations (id, carnet_id, cycle_id, type, montant, date, compte_id, objectif_id, cree_le) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
             outils.nouvelId(),
             carnet.id,
             cycle.id,
@@ -756,11 +805,22 @@ export function creerDepot(sql: Sql, outils: Outils) {
             montant,
             jour,
             p.compteId,
+            objectifId,
             outils.horodatage(),
           );
         };
         await operation('revenu', p.revenu);
         await operation('epargne', p.epargne);
+        for (const v of versements) {
+          if (v.montant <= 0) continue;
+          const objectif = await sql.premier<{ id: string }>(
+            'SELECT id FROM objectifs WHERE id = ? AND carnet_id = ? AND archive = 0',
+            v.objectifId,
+            carnet.id,
+          );
+          if (!objectif) throw new SaisieInvalide('objectifInconnu');
+          await operation('epargne', v.montant, objectif.id);
+        }
         await operation('sadaqa', p.sadaqa);
         for (const x of p.plafonds) {
           const env = await sql.premier<{ id: string }>(
@@ -874,6 +934,126 @@ export function creerDepot(sql: Sql, outils: Outils) {
         v.note?.trim() ? v.note.trim() : null,
         outils.horodatage(),
       );
+    },
+
+    // --- Épargne avec intention : un versement est une opération « épargne » du cycle en cours. ---
+
+    /** Total mis de côté, épargne libre, objectifs actifs et objectifs utilisés. */
+    async epargne(carnet: Carnet): Promise<Epargne> {
+      const objectifs = (
+        await sql.tous<LigneObjectif>(`${SELECT_OBJECTIF} WHERE ob.carnet_id = ? ORDER BY ob.rowid`, carnet.id)
+      ).map(versObjectif);
+      const libre = await sql.premier<{ total: number }>(
+        "SELECT COALESCE(SUM(montant), 0) AS total FROM operations WHERE carnet_id = ? AND type = 'epargne' AND objectif_id IS NULL",
+        carnet.id,
+      );
+      const actifs = objectifs.filter((o) => !o.utilise);
+      const totalLibre = libre?.total ?? 0;
+      return {
+        total: totalLibre + actifs.reduce((t, o) => t + o.verse, 0),
+        libre: totalLibre,
+        objectifs: actifs,
+        utilises: objectifs.filter((o) => o.utilise),
+      };
+    },
+
+    async objectif(carnet: Carnet, id: string): Promise<DetailObjectif | null> {
+      const ligne = await sql.premier<LigneObjectif>(
+        `${SELECT_OBJECTIF} WHERE ob.carnet_id = ? AND ob.id = ?`,
+        carnet.id,
+        id,
+      );
+      if (!ligne) return null;
+      const versements = await sql.tous<Operation>(
+        `SELECT o.id, o.montant, o.date, o.note, c.nom AS compte
+         FROM operations o LEFT JOIN comptes c ON c.id = o.compte_id
+         WHERE o.carnet_id = ? AND o.objectif_id = ? AND o.type = 'epargne'
+         ORDER BY o.date DESC, o.cree_le DESC`,
+        carnet.id,
+        id,
+      );
+      return { ...versObjectif(ligne), versements };
+    },
+
+    async ajouterObjectif(carnet: Carnet, s: SaisieObjectif): Promise<string> {
+      const v = validerObjectif(s);
+      const id = outils.nouvelId();
+      await sql.executer(
+        "INSERT INTO objectifs (id, carnet_id, nom, intention, cible, versement_mensuel, icone, archive) VALUES (?, ?, ?, ?, ?, ?, 'target', 0)",
+        id,
+        carnet.id,
+        v.nom,
+        v.intention,
+        s.cible,
+        s.versementMensuel,
+      );
+      return id;
+    },
+
+    async modifierObjectif(carnet: Carnet, id: string, s: SaisieObjectif): Promise<void> {
+      const v = validerObjectif(s);
+      const existe = await sql.premier<{ id: string }>(
+        'SELECT id FROM objectifs WHERE id = ? AND carnet_id = ?',
+        id,
+        carnet.id,
+      );
+      if (!existe) throw new SaisieInvalide('objectifInconnu');
+      await sql.executer(
+        'UPDATE objectifs SET nom = ?, intention = ?, cible = ?, versement_mensuel = ? WHERE id = ? AND carnet_id = ?',
+        v.nom,
+        v.intention,
+        s.cible,
+        s.versementMensuel,
+        id,
+        carnet.id,
+      );
+    },
+
+    /** Met de côté ce mois-ci, pour un objectif actif ou sans objectif (épargne libre). */
+    async verserEpargne(
+      carnet: Carnet,
+      v: { montant: number; objectifId: string | null; compteId: string | null; note: string | null },
+    ): Promise<void> {
+      if (!montantValide(v.montant)) throw new SaisieInvalide('montantInvalide');
+      if (v.objectifId) {
+        const o = await sql.premier<{ id: string }>(
+          'SELECT id FROM objectifs WHERE id = ? AND carnet_id = ? AND archive = 0',
+          v.objectifId,
+          carnet.id,
+        );
+        if (!o) throw new SaisieInvalide('objectifInconnu');
+      }
+      if (v.compteId) {
+        const c = await sql.premier<{ id: string }>(
+          'SELECT id FROM comptes WHERE id = ? AND carnet_id = ?',
+          v.compteId,
+          carnet.id,
+        );
+        if (!c) throw new SaisieInvalide('compteInconnu');
+      }
+      const cycle = await cycleCourant(carnet);
+      await sql.executer(
+        "INSERT INTO operations (id, carnet_id, cycle_id, type, montant, date, compte_id, objectif_id, note, cree_le) VALUES (?, ?, ?, 'epargne', ?, ?, ?, ?, ?, ?)",
+        outils.nouvelId(),
+        carnet.id,
+        cycle.id,
+        v.montant,
+        outils.aujourdhui(),
+        v.compteId,
+        v.objectifId,
+        noteOuNull(v.note),
+        outils.horodatage(),
+      );
+    },
+
+    /** L'objectif a servi (le mouton est acheté) : il sort du total mis de côté, ses versements restent. */
+    async marquerUtilise(carnet: Carnet, id: string): Promise<void> {
+      await changerArchive(carnet, id, 1);
+    },
+
+    /** Annule « utilisé » : l'objectif revient avec ce qu'il a reçu. */
+    async restaurerObjectif(carnet: Carnet, id: string): Promise<void> {
+      await changerArchive(carnet, id, 0);
     },
 
     // --- Dettes entre proches : séparées du budget du mois, elles ne touchent ni enveloppes ni comptes. ---
@@ -1005,6 +1185,45 @@ export function creerDepot(sql: Sql, outils: Outils) {
       });
     },
   });
+}
+
+type LigneObjectif = {
+  id: string;
+  nom: string;
+  intention: string | null;
+  cible: number | null;
+  versement_mensuel: number | null;
+  icone: string;
+  archive: number;
+  verse: number;
+};
+
+const SELECT_OBJECTIF = `SELECT ob.id, ob.nom, ob.intention, ob.cible, ob.versement_mensuel, ob.icone, ob.archive,
+  COALESCE((SELECT SUM(o.montant) FROM operations o WHERE o.objectif_id = ob.id AND o.type = 'epargne'), 0) AS verse
+  FROM objectifs ob`;
+
+function versObjectif(l: LigneObjectif): Objectif {
+  return {
+    id: l.id,
+    nom: l.nom,
+    intention: l.intention,
+    cible: l.cible,
+    versementMensuel: l.versement_mensuel,
+    icone: l.icone,
+    utilise: l.archive === 1,
+    verse: l.verse,
+  };
+}
+
+/** Vérifie une saisie d'objectif ; rend le nom et l'intention nettoyés. */
+function validerObjectif(s: SaisieObjectif): { nom: string; intention: string | null } {
+  const nom = s.nom.trim();
+  if (nom.length < 1 || nom.length > NOM_OBJECTIF_MAX) throw new SaisieInvalide('nomInvalide');
+  const intention = noteOuNull(s.intention);
+  if (intention !== null && intention.length > INTENTION_MAX) throw new SaisieInvalide('nomInvalide');
+  if (s.cible !== null && !montantValide(s.cible)) throw new SaisieInvalide('montantInvalide');
+  if (s.versementMensuel !== null && !montantValide(s.versementMensuel)) throw new SaisieInvalide('montantInvalide');
+  return { nom, intention };
 }
 
 type LigneDette = {

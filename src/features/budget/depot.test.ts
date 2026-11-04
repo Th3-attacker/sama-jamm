@@ -837,3 +837,128 @@ test('dettes : annulation, et aucune dette d’un autre carnet n’est visible',
   assert.deepEqual(await depot.dettes(autre, 'closes'), []);
   await assert.rejects(depot.annulerDette(autre, id), (e) => e instanceof SaisieInvalide && e.cle === 'detteInconnue');
 });
+
+// --- Épargne avec intention ---
+
+const objectifDe = (nom: string, cible: number | null, versementMensuel: number | null = null) => ({
+  nom,
+  intention: 'Accomplir le sacrifice avec la famille',
+  cible,
+  versementMensuel,
+});
+
+test('épargne : objectifs, versements, épargne libre et total', async () => {
+  const { depot } = monde();
+  const carnet = await carnetExemple(depot);
+  const mouton = await depot.ajouterObjectif(carnet, objectifDe('  Mouton de Tabaski ', 200_000, 25_000));
+  const oumra = await depot.ajouterObjectif(carnet, objectifDe('Oumra', null));
+  const [compte] = await depot.comptes(carnet.id);
+  assert.ok(compte);
+  await depot.verserEpargne(carnet, { montant: 100_000, objectifId: mouton, compteId: compte.id, note: null });
+  await depot.verserEpargne(carnet, { montant: 20_000, objectifId: mouton, compteId: null, note: ' Prime ' });
+  await depot.verserEpargne(carnet, { montant: 300_000, objectifId: oumra, compteId: null, note: null });
+  await depot.verserEpargne(carnet, { montant: 5_000, objectifId: null, compteId: null, note: null });
+  const e = await depot.epargne(carnet);
+  assert.equal(e.total, 425_000);
+  assert.equal(e.libre, 5_000);
+  assert.deepEqual(
+    e.objectifs.map((o) => [o.nom, o.verse, o.cible]),
+    [
+      ['Mouton de Tabaski', 120_000, 200_000],
+      ['Oumra', 300_000, null],
+    ],
+  );
+  // Le mis de côté du mois et le solde du compte suivent.
+  assert.equal((await depot.mois(carnet)).misDeCote, 425_000);
+  const detail = await depot.objectif(carnet, mouton);
+  // Même jour et même horodatage dans ce test : on compare sans dépendre de l'ordre.
+  const versements = (detail?.versements ?? []).map((v) => `${v.montant}:${v.note ?? ''}`).sort();
+  assert.deepEqual(versements, ['100000:', '20000:Prime']);
+});
+
+test('épargne : objectif utilisé hors du total, puis restauré', async () => {
+  const { depot } = monde();
+  const carnet = await carnetExemple(depot);
+  const mouton = await depot.ajouterObjectif(carnet, objectifDe('Mouton', 200_000));
+  await depot.verserEpargne(carnet, { montant: 200_000, objectifId: mouton, compteId: null, note: null });
+  await depot.marquerUtilise(carnet, mouton);
+  let e = await depot.epargne(carnet);
+  assert.equal(e.total, 0);
+  assert.deepEqual(
+    e.utilises.map((o) => [o.nom, o.verse, o.utilise]),
+    [['Mouton', 200_000, true]],
+  );
+  await assert.rejects(
+    depot.verserEpargne(carnet, { montant: 1, objectifId: mouton, compteId: null, note: null }),
+    (x) => x instanceof SaisieInvalide && x.cle === 'objectifInconnu',
+  );
+  await depot.restaurerObjectif(carnet, mouton);
+  e = await depot.epargne(carnet);
+  assert.equal(e.total, 200_000);
+  assert.deepEqual(e.utilises, []);
+});
+
+test('épargne : saisies refusées et modification', async () => {
+  const { depot } = monde();
+  const carnet = await carnetExemple(depot);
+  const cle = (x: unknown) => (x instanceof SaisieInvalide ? x.cle : String(x));
+  await assert.rejects(depot.ajouterObjectif(carnet, objectifDe('  ', null)), (x) => cle(x) === 'nomInvalide');
+  await assert.rejects(
+    depot.ajouterObjectif(carnet, objectifDe('x'.repeat(41), null)),
+    (x) => cle(x) === 'nomInvalide',
+  );
+  await assert.rejects(depot.ajouterObjectif(carnet, objectifDe('Oumra', 0)), (x) => cle(x) === 'montantInvalide');
+  const id = await depot.ajouterObjectif(carnet, objectifDe('Rentrée', 150_000, 15_000));
+  await depot.modifierObjectif(carnet, id, {
+    nom: 'Rentrée scolaire',
+    intention: '  ',
+    cible: null,
+    versementMensuel: null,
+  });
+  const o = await depot.objectif(carnet, id);
+  assert.equal(o?.nom, 'Rentrée scolaire');
+  assert.equal(o?.intention, null);
+  assert.equal(o?.cible, null);
+  await assert.rejects(
+    depot.verserEpargne(carnet, { montant: 1_000, objectifId: null, compteId: 'inconnu', note: null }),
+    (x) => cle(x) === 'compteInconnu',
+  );
+  const autre: Carnet = { ...carnet, id: 'autre-carnet' };
+  assert.equal(await depot.objectif(autre, id), null);
+  await assert.rejects(depot.marquerUtilise(autre, id), (x) => cle(x) === 'objectifInconnu');
+});
+
+test('jour de paie : versements par objectif et autre épargne', async () => {
+  const { depot } = monde();
+  const carnet = await carnetExemple(depot);
+  const mouton = await depot.ajouterObjectif(carnet, objectifDe('Mouton', 200_000, 25_000));
+  const avant = await depot.mois(carnet);
+  await depot.jourDePaie(carnet, {
+    revenu: 0,
+    compteId: null,
+    epargne: 10_000,
+    sadaqa: 0,
+    plafonds: [],
+    versements: [
+      { objectifId: mouton, montant: 25_000 },
+      { objectifId: mouton, montant: 0 },
+    ],
+  });
+  const e = await depot.epargne(carnet);
+  assert.equal(e.libre, 10_000);
+  assert.equal(e.objectifs[0]?.verse, 25_000);
+  assert.equal((await depot.mois(carnet)).misDeCote, avant.misDeCote + 35_000);
+  await assert.rejects(
+    depot.jourDePaie(carnet, {
+      revenu: 0,
+      compteId: null,
+      epargne: 0,
+      sadaqa: 0,
+      plafonds: [],
+      versements: [{ objectifId: 'absent', montant: 1 }],
+    }),
+    (x) => x instanceof SaisieInvalide && x.cle === 'objectifInconnu',
+  );
+  // Tout ou rien : l'échec n'a rien enregistré.
+  assert.equal((await depot.epargne(carnet)).total, 35_000);
+});

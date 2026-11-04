@@ -47,6 +47,14 @@ export function formatMois(date: Date, langue: string): string {
   return new Intl.DateTimeFormat(LOCALES[langue] ?? 'fr-FR', { month: 'long' }).format(date);
 }
 
+/** « août 2027 » depuis une clé de mois « 2027-08 ». */
+export function formatMoisAnnee(mois: string, langue: string): string {
+  const [a, m] = mois.split('-').map(Number);
+  return new Intl.DateTimeFormat(LOCALES[langue] ?? 'fr-FR', { month: 'long', year: 'numeric' }).format(
+    new Date(a ?? 1970, (m ?? 1) - 1, 1),
+  );
+}
+
 /** « 25 octobre » depuis une clé de jour « 2026-10-25 » (jour local). */
 export function formatJourCle(jour: string, langue: string): string {
   const [a, m, j] = jour.split('-').map(Number);
