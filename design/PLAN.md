@@ -19,7 +19,8 @@ Ordre : **A → B1 → B2 → C2 → C3 → C4 → B4 → C1 → C5 → D → E 
 | C2 · C3 · C4 | Dettes, épargne avec intention, zakat indicative | #59 à #62 |
 | B4 | Découpage du dépôt, aides partagées des écrans du budget | #63 |
 | B4 (fin) | Montant facultatif partagé, traductions obsolètes, minuteries nettoyées, config web retirée | #64 |
-| C1 | Devise personnalisée, changement de devise avec conversion par un taux | cette PR |
+| C1 | Devise personnalisée, changement de devise avec conversion par un taux | #65 |
+| C5a | Export CSV, sauvegarde chiffrée par mot de passe, restauration | cette PR |
 
 ## A. Vérifier sur un téléphone (bloquant)
 
@@ -55,7 +56,7 @@ Ordre : **A → B1 → B2 → C2 → C3 → C4 → B4 → C1 → C5 → D → E 
 | C2 | Dettes entre proches (section 17 du design) |
 | C3 | Épargne : objectifs avec intention |
 | C4 | Zakat : base, nisab, année lunaire, biens |
-| C5 | Export CSV, sauvegarde chiffrée, restauration, sauvegarde Android ciblée |
+| C5b | Sauvegarde Android ciblée (règles de sauvegarde automatique, budget exclu) |
 
 ## D. Robustesse
 

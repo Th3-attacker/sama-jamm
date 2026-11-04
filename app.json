@@ -63,7 +63,8 @@
         {
           "faceIDPermission": "Pour déverrouiller votre budget avec Face ID. Rien ne quitte ce téléphone."
         }
-      ]
+      ],
+      "expo-sharing"
     ],
     "experiments": {
       "typedRoutes": true,

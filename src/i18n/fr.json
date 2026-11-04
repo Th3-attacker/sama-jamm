@@ -962,5 +962,44 @@
     "detteSoldee": "Dette soldée",
     "introuvable": "Cette dette n’existe plus.",
     "rappelMessage": "Bonjour {{personne}}, petit rappel amical : il reste {{montant}} sur ce que je t’ai prêté. Merci !"
+  },
+  "sauvegarde": {
+    "titre": "Sauvegarde et export",
+    "voir": "Sauvegarder, restaurer, exporter en CSV",
+    "intro": "Votre budget ne quitte jamais ce téléphone. Une sauvegarde chiffrée par un mot de passe vous permet de le garder ailleurs, ou de le retrouver sur un nouveau téléphone.",
+    "sauvegarderAide": "Fichier protégé par un mot de passe, à envoyer où vous voulez",
+    "restaurer": "Restaurer une sauvegarde",
+    "restaurerAide": "Remplace le budget de ce téléphone",
+    "depuisPremier": "J’ai déjà une sauvegarde",
+    "authentification": "Confirmez que c’est bien vous",
+    "motDePasseAide": "{{min}} caractères au moins.",
+    "motDePasseAvertissement": "Sans ce mot de passe, la sauvegarde ne pourra jamais être ouverte, même par nous. Notez-le en lieu sûr.",
+    "confirmation": "Confirmer le mot de passe",
+    "differents": "Les deux mots de passe ne sont pas identiques.",
+    "sauvegarder": "Sauvegarder et partager",
+    "restaurerAvertissement": "Le budget de ce téléphone sera entièrement remplacé par « {{fichier}} ».",
+    "remplacer": "Remplacer mon budget",
+    "motDePasseIncorrect": "Mot de passe incorrect, ou ce fichier n’est pas une sauvegarde de Sama Jàmm.",
+    "incompatible": "Cette sauvegarde vient d’une version plus récente de l’app. Mettez l’app à jour, puis réessayez.",
+    "restauree": "Budget restauré",
+    "rienAExporter": "Aucune opération à exporter pour l’instant.",
+    "colonnes": {
+      "date": "Date",
+      "type": "Type",
+      "enveloppe": "Enveloppe",
+      "compte": "Compte",
+      "compteDestination": "Vers le compte",
+      "objectif": "Objectif",
+      "montant": "Montant",
+      "devise": "Devise",
+      "note": "Note"
+    },
+    "types": {
+      "depense": "Dépense",
+      "revenu": "Revenu",
+      "virement": "Virement",
+      "epargne": "Épargne",
+      "sadaqa": "Sadaqa"
+    }
   }
 }

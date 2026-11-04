@@ -109,6 +109,9 @@ export default function PremierBudget() {
           <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, { color: couleurs.encre2 }]}>
             {t('budget.premierTexte')}
           </Text>
+          <Button variant="discret" icone="reset" onPress={() => router.push('/budget/sauvegarde')}>
+            {t('sauvegarde.depuisPremier')}
+          </Button>
 
           <View style={{ gap: espace.espace2 }}>
             <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, { color: couleurs.encre }]}>

@@ -1153,3 +1153,23 @@ test('changer de devise : même devise, taux ou devise refusés, rien n’est mo
   assert.equal((await depot.carnetActif())?.devise.code, 'XOF');
   assert.equal((await depot.mois(carnet)).recu, 350_000);
 });
+
+test('export : opérations du carnet avec enveloppe et compte, dans l’ordre', async () => {
+  const { depot } = monde();
+  const carnet = await carnetExemple(depot);
+  const lignes = await depot.operationsExport(carnet);
+  assert.equal(lignes.length, 1);
+  assert.deepEqual(
+    { ...lignes[0] },
+    {
+      date: '2026-10-29',
+      type: 'revenu',
+      enveloppe: null,
+      compte: 'Espèces',
+      compteDestination: null,
+      objectif: null,
+      montant: 350_000,
+      note: null,
+    },
+  );
+});
