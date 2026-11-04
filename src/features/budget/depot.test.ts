@@ -388,3 +388,63 @@ test('ajouter un revenu en cours de cycle : le reçu augmente', async () => {
   await assert.rejects(depot.ajouterRevenu(carnet, { montant: 0, compteId: null, note: null }), SaisieInvalide);
   await assert.rejects(depot.ajouterRevenu(carnet, { montant: 1.5, compteId: null, note: null }), SaisieInvalide);
 });
+
+test('enveloppe archivée : retrouvée, détaillée sur tous les cycles, corrigée, restaurée', async () => {
+  const w = monde();
+  const carnet = await carnetExemple(w.depot);
+  const [quotidien, , transport] = (await w.depot.mois(carnet)).enveloppes;
+  assert.ok(quotidien && transport);
+  const dep = (montant: number) =>
+    w.depot.ajouterDepense(carnet, {
+      carnetId: carnet.id,
+      montant,
+      enveloppeId: transport.id,
+      compteId: null,
+      note: null,
+    });
+  await dep(2_000);
+  w.allerAu('2026-11-26');
+  await dep(3_000);
+  await w.depot.archiverEnveloppe(carnet, transport.id);
+
+  assert.deepEqual(
+    (await w.depot.enveloppesArchivees(carnet)).map((e) => [e.nom, e.nombre, e.total]),
+    [['Transport', 2, 5_000]],
+  );
+  const detail = await w.depot.detailEnveloppe(carnet, transport.id);
+  assert.equal(detail?.enveloppe.archivee, true);
+  assert.deepEqual(
+    detail?.operations.map((o) => o.montant),
+    [3_000, 2_000],
+  );
+
+  // La dépense garde son enveloppe archivée…
+  const [recente] = detail?.operations ?? [];
+  assert.ok(recente);
+  await w.depot.modifierOperation(carnet, recente.id, {
+    montant: 3_500,
+    enveloppeId: transport.id,
+    compteId: null,
+    note: null,
+  });
+  assert.equal((await w.depot.mois(carnet)).depense, 3_500);
+  // … ou part vers une enveloppe active, mais jamais vers une autre enveloppe archivée.
+  await w.depot.archiverEnveloppe(carnet, quotidien.id);
+  await assert.rejects(
+    w.depot.modifierOperation(carnet, recente.id, {
+      montant: 3_500,
+      enveloppeId: quotidien.id,
+      compteId: null,
+      note: null,
+    }),
+    SaisieInvalide,
+  );
+
+  await w.depot.restaurerEnveloppe(carnet, transport.id);
+  assert.equal(
+    (await w.depot.mois(carnet)).enveloppes.some((e) => e.id === transport.id),
+    true,
+  );
+  assert.equal((await w.depot.detailEnveloppe(carnet, transport.id))?.operations.length, 1);
+  await assert.rejects(w.depot.restaurerEnveloppe(carnet, 'absente'), SaisieInvalide);
+});

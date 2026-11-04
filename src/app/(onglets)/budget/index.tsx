@@ -18,13 +18,18 @@ import { Banner } from '@/ui/Banner';
 import { BottomSheet } from '@/ui/BottomSheet';
 import { Button } from '@/ui/Button';
 import { Envelope } from '@/ui/Envelope';
+import { ListGroup } from '@/ui/ListGroup';
+import { ListItem } from '@/ui/ListItem';
 import { TextField } from '@/ui/TextField';
 import { TopBar } from '@/ui/TopBar';
 
 export default function Budget() {
   const { t, i18n } = useTranslation();
   const { couleurs, espace, rayon, typographie } = useTheme();
-  const etat = useBudget((depot, carnet) => depot.mois(carnet));
+  const etat = useBudget(async (depot, carnet) => ({
+    mois: await depot.mois(carnet),
+    archivees: await depot.enveloppesArchivees(carnet),
+  }));
   // Feuille « Ajouter une enveloppe » : nom et plafond.
   const [feuille, setFeuille] = useState(false);
   const [nom, setNom] = useState('');
@@ -41,7 +46,8 @@ export default function Budget() {
     );
   }
 
-  const { carnet, donnees: mois } = etat;
+  const { carnet } = etat;
+  const { mois, archivees } = etat.donnees;
   const devise = carnet.devise;
   const f = (m: number) => formatMontant(m, devise);
   const aujourdhui = cleJour(new Date());
@@ -174,6 +180,21 @@ export default function Budget() {
           }}>
           {t('budget.nouvelleEnveloppe')}
         </Button>
+
+        {/* Archivées avant la suppression : cachées, mais leurs dépenses comptent ; on peut les rouvrir. */}
+        {archivees.length > 0 ? (
+          <ListGroup titre={t('budget.enveloppesArchivees')}>
+            {archivees.map((a) => (
+              <ListItem
+                key={a.id}
+                icone={iconeEnveloppe(a.icone)}
+                titre={a.nom}
+                sousTitre={t('budget.depensesTotal', { count: a.nombre, montant: f(a.total) })}
+                onPress={() => router.push({ pathname: '/budget/enveloppe/[id]', params: { id: a.id } })}
+              />
+            ))}
+          </ListGroup>
+        ) : null}
       </ScrollView>
 
       <BottomSheet ouvert={feuille} titre={t('budget.nouvelleEnveloppe')} onFermer={() => setFeuille(false)}>

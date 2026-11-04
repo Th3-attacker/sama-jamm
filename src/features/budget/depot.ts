@@ -25,7 +25,10 @@ export type EnveloppeDuMois = {
   fixe: boolean;
   plafond: number;
   depense: number;
+  /** Cachée des listes, mais ses dépenses comptent toujours dans les totaux. */
+  archivee: boolean;
 };
+export type EnveloppeArchivee = { id: string; nom: string; icone: string; nombre: number; total: number };
 export type Mois = {
   cycle: CycleBudget;
   recu: number;
@@ -168,18 +171,19 @@ export function creerDepot(sql: Sql, outils: Outils) {
       fixe: number;
       plafond: number;
       depense: number;
+      archivee: number;
     }>(
-      `SELECT e.id, e.nom, e.icone, e.fixe,
+      `SELECT e.id, e.nom, e.icone, e.fixe, e.archivee,
               COALESCE(p.montant, 0) + COALESCE(p.report, 0) AS plafond,
               COALESCE((SELECT SUM(o.montant) FROM operations o
                         WHERE o.cycle_id = ? AND o.enveloppe_id = e.id AND o.type = 'depense'), 0) AS depense
        FROM enveloppes e
        LEFT JOIN plafonds p ON p.enveloppe_id = e.id AND p.cycle_id = ?
-       WHERE e.carnet_id = ? AND e.archivee = 0 ${enveloppeId ? 'AND e.id = ?' : ''}
+       WHERE e.carnet_id = ? AND ${enveloppeId ? 'e.id = ?' : 'e.archivee = 0'}
        ORDER BY e.ordre`,
       ...[cycleId, cycleId, carnetId, ...(enveloppeId ? [enveloppeId] : [])],
     );
-    return lignes.map((l) => ({ ...l, fixe: l.fixe === 1 }));
+    return lignes.map((l) => ({ ...l, fixe: l.fixe === 1, archivee: l.archivee === 1 }));
   }
 
   return {
@@ -333,13 +337,13 @@ export function creerDepot(sql: Sql, outils: Outils) {
       const cycle = await cycleCourant(carnet);
       const [enveloppe] = await enveloppesDuCycle(carnet.id, cycle.id, enveloppeId);
       if (!enveloppe) return null;
+      // Enveloppe archivée : toutes ses dépenses, tous cycles, pour pouvoir les corriger ou les supprimer.
       const operations = await sql.tous<Operation>(
         `SELECT o.id, o.montant, o.date, o.note, c.nom AS compte
          FROM operations o LEFT JOIN comptes c ON c.id = o.compte_id
-         WHERE o.cycle_id = ? AND o.enveloppe_id = ? AND o.type = 'depense'
+         WHERE o.enveloppe_id = ? AND o.type = 'depense' ${enveloppe.archivee ? '' : 'AND o.cycle_id = ?'}
          ORDER BY o.date DESC, o.cree_le DESC`,
-        cycle.id,
-        enveloppeId,
+        ...(enveloppe.archivee ? [enveloppeId] : [enveloppeId, cycle.id]),
       );
       return { enveloppe, cycle, operations };
     },
@@ -370,19 +374,21 @@ export function creerDepot(sql: Sql, outils: Outils) {
     /** Corrige une opération : montant, enveloppe (dépense), compte, note. Le jour et le cycle ne changent pas. */
     async modifierOperation(carnet: Carnet, id: string, m: ModificationOperation): Promise<void> {
       if (!montantValide(m.montant)) throw new SaisieInvalide('montantInvalide');
-      const actuelle = await sql.premier<{ type: TypeOperation }>(
-        'SELECT type FROM operations WHERE id = ? AND carnet_id = ?',
+      const actuelle = await sql.premier<{ type: TypeOperation; enveloppeId: string | null }>(
+        'SELECT type, enveloppe_id AS enveloppeId FROM operations WHERE id = ? AND carnet_id = ?',
         id,
         carnet.id,
       );
       if (!actuelle) throw new SaisieInvalide('operationInconnue');
       let enveloppeId: string | null = null;
       if (actuelle.type === 'depense') {
+        // Une dépense peut garder son enveloppe archivée, mais pas être déplacée vers une enveloppe archivée.
         const env = m.enveloppeId
           ? await sql.premier<{ id: string }>(
-              'SELECT id FROM enveloppes WHERE id = ? AND carnet_id = ? AND archivee = 0',
+              'SELECT id FROM enveloppes WHERE id = ? AND carnet_id = ? AND (archivee = 0 OR id = ?)',
               m.enveloppeId,
               carnet.id,
+              actuelle.enveloppeId,
             )
           : null;
         if (!env) throw new SaisieInvalide('enveloppeInconnue');
@@ -476,6 +482,28 @@ export function creerDepot(sql: Sql, outils: Outils) {
       );
       if (!existe) throw new SaisieInvalide('enveloppeInconnue');
       await sql.executer('UPDATE enveloppes SET archivee = 1 WHERE id = ? AND carnet_id = ?', id, carnet.id);
+    },
+
+    /** Enveloppes archivées avec leurs dépenses (tous cycles) : à retrouver pour corriger ou supprimer. */
+    async enveloppesArchivees(carnet: Carnet): Promise<EnveloppeArchivee[]> {
+      return sql.tous<EnveloppeArchivee>(
+        `SELECT e.id, e.nom, e.icone,
+                (SELECT COUNT(*) FROM operations o WHERE o.enveloppe_id = e.id) AS nombre,
+                (SELECT COALESCE(SUM(o.montant), 0) FROM operations o WHERE o.enveloppe_id = e.id) AS total
+         FROM enveloppes e WHERE e.carnet_id = ? AND e.archivee = 1 ORDER BY e.ordre`,
+        carnet.id,
+      );
+    },
+
+    /** Remet une enveloppe archivée dans les listes. */
+    async restaurerEnveloppe(carnet: Carnet, id: string): Promise<void> {
+      const existe = await sql.premier<{ id: string }>(
+        'SELECT id FROM enveloppes WHERE id = ? AND carnet_id = ?',
+        id,
+        carnet.id,
+      );
+      if (!existe) throw new SaisieInvalide('enveloppeInconnue');
+      await sql.executer('UPDATE enveloppes SET archivee = 0 WHERE id = ? AND carnet_id = ?', id, carnet.id);
     },
 
     /** Dépenses d'une enveloppe, tous cycles confondus : à annoncer avant de la supprimer. */
