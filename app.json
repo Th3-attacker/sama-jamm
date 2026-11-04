@@ -21,7 +21,8 @@
       "package": "com.samajamm.app",
       "permissions": [
         "android.permission.SCHEDULE_EXACT_ALARM"
-      ]
+      ],
+      "allowBackup": false
     },
     "web": {
       "output": "server",
@@ -46,7 +47,12 @@
           "supportsRTL": true
         }
       ],
-      "expo-sqlite",
+      [
+        "expo-sqlite",
+        {
+          "useSQLCipher": true
+        }
+      ],
       [
         "expo-location",
         {
@@ -54,7 +60,8 @@
         }
       ],
       "expo-notifications",
-      "expo-background-task"
+      "expo-background-task",
+      "expo-secure-store"
     ],
     "experiments": {
       "typedRoutes": true,

@@ -1,0 +1,108 @@
+// Base du budget : SQLCipher, clé aléatoire de 256 bits gardée dans le trousseau du téléphone.
+// Rien ici ne s'exécute dans Expo Go : SQLCipher demande un build natif (plugin `expo-sqlite` avec `useSQLCipher`).
+import * as Crypto from 'expo-crypto';
+import * as SecureStore from 'expo-secure-store';
+import { deleteDatabaseAsync, openDatabaseAsync, type SQLiteDatabase } from 'expo-sqlite';
+
+import { devisesIntegrees } from '@/lib/montant';
+
+import { migrations, VERSION_SCHEMA } from './schema';
+
+const NOM_BASE = 'budget.db';
+const CLE_TROUSSEAU = 'budget.cle';
+const FORMAT_CLE = /^[0-9a-f]{64}$/;
+
+/** La base existe mais ne s'ouvre pas : clé perdue ou fichier abîmé. On n'efface jamais sans demande de l'utilisateur. */
+export class BudgetIllisible extends Error {
+  constructor(cause: unknown) {
+    super('Le budget ne peut pas être ouvert.', { cause });
+    this.name = 'BudgetIllisible';
+  }
+}
+
+const versHex = (octets: Uint8Array) => Array.from(octets, (o) => o.toString(16).padStart(2, '0')).join('');
+
+/** Clé du trousseau, créée à la première ouverture. Elle ne quitte jamais ce téléphone. */
+async function cleDuBudget(): Promise<string> {
+  const existante = await SecureStore.getItemAsync(CLE_TROUSSEAU);
+  if (existante !== null) {
+    if (!FORMAT_CLE.test(existante)) throw new BudgetIllisible(new Error('Clé du trousseau illisible.'));
+    return existante;
+  }
+  const nouvelle = versHex(Crypto.getRandomBytes(32));
+  await SecureStore.setItemAsync(CLE_TROUSSEAU, nouvelle, {
+    keychainAccessible: SecureStore.WHEN_UNLOCKED_THIS_DEVICE_ONLY,
+  });
+  return nouvelle;
+}
+
+async function appliquerMigrations(db: SQLiteDatabase): Promise<void> {
+  const ligne = await db.getFirstAsync<{ user_version: number }>('PRAGMA user_version');
+  const actuelle = ligne?.user_version ?? 0;
+  if (actuelle > VERSION_SCHEMA) throw new Error(`Budget plus récent que l'app (version ${actuelle}).`);
+  for (let version = actuelle + 1; version <= VERSION_SCHEMA; version++) {
+    const sql = migrations[version - 1];
+    if (sql === undefined) throw new Error(`Migration ${version} manquante.`);
+    // `user_version` avance dans la même transaction : une migration à moitié faite est annulée en entier.
+    await db.withTransactionAsync(async () => {
+      await db.execAsync(sql);
+      await db.execAsync(`PRAGMA user_version = ${version}`);
+    });
+  }
+}
+
+async function semerDevises(db: SQLiteDatabase): Promise<void> {
+  for (const d of devisesIntegrees) {
+    await db.runAsync(
+      'INSERT OR IGNORE INTO devises (code, nom, symbole, position, decimales, sous_unites, personnelle) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      d.code,
+      d.nom,
+      d.symbole,
+      d.position,
+      d.decimales,
+      d.sousUnites,
+      d.personnelle ? 1 : 0,
+    );
+  }
+}
+
+async function ouvrir(): Promise<SQLiteDatabase> {
+  const cle = await cleDuBudget();
+  const db = await openDatabaseAsync(NOM_BASE);
+  try {
+    // Valeur validée (64 chiffres hexadécimaux) : la syntaxe x'…' de SQLCipher n'accepte pas de paramètre lié.
+    await db.execAsync(`PRAGMA key = "x'${cle}'"`);
+    // Première lecture : échoue ici (« file is not a database ») si la clé ne correspond pas au fichier.
+    await db.getFirstAsync('SELECT count(*) FROM sqlite_master');
+  } catch (erreur) {
+    await db.closeAsync();
+    throw new BudgetIllisible(erreur);
+  }
+  await db.execAsync('PRAGMA foreign_keys = ON');
+  await appliquerMigrations(db);
+  await semerDevises(db);
+  return db;
+}
+
+let ouverture: Promise<SQLiteDatabase> | undefined;
+
+/** Base du budget, ouverte une seule fois. Lève `BudgetIllisible` si elle ne s'ouvre pas ; l'appel suivant réessaie. */
+export function budgetDb(): Promise<SQLiteDatabase> {
+  ouverture ??= ouvrir().catch((erreur: unknown) => {
+    ouverture = undefined;
+    throw erreur;
+  });
+  return ouverture;
+}
+
+/**
+ * Efface le budget et sa clé. À n'appeler qu'après la confirmation explicite de l'utilisateur,
+ * quand la base est illisible : les données sont alors perdues.
+ */
+export async function reinitialiserBudget(): Promise<void> {
+  const courante = ouverture;
+  ouverture = undefined;
+  if (courante) await courante.then((db) => db.closeAsync()).catch(() => undefined);
+  await deleteDatabaseAsync(NOM_BASE);
+  await SecureStore.deleteItemAsync(CLE_TROUSSEAU);
+}
