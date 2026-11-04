@@ -6,6 +6,8 @@
 // démarrage de l'app : le routeur charge tous les écrans d'un coup.
 import donneesSourates from '@/data/sourates.json';
 
+import { creerReperes } from './reperes';
+
 export type Sourate = {
   /** Numéro, de 1 à 114. */
   n: number;
@@ -65,6 +67,25 @@ export function versetsDe(n: number): readonly string[] {
 export function traductionDe(n: number): readonly string[] {
   const s = sourate(n);
   return s ? (traduction()[s.n - 1] ?? []) : [];
+}
+
+// --- Translittération et repères (Tanzil, CC BY 3.0 ; voir scripts/donnees-coran.mjs) ----------
+
+let translitEnMemoire: readonly (readonly string[])[] | undefined;
+let reperesEnMemoire: ReturnType<typeof creerReperes> | undefined;
+
+/** Translittération (anglaise, Tanzil) des versets d'une sourate, balises comprises (voir `segmentsTranslit`). */
+export function translitDe(n: number): readonly string[] {
+  const s = sourate(n);
+  if (!s) return [];
+  translitEnMemoire ??= require('@/data/coran/translit.json');
+  return translitEnMemoire?.[s.n - 1] ?? [];
+}
+
+/** Juz, quarts de hizb et prosternations, lus au premier besoin. */
+export function reperes(): ReturnType<typeof creerReperes> {
+  reperesEnMemoire ??= creerReperes(require('@/data/coran/reperes.json'));
+  return reperesEnMemoire;
 }
 
 // --- Pages du mushaf (604, disposition Hafs) -------------------------------------------------

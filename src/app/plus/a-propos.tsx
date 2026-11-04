@@ -18,7 +18,7 @@ export default function APropos() {
   const version = Constants.expoConfig?.version;
 
   const paragraphe = [typographie.corps, { color: couleurs.encre }];
-  const sources = ['sourceCoran', 'sourceTraduction', 'sourceAdhan', 'polices'] as const;
+  const sources = ['sourceCoran', 'sourceTraduction', 'sourceTanzil', 'sourceAdhan', 'polices'] as const;
 
   return (
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>

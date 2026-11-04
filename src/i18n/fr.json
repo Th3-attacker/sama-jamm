@@ -194,7 +194,14 @@
     "compterRepetition": "Touchez pour compter",
     "repetitions": "{{n}} / {{total}}",
     "toucherPage": "Touchez la page pour afficher ou cacher la barre",
-    "pageN": "Page {{n}}"
+    "pageN": "Page {{n}}",
+    "quartsHizb": {
+      "0": "Hizb {{n}}",
+      "1": "¼ du hizb {{n}}",
+      "2": "½ du hizb {{n}}",
+      "3": "¾ du hizb {{n}}"
+    },
+    "sajdaObligatoire": "Prosternation obligatoire"
   },
   "khatm": {
     "titre": "Khatm collectif",
@@ -453,7 +460,9 @@
     "veilleSiAuto": "Seulement avec le thème Auto",
     "tailleEcriture": "Taille de l’écriture",
     "tailleNote": "Pour la lecture verset par verset. En mode page, l’écriture s’ajuste pour que la page tienne dans l’écran.",
-    "apercu": "Aperçu"
+    "apercu": "Aperçu",
+    "translit": "Translittération",
+    "translitAide": "Sous le texte arabe, en caractères latins (Tanzil, en anglais)"
   },
   "aPropos": {
     "titre": "À propos",
@@ -469,7 +478,8 @@
     "signaler": "Signaler un problème",
     "signalerAide": "Partage la liste des dernières erreurs : codes et versions, jamais vos données",
     "signalerEntete": "Sama Jàmm · erreurs récentes",
-    "aucuneErreur": "Aucune erreur enregistrée."
+    "aucuneErreur": "Aucune erreur enregistrée.",
+    "sourceTanzil": "Translittération, juz, hizb et prosternations : Tanzil Project (tanzil.net), licence CC BY 3.0, reproduits sans modification."
   },
   "compte": {
     "titre": "Compte",
