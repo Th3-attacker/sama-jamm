@@ -23,11 +23,30 @@ export type EnveloppeDuMois = {
   nom: string;
   icone: string;
   fixe: boolean;
+  /** Plafond du cycle, report compris. */
   plafond: number;
+  /** Part du plafond reportée du cycle précédent (bilan). */
+  report: number;
   depense: number;
   /** Cachée des listes, mais ses dépenses comptent toujours dans les totaux. */
   archivee: boolean;
 };
+export type ChoixBilan = 'reporter' | 'epargner' | 'sadaqa';
+export type Bilan = { cycle: CycleBudget; enveloppes: { id: string; nom: string; reste: number }[] };
+export type JourDePaie = {
+  /** Revenu reçu ce jour-là ; 0 pour seulement revoir la répartition. */
+  revenu: number;
+  compteId: string | null;
+  epargne: number;
+  sadaqa: number;
+  /** Nouveaux plafonds (hors report) des enveloppes touchées. */
+  plafonds: { enveloppeId: string; montant: number }[];
+};
+
+/** Pas encore réparti : reçu − mis de côté − plafonds du cycle (hors report, venu d'un cycle précédent). */
+export function nonReparti(mois: Pick<Mois, 'recu' | 'misDeCote' | 'enveloppes'>): number {
+  return mois.recu - mois.misDeCote - mois.enveloppes.reduce((t, e) => t + (e.plafond - e.report), 0);
+}
 export type EnveloppeArchivee = { id: string; nom: string; icone: string; nombre: number; total: number };
 export type Mois = {
   cycle: CycleBudget;
@@ -98,7 +117,10 @@ type CleSaisie =
   | 'operationInconnue'
   | 'nomInvalide'
   | 'dateHorsCycle'
-  | 'typeCompteInvalide';
+  | 'typeCompteInvalide'
+  | 'comptesIdentiques'
+  | 'compteInconnu'
+  | 'cycleNonTermine';
 
 /** Nom d'enveloppe : 1 à 40 caractères, espaces autour retirés. */
 export const NOM_ENVELOPPE_MAX = 40;
@@ -189,11 +211,13 @@ export function creerDepot(sql: Sql, outils: Outils) {
       icone: string;
       fixe: number;
       plafond: number;
+      report: number;
       depense: number;
       archivee: number;
     }>(
       `SELECT e.id, e.nom, e.icone, e.fixe, e.archivee,
               COALESCE(p.montant, 0) + COALESCE(p.report, 0) AS plafond,
+              COALESCE(p.report, 0) AS report,
               COALESCE((SELECT SUM(o.montant) FROM operations o
                         WHERE o.cycle_id = ? AND o.enveloppe_id = e.id AND o.type = 'depense'), 0) AS depense
        FROM enveloppes e
@@ -641,6 +665,146 @@ export function creerDepot(sql: Sql, outils: Outils) {
         c.soldeInitial,
       );
       return id;
+    },
+
+    /** Jour de paie, tout ou rien : revenu reçu, mise de côté d'abord (épargne, sadaqa), puis répartition. */
+    async jourDePaie(carnet: Carnet, p: JourDePaie): Promise<void> {
+      const entier = (m: number) => Number.isSafeInteger(m) && m >= 0;
+      if (![p.revenu, p.epargne, p.sadaqa, ...p.plafonds.map((x) => x.montant)].every(entier))
+        throw new SaisieInvalide('montantInvalide');
+      // Hors transaction : `cycleCourant` peut en ouvrir une pour créer le cycle.
+      const cycle = await cycleCourant(carnet);
+      const jour = outils.aujourdhui();
+      await sql.transaction(async () => {
+        const operation = async (type: 'revenu' | 'epargne' | 'sadaqa', montant: number) => {
+          if (montant <= 0) return;
+          await sql.executer(
+            'INSERT INTO operations (id, carnet_id, cycle_id, type, montant, date, compte_id, cree_le) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+            outils.nouvelId(),
+            carnet.id,
+            cycle.id,
+            type,
+            montant,
+            jour,
+            p.compteId,
+            outils.horodatage(),
+          );
+        };
+        await operation('revenu', p.revenu);
+        await operation('epargne', p.epargne);
+        await operation('sadaqa', p.sadaqa);
+        for (const x of p.plafonds) {
+          const env = await sql.premier<{ id: string }>(
+            'SELECT id FROM enveloppes WHERE id = ? AND carnet_id = ? AND archivee = 0',
+            x.enveloppeId,
+            carnet.id,
+          );
+          if (!env) throw new SaisieInvalide('enveloppeInconnue');
+          await sql.executer(
+            `INSERT INTO plafonds (cycle_id, enveloppe_id, montant, report) VALUES (?, ?, ?, 0)
+             ON CONFLICT (cycle_id, enveloppe_id) DO UPDATE SET montant = excluded.montant`,
+            cycle.id,
+            x.enveloppeId,
+            x.montant,
+          );
+        }
+      });
+    },
+
+    /** Dernier cycle terminé et pas encore clos, avec le reste de chaque enveloppe ; null s'il n'y en a pas. */
+    async bilanAFaire(carnet: Carnet): Promise<Bilan | null> {
+      const cycle = await sql.premier<CycleBudget>(
+        'SELECT id, debut, fin FROM cycles WHERE carnet_id = ? AND fin < ? AND clos = 0 ORDER BY fin DESC LIMIT 1',
+        carnet.id,
+        outils.aujourdhui(),
+      );
+      if (!cycle) return null;
+      const enveloppes = (await enveloppesDuCycle(carnet.id, cycle.id))
+        .map((e) => ({ id: e.id, nom: e.nom, reste: e.plafond - e.depense }))
+        .filter((e) => e.reste > 0);
+      return { cycle, enveloppes };
+    },
+
+    /**
+     * Clôt un cycle terminé : chaque reste est reporté au cycle en cours (défaut), épargné ou donné en sadaqa.
+     * Une seule fois par cycle. Renvoie les montants de chaque choix.
+     */
+    async cloreCycle(
+      carnet: Carnet,
+      cycleId: string,
+      choix: Record<string, ChoixBilan>,
+    ): Promise<{ reporte: number; epargne: number; sadaqa: number }> {
+      const ancien = await sql.premier<CycleBudget & { clos: number }>(
+        'SELECT id, debut, fin, clos FROM cycles WHERE id = ? AND carnet_id = ?',
+        cycleId,
+        carnet.id,
+      );
+      if (!ancien || ancien.clos === 1 || ancien.fin >= outils.aujourdhui())
+        throw new SaisieInvalide('cycleNonTermine');
+      const courant = await cycleCourant(carnet);
+      const restes = (await enveloppesDuCycle(carnet.id, ancien.id))
+        .map((e) => ({ ...e, reste: e.plafond - e.depense }))
+        .filter((e) => e.reste > 0);
+      const totaux = { reporte: 0, epargne: 0, sadaqa: 0 };
+      await sql.transaction(async () => {
+        for (const e of restes) {
+          const c = choix[e.id] ?? 'reporter';
+          if (c === 'reporter') {
+            totaux.reporte += e.reste;
+            await sql.executer(
+              `INSERT INTO plafonds (cycle_id, enveloppe_id, montant, report) VALUES (?, ?, 0, ?)
+               ON CONFLICT (cycle_id, enveloppe_id) DO UPDATE SET report = report + excluded.report`,
+              courant.id,
+              e.id,
+              e.reste,
+            );
+          } else {
+            totaux[c === 'epargner' ? 'epargne' : 'sadaqa'] += e.reste;
+            await sql.executer(
+              'INSERT INTO operations (id, carnet_id, cycle_id, type, montant, date, note, cree_le) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+              outils.nouvelId(),
+              carnet.id,
+              ancien.id,
+              c === 'epargner' ? 'epargne' : 'sadaqa',
+              e.reste,
+              ancien.fin,
+              e.nom,
+              outils.horodatage(),
+            );
+          }
+        }
+        await sql.executer('UPDATE cycles SET clos = 1 WHERE id = ? AND carnet_id = ?', ancien.id, carnet.id);
+      });
+      return totaux;
+    },
+
+    /** Virement entre deux comptes du carnet : ni dépense ni revenu, les enveloppes ne bougent pas. */
+    async virement(
+      carnet: Carnet,
+      v: { de: string; vers: string; montant: number; note: string | null },
+    ): Promise<void> {
+      if (!montantValide(v.montant)) throw new SaisieInvalide('montantInvalide');
+      if (v.de === v.vers) throw new SaisieInvalide('comptesIdentiques');
+      const trouves = await sql.tous<{ id: string }>(
+        'SELECT id FROM comptes WHERE carnet_id = ? AND id IN (?, ?)',
+        carnet.id,
+        v.de,
+        v.vers,
+      );
+      if (trouves.length !== 2) throw new SaisieInvalide('compteInconnu');
+      const cycle = await cycleCourant(carnet);
+      await sql.executer(
+        "INSERT INTO operations (id, carnet_id, cycle_id, type, montant, date, compte_id, compte_dest_id, note, cree_le) VALUES (?, ?, ?, 'virement', ?, ?, ?, ?, ?, ?)",
+        outils.nouvelId(),
+        carnet.id,
+        cycle.id,
+        v.montant,
+        outils.aujourdhui(),
+        v.de,
+        v.vers,
+        v.note?.trim() ? v.note.trim() : null,
+        outils.horodatage(),
+      );
     },
   };
 }

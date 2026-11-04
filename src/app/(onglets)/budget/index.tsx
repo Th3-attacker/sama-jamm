@@ -30,6 +30,7 @@ export default function Budget() {
     mois: await depot.mois(carnet),
     archivees: await depot.enveloppesArchivees(carnet),
     comptes: await depot.comptes(carnet.id),
+    bilan: await depot.bilanAFaire(carnet),
   }));
   // Feuille « Ajouter une enveloppe » : nom et plafond.
   const [feuille, setFeuille] = useState(false);
@@ -48,7 +49,7 @@ export default function Budget() {
   }
 
   const { carnet } = etat;
-  const { mois, archivees, comptes } = etat.donnees;
+  const { mois, archivees, comptes, bilan } = etat.donnees;
   const devise = carnet.devise;
   const f = (m: number) => formatMontant(m, devise);
   const aujourdhui = cleJour(new Date());
@@ -96,6 +97,15 @@ export default function Budget() {
           paddingBottom: espace.espace8,
           gap: espace.espace5,
         }}>
+        {/* Cycle précédent terminé mais pas clos : une invitation douce, jamais un blocage. */}
+        {bilan ? (
+          <Banner ton="info" action={{ label: t('budget.faireBilan'), onPress: () => router.push('/budget/bilan') }}>
+            {t('budget.bilanBandeau', {
+              debut: formatJourCle(bilan.cycle.debut, i18n.language),
+              fin: formatJourCle(bilan.cycle.fin, i18n.language),
+            })}
+          </Banner>
+        ) : null}
         {/* La carte du haut ouvre la liste des revenus du cycle : ajouter, corriger ou supprimer un revenu. */}
         <Pressable
           accessibilityRole="button"
@@ -153,6 +163,12 @@ export default function Budget() {
         </Button>
 
         <ListGroup>
+          <ListItem
+            icone="calendar"
+            titre={t('budget.paieTitre')}
+            sousTitre={t('budget.paieAide')}
+            onPress={() => router.push('/budget/paie')}
+          />
           <ListItem
             icone="list"
             titre={t('budget.historique')}

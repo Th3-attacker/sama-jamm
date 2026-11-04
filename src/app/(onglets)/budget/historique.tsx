@@ -82,12 +82,31 @@ export default function Historique() {
         )}
         renderItem={({ item: o }) => {
           const revenu = o.type === 'revenu';
+          // Libellé de la sorte d'opération : l'enveloppe pour une dépense, sinon un mot.
+          const sorte =
+            o.type === 'depense'
+              ? o.enveloppe
+              : o.type === 'revenu'
+                ? t('budget.recu')
+                : o.type === 'epargne'
+                  ? t('budget.epargneOperation')
+                  : o.type === 'sadaqa'
+                    ? t('budget.sadaqaOperation')
+                    : t('budget.virementOperation');
           return (
             <ListItem
-              icone={revenu ? 'wallet' : iconeEnveloppe(o.icone ?? '')}
+              icone={
+                revenu
+                  ? 'wallet'
+                  : o.type === 'depense'
+                    ? iconeEnveloppe(o.icone ?? '')
+                    : o.type === 'virement'
+                      ? 'repeat'
+                      : 'heart'
+              }
               ton={revenu ? 'emeraude' : undefined}
-              titre={o.note ?? o.enveloppe ?? t('budget.recu')}
-              sousTitre={[revenu ? t('budget.recu') : o.enveloppe, o.compte].filter(Boolean).join(' · ')}
+              titre={o.note ?? sorte ?? t('budget.recu')}
+              sousTitre={[sorte, o.compte].filter(Boolean).join(' · ')}
               valeur={`${revenu ? '+ ' : ''}${formatMontant(o.montant, devise)}`}
               onPress={() => router.push({ pathname: '/budget/operation/[id]', params: { id: o.id } })}
             />
