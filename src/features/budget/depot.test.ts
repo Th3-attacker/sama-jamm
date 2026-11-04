@@ -1081,3 +1081,75 @@ test('zakat versée : sadaqa du cycle et nouvelle année lunaire', async () => {
   assert.equal(apres.misDeCote, avant.misDeCote + 8_750);
   assert.equal((await depot.zakat(carnet)).reglages.debutHawl, '2027-06-25');
 });
+
+test('devises : intégrées d’abord, puis la devise personnelle ajoutée ; saisie refusée', async () => {
+  const { depot } = monde();
+  const dh = await depot.ajouterDevise({ nom: 'Dirham', symbole: 'DH', position: 'apres', decimales: 2 });
+  assert.equal(dh.code, 'P-id-0001');
+  assert.equal(dh.sousUnites, 100);
+  assert.deepEqual(
+    (await depot.devises()).map((d) => [d.code, d.personnelle]),
+    [
+      ['XOF', false],
+      ['MRU', false],
+      ['P-id-0001', true],
+    ],
+  );
+  await assert.rejects(
+    depot.ajouterDevise({ nom: '', symbole: 'X', position: 'avant', decimales: 0 }),
+    (e: unknown) => e instanceof SaisieInvalide && e.cle === 'deviseInvalide',
+  );
+});
+
+test('changer de devise : tout l’argent du carnet converti au taux, dettes cohérentes', async () => {
+  const { sql, depot } = monde();
+  const carnet = await carnetExemple(depot);
+  const dh = await depot.ajouterDevise({ nom: 'Dirham', symbole: 'DH', position: 'apres', decimales: 2 });
+  await sql.executer(
+    "INSERT INTO dettes (id, carnet_id, sens, personne, montant_initial, date, statut, cree_le) VALUES ('d1', ?, 'prete', 'Awa', 10000, '2026-10-29', 'ouverte', 'x'), ('d2', ?, 'prete', 'Moussa', 1001, '2026-10-29', 'soldee', 'x')",
+    carnet.id,
+    carnet.id,
+  );
+  await sql.executer(
+    "INSERT INTO paiements_dette (id, dette_id, montant, date, cree_le) VALUES ('p1', 'd1', 3333, '2026-10-29', 'x'), ('p2', 'd1', 3333, '2026-10-29', 'x'), ('p3', 'd2', 1001, '2026-10-29', 'x')",
+  );
+  await sql.executer(
+    "INSERT INTO zakat (carnet_id, base_nisab, cours_or_g, cours_argent_g) VALUES (?, 'argent', 50000, NULL)",
+    carnet.id,
+  );
+
+  await depot.changerDevise(carnet, dh.code, '0,0165');
+
+  const apres = await depot.carnetActif();
+  assert.equal(apres?.devise.code, dh.code);
+  const revenus = await sql.tous<{ montant: number }>("SELECT montant FROM operations WHERE type = 'revenu'");
+  assert.deepEqual(
+    revenus.map((r) => r.montant),
+    [577_500],
+  );
+  const plafonds = await sql.tous<{ montant: number }>('SELECT montant FROM plafonds ORDER BY montant DESC');
+  assert.deepEqual(
+    plafonds.map((p) => p.montant),
+    [247_500, 165_000, 49_500],
+  );
+  const zakat = await sql.premier<{ cours_or_g: number; cours_argent_g: number | null }>('SELECT * FROM zakat');
+  assert.equal(zakat?.cours_or_g, 82_500);
+  assert.equal(zakat?.cours_argent_g, null);
+  const ouverte = await depot.dette(apres ?? carnet, 'd1');
+  assert.equal(ouverte?.rembourse, 10_998);
+  assert.equal(ouverte?.reste, 5501);
+  const soldee = await depot.dette(apres ?? carnet, 'd2');
+  assert.equal(soldee?.reste, 0);
+  assert.equal(soldee?.montantInitial, 1652);
+});
+
+test('changer de devise : même devise, taux ou devise refusés, rien n’est modifié', async () => {
+  const { depot } = monde();
+  const carnet = await carnetExemple(depot);
+  const refus = (cle: string) => (e: unknown) => e instanceof SaisieInvalide && e.cle === cle;
+  await assert.rejects(depot.changerDevise(carnet, 'XOF', '1'), refus('memeDevise'));
+  await assert.rejects(depot.changerDevise(carnet, 'MRU', '0'), refus('tauxInvalide'));
+  await assert.rejects(depot.changerDevise(carnet, 'INCONNUE', '1'), refus('deviseInconnue'));
+  assert.equal((await depot.carnetActif())?.devise.code, 'XOF');
+  assert.equal((await depot.mois(carnet)).recu, 350_000);
+});

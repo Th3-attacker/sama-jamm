@@ -32,7 +32,11 @@ export type CleSaisie =
   | 'montantSousRembourse'
   | 'dateInvalide'
   | 'objectifInconnu'
-  | 'bienInconnu';
+  | 'bienInconnu'
+  | 'deviseInvalide'
+  | 'deviseInconnue'
+  | 'memeDevise'
+  | 'tauxInvalide';
 
 /** Erreur de saisie que l'écran peut expliquer (clé i18n dans `cle`). */
 export class SaisieInvalide extends Error {

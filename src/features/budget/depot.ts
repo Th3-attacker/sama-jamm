@@ -6,6 +6,7 @@ import type { Devise } from '../../lib/montant.ts';
 import { cycleDe, type Jour } from './cycle.ts';
 import { enFileUnique, montantValide, SaisieInvalide, type Contexte, type Outils, type Sql } from './depotCommun.ts';
 import { methodesDettes } from './depotDettes.ts';
+import { methodesDevises } from './depotDevises.ts';
 import { methodesEpargne } from './depotEpargne.ts';
 import { methodesZakat } from './depotZakat.ts';
 
@@ -819,6 +820,7 @@ export function creerDepot(sql: Sql, outils: Outils) {
     ...methodesEpargne(contexte),
     ...methodesZakat(contexte),
     ...methodesDettes(contexte),
+    ...methodesDevises(contexte),
   });
 }
 

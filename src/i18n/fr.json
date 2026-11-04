@@ -809,7 +809,14 @@
     "changerTexte": "Votre carnet contient déjà des opérations en {{devise}}. Convertissez-les avec un taux, ou ouvrez un nouveau carnet.",
     "convertir": "Convertir avec un taux",
     "nouveauCarnet": "Ouvrir un nouveau carnet",
-    "taux": "1 {{de}} = ? {{vers}}"
+    "taux": "1 {{de}} = ? {{vers}}",
+    "intro": "Choisissez la monnaie de votre budget, ou ajoutez la vôtre.",
+    "personnelle": "Devise personnalisée",
+    "note": "Un carnet de budget garde une seule devise. En changer convertit tous les montants déjà saisis avec le taux que vous indiquez.",
+    "changer": "Convertir et changer",
+    "changee": "Budget passé en {{devise}}",
+    "tauxInvalide": "Indiquez un taux positif, avec 6 décimales au plus.",
+    "conversionNote": "Tous les montants du budget seront convertis et arrondis à l’unité la plus proche : les totaux peuvent varier très légèrement."
   },
   "dons": {
     "titre": "Soutenir Sama Jàmm",
