@@ -6,7 +6,7 @@ import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } fr
 import { useFormatMontant } from '@/features/budget/verrou';
 import { EcranBudgetIncomplet } from '@/features/budget/EcranBudgetIncomplet';
 import { budgetModifie, useBudget } from '@/features/budget/useBudget';
-import { versMinimes, versSaisie } from '@/lib/montant';
+import { lireMontantFacultatif, versSaisie } from '@/lib/montant';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { Banner } from '@/ui/Banner';
@@ -46,7 +46,7 @@ export default function JourDePaie() {
   const { mois, comptes, objectifs } = donnees;
   const devise = carnet.devise;
   const f = (m: number) => formatMontant(m, devise);
-  const lire = (saisie: string) => (saisie.trim() === '' ? 0 : versMinimes(saisie, devise));
+  const lire = (saisie: string) => lireMontantFacultatif(saisie, devise);
   const clavier = devise.decimales > 0 ? 'decimal-pad' : 'number-pad';
   const compte = comptes.find((c) => c.id === compteId) ?? comptes[0];
 

@@ -4,6 +4,7 @@ import { test } from 'node:test';
 
 import {
   formatMontant,
+  lireMontantFacultatif,
   MONTANT_MAX_UNITES,
   MRU,
   versMinimes,
@@ -51,6 +52,14 @@ test('la saisie accepte espaces, virgule et point', () => {
   assert.equal(versMinimes('12.5', DH), 1250);
   assert.equal(versMinimes('12', DH), 1200);
   assert.equal(versMinimes('0', XOF), 0);
+});
+
+test('montant facultatif : vide vaut 0, invalide donne null', () => {
+  assert.equal(lireMontantFacultatif('', XOF), 0);
+  assert.equal(lireMontantFacultatif('  ', XOF), 0);
+  assert.equal(lireMontantFacultatif('2 500', XOF), 2500);
+  assert.equal(lireMontantFacultatif('12,50', DH), 1250);
+  assert.equal(lireMontantFacultatif('abc', XOF), null);
 });
 
 test('une saisie invalide donne null, jamais un montant approché', () => {

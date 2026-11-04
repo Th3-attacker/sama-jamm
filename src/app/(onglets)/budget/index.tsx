@@ -11,7 +11,7 @@ import { EtatsBudget } from '@/features/budget/EtatsBudget';
 import { FeuilleRevenu } from '@/features/budget/FeuilleRevenu';
 import { budgetModifie, useBudget } from '@/features/budget/useBudget';
 import { cleJour, formatJourCle } from '@/lib/dates';
-import { versMinimes } from '@/lib/montant';
+import { lireMontantFacultatif } from '@/lib/montant';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { AmountDisplay } from '@/ui/AmountDisplay';
@@ -74,7 +74,7 @@ export default function Budget() {
   const depasse = depassement(reste);
   const nomPropre = nom.trim();
   const nomValide = nomPropre.length >= 1 && nomPropre.length <= NOM_ENVELOPPE_MAX;
-  const plafondMinimes = plafond.trim() === '' ? 0 : versMinimes(plafond, devise);
+  const plafondMinimes = lireMontantFacultatif(plafond, devise);
 
   const ajouterEnveloppe = async () => {
     if (!nomValide || plafondMinimes === null) return;

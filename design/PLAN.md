@@ -17,7 +17,8 @@ Ordre : **A → B1 → B2 → C2 → C3 → C4 → B4 → C1 → C5 → D → E 
 | B2 | Tests (horaires, fenêtre, recherche), examen de `npm audit` | #57 |
 | Lecture | Mode page plein écran, taille dans les réglages | #58 |
 | C2 · C3 · C4 | Dettes, épargne avec intention, zakat indicative | #59 à #62 |
-| B4 (partiel) | Découpage du dépôt, aides partagées des écrans du budget | cette PR |
+| B4 | Découpage du dépôt, aides partagées des écrans du budget | #63 |
+| B4 (fin) | Montant facultatif partagé, traductions obsolètes, minuteries nettoyées, config web retirée | cette PR |
 
 ## A. Vérifier sur un téléphone (bloquant)
 
@@ -34,7 +35,6 @@ Ordre : **A → B1 → B2 → C2 → C3 → C4 → B4 → C1 → C5 → D → E 
 | B1 | Performance : Veille recalculée à la bascule, index de recherche par paquets, notifications reprogrammées seulement si elles changent |
 | B2 | Tests (horaires, fenêtre de notifications, recherche) et examen de `npm audit` |
 | B3 | Trois parcours Maestro : bienvenue, lecture, dépense |
-| B4 (reste) | Montant facultatif partagé, 3 traductions obsolètes, 2 minuteries, retrait de la config web ; sauvegarde Android ciblée déplacée vers C5 |
 
 ### `npm audit` (examen du 4 novembre 2026)
 
@@ -55,7 +55,7 @@ Ordre : **A → B1 → B2 → C2 → C3 → C4 → B4 → C1 → C5 → D → E 
 | C2 | Dettes entre proches (section 17 du design) |
 | C3 | Épargne : objectifs avec intention |
 | C4 | Zakat : base, nisab, année lunaire, biens |
-| C5 | Export CSV, sauvegarde chiffrée, restauration |
+| C5 | Export CSV, sauvegarde chiffrée, restauration, sauvegarde Android ciblée |
 
 ## D. Robustesse
 

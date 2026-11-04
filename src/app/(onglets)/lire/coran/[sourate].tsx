@@ -117,6 +117,8 @@ function LectureSourate({
   const liste = useRef<FlatList>(null);
   // Premier verset visible en lecture verset par verset, enregistré à l'arrêt du défilement.
   const versetVisible = useRef(versetInitial);
+  const reessai = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  useEffect(() => () => clearTimeout(reessai.current), []);
 
   // Un jour de lecture est compté après 30 secondes passées sur la sourate.
   useEffect(() => {
@@ -256,7 +258,8 @@ function LectureSourate({
         onScrollToIndexFailed={({ index, averageItemLength }) => {
           // Verset pas encore mesuré : on s'en approche, puis on réessaie.
           liste.current?.scrollToOffset({ offset: averageItemLength * index, animated: false });
-          setTimeout(() => liste.current?.scrollToIndex({ index, animated: false }), 100);
+          clearTimeout(reessai.current);
+          reessai.current = setTimeout(() => liste.current?.scrollToIndex({ index, animated: false }), 100);
         }}
         keyExtractor={(v) => String(v.n)}
         ListHeaderComponent={<Entete sourate={s.n} mode={mode} />}
