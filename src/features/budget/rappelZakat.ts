@@ -11,17 +11,15 @@ import type { Jour } from './cycle';
 const ID_RAPPEL_ZAKAT = 'zakat-echeance';
 
 /**
- * Programme (ou reprogramme) le rappel à 9 h le jour de l'échéance. Demande l'autorisation si elle n'a jamais été
- * refusée ; rend « refuse » sinon, « passe » si l'échéance est déjà là.
+ * Programme (ou reprogramme) le rappel à 9 h le jour de l'échéance. L'autorisation est demandée avant, par l'écran
+ * (explication puis demande du téléphone) ; rend « refuse » si elle manque, « passe » si l'échéance est déjà là.
  */
 export async function programmerRappelZakat(echeance: Jour): Promise<'programme' | 'refuse' | 'passe'> {
   const [a, m, j] = echeance.split('-').map(Number);
   const date = new Date(a ?? 1970, (m ?? 1) - 1, j ?? 1, 9, 0);
   if (date.getTime() <= Date.now()) return 'passe';
   await creerCanaux();
-  const actuel = await Notifications.getPermissionsAsync();
-  const accorde = actuel.granted || (actuel.canAskAgain && (await Notifications.requestPermissionsAsync()).granted);
-  if (!accorde) return 'refuse';
+  if (!(await Notifications.getPermissionsAsync()).granted) return 'refuse';
   await Notifications.scheduleNotificationAsync({
     identifier: ID_RAPPEL_ZAKAT,
     content: {

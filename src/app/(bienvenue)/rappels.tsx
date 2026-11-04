@@ -90,6 +90,9 @@ export default function Rappels() {
       <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, { color: couleurs.encre }]}>
         {t('bienvenue.rappelsTexte')}
       </Text>
+      <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre2 }]}>
+        {t('autorisations.avant.notifications.demande')}
+      </Text>
       {refusees ? (
         <Banner ton="attention" action={{ label: t('autorisations.ouvrirReglages'), onPress: ouvrirReglagesTelephone }}>
           {t('bienvenue.notificationsRefusees')}

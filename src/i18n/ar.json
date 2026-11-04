@@ -113,7 +113,35 @@
     "ouvrirReglages": "فتح إعدادات الهاتف",
     "pasMaintenant": "ليس الآن",
     "iosPosition": "لحساب مواقيت الصلاة واتجاه القبلة على هذا الهاتف.",
-    "iosMicro": ""
+    "iosMicro": "",
+    "avant": {
+      "position": {
+        "titreFeuille": "قبل طلب الموقع",
+        "titre": "Fan nga nekk ?",
+        "sousTitre": "أين أنت؟",
+        "texte": "يُستخدم موقعك لأمرين، ولا يغادر هذا الهاتف أبدًا.",
+        "horaires": "مواقيت الصلاة",
+        "horairesAide": "محسوبة للمكان الذي أنت فيه بالضبط",
+        "qibla": "اتجاه القبلة",
+        "qiblaAide": "من موقعك نحو الكعبة",
+        "jamaisEnvoyee": "لا يُرسل أبدًا",
+        "jamaisEnvoyeeAide": "لا خادم، لا تتبّع، لا إعلانات",
+        "demande": "سيطلب منك الهاتف الإذن. إن رفضت، ستختار مدينتك من قائمة."
+      },
+      "notifications": {
+        "titreFeuille": "قبل طلب الإشعارات",
+        "titre": "Waxtu julli jot na",
+        "sousTitre": "حان وقت الصلاة",
+        "texte": "يمكن لسما جام أن ينبّهك بلطف في الأوقات التي تختارها.",
+        "prieres": "الصلوات الخمس",
+        "prieresAide": "بالأذان، أو بصوت خافت، أو بصمت",
+        "khatm": "نصيبك من الختمة",
+        "khatmAide": "تذكير قبل يوم من موعد الختم",
+        "sansPublicite": "بلا إعلانات أبدًا",
+        "sansPubliciteAide": "تضبط كل تذكير، أو توقفها كلها",
+        "demande": "سيطلب منك الهاتف الإذن. يمكنك تغييره في أي وقت."
+      }
+    }
   },
   "accueil": {
     "date": "{{jour}} · {{hegirien}}",

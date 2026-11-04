@@ -21,7 +21,8 @@ Ordre : **A → B1 → B2 → C2 → C3 → C4 → B4 → C1 → C5 → D → E 
 | B4 (fin) | Montant facultatif partagé, traductions obsolètes, minuteries nettoyées, config web retirée | #64 |
 | C1 | Devise personnalisée, changement de devise avec conversion par un taux | #65 |
 | C5a | Export CSV, sauvegarde chiffrée par mot de passe, restauration | #66 |
-| D1 | Écran d'erreur (repli des écrans qui plantent), mise à jour bloquante via `version.json` | cette PR |
+| D1 | Écran d'erreur (repli des écrans qui plantent), mise à jour bloquante via `version.json` | #67 |
+| D2 | Explication avant les demandes de position (qibla) et de notifications (zakat), raisons dans la bienvenue | cette PR |
 
 ## A. Vérifier sur un téléphone (bloquant)
 
@@ -63,7 +64,6 @@ Ordre : **A → B1 → B2 → C2 → C3 → C4 → B4 → C1 → C5 → D → E 
 
 | Lot | Contenu |
 | --- | --- |
-| D2 | Écrans « avant la demande » de position et de notifications |
 | D3 | Démarrage animé |
 | D4 | Suivi des plantages anonymisé |
 
