@@ -336,7 +336,9 @@
     "maPosition": "موقعي",
     "sansRappel": "بدون تذكير مسبق",
     "son": "صوت الأذان",
-    "rappelAvantTitre": "تذكير قبل الصلاة"
+    "rappelAvantTitre": "تذكير قبل الصلاة",
+    "essayerSon": "تجربة هذا الصوت",
+    "essaiRefuse": "اسمح بالإشعارات لسماع التجربة."
   },
   "notifications": {
     "appelTitre": "{{priere}} · {{heure}}",
@@ -355,7 +357,8 @@
       "vibration": "اهتزاز",
       "silencieux": "صامت",
       "rappels": "تذكيرات"
-    }
+    },
+    "essaiTitre": "تجربة صوت الأذان"
   },
   "qibla": {
     "titre": "القبلة",
@@ -486,6 +489,7 @@
     "sources": "المصادر والتراخيص",
     "sourceCoran": "نص القرآن: الرسم العثماني، عبر alquran.cloud (api.alquran.cloud)، دون أي تعديل.",
     "sourceTraduction": "الترجمة الفرنسية: محمد الحميد الله، عبر alquran.cloud.",
+    "sourceAdhan": "الأذان: «Beautiful adhan» (Adam-synagda) و«Adhan» (Aishatu98)، ويكيميديا كومنز، ملك عام (CC0).",
     "polices": "الخطوط: Cormorant Garamond وSource Serif 4 وSource Sans 3 وAmiri وAmiri Quran (رخصة SIL للخطوط المفتوحة).",
     "remerciements": "شكر وتقدير",
     "contact": "راسل الفريق",

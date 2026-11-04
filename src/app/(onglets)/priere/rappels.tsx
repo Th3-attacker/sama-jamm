@@ -3,11 +3,13 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { essayerSon } from '@/features/priere/notifications';
 import { prieres, sons, useReglages, type NomPriere } from '@/stores/reglages';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { Banner } from '@/ui/Banner';
 import { BottomSheet } from '@/ui/BottomSheet';
+import { Button } from '@/ui/Button';
 import { ListGroup } from '@/ui/ListGroup';
 import { ListItem } from '@/ui/ListItem';
 import { RadioGroup } from '@/ui/RadioGroup';
@@ -24,6 +26,7 @@ export default function AppelEtRappels() {
   const rappelAvant = useReglages((s) => s.rappelAvant);
   const definirRappel = useReglages((s) => s.definirRappel);
   const definirSon = useReglages((s) => s.definirSon);
+  const [essaiRefuse, setEssaiRefuse] = useState(false);
   const definirRappelAvant = useReglages((s) => s.definirRappelAvant);
   const [ouverte, setOuverte] = useState<NomPriere | null>(null);
   const [alarmesRefusees, setAlarmesRefusees] = useState(false);
@@ -88,6 +91,18 @@ export default function AppelEtRappels() {
                 if (s) definirSon(ouverte, s);
               }}
             />
+            <Button
+              variant="secondaire"
+              icone="bell"
+              pleineLargeur
+              onPress={() => {
+                essayerSon(sonsChoisis[ouverte])
+                  .then((ok) => setEssaiRefuse(!ok))
+                  .catch((erreur: unknown) => console.warn('Essai du son impossible', erreur));
+              }}>
+              {t('priere.essayerSon')}
+            </Button>
+            {essaiRefuse ? <Banner ton="attention">{t('priere.essaiRefuse')}</Banner> : null}
             <RadioGroup
               label={t('priere.rappelAvantTitre')}
               options={[

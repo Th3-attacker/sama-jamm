@@ -20,27 +20,33 @@ export const URL_ZAKAT = 'samajamm://budget/zakat';
 const TACHE = 'replanifier-prieres';
 
 // Le son d'un canal ne change plus après sa création : identifiants versionnés pour pouvoir les remplacer.
+// v2 : l'adhan (fichiers CC0 de Wikimedia Commons, intégrés par le plugin expo-notifications) remplace le son par défaut.
 const CANAUX: Record<Son, string> = {
-  complet: 'priere-v1-complet',
-  court: 'priere-v1-court',
-  doux: 'priere-v1-doux',
-  vibration: 'priere-v1-vibration',
-  silencieux: 'priere-v1-silencieux',
+  complet: 'priere-v2-complet',
+  court: 'priere-v2-court',
+  doux: 'priere-v2-doux',
+  vibration: 'priere-v2-vibration',
+  silencieux: 'priere-v2-silencieux',
 };
+/** Fichiers de `assets/sons`, copiés dans les ressources Android par le plugin (nom avec l'extension). */
+const SONS_ADHAN: Partial<Record<Son, string>> = { complet: 'adhan_complet.ogg', court: 'adhan_court.ogg' };
 /** Canal Android des rappels doux (avant la prière, zakat). */
 export const CANAL_RAPPELS = 'rappels-v1';
-const ANCIEN_CANAL = 'priere-defaut';
+const ANCIENS_CANAUX = [
+  'priere-defaut',
+  ...['complet', 'court', 'doux', 'vibration', 'silencieux'].map((son) => `priere-v1-${son}`),
+];
 
 /** Crée les canaux Android (nécessaires avant la demande d'autorisation sur Android 13 et plus). */
 export async function creerCanaux(): Promise<void> {
   if (Platform.OS !== 'android') return;
   const t = i18n.t.bind(i18n);
-  // Sans fichier d'adhan sous licence, les trois appels jouent le son par défaut du téléphone.
+  // Complet et court : l'adhan ; doux : le son par défaut du téléphone.
   for (const son of ['complet', 'court', 'doux'] as const) {
     await Notifications.setNotificationChannelAsync(CANAUX[son], {
       name: t(`notifications.canaux.${son}`),
       importance: AndroidImportance.HIGH,
-      sound: 'default',
+      sound: SONS_ADHAN[son] ?? 'default',
     });
   }
   await Notifications.setNotificationChannelAsync(CANAUX.vibration, {
@@ -59,7 +65,27 @@ export async function creerCanaux(): Promise<void> {
     name: t('notifications.canaux.rappels'),
     importance: AndroidImportance.DEFAULT,
   });
-  await Notifications.deleteNotificationChannelAsync(ANCIEN_CANAL);
+  for (const ancien of ANCIENS_CANAUX) await Notifications.deleteNotificationChannelAsync(ancien);
+}
+
+/**
+ * Notification d'essai dans 2 secondes, sur le canal du son choisi (on entend l'adhan sans attendre la prière).
+ * Faux si les notifications ne sont pas autorisées.
+ */
+export async function essayerSon(son: Son): Promise<boolean> {
+  if (!(await Notifications.getPermissionsAsync()).granted) return false;
+  await creerCanaux();
+  const t = i18n.t.bind(i18n);
+  await Notifications.scheduleNotificationAsync({
+    identifier: 'essai-son',
+    content: {
+      title: t('notifications.essaiTitre'),
+      body: t('notifications.appelTexte'),
+      sound: son === 'complet' || son === 'court' || son === 'doux',
+    },
+    trigger: { type: SchedulableTriggerInputTypes.TIME_INTERVAL, seconds: 2, channelId: CANAUX[son] },
+  });
+  return true;
 }
 
 function contenu(n: Planifiee): Notifications.NotificationContentInput {

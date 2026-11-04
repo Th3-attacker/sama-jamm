@@ -25,7 +25,8 @@ Ordre : **A → B1 → B2 → C2 → C3 → C4 → B4 → C1 → C5 → D → E 
 | D2 | Explication avant les demandes de position (qibla) et de notifications (zakat), raisons dans la bienvenue | #68 |
 | D3 | Démarrage animé (relais du démarrage natif, signature, fondu ; réduit si « Réduire les animations ») | #69 |
 | D4 | Journal local des erreurs (sans données personnelles), partagé par l'utilisateur depuis À propos | #70 |
-| E3 | Partage d'un verset : image (fond émeraude ou nuit, traduction au choix) ou texte avec lien | cette PR |
+| E3 | Partage d'un verset : image (fond émeraude ou nuit, traduction au choix) ou texte avec lien | #71 |
+| Adhan | Appel à la prière dans les notifications (Android, sons CC0), icône de notification, essai du son ; iOS à faire (WAV ≤ 30 s, ffmpeg) | cette PR |
 
 ## A. Vérifier sur un téléphone (bloquant)
 
