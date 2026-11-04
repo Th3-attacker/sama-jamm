@@ -5,7 +5,8 @@ import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } fr
 
 import { EtatsBudget } from '@/features/budget/EtatsBudget';
 import { budgetModifie, useBudget } from '@/features/budget/useBudget';
-import { formatJourCle } from '@/lib/dates';
+import { ajouterJours } from '@/features/budget/cycle';
+import { cleJour, formatJourCle } from '@/lib/dates';
 import { formatMontant, versMinimes, versSaisie } from '@/lib/montant';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
@@ -42,6 +43,7 @@ export default function EcranOperation() {
   const [saisie, setSaisie] = useState<string | null>(null);
   const [note, setNote] = useState<string | null>(null);
   const [enveloppeId, setEnveloppeId] = useState<string | null>(null);
+  const [jour, setJour] = useState<string | null>(null);
   const [confirmer, setConfirmer] = useState(false);
   const [envoi, setEnvoi] = useState(false);
   const [echec, setEchec] = useState(false);
@@ -73,6 +75,16 @@ export default function EcranOperation() {
   const nomEnveloppe = donnees.enveloppes.find((e) => e.id === choixEnveloppe)?.nom ?? '';
   const valide =
     montant !== null && montant > 0 && (!estDepense || donnees.enveloppes.some((e) => e.id === choixEnveloppe));
+  // Jours proposés : de la fin du cycle (ou aujourd'hui) en remontant, 14 au plus, sans sortir du cycle.
+  const aujourdhui = cleJour(new Date());
+  const hier = ajouterJours(aujourdhui, -1);
+  const dernierJour = aujourdhui < op.cycleFin ? aujourdhui : op.cycleFin;
+  const jours: string[] = [];
+  for (let j = dernierJour; j >= op.cycleDebut && jours.length < 14; j = ajouterJours(j, -1)) jours.push(j);
+  if (!jours.includes(op.date)) jours.push(op.date);
+  const choixJour = jour ?? op.date;
+  const libelleJour = (j: string) =>
+    j === aujourdhui ? t('budget.aujourdhui') : j === hier ? t('budget.hier') : formatJourCle(j, i18n.language);
 
   const enregistrer = async () => {
     if (!valide || montant === null) return;
@@ -85,6 +97,7 @@ export default function EcranOperation() {
         compteId: op.compteId,
         note: note ?? op.note,
       });
+      if (choixJour !== op.date) await depot.modifierDateOperation(carnet, op.id, choixJour);
       budgetModifie();
       afficher({ texte: t('budget.modificationEnregistree'), icone: 'check' });
       router.back();
@@ -147,6 +160,25 @@ export default function EcranOperation() {
               </ScrollView>
             </View>
           ) : null}
+
+          <View style={{ gap: espace.espace2 }}>
+            <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, { color: couleurs.encre }]}>
+              {t('budget.jourOperation')}
+            </Text>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{ gap: espace.espace2 }}>
+              {jours.map((j) => (
+                <Chip key={j} selectionne={j === choixJour} onPress={() => setJour(j)}>
+                  {libelleJour(j)}
+                </Chip>
+              ))}
+            </ScrollView>
+            <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre3 }]}>
+              {t('budget.jourOperationAide')}
+            </Text>
+          </View>
 
           <TextField label={t('budget.note')} valeur={note ?? op.note ?? ''} onChange={setNote} maxLength={120} />
 

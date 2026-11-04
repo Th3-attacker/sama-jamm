@@ -29,6 +29,7 @@ export default function Budget() {
   const etat = useBudget(async (depot, carnet) => ({
     mois: await depot.mois(carnet),
     archivees: await depot.enveloppesArchivees(carnet),
+    comptes: await depot.comptes(carnet.id),
   }));
   // Feuille « Ajouter une enveloppe » : nom et plafond.
   const [feuille, setFeuille] = useState(false);
@@ -47,7 +48,7 @@ export default function Budget() {
   }
 
   const { carnet } = etat;
-  const { mois, archivees } = etat.donnees;
+  const { mois, archivees, comptes } = etat.donnees;
   const devise = carnet.devise;
   const f = (m: number) => formatMontant(m, devise);
   const aujourdhui = cleJour(new Date());
@@ -151,6 +152,21 @@ export default function Budget() {
           {t('budget.ajouterRevenu')}
         </Button>
 
+        <ListGroup>
+          <ListItem
+            icone="list"
+            titre={t('budget.historique')}
+            sousTitre={t('budget.voirHistorique')}
+            onPress={() => router.push('/budget/historique')}
+          />
+          <ListItem
+            icone="wallet"
+            titre={t('budget.comptes')}
+            sousTitre={t('budget.voirComptes')}
+            onPress={() => router.push('/budget/comptes')}
+          />
+        </ListGroup>
+
         <View>
           <Text
             accessibilityRole="header"
@@ -229,6 +245,7 @@ export default function Budget() {
         onFermer={() => setFeuilleRevenu(false)}
         carnet={carnet}
         depot={etat.depot}
+        comptes={comptes}
       />
     </View>
   );

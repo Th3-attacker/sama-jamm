@@ -640,7 +640,18 @@
     "depensesTotal_two": "مصروفان · {{montant}}",
     "depensesTotal_few": "{{count}} مصروفات · {{montant}}",
     "depensesTotal_many": "{{count}} مصروفًا · {{montant}}",
-    "depensesTotal_other": "{{count}} مصروف · {{montant}}"
+    "depensesTotal_other": "{{count}} مصروف · {{montant}}",
+    "totalComptes": "المجموع في حساباتك",
+    "nomCompte": "اسم الحساب",
+    "typeCompte": "نوع الحساب",
+    "compteAjoute": "تمت إضافة الحساب",
+    "jourOperation": "اليوم",
+    "jourOperationAide": "يبقى اليوم داخل دورة العملية.",
+    "aujourdhui": "اليوم",
+    "hier": "أمس",
+    "dateHorsCycle": "هذا اليوم خارج دورة العملية.",
+    "voirHistorique": "كل عمليات الدورة",
+    "voirComptes": "نقدًا، المال عبر الهاتف، البنك"
   },
   "epargne": {
     "titre": "الادخار",

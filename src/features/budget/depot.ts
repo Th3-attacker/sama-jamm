@@ -49,7 +49,19 @@ export type DetailOperation = {
   note: string | null;
   enveloppeId: string | null;
   compteId: string | null;
+  /** Bornes du cycle de l'opération : son jour ne peut changer qu'entre elles. */
+  cycleDebut: Jour;
+  cycleFin: Jour;
 };
+export type FiltreHistorique = 'tout' | 'depenses' | 'revenus';
+export type OperationHistorique = Operation & {
+  type: TypeOperation;
+  enveloppe: string | null;
+  icone: string | null;
+};
+export type TypeCompte = Compte['type'];
+export type CompteAvecSolde = Compte & { solde: number };
+export const TYPES_COMPTE: readonly TypeCompte[] = ['especes', 'mobile', 'banque'];
 export type ModificationOperation = {
   montant: number;
   /** Obligatoire pour une dépense ; ignoré pour les autres opérations. */
@@ -79,7 +91,14 @@ export type NouvelleDepense = {
   note: string | null;
 };
 
-type CleSaisie = 'montantInvalide' | 'jourPaieInvalide' | 'enveloppeInconnue' | 'operationInconnue' | 'nomInvalide';
+type CleSaisie =
+  | 'montantInvalide'
+  | 'jourPaieInvalide'
+  | 'enveloppeInconnue'
+  | 'operationInconnue'
+  | 'nomInvalide'
+  | 'dateHorsCycle'
+  | 'typeCompteInvalide';
 
 /** Nom d'enveloppe : 1 à 40 caractères, espaces autour retirés. */
 export const NOM_ENVELOPPE_MAX = 40;
@@ -364,8 +383,10 @@ export function creerDepot(sql: Sql, outils: Outils) {
     /** Une opération du carnet, quel que soit son cycle ; null si elle n'existe pas. */
     async operation(carnet: Carnet, id: string): Promise<DetailOperation | null> {
       return sql.premier<DetailOperation>(
-        `SELECT id, type, montant, date, note, enveloppe_id AS enveloppeId, compte_id AS compteId
-         FROM operations WHERE id = ? AND carnet_id = ?`,
+        `SELECT o.id, o.type, o.montant, o.date, o.note, o.enveloppe_id AS enveloppeId, o.compte_id AS compteId,
+                c.debut AS cycleDebut, c.fin AS cycleFin
+         FROM operations o JOIN cycles c ON c.id = o.cycle_id
+         WHERE o.id = ? AND o.carnet_id = ?`,
         id,
         carnet.id,
       );
@@ -550,6 +571,76 @@ export function creerDepot(sql: Sql, outils: Outils) {
         note,
         outils.horodatage(),
       );
+    },
+
+    /** Opérations du cycle en cours, les plus récentes d'abord, filtrées par sorte. */
+    async historique(
+      carnet: Carnet,
+      filtre: FiltreHistorique,
+    ): Promise<{ cycle: CycleBudget; operations: OperationHistorique[] }> {
+      const cycle = await cycleCourant(carnet);
+      const types =
+        filtre === 'depenses'
+          ? "('depense')"
+          : filtre === 'revenus'
+            ? "('revenu')"
+            : "('depense','revenu','virement','epargne','sadaqa')";
+      const operations = await sql.tous<OperationHistorique>(
+        `SELECT o.id, o.type, o.montant, o.date, o.note, c.nom AS compte, e.nom AS enveloppe, e.icone AS icone
+         FROM operations o
+         LEFT JOIN comptes c ON c.id = o.compte_id
+         LEFT JOIN enveloppes e ON e.id = o.enveloppe_id
+         WHERE o.cycle_id = ? AND o.type IN ${types}
+         ORDER BY o.date DESC, o.cree_le DESC`,
+        cycle.id,
+      );
+      return { cycle, operations };
+    },
+
+    /** Change le jour d'une opération, sans la faire sortir de son cycle (les totaux de deux cycles bougeraient). */
+    async modifierDateOperation(carnet: Carnet, id: string, date: Jour): Promise<void> {
+      const op = await sql.premier<{ debut: Jour; fin: Jour }>(
+        'SELECT c.debut, c.fin FROM operations o JOIN cycles c ON c.id = o.cycle_id WHERE o.id = ? AND o.carnet_id = ?',
+        id,
+        carnet.id,
+      );
+      if (!op) throw new SaisieInvalide('operationInconnue');
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || date < op.debut || date > op.fin)
+        throw new SaisieInvalide('dateHorsCycle');
+      await sql.executer('UPDATE operations SET date = ? WHERE id = ? AND carnet_id = ?', date, id, carnet.id);
+    },
+
+    /** Comptes avec leur solde : départ + revenus − dépenses, épargne et sadaqa ± virements. */
+    async comptesAvecSolde(carnet: Carnet): Promise<CompteAvecSolde[]> {
+      return sql.tous<CompteAvecSolde>(
+        `SELECT c.id, c.nom, c.type,
+                c.solde_initial
+                + COALESCE((SELECT SUM(CASE WHEN o.type = 'revenu' THEN o.montant
+                                            WHEN o.type IN ('depense','epargne','sadaqa','virement') THEN -o.montant END)
+                            FROM operations o WHERE o.compte_id = c.id), 0)
+                + COALESCE((SELECT SUM(o.montant) FROM operations o
+                            WHERE o.compte_dest_id = c.id AND o.type = 'virement'), 0) AS solde
+         FROM comptes c WHERE c.carnet_id = ? ORDER BY c.rowid`,
+        carnet.id,
+      );
+    },
+
+    /** Nouveau compte : espèces, mobile money ou banque, avec son solde de départ. */
+    async ajouterCompte(carnet: Carnet, c: { nom: string; type: TypeCompte; soldeInitial: number }): Promise<string> {
+      const nom = c.nom.trim();
+      if (nom.length < 1 || nom.length > NOM_ENVELOPPE_MAX) throw new SaisieInvalide('nomInvalide');
+      if (!TYPES_COMPTE.includes(c.type)) throw new SaisieInvalide('typeCompteInvalide');
+      if (!Number.isSafeInteger(c.soldeInitial) || c.soldeInitial < 0) throw new SaisieInvalide('montantInvalide');
+      const id = outils.nouvelId();
+      await sql.executer(
+        'INSERT INTO comptes (id, carnet_id, nom, type, solde_initial) VALUES (?, ?, ?, ?, ?)',
+        id,
+        carnet.id,
+        nom,
+        c.type,
+        c.soldeInitial,
+      );
+      return id;
     },
   };
 }

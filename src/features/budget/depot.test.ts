@@ -448,3 +448,105 @@ test('enveloppe archivée : retrouvée, détaillée sur tous les cycles, corrig�
   assert.equal((await w.depot.detailEnveloppe(carnet, transport.id))?.operations.length, 1);
   await assert.rejects(w.depot.restaurerEnveloppe(carnet, 'absente'), SaisieInvalide);
 });
+
+test("historique du cycle : filtré, le plus récent d'abord, avec enveloppe et compte", async () => {
+  const w = monde();
+  const carnet = await carnetExemple(w.depot);
+  const env = (await w.depot.mois(carnet)).enveloppes[0];
+  assert.ok(env);
+  w.allerAu('2026-10-30');
+  await w.depot.ajouterDepense(carnet, {
+    carnetId: carnet.id,
+    montant: 2_000,
+    enveloppeId: env.id,
+    compteId: null,
+    note: 'Pain',
+  });
+  w.allerAu('2026-10-31');
+  await w.depot.ajouterRevenu(carnet, { montant: 10_000, compteId: null, note: 'Aide' });
+  const tout = await w.depot.historique(carnet, 'tout');
+  assert.deepEqual(
+    tout.operations.map((o) => [o.date, o.type, o.montant, o.enveloppe]),
+    [
+      ['2026-10-31', 'revenu', 10_000, null],
+      ['2026-10-30', 'depense', 2_000, 'Dépense quotidienne'],
+      ['2026-10-29', 'revenu', 350_000, null],
+    ],
+  );
+  assert.deepEqual(
+    (await w.depot.historique(carnet, 'depenses')).operations.map((o) => o.montant),
+    [2_000],
+  );
+  assert.deepEqual(
+    (await w.depot.historique(carnet, 'revenus')).operations.map((o) => o.montant),
+    [10_000, 350_000],
+  );
+});
+
+test("changer le jour d'une opération : seulement dans son cycle", async () => {
+  const w = monde();
+  const carnet = await carnetExemple(w.depot);
+  const env = (await w.depot.mois(carnet)).enveloppes[0];
+  assert.ok(env);
+  await w.depot.ajouterDepense(carnet, {
+    carnetId: carnet.id,
+    montant: 2_000,
+    enveloppeId: env.id,
+    compteId: null,
+    note: null,
+  });
+  const [op] = (await w.depot.historique(carnet, 'depenses')).operations;
+  assert.ok(op);
+  const detail = await w.depot.operation(carnet, op.id);
+  assert.deepEqual([detail?.cycleDebut, detail?.cycleFin], ['2026-10-25', '2026-11-24']);
+  await w.depot.modifierDateOperation(carnet, op.id, '2026-10-26');
+  assert.equal((await w.depot.operation(carnet, op.id))?.date, '2026-10-26');
+  await assert.rejects(w.depot.modifierDateOperation(carnet, op.id, '2026-10-24'), SaisieInvalide);
+  await assert.rejects(w.depot.modifierDateOperation(carnet, op.id, '2026-11-25'), SaisieInvalide);
+  await assert.rejects(w.depot.modifierDateOperation(carnet, op.id, '26/10/2026'), SaisieInvalide);
+  await assert.rejects(w.depot.modifierDateOperation(carnet, 'absente', '2026-10-26'), SaisieInvalide);
+});
+
+test('comptes : solde de départ, revenus et dépenses par compte', async () => {
+  const { depot } = monde();
+  const carnet = await carnetExemple(depot);
+  const wave = await depot.ajouterCompte(carnet, { nom: ' Wave ', type: 'mobile', soldeInitial: 20_000 });
+  const env = (await depot.mois(carnet)).enveloppes[0];
+  assert.ok(env);
+  await depot.ajouterDepense(carnet, {
+    carnetId: carnet.id,
+    montant: 5_000,
+    enveloppeId: env.id,
+    compteId: wave,
+    note: null,
+  });
+  await depot.ajouterRevenu(carnet, { montant: 1_000, compteId: wave, note: null });
+  const [especes] = await depot.comptes(carnet.id);
+  assert.ok(especes);
+  await depot.ajouterDepense(carnet, {
+    carnetId: carnet.id,
+    montant: 2_500,
+    enveloppeId: env.id,
+    compteId: especes.id,
+    note: null,
+  });
+  assert.deepEqual(
+    (await depot.comptesAvecSolde(carnet)).map((c) => [c.nom, c.type, c.solde]),
+    [
+      ['Espèces', 'especes', 347_500],
+      ['Wave', 'mobile', 16_000],
+    ],
+  );
+});
+
+test('ajouter un compte : nom, type et solde vérifiés', async () => {
+  const { depot } = monde();
+  const carnet = await carnetExemple(depot);
+  await assert.rejects(depot.ajouterCompte(carnet, { nom: ' ', type: 'banque', soldeInitial: 0 }), SaisieInvalide);
+  await assert.rejects(
+    depot.ajouterCompte(carnet, { nom: 'X', type: 'coffre' as never, soldeInitial: 0 }),
+    SaisieInvalide,
+  );
+  await assert.rejects(depot.ajouterCompte(carnet, { nom: 'X', type: 'banque', soldeInitial: -1 }), SaisieInvalide);
+  assert.equal((await depot.comptes(carnet.id)).length, 1);
+});
