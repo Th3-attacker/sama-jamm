@@ -46,3 +46,11 @@ export function cleJour(date: Date): string {
 export function formatMois(date: Date, langue: string): string {
   return new Intl.DateTimeFormat(LOCALES[langue] ?? 'fr-FR', { month: 'long' }).format(date);
 }
+
+/** « 25 octobre » depuis une clé de jour « 2026-10-25 » (jour local). */
+export function formatJourCle(jour: string, langue: string): string {
+  const [a, m, j] = jour.split('-').map(Number);
+  return new Intl.DateTimeFormat(LOCALES[langue] ?? 'fr-FR', { day: 'numeric', month: 'long' }).format(
+    new Date(a ?? 1970, (m ?? 1) - 1, j ?? 1),
+  );
+}
