@@ -358,7 +358,9 @@
     "resultats_one": "{{count}} résultat",
     "resultats_other": "{{count}} résultats",
     "aucun": "Aucun résultat pour « {{terme}} »",
-    "aucunTexte": "Essayez un autre mot, ou le nom d'une sourate : « kahf », « yasin »."
+    "aucunTexte": "Essayez un autre mot, ou le nom d'une sourate : « kahf », « yasin ».",
+    "sourates": "Sourates",
+    "versets": "Versets"
   },
   "favoris": {
     "titre": "Favoris",

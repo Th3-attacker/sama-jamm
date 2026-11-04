@@ -8,6 +8,7 @@ import { useOptionsCalcul } from '@/features/priere/useOptionsCalcul';
 import { BandeauVeille } from '@/features/priere/veille';
 import { useMaintenant } from '@/hooks/useMaintenant';
 import { sourate } from '@/features/lire/coran';
+import { useMenuPlus } from '@/features/plus/MenuPlus';
 import { cleJour, formatDuree, formatHegirien, formatHeure, formatJour, formatMois, minutesDuJour } from '@/lib/dates';
 import { useLecture } from '@/stores/lecture';
 import { prieres, useReglages } from '@/stores/reglages';
@@ -35,6 +36,7 @@ export default function Accueil() {
   const maintenant = useMaintenant();
   const lieu = useReglages((s) => s.lieu);
   const options = useOptionsCalcul();
+  const menu = useMenuPlus();
   const position = useLecture((s) => s.position);
   const joursLus = useLecture((s) => s.jours);
 
@@ -70,8 +72,8 @@ export default function Accueil() {
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
       <TopBar
         actions={[
-          { icone: 'search', label: t('menuPlus.rechercher') },
-          { icone: 'settings', label: t('menuPlus.reglages'), onPress: () => router.push('/plus/reglages') },
+          { icone: 'search', label: t('menuPlus.rechercher'), onPress: () => router.push('/plus/recherche') },
+          menu.action,
         ]}
       />
       <ScrollView
@@ -172,6 +174,7 @@ export default function Accueil() {
           </Button>
         ) : null}
       </ScrollView>
+      {menu.feuille}
     </View>
   );
 }
