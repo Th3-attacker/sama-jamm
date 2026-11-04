@@ -17,6 +17,9 @@ export type EcoleAsr = 'standard' | 'hanafite';
 export const sons = ['complet', 'court', 'doux', 'vibration', 'silencieux'] as const;
 export type Son = (typeof sons)[number];
 
+export const affichagesLecture = ['arabeSeul', 'arabeTrad', 'tradSeule'] as const;
+export type AffichageLecture = (typeof affichagesLecture)[number];
+
 export type Lieu =
   | { type: 'position'; latitude: number; longitude: number }
   | { type: 'ville'; id: string; nom: string; latitude: number; longitude: number };
@@ -46,6 +49,8 @@ type Donnees = {
   bienvenueTerminee: boolean;
   /** Échelon de taille du texte de lecture, de 0 à 6 (voir `features/lire/BarreTaille`). */
   tailleLecture: number;
+  /** Ce que la lecture affiche : arabe seul, arabe et traduction, ou traduction seule. */
+  affichage: AffichageLecture;
 };
 
 type Actions = {
@@ -64,6 +69,7 @@ type Actions = {
   definirTheme: (theme: ChoixTheme) => void;
   terminerBienvenue: () => void;
   definirTailleLecture: (echelon: number) => void;
+  definirAffichage: (affichage: AffichageLecture) => void;
 };
 
 export const AJUSTEMENT_MAX = 15;
@@ -86,6 +92,7 @@ const parDefaut: Donnees = {
   theme: 'auto',
   bienvenueTerminee: false,
   tailleLecture: 2,
+  affichage: 'arabeTrad',
 };
 
 export const useReglages = create<Donnees & Actions>()(
@@ -113,6 +120,7 @@ export const useReglages = create<Donnees & Actions>()(
       definirTheme: (theme) => set({ theme }),
       terminerBienvenue: () => set({ bienvenueTerminee: true }),
       definirTailleLecture: (echelon) => set({ tailleLecture: Math.max(0, Math.min(6, Math.round(echelon))) }),
+      definirAffichage: (affichage) => set({ affichage }),
     }),
     {
       name: 'reglages',
@@ -139,6 +147,7 @@ export const useReglages = create<Donnees & Actions>()(
         theme: s.theme,
         bienvenueTerminee: s.bienvenueTerminee,
         tailleLecture: s.tailleLecture,
+        affichage: s.affichage,
       }),
       onRehydrateStorage: () => (_etat, erreur) => {
         if (erreur) console.error('Réglages illisibles : valeurs par défaut', erreur);

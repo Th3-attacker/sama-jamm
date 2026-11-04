@@ -1,5 +1,5 @@
 import { router, useLocalSearchParams } from 'expo-router';
-import { useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FlatList, StyleSheet, Text, View } from 'react-native';
 
@@ -15,12 +15,19 @@ import {
   type Sourate,
   versetsAvecTraduction,
 } from '@/features/lire/coran';
+import { cleJour } from '@/lib/dates';
+import { useLecture, type ModeLecture } from '@/stores/lecture';
+import { affichagesLecture, useReglages } from '@/stores/reglages';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { Banner } from '@/ui/Banner';
 import { Button } from '@/ui/Button';
 import { SegmentedControl } from '@/ui/SegmentedControl';
 import { TopBar } from '@/ui/TopBar';
+
+/** Une sourate est « lue » après ce délai à l'écran (section Lecture et audio du design). */
+const SECONDES_POUR_UN_JOUR = 30;
+const CONFIG_VISIBILITE = { itemVisiblePercentThreshold: 50 };
 
 const CHIFFRES_ARABES = '٠١٢٣٤٥٦٧٨٩';
 
@@ -32,10 +39,16 @@ function marqueur(n: number): string {
 export default function EcranSourate() {
   const { t } = useTranslation();
   const { couleurs, espace } = useTheme();
-  const params = useLocalSearchParams<{ n?: string | string[] }>();
+  const params = useLocalSearchParams<{
+    sourate?: string | string[];
+    verset?: string | string[];
+    mode?: string | string[];
+  }>();
 
-  const brut = Array.isArray(params.n) ? params.n[0] : params.n;
-  const s = sourate(Number(brut));
+  const premier = (v?: string | string[]) => (Array.isArray(v) ? v[0] : v);
+  const s = sourate(Number(premier(params.sourate)));
+  const verset = Number(premier(params.verset));
+  const mode: ModeLecture = premier(params.mode) === 'verset' ? 'verset' : 'page';
 
   if (!s) {
     // Adresse invalide ou sourate inconnue : jamais de texte tronqué.
@@ -52,31 +65,81 @@ export default function EcranSourate() {
   }
 
   // `key` : changer de sourate repart d'un état neuf (mode verset, première page).
-  return <LectureSourate key={s.n} s={s} />;
+  return (
+    <LectureSourate
+      key={s.n}
+      s={s}
+      versetInitial={Number.isInteger(verset) && verset >= 1 && verset <= s.versets ? verset : 1}
+      modeInitial={mode}
+    />
+  );
 }
 
-function LectureSourate({ s }: { s: Sourate }) {
+function LectureSourate({
+  s,
+  versetInitial,
+  modeInitial,
+}: {
+  s: Sourate;
+  versetInitial: number;
+  modeInitial: ModeLecture;
+}) {
   const { t } = useTranslation();
   const { couleurs, espace, rayon, typographie } = useTheme();
   const { tailleArabe, tailleTrad } = useTaillesLecture();
-  const [affichage, setAffichage] = useState('');
+  const mode = useReglages((st) => st.affichage);
+  const definirAffichage = useReglages((st) => st.definirAffichage);
+  const enregistrerPosition = useLecture((st) => st.enregistrerPosition);
+  const marquerJour = useLecture((st) => st.marquerJour);
   // Vue mushaf (page justifiée) par défaut ; la bascule ouvre la lecture verset par verset.
-  const [modePage, setModePage] = useState(true);
-  const [page, setPage] = useState(() => pageDe(s.n, 1) ?? 1);
+  const [modePage, setModePage] = useState(modeInitial === 'page');
+  const [page, setPage] = useState(() => pageDe(s.n, versetInitial) ?? 1);
   const versets = useMemo(() => versetsAvecTraduction(s.n), [s.n]);
+  const liste = useRef<FlatList>(null);
+  // Premier verset visible en lecture verset par verset, enregistré à l'arrêt du défilement.
+  const versetVisible = useRef(versetInitial);
 
-  // Arabe + traduction par défaut, tant que l'utilisateur n'a pas choisi.
-  const mode = affichage || 'arabeTrad';
+  // Un jour de lecture est compté après 30 secondes passées sur la sourate.
+  useEffect(() => {
+    const minuteur = setTimeout(() => marquerJour(cleJour(new Date())), SECONDES_POUR_UN_JOUR * 1000);
+    return () => clearTimeout(minuteur);
+  }, [marquerJour]);
+
+  const enregistrerVerset = useCallback(
+    () => enregistrerPosition({ sourate: s.n, verset: versetVisible.current, mode: 'verset' }),
+    [enregistrerPosition, s.n],
+  );
+  // Doit rester stable : la FlatList refuse un rappel qui change entre deux rendus.
+  const surVisibles = useCallback(({ viewableItems }: { viewableItems: { item: { n: number } }[] }) => {
+    const premier = viewableItems[0];
+    if (premier) versetVisible.current = premier.item.n;
+  }, []);
+
+  // En vue page : la position est le premier verset de la page affichée.
+  useEffect(() => {
+    if (!modePage) return;
+    const debut = segmentsDePage(page)[0]?.versets[0];
+    if (debut) enregistrerPosition({ sourate: debut.sourate, verset: debut.verset, mode: 'page' });
+  }, [modePage, page, enregistrerPosition]);
+
+  // Reprise en lecture verset par verset : on se place sur le verset enregistré.
+  useEffect(() => {
+    if (modePage || versetInitial <= 1) return;
+    const minuteur = setTimeout(() => liste.current?.scrollToIndex({ index: versetInitial - 1, animated: false }), 0);
+    return () => clearTimeout(minuteur);
+  }, [modePage, versetInitial]);
   const sousTitre = `${t('lire.sourate')} ${s.n} · ${t('lire.versets', { count: s.versets })}`;
   const legende = [typographie.legende, { color: couleurs.encre3, textAlign: 'center' as const }];
 
   const basculerMode = () => {
     if (modePage) {
+      // On reste sur le verset qui ouvre la page : la lecture verset par verset s'y place.
+      const debut = segmentsDePage(page)[0]?.versets[0];
+      versetVisible.current = debut?.sourate === s.n ? debut.verset : 1;
       setModePage(false);
       return;
     }
-    // On part sur la page qui contient le premier verset de la sourate.
-    setPage(pageDe(s.n, 1) ?? 1);
+    setPage(pageDe(s.n, versetVisible.current) ?? 1);
     setModePage(true);
   };
 
@@ -149,7 +212,10 @@ function LectureSourate({ s }: { s: Sourate }) {
               { id: 'tradSeule', label: t('lire.tradSeule') },
             ]}
             valeur={mode}
-            onChange={setAffichage}
+            onChange={(id) => {
+              const choix = affichagesLecture.find((x) => x === id);
+              if (choix) definirAffichage(choix);
+            }}
           />
         </View>
       )}
@@ -184,7 +250,17 @@ function LectureSourate({ s }: { s: Sourate }) {
       ) : (
         <FlatList
           key={String(s.n)}
+          ref={liste}
           data={versets}
+          viewabilityConfig={CONFIG_VISIBILITE}
+          onViewableItemsChanged={surVisibles}
+          onScrollEndDrag={enregistrerVerset}
+          onMomentumScrollEnd={enregistrerVerset}
+          onScrollToIndexFailed={({ index, averageItemLength }) => {
+            // Verset pas encore mesuré : on s'en approche, puis on réessaie.
+            liste.current?.scrollToOffset({ offset: averageItemLength * index, animated: false });
+            setTimeout(() => liste.current?.scrollToIndex({ index, animated: false }), 100);
+          }}
           keyExtractor={(v) => String(v.n)}
           ListHeaderComponent={<Entete sourate={s.n} mode={mode} />}
           ItemSeparatorComponent={() => <View style={[styles.ligneFine, { backgroundColor: couleurs.ligne }]} />}
@@ -240,8 +316,8 @@ function LectureSourate({ s }: { s: Sourate }) {
                   pleineLargeur
                   onPress={() =>
                     router.replace({
-                      pathname: '/lire/sourate',
-                      params: { n: sourates[s.n].n },
+                      pathname: '/lire/coran/[sourate]',
+                      params: { sourate: sourates[s.n].n },
                     })
                   }>
                   {`${t('lire.souratesuivante')} · ${sourates[s.n].nom}`}
@@ -253,8 +329,8 @@ function LectureSourate({ s }: { s: Sourate }) {
                   pleineLargeur
                   onPress={() =>
                     router.replace({
-                      pathname: '/lire/sourate',
-                      params: { n: s.n - 1 },
+                      pathname: '/lire/coran/[sourate]',
+                      params: { sourate: s.n - 1 },
                     })
                   }>
                   {`${t('lire.souratePrecedente')} · ${sourates[s.n - 2].nom}`}

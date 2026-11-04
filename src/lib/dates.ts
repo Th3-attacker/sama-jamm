@@ -36,3 +36,13 @@ export function formatHegirien(date: Date, langue: string): string | null {
     return null;
   }
 }
+
+/** Clé de jour locale « 2026-10-29 », pour comparer des jours sans fuseau. */
+export function cleJour(date: Date): string {
+  return `${date.getFullYear()}-${deux(date.getMonth() + 1)}-${deux(date.getDate())}`;
+}
+
+/** « octobre » : nom du mois dans la langue de l'interface (le wolof utilise le français). */
+export function formatMois(date: Date, langue: string): string {
+  return new Intl.DateTimeFormat(LOCALES[langue] ?? 'fr-FR', { month: 'long' }).format(date);
+}
