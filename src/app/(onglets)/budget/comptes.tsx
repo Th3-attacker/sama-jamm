@@ -1,16 +1,18 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { NOM_ENVELOPPE_MAX, TYPES_COMPTE, type TypeCompte } from '@/features/budget/depot';
 import { EtatsBudget } from '@/features/budget/EtatsBudget';
 import { budgetModifie, useBudget } from '@/features/budget/useBudget';
 import { formatMontant, versMinimes } from '@/lib/montant';
+import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { AmountDisplay } from '@/ui/AmountDisplay';
 import { Banner } from '@/ui/Banner';
 import { BottomSheet } from '@/ui/BottomSheet';
 import { Button } from '@/ui/Button';
+import { Chip } from '@/ui/Chip';
 import { ListGroup } from '@/ui/ListGroup';
 import { ListItem } from '@/ui/ListItem';
 import { SegmentedControl } from '@/ui/SegmentedControl';
@@ -24,7 +26,7 @@ const ICONES: Record<TypeCompte, IconName> = { especes: 'wallet', mobile: 'bolt'
 /** Où se trouve l'argent du foyer : chaque compte avec son solde, et le total. */
 export default function Comptes() {
   const { t } = useTranslation();
-  const { couleurs, espace } = useTheme();
+  const { couleurs, espace, typographie } = useTheme();
   const { afficher } = useToast();
   const etat = useBudget((depot, carnet) => depot.comptesAvecSolde(carnet));
   const [feuille, setFeuille] = useState(false);
@@ -32,6 +34,11 @@ export default function Comptes() {
   const [type, setType] = useState<TypeCompte>('mobile');
   const [solde, setSolde] = useState('');
   const [echec, setEchec] = useState(false);
+  // Feuille de virement : compte de départ, compte d'arrivée, montant.
+  const [virement, setVirement] = useState(false);
+  const [de, setDe] = useState<string | null>(null);
+  const [vers, setVers] = useState<string | null>(null);
+  const [montantVirement, setMontantVirement] = useState('');
 
   if (etat.etat !== 'pret') {
     return (
@@ -48,6 +55,48 @@ export default function Comptes() {
   const nomPropre = nom.trim();
   const nomValide = nomPropre.length >= 1 && nomPropre.length <= NOM_ENVELOPPE_MAX;
   const soldeMinimes = solde.trim() === '' ? 0 : versMinimes(solde, devise);
+
+  const deChoisi = de ?? comptes[0]?.id ?? null;
+  const versChoisi = vers ?? comptes.find((c) => c.id !== deChoisi)?.id ?? null;
+  const virementMinimes = montantVirement.trim() === '' ? null : versMinimes(montantVirement, devise);
+  const virementValide =
+    deChoisi !== null &&
+    versChoisi !== null &&
+    deChoisi !== versChoisi &&
+    virementMinimes !== null &&
+    virementMinimes > 0;
+
+  const virer = async () => {
+    if (!virementValide || !deChoisi || !versChoisi || virementMinimes === null) return;
+    setEchec(false);
+    try {
+      await depot.virement(carnet, { de: deChoisi, vers: versChoisi, montant: virementMinimes, note: null });
+      setVirement(false);
+      budgetModifie();
+      afficher({
+        texte: t('budget.virementEnregistre', { montant: formatMontant(virementMinimes, devise) }),
+        icone: 'check',
+      });
+    } catch (erreur: unknown) {
+      console.error('Virement non enregistré', erreur);
+      setEchec(true);
+    }
+  };
+
+  const puces = (titre: string, choisi: string | null, choisir: (id: string) => void) => (
+    <View style={{ gap: espace.espace2 }}>
+      <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, { color: couleurs.encre }]}>
+        {titre}
+      </Text>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: espace.espace2 }}>
+        {comptes.map((c) => (
+          <Chip key={c.id} selectionne={c.id === choisi} onPress={() => choisir(c.id)}>
+            {c.nom}
+          </Chip>
+        ))}
+      </ScrollView>
+    </View>
+  );
 
   const ajouter = async () => {
     if (!nomValide || soldeMinimes === null) return;
@@ -97,7 +146,48 @@ export default function Comptes() {
           }}>
           {t('budget.nouveauCompte')}
         </Button>
+        {comptes.length > 1 ? (
+          <Button
+            variant="secondaire"
+            icone="repeat"
+            pleineLargeur
+            onPress={() => {
+              setDe(null);
+              setVers(null);
+              setMontantVirement('');
+              setEchec(false);
+              setVirement(true);
+            }}>
+            {t('budget.virement')}
+          </Button>
+        ) : null}
       </ScrollView>
+
+      <BottomSheet ouvert={virement} titre={t('budget.virementTitre')} onFermer={() => setVirement(false)}>
+        {puces(t('budget.depuis'), deChoisi, setDe)}
+        {puces(t('budget.vers'), versChoisi, setVers)}
+        {deChoisi !== null && deChoisi === versChoisi ? (
+          <Banner ton="attention" icone="alert">
+            {t('budget.comptesIdentiques')}
+          </Banner>
+        ) : null}
+        <TextField
+          label={t('budget.montant')}
+          valeur={montantVirement}
+          onChange={setMontantVirement}
+          clavier={devise.decimales > 0 ? 'decimal-pad' : 'number-pad'}
+          suffixe={devise.symbole}
+          erreur={
+            montantVirement.trim() !== '' && (virementMinimes === null || virementMinimes <= 0)
+              ? t('budget.montantInvalide')
+              : undefined
+          }
+        />
+        {echec ? <Banner ton="erreur">{t('etats.erreurTexte')}</Banner> : null}
+        <Button pleineLargeur disabled={!virementValide} onPress={virer}>
+          {t('commun.enregistrer')}
+        </Button>
+      </BottomSheet>
 
       <BottomSheet ouvert={feuille} titre={t('budget.nouveauCompte')} onFermer={() => setFeuille(false)}>
         <TextField

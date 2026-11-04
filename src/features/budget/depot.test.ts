@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { DatabaseSync, type SQLInputValue } from 'node:sqlite';
 import { test } from 'node:test';
 
-import { creerDepot, SaisieInvalide, type Carnet, type Parametre, type Sql } from './depot.ts';
+import { creerDepot, nonReparti, SaisieInvalide, type Carnet, type Parametre, type Sql } from './depot.ts';
 import { migrations } from './schema.ts';
 
 /** Même interface que dans l'app, sur SQLite en mémoire. */
@@ -549,4 +549,99 @@ test('ajouter un compte : nom, type et solde vérifiés', async () => {
   );
   await assert.rejects(depot.ajouterCompte(carnet, { nom: 'X', type: 'banque', soldeInitial: -1 }), SaisieInvalide);
   assert.equal((await depot.comptes(carnet.id)).length, 1);
+});
+
+test('jour de paie : revenu, mise de côté et répartition, puis non réparti', async () => {
+  const { depot } = monde();
+  const carnet = await carnetExemple(depot);
+  const [quotidien, loyer, transport] = (await depot.mois(carnet)).enveloppes;
+  assert.ok(quotidien && loyer && transport);
+  // Avant : 350 000 reçus, 280 000 répartis.
+  assert.equal(nonReparti(await depot.mois(carnet)), 70_000);
+  await depot.jourDePaie(carnet, {
+    revenu: 50_000,
+    compteId: null,
+    epargne: 40_000,
+    sadaqa: 5_000,
+    plafonds: [{ enveloppeId: transport.id, montant: 45_000 }],
+  });
+  const mois = await depot.mois(carnet);
+  assert.equal(mois.recu, 400_000);
+  assert.equal(mois.misDeCote, 45_000);
+  assert.equal(mois.enveloppes[2]?.plafond, 45_000);
+  assert.equal(nonReparti(mois), 400_000 - 45_000 - (150_000 + 100_000 + 45_000));
+});
+
+test('jour de paie : tout ou rien si une enveloppe est inconnue ou un montant invalide', async () => {
+  const { depot } = monde();
+  const carnet = await carnetExemple(depot);
+  const base = { revenu: 10_000, compteId: null, epargne: 0, sadaqa: 0 };
+  await assert.rejects(
+    depot.jourDePaie(carnet, { ...base, plafonds: [{ enveloppeId: 'absente', montant: 1 }] }),
+    SaisieInvalide,
+  );
+  await assert.rejects(depot.jourDePaie(carnet, { ...base, epargne: -1, plafonds: [] }), SaisieInvalide);
+  assert.equal((await depot.mois(carnet)).recu, 350_000);
+});
+
+test('bilan : restes du cycle terminé, report, épargne, sadaqa, clôture unique', async () => {
+  const w = monde();
+  const carnet = await carnetExemple(w.depot);
+  const [quotidien, loyer, transport] = (await w.depot.mois(carnet)).enveloppes;
+  assert.ok(quotidien && loyer && transport);
+  const dep = (montant: number, enveloppeId: string) =>
+    w.depot.ajouterDepense(carnet, { carnetId: carnet.id, montant, enveloppeId, compteId: null, note: null });
+  await dep(140_000, quotidien.id); // reste 10 000
+  await dep(100_000, loyer.id); // reste 0
+  await dep(10_000, transport.id); // reste 20 000
+  assert.equal(await w.depot.bilanAFaire(carnet), null); // cycle pas encore terminé
+
+  w.allerAu('2026-11-26');
+  const bilan = await w.depot.bilanAFaire(carnet);
+  assert.ok(bilan);
+  assert.deepEqual(bilan.cycle.fin, '2026-11-24');
+  assert.deepEqual(
+    bilan.enveloppes.map((e) => [e.nom, e.reste]),
+    [
+      ['Dépense quotidienne', 10_000],
+      ['Transport', 20_000],
+    ],
+  );
+  const totaux = await w.depot.cloreCycle(carnet, bilan.cycle.id, { [transport.id]: 'sadaqa' });
+  assert.deepEqual(totaux, { reporte: 10_000, epargne: 0, sadaqa: 20_000 });
+  const mois = await w.depot.mois(carnet);
+  assert.deepEqual([mois.enveloppes[0]?.plafond, mois.enveloppes[0]?.report], [160_000, 10_000]);
+  assert.equal(mois.enveloppes[2]?.report, 0);
+  // Le report ne compte pas comme argent réparti ce cycle.
+  assert.equal(nonReparti(mois), -(150_000 + 100_000 + 30_000));
+  assert.equal(await w.depot.bilanAFaire(carnet), null);
+  await assert.rejects(w.depot.cloreCycle(carnet, bilan.cycle.id, {}), SaisieInvalide);
+  // La sadaqa est inscrite sur le cycle terminé.
+  w.allerAu('2026-11-20');
+  assert.equal((await w.depot.mois(carnet)).misDeCote, 20_000);
+});
+
+test('bilan : un cycle en cours ne peut pas être clos', async () => {
+  const { depot } = monde();
+  const carnet = await carnetExemple(depot);
+  const { cycle } = await depot.mois(carnet);
+  await assert.rejects(depot.cloreCycle(carnet, cycle.id, {}), SaisieInvalide);
+});
+
+test('virement : soldes des deux comptes, enveloppes et totaux inchangés', async () => {
+  const { depot } = monde();
+  const carnet = await carnetExemple(depot);
+  const wave = await depot.ajouterCompte(carnet, { nom: 'Wave', type: 'mobile', soldeInitial: 50_000 });
+  const [especes] = await depot.comptes(carnet.id);
+  assert.ok(especes);
+  await depot.virement(carnet, { de: wave, vers: especes.id, montant: 20_000, note: 'Retrait' });
+  assert.deepEqual(
+    (await depot.comptesAvecSolde(carnet)).map((c) => c.solde),
+    [370_000, 30_000],
+  );
+  const mois = await depot.mois(carnet);
+  assert.deepEqual([mois.recu, mois.depense, mois.misDeCote], [350_000, 0, 0]);
+  await assert.rejects(depot.virement(carnet, { de: wave, vers: wave, montant: 1, note: null }), SaisieInvalide);
+  await assert.rejects(depot.virement(carnet, { de: wave, vers: 'absent', montant: 1, note: null }), SaisieInvalide);
+  await assert.rejects(depot.virement(carnet, { de: wave, vers: especes.id, montant: 0, note: null }), SaisieInvalide);
 });
