@@ -619,7 +619,18 @@
     "revenusTitre": "مداخيل هذه الدورة",
     "aucunRevenu": "لا مداخيل مسجلة لهذه الدورة.",
     "modificationEnregistree": "تم حفظ التعديل",
-    "voirRevenus": "عرض المداخيل"
+    "voirRevenus": "عرض المداخيل",
+    "supprimerEnveloppe": "حذف الظرف",
+    "supprimerEnveloppeTitre": "حذف هذا الظرف؟",
+    "supprimerEnveloppeVide": "سيُحذف هذا الظرف.",
+    "supprimerEnveloppeAvec_zero": "سيُحذف مع مصروفاته ({{montant}}). ستنقص مجاميعك بالقدر نفسه.",
+    "supprimerEnveloppeAvec_one": "سيُحذف مع مصروفه الوحيد ({{montant}}). ستنقص مجاميعك بالقدر نفسه.",
+    "supprimerEnveloppeAvec_two": "سيُحذف مع مصروفيه ({{montant}}). ستنقص مجاميعك بالقدر نفسه.",
+    "supprimerEnveloppeAvec_few": "سيُحذف مع {{count}} مصروفات ({{montant}}). ستنقص مجاميعك بالقدر نفسه.",
+    "supprimerEnveloppeAvec_many": "سيُحذف مع {{count}} مصروفًا ({{montant}}). ستنقص مجاميعك بالقدر نفسه.",
+    "supprimerEnveloppeAvec_other": "سيُحذف مع {{count}} مصروف ({{montant}}). ستنقص مجاميعك بالقدر نفسه.",
+    "enveloppeSupprimee": "تم حذف الظرف",
+    "noteRevenuAide": "مثلًا: راتب، مساعدة من العائلة."
   },
   "epargne": {
     "titre": "الادخار",

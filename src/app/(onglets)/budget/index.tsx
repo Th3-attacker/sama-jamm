@@ -7,6 +7,7 @@ import { depassement, depenseDuJour, joursRestants, pasArrondi, resteAVivre } fr
 import { iconeEnveloppe } from '@/features/budget/enveloppesDeDepart';
 import { NOM_ENVELOPPE_MAX } from '@/features/budget/depot';
 import { EtatsBudget } from '@/features/budget/EtatsBudget';
+import { FeuilleRevenu } from '@/features/budget/FeuilleRevenu';
 import { budgetModifie, useBudget } from '@/features/budget/useBudget';
 import { cleJour, formatJourCle } from '@/lib/dates';
 import { formatMontant, versMinimes } from '@/lib/montant';
@@ -29,6 +30,7 @@ export default function Budget() {
   const [nom, setNom] = useState('');
   const [plafond, setPlafond] = useState('');
   const [echec, setEchec] = useState(false);
+  const [feuilleRevenu, setFeuilleRevenu] = useState(false);
 
   if (etat.etat !== 'pret') {
     return (
@@ -135,6 +137,9 @@ export default function Budget() {
         <Button icone="plus" pleineLargeur onPress={() => router.push('/budget-ajout')}>
           {t('budget.ajouterDepense')}
         </Button>
+        <Button variant="secondaire" icone="plus" pleineLargeur onPress={() => setFeuilleRevenu(true)}>
+          {t('budget.ajouterRevenu')}
+        </Button>
 
         <View>
           <Text
@@ -193,6 +198,13 @@ export default function Budget() {
           {t('commun.enregistrer')}
         </Button>
       </BottomSheet>
+
+      <FeuilleRevenu
+        ouvert={feuilleRevenu}
+        onFermer={() => setFeuilleRevenu(false)}
+        carnet={carnet}
+        depot={etat.depot}
+      />
     </View>
   );
 }

@@ -477,6 +477,52 @@ export function creerDepot(sql: Sql, outils: Outils) {
       if (!existe) throw new SaisieInvalide('enveloppeInconnue');
       await sql.executer('UPDATE enveloppes SET archivee = 1 WHERE id = ? AND carnet_id = ?', id, carnet.id);
     },
+
+    /** Dépenses d'une enveloppe, tous cycles confondus : à annoncer avant de la supprimer. */
+    async depensesDeLEnveloppe(carnet: Carnet, id: string): Promise<{ nombre: number; total: number }> {
+      const r = await sql.premier<{ nombre: number; total: number }>(
+        'SELECT COUNT(*) AS nombre, COALESCE(SUM(montant), 0) AS total FROM operations WHERE enveloppe_id = ? AND carnet_id = ?',
+        id,
+        carnet.id,
+      );
+      return { nombre: r?.nombre ?? 0, total: r?.total ?? 0 };
+    },
+
+    /** Supprime l'enveloppe avec ses plafonds et ses dépenses, tout ou rien (après confirmation). */
+    async supprimerEnveloppe(carnet: Carnet, id: string): Promise<void> {
+      const existe = await sql.premier<{ id: string }>(
+        'SELECT id FROM enveloppes WHERE id = ? AND carnet_id = ?',
+        id,
+        carnet.id,
+      );
+      if (!existe) throw new SaisieInvalide('enveloppeInconnue');
+      await sql.transaction(async () => {
+        await sql.executer('DELETE FROM operations WHERE enveloppe_id = ? AND carnet_id = ?', id, carnet.id);
+        await sql.executer('DELETE FROM plafonds WHERE enveloppe_id = ?', id);
+        await sql.executer('DELETE FROM enveloppes WHERE id = ? AND carnet_id = ?', id, carnet.id);
+      });
+    },
+
+    /** Argent reçu en cours de cycle (salaire, aide…) : augmente le reçu et la dépense du jour. */
+    async ajouterRevenu(
+      carnet: Carnet,
+      r: { montant: number; compteId: string | null; note: string | null },
+    ): Promise<void> {
+      if (!montantValide(r.montant)) throw new SaisieInvalide('montantInvalide');
+      const cycle = await cycleCourant(carnet);
+      const note = r.note?.trim() ? r.note.trim() : null;
+      await sql.executer(
+        "INSERT INTO operations (id, carnet_id, cycle_id, type, montant, date, compte_id, note, cree_le) VALUES (?, ?, ?, 'revenu', ?, ?, ?, ?, ?)",
+        outils.nouvelId(),
+        carnet.id,
+        cycle.id,
+        r.montant,
+        outils.aujourdhui(),
+        r.compteId,
+        note,
+        outils.horodatage(),
+      );
+    },
   };
 }
 

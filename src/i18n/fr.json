@@ -587,7 +587,14 @@
     "revenusTitre": "Revenus de ce cycle",
     "aucunRevenu": "Aucun revenu enregistré pour ce cycle.",
     "modificationEnregistree": "Modification enregistrée",
-    "voirRevenus": "Voir les revenus"
+    "voirRevenus": "Voir les revenus",
+    "supprimerEnveloppe": "Supprimer l'enveloppe",
+    "supprimerEnveloppeTitre": "Supprimer cette enveloppe ?",
+    "supprimerEnveloppeVide": "Cette enveloppe sera supprimée.",
+    "supprimerEnveloppeAvec_one": "Elle sera supprimée avec sa dépense ({{montant}}). Vos totaux baisseront d'autant.",
+    "supprimerEnveloppeAvec_other": "Elle sera supprimée avec ses {{count}} dépenses ({{montant}}). Vos totaux baisseront d'autant.",
+    "enveloppeSupprimee": "Enveloppe supprimée",
+    "noteRevenuAide": "Par exemple : salaire, aide de la famille."
   },
   "epargne": {
     "titre": "Épargne",
