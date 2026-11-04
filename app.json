@@ -55,7 +55,15 @@
           "locationWhenInUsePermission": "Pour calculer vos horaires de prière et la direction de la qibla sur ce téléphone."
         }
       ],
-      "expo-notifications",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/notification-icon.png",
+          "color": "#1f5f4a",
+          "defaultChannel": "rappels-v1",
+          "sounds": ["./assets/sons/adhan_complet.ogg", "./assets/sons/adhan_court.ogg"]
+        }
+      ],
       "expo-background-task",
       "expo-secure-store",
       [

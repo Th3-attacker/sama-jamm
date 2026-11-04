@@ -312,7 +312,9 @@
     "maPosition": "Ma position",
     "sansRappel": "Sans rappel avant",
     "son": "Son de l'appel",
-    "rappelAvantTitre": "Rappel avant la prière"
+    "rappelAvantTitre": "Rappel avant la prière",
+    "essayerSon": "Essayer ce son",
+    "essaiRefuse": "Autorisez les notifications pour entendre l’essai."
   },
   "notifications": {
     "appelTitre": "{{priere}} · {{heure}}",
@@ -331,7 +333,8 @@
       "vibration": "Vibration",
       "silencieux": "Silencieux",
       "rappels": "Rappels"
-    }
+    },
+    "essaiTitre": "Essai du son de l’appel"
   },
   "qibla": {
     "titre": "Qibla",
@@ -458,6 +461,7 @@
     "sources": "Sources et licences",
     "sourceCoran": "Texte du Coran : édition uthmani obtenue via alquran.cloud (api.alquran.cloud), reproduite sans modification.",
     "sourceTraduction": "Traduction française : Muhammad Hamidullah, obtenue via alquran.cloud (api.alquran.cloud).",
+    "sourceAdhan": "Appels à la prière : « Beautiful adhan » (Adam-synagda) et « Adhan » (Aishatu98), Wikimedia Commons, domaine public (CC0).",
     "polices": "Polices : Cormorant Garamond, Source Serif 4, Source Sans 3, Amiri, Amiri Quran (SIL Open Font License).",
     "remerciements": "Remerciements",
     "contact": "Écrire à l'équipe",
