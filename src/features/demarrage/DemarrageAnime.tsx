@@ -2,7 +2,7 @@
 // puis fondu vers l'app. Moins d'une seconde ; l'app se charge dessous, l'animation ne la retarde jamais.
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Image, StyleSheet, Text } from 'react-native';
+import { Image, StyleSheet, Text, useColorScheme } from 'react-native';
 import Animated, {
   Easing,
   useAnimatedStyle,
@@ -12,6 +12,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
+import iconeDemarrageSombre from '../../../assets/images/splash-icon-dark.png';
 import iconeDemarrage from '../../../assets/images/splash-icon.png';
 
 import { echelleMax } from '@/theme/typographie';
@@ -28,6 +29,8 @@ export function DemarrageAnime({ onFin }: { onFin: () => void }) {
   const { t } = useTranslation();
   const { couleurs, espace, typographie, latin } = useTheme();
   const reduit = useReducedMotion();
+  // Même image que le démarrage natif, qui suit le mode du téléphone (pas le thème choisi dans l'app).
+  const sombre = useColorScheme() === 'dark';
   const marque = useSharedValue(0);
   const filet = useSharedValue(0);
   const signature = useSharedValue(0);
@@ -61,7 +64,7 @@ export function DemarrageAnime({ onFin }: { onFin: () => void }) {
       accessibilityLabel={t('demarrage.traduction')}
       style={[StyleSheet.absoluteFill, styles.centre, { backgroundColor: couleurs.fond }, styleEcran]}>
       <Animated.View style={styleMarque}>
-        <Image source={iconeDemarrage} style={{ width: LARGEUR_IMAGE, height: LARGEUR_IMAGE }} resizeMode="contain" />
+        <Image source={sombre ? iconeDemarrageSombre : iconeDemarrage} style={{ width: LARGEUR_IMAGE, height: LARGEUR_IMAGE }} resizeMode="contain" />
       </Animated.View>
       <Animated.View style={[styles.bas, { gap: espace.espace2 }, styleSignature]}>
         <Animated.View style={[styles.filet, { backgroundColor: couleurs.or }, styleFilet]} />
