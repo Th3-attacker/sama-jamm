@@ -17,6 +17,7 @@ import {
 } from '@/features/lire/coran';
 import { PageMushaf } from '@/features/lire/PageMushaf';
 import { cleJour } from '@/lib/dates';
+import { PartageVerset, type VersetAPartager } from '@/features/lire/PartageVerset';
 import { cleVerset, useFavoris } from '@/stores/favoris';
 import { useLecture, type ModeLecture } from '@/stores/lecture';
 import { affichagesLecture, useReglages } from '@/stores/reglages';
@@ -95,6 +96,7 @@ function LectureSourate({
   const basculer = useFavoris((st) => st.basculer);
   const { afficher } = useToast();
 
+  const [aPartager, setAPartager] = useState<VersetAPartager | null>(null);
   const basculerFavori = (verset: number) => {
     if (basculer(s.n, verset)) afficher({ texte: t('lire.favoriAjoute'), icone: 'check' });
   };
@@ -301,6 +303,11 @@ function LectureSourate({
                   label={t(favoris.includes(cleVerset(s.n, item.n)) ? 'lire.favoriRetirer' : 'lire.favoriAjouter')}
                   onPress={() => basculerFavori(item.n)}
                 />
+                <IconButton
+                  icone="share"
+                  label={t('partage.titre')}
+                  onPress={() => setAPartager({ sourate: s.n, nomSourate: s.nom, n: item.n, texte: item.texte, trad: item.trad })}
+                />
               </View>
             </View>
           </View>
@@ -346,6 +353,7 @@ function LectureSourate({
           </View>
         }
       />
+      <PartageVerset verset={aPartager} onFermer={() => setAPartager(null)} />
     </View>
   );
 }
