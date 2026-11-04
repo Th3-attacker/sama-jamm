@@ -1,6 +1,9 @@
 // Recherche dans le Coran embarqué, sans réseau : arabe, traduction française et noms de sourates.
-// L'index (textes normalisés) est construit à la première recherche, pas au démarrage de l'app.
+// L'index (textes normalisés) est préparé par paquets à l'ouverture de l'écran (`preparerIndex`), sans figer la saisie ;
+// à défaut, il est construit d'un bloc à la première recherche.
 import { sourate, sourates, traductionDe, versetsDe, type Sourate } from '@/features/lire/coran';
+
+import { parPaquets } from '@/lib/paquets';
 
 import { contientArabe, normaliserArabe, normaliserLatin } from './normaliser';
 
@@ -22,17 +25,50 @@ type Index = {
   trad: string[][];
 };
 let indexEnMemoire: Index | undefined;
+let preparation: Promise<void> | undefined;
+
+const nomNormalise = (s: Sourate) => {
+  const nom = normaliserLatin(s.nom);
+  return { sourate: s, nom, sansEspaces: nom.replace(/ /g, ''), arabe: normaliserArabe(s.arabe) };
+};
+/** Une sourate de l'index : ses versets normalisés en arabe et en français. */
+const sourateNormalisee = (i: number) => {
+  const n = sourates[i]?.n ?? i + 1;
+  return { arabe: versetsDe(n).map(normaliserArabe), trad: traductionDe(n).map(normaliserLatin) };
+};
 
 function index(): Index {
-  indexEnMemoire ??= {
-    noms: sourates.map((s) => {
-      const nom = normaliserLatin(s.nom);
-      return { sourate: s, nom, sansEspaces: nom.replace(/ /g, ''), arabe: normaliserArabe(s.arabe) };
-    }),
-    arabe: sourates.map((s) => versetsDe(s.n).map(normaliserArabe)),
-    trad: sourates.map((s) => traductionDe(s.n).map(normaliserLatin)),
-  };
+  if (!indexEnMemoire) {
+    const parSourate = sourates.map((_, i) => sourateNormalisee(i));
+    indexEnMemoire = {
+      noms: sourates.map(nomNormalise),
+      arabe: parSourate.map((x) => x.arabe),
+      trad: parSourate.map((x) => x.trad),
+    };
+  }
   return indexEnMemoire;
+}
+
+/** Vrai quand l'index est prêt : une recherche ne bloquera plus l'écran. */
+export function indexPret(): boolean {
+  return indexEnMemoire !== undefined;
+}
+
+/** Prépare l'index par paquets de 10 sourates, en cédant la main entre deux paquets. Une seule préparation à la fois. */
+export function preparerIndex(): Promise<void> {
+  if (indexEnMemoire) return Promise.resolve();
+  preparation ??= parPaquets(sourates.length, sourateNormalisee, 10)
+    .then((parSourate) => {
+      indexEnMemoire ??= {
+        noms: sourates.map(nomNormalise),
+        arabe: parSourate.map((x) => x.arabe),
+        trad: parSourate.map((x) => x.trad),
+      };
+    })
+    .finally(() => {
+      preparation = undefined;
+    });
+  return preparation;
 }
 
 /** Tous les mots de la requête doivent se trouver dans le texte. */
