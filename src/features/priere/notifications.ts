@@ -9,6 +9,9 @@ import i18n from '@/i18n';
 import { formatHeure } from '@/lib/dates';
 import { useReglages, type Son } from '@/stores/reglages';
 
+import { stockage } from '@/stores/stockage';
+
+import { comparerFenetre } from './comparaison';
 import { construireFenetre, type Planifiee } from './fenetre';
 
 export const URL_PRIERE = 'samajamm://priere';
@@ -78,28 +81,83 @@ function contenu(n: Planifiee): Notifications.NotificationContentInput {
 
 const estDePriere = (id: string) => id.startsWith('priere-') || id.startsWith('rappel-');
 
-/** Annule puis reprogramme la fenêtre glissante. Ne demande jamais l'autorisation. */
-export async function replanifier(): Promise<number> {
+const CLE_EMPREINTES = 'notifications.empreintes';
+
+function lireEmpreintes(): Record<string, string> {
+  try {
+    const brut = stockage.getItem(CLE_EMPREINTES);
+    const valeur: unknown = typeof brut === 'string' ? JSON.parse(brut) : null;
+    return valeur && typeof valeur === 'object' ? (valeur as Record<string, string>) : {};
+  } catch (erreur: unknown) {
+    // Empreintes illisibles : tout sera reprogrammé, comme avant.
+    console.warn('Empreintes des notifications illisibles', erreur);
+    return {};
+  }
+}
+
+function ecrireEmpreintes(empreintes: Record<string, string>): void {
+  try {
+    void stockage.setItem(CLE_EMPREINTES, JSON.stringify(empreintes));
+  } catch (erreur: unknown) {
+    console.warn('Empreintes des notifications non enregistrées', erreur);
+  }
+}
+
+async function executerReplanification(): Promise<number> {
   const permission = await Notifications.getPermissionsAsync();
   const existantes = await Notifications.getAllScheduledNotificationsAsync();
-  await Promise.all(existantes.filter((n) => estDePriere(n.identifier)).map((n) => Notifications.cancelScheduledNotificationAsync(n.identifier)));
+  const programmees = new Set(existantes.map((n) => n.identifier).filter(estDePriere));
 
   const { lieu, rappels, sons, rappelAvant, methode, ecoleAsr, ajustements } = useReglages.getState();
-  if (!permission.granted || !lieu) return 0;
+  const fenetre =
+    permission.granted && lieu
+      ? construireFenetre({
+          lieu,
+          options: { methode, ecoleAsr, ajustements },
+          rappels,
+          sons,
+          rappelAvant,
+          depuis: new Date(),
+        })
+      : [];
+  const aProgrammer = fenetre.map((n) => {
+    const channelId = n.type === 'rappel' ? CANAL_RAPPELS : CANAUX[n.son];
+    const content = contenu(n);
+    // Empreinte : jour et heure, canal (son), texte (langue) ; une différence entraîne le remplacement.
+    const empreinte = [n.date.getTime(), channelId, content.title, content.body, String(content.sound)].join('|');
+    return { n, channelId, content, empreinte };
+  });
 
-  const fenetre = construireFenetre({ lieu, options: { methode, ecoleAsr, ajustements }, rappels, sons, rappelAvant, depuis: new Date() });
-  for (const n of fenetre) {
+  const anciennes = lireEmpreintes();
+  const { annuler, programmer } = comparerFenetre(
+    programmees,
+    anciennes,
+    aProgrammer.map((x) => ({ id: x.n.id, empreinte: x.empreinte })),
+  );
+  await Promise.all(annuler.map((id) => Notifications.cancelScheduledNotificationAsync(id)));
+  const aFaire = new Set(programmer);
+  for (const x of aProgrammer) {
+    if (!aFaire.has(x.n.id)) continue;
     await Notifications.scheduleNotificationAsync({
-      identifier: n.id,
-      content: contenu(n),
-      trigger: {
-        type: SchedulableTriggerInputTypes.DATE,
-        date: n.date,
-        channelId: n.type === 'rappel' ? CANAL_RAPPELS : CANAUX[n.son],
-      },
+      identifier: x.n.id,
+      content: x.content,
+      trigger: { type: SchedulableTriggerInputTypes.DATE, date: x.n.date, channelId: x.channelId },
     });
   }
-  return fenetre.length;
+  ecrireEmpreintes(Object.fromEntries(aProgrammer.map((x) => [x.n.id, x.empreinte])));
+  return aProgrammer.length;
+}
+
+let derniere: Promise<unknown> = Promise.resolve();
+
+/**
+ * Met la fenêtre glissante à jour en ne touchant qu'à ce qui change (voir `comparerFenetre`).
+ * Une seule mise à jour à la fois (premier plan, réglages, tâche de fond). Ne demande jamais l'autorisation.
+ */
+export function replanifier(): Promise<number> {
+  const resultat = derniere.then(executerReplanification);
+  derniere = resultat.catch(() => undefined);
+  return resultat;
 }
 
 // Tâche de fond quotidienne : reprogramme la fenêtre même si l'app n'est pas ouverte.

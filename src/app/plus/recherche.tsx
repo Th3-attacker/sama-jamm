@@ -1,11 +1,11 @@
 import { router } from 'expo-router';
-import { useDeferredValue, useMemo, useState } from 'react';
+import { useDeferredValue, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { SectionList, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, SectionList, StyleSheet, Text, View } from 'react-native';
 
 import { CarteSourate } from '@/features/lire/CarteSourate';
 import { CarteVerset } from '@/features/lire/CarteVerset';
-import { rechercher, type ResultatVerset } from '@/features/recherche/recherche';
+import { indexPret, preparerIndex, rechercher, VIDE, type ResultatVerset } from '@/features/recherche/recherche';
 import type { Sourate } from '@/features/lire/coran';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
@@ -22,9 +22,25 @@ export default function Recherche() {
   const [requete, setRequete] = useState('');
   // La frappe reste fluide : la recherche suit avec un léger retard.
   const requeteDiffree = useDeferredValue(requete);
-  const resultats = useMemo(() => rechercher(requeteDiffree), [requeteDiffree]);
+  // Index préparé par paquets après l'ouverture de l'écran ; la requête tapée entre-temps part dès qu'il est prêt.
+  const [pret, setPret] = useState(indexPret);
+  useEffect(() => {
+    if (pret) return;
+    let actif = true;
+    // Un effet s'exécute après l'affichage : l'écran et le champ sont déjà là quand la préparation commence.
+    preparerIndex()
+      .then(() => {
+        if (actif) setPret(true);
+      })
+      .catch((erreur: unknown) => console.error('Index de recherche non préparé', erreur));
+    return () => {
+      actif = false;
+    };
+  }, [pret]);
+  const resultats = useMemo(() => (pret ? rechercher(requeteDiffree) : VIDE), [pret, requeteDiffree]);
+  const enAttente = !pret && requeteDiffree.trim().length > 0;
   const recherche = requeteDiffree.trim().length > 0;
-  const aucun = recherche && resultats.sourates.length === 0 && resultats.versets.length === 0;
+  const aucun = pret && recherche && resultats.sourates.length === 0 && resultats.versets.length === 0;
 
   const sections = [
     { cle: 'sourates', titre: t('recherche.sourates'), data: resultats.sourates as Ligne[] },
@@ -42,7 +58,13 @@ export default function Recherche() {
         <SearchField autoFocus placeholder={t('recherche.placeholder')} valeur={requete} onChange={setRequete} />
       </View>
 
-      {aucun ? (
+      {enAttente ? (
+        <ActivityIndicator
+          accessibilityLabel={t('recherche.titre')}
+          color={couleurs.emeraude}
+          style={{ marginTop: espace.espace6 }}
+        />
+      ) : aucun ? (
         <EmptyState
           icone="search"
           titre={t('recherche.aucun', { terme: requeteDiffree.trim() })}
