@@ -51,6 +51,8 @@ type Donnees = {
   tailleLecture: number;
   /** Ce que la lecture affiche : arabe seul, arabe et traduction, ou traduction seule. */
   affichage: AffichageLecture;
+  /** Translittération sous le texte arabe (Tanzil, en caractères latins). */
+  translitLecture: boolean;
   /** Budget protégé par l'empreinte, le visage ou le code du téléphone. */
   verrouBudget: boolean;
   /** Montants du budget remplacés par « ••• » à l'ouverture de l'app. */
@@ -74,6 +76,7 @@ type Actions = {
   terminerBienvenue: () => void;
   definirTailleLecture: (echelon: number) => void;
   definirAffichage: (affichage: AffichageLecture) => void;
+  definirTranslitLecture: (actif: boolean) => void;
   definirVerrouBudget: (actif: boolean) => void;
   definirMasquerMontants: (actif: boolean) => void;
 };
@@ -99,6 +102,7 @@ const parDefaut: Donnees = {
   bienvenueTerminee: false,
   tailleLecture: 1,
   affichage: 'arabeTrad',
+  translitLecture: false,
   verrouBudget: false,
   masquerMontants: false,
 };
@@ -129,15 +133,17 @@ export const useReglages = create<Donnees & Actions>()(
       terminerBienvenue: () => set({ bienvenueTerminee: true }),
       definirTailleLecture: (echelon) => set({ tailleLecture: Math.max(0, Math.min(6, Math.round(echelon))) }),
       definirAffichage: (affichage) => set({ affichage }),
+      definirTranslitLecture: (translitLecture) => set({ translitLecture }),
       definirVerrouBudget: (verrouBudget) => set({ verrouBudget }),
       definirMasquerMontants: (masquerMontants) => set({ masquerMontants }),
     }),
     {
       name: 'reglages',
-      version: 4,
+      version: 5,
       storage: createJSONStorage(() => stockage),
       // v1 → v2 : réglages de prière ; v2 → v3 : vibrations. Valeurs par défaut pour les clés absentes.
       // v3 → v4 : la taille de lecture par défaut passe du 3e au 2e cran ; une autre taille choisie est gardée.
+      // v4 → v5 : translittération (absente des anciens réglages : la valeur par défaut, désactivée, s'applique).
       migrate: (etat, version) => {
         if (!etat || typeof etat !== 'object') return etat;
         const migre: Record<string, unknown> = version < 3 ? { ...parDefaut, ...etat } : { ...etat };
@@ -163,6 +169,7 @@ export const useReglages = create<Donnees & Actions>()(
         bienvenueTerminee: s.bienvenueTerminee,
         tailleLecture: s.tailleLecture,
         affichage: s.affichage,
+        translitLecture: s.translitLecture,
       }),
       onRehydrateStorage: () => (_etat, erreur) => {
         if (erreur) console.error('Réglages illisibles : valeurs par défaut', erreur);

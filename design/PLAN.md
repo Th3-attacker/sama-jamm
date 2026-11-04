@@ -26,7 +26,8 @@ Ordre : **A → B1 → B2 → C2 → C3 → C4 → B4 → C1 → C5 → D → E 
 | D3 | Démarrage animé (relais du démarrage natif, signature, fondu ; réduit si « Réduire les animations ») | #69 |
 | D4 | Journal local des erreurs (sans données personnelles), partagé par l'utilisateur depuis À propos | #70 |
 | E3 | Partage d'un verset : image (fond émeraude ou nuit, traduction au choix) ou texte avec lien | #71 |
-| Adhan | Appel à la prière dans les notifications (Android, sons CC0), icône de notification, essai du son ; iOS à faire (WAV ≤ 30 s, ffmpeg) | cette PR |
+| Adhan | Appel à la prière dans les notifications (Android, sons CC0), icône de notification, essai du son ; iOS à faire (WAV ≤ 30 s, ffmpeg) | #72 à #74 |
+| E1 · E2 | Crédit Tanzil ; translittération (réglage), repères juz et quarts de hizb, prosternations, juz en mode page | cette PR |
 
 ## A. Vérifier sur un téléphone (bloquant)
 
@@ -71,7 +72,7 @@ Ordre : **A → B1 → B2 → C2 → C3 → C4 → B4 → C1 → C5 → D → E 
 
 ## E. Contenus de lecture (après les droits)
 
-E1 licences du texte et de la traduction · E2 translittération, juz, hizb, prosternation · E4 xassaïdes et invocations.
+E1 bis : licence du texte arabe d'alquran.cloud à confirmer (ou passer au texte de Tanzil) · E4 xassaïdes et invocations.
 
 ## F. Écouter (après les droits audio)
 

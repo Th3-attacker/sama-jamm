@@ -9,15 +9,18 @@ import {
   basmalaDe,
   nombreDePages,
   pageDe,
+  reperes,
   segmentsDePage,
   sourate,
   sourates,
+  translitDe,
   type Sourate,
   versetsAvecTraduction,
 } from '@/features/lire/coran';
 import { PageMushaf } from '@/features/lire/PageMushaf';
 import { cleJour } from '@/lib/dates';
 import { PartageVerset, type VersetAPartager } from '@/features/lire/PartageVerset';
+import { TranslitVerset } from '@/features/lire/TranslitVerset';
 import { cleVerset, useFavoris } from '@/stores/favoris';
 import { useLecture, type ModeLecture } from '@/stores/lecture';
 import { affichagesLecture, useReglages } from '@/stores/reglages';
@@ -89,6 +92,8 @@ function LectureSourate({
   const { couleurs, espace, rayon, typographie } = useTheme();
   const { tailleArabe, tailleTrad } = useTaillesLecture();
   const mode = useReglages((st) => st.affichage);
+  const translitActive = useReglages((st) => st.translitLecture);
+  const translits = useMemo(() => (translitActive ? translitDe(s.n) : []), [s.n, translitActive]);
   const definirAffichage = useReglages((st) => st.definirAffichage);
   const enregistrerPosition = useLecture((st) => st.enregistrerPosition);
   const marquerJour = useLecture((st) => st.marquerJour);
@@ -176,7 +181,13 @@ function LectureSourate({
     <TopBar
       retour
       titre={modePage ? nomPage : s.nom}
-      sousTitre={modePage ? t('lire.pageN', { n: page }) : sousTitre}
+      sousTitre={
+        modePage && premierSegment
+          ? `${t('lire.pageN', { n: page })} · ${t('lire.juz', { n: reperes().juzDe(premierSegment.sourate, premierSegment.versets[0]?.verset ?? 1) })}`
+          : modePage
+            ? t('lire.pageN', { n: page })
+            : sousTitre
+      }
       actions={[
         {
           icone: modePage ? 'list' : 'book',
@@ -266,7 +277,20 @@ function LectureSourate({
         keyExtractor={(v) => String(v.n)}
         ListHeaderComponent={<Entete sourate={s.n} mode={mode} />}
         ItemSeparatorComponent={() => <View style={[styles.ligneFine, { backgroundColor: couleurs.ligne }]} />}
-        renderItem={({ item }) => (
+        renderItem={({ item }) => {
+          const repere = reperes().repereDe(s.n, item.n);
+          const sajda = reperes().sajdaDe(s.n, item.n);
+          return (
+          <View style={{ gap: espace.espace2 }}>
+            {repere ? (
+              <Text
+                maxFontSizeMultiplier={echelleMax.courant}
+                style={[typographie.libelle, styles.repere, { color: couleurs.orTexte }]}>
+                {repere.type === 'juz'
+                  ? `۞ ${t('lire.juz', { n: repere.juz })}`
+                  : `۞ ${t(`lire.quartsHizb.${repere.quart}`, { n: repere.hizb })}`}
+              </Text>
+            ) : null}
           <View style={[styles.verset, { gap: espace.espace3 }]}>
             <View
               style={[
@@ -289,6 +313,9 @@ function LectureSourate({
                   {item.texte}
                 </Text>
               ) : null}
+              {mode !== 'tradSeule' && translits[item.n - 1] ? (
+                <TranslitVerset texte={translits[item.n - 1] ?? ''} taille={tailleTrad} />
+              ) : null}
               {mode !== 'arabeSeul' && item.trad ? (
                 <Text
                   maxFontSizeMultiplier={echelleMax.grand}
@@ -309,10 +336,17 @@ function LectureSourate({
                   onPress={() => setAPartager({ sourate: s.n, nomSourate: s.nom, n: item.n, texte: item.texte, trad: item.trad })}
                 />
               </View>
+              {sajda ? (
+                <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.orTexte }]}>
+                  {`۩ ${t(sajda === 'obligatoire' ? 'lire.sajdaObligatoire' : 'lire.sajda')}`}
+                </Text>
+              ) : null}
             </View>
           </View>
-        )}
-        extraData={favoris}
+          </View>
+          );
+        }}
+        extraData={[favoris, translits]}
         contentContainerStyle={{
           paddingHorizontal: espace.espace5,
           paddingBottom: espace.espace8,
@@ -428,5 +462,6 @@ const styles = StyleSheet.create({
   textes: { flex: 1, gap: 4 },
   arabe: { textAlign: 'right', writingDirection: 'rtl' },
   actions: { flexDirection: 'row', justifyContent: 'flex-end' },
+  repere: { textAlign: 'center' },
   barreFlottante: { position: 'absolute', top: 0, left: 0, right: 0, borderBottomWidth: StyleSheet.hairlineWidth },
 });
