@@ -14,7 +14,7 @@ export type TextFieldProps = {
   erreur?: string;
   /** Unité après la valeur : « F CFA ». */
   suffixe?: string;
-  clavier?: 'default' | 'number-pad';
+  clavier?: 'default' | 'number-pad' | 'decimal-pad';
   maxLength?: number;
 };
 

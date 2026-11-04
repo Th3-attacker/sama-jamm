@@ -87,3 +87,17 @@ export function formatMontant(minimes: number, devise: Devise): string {
     ? `${devise.symbole}${ENTRE_NOMBRE_ET_SYMBOLE}${nombre}`
     : `${nombre}${ENTRE_NOMBRE_ET_SYMBOLE}${devise.symbole}`;
 }
+
+/**
+ * Montant stocké vers le texte d'un champ de saisie (« 2500 », « 12,50 ») : l'inverse de `versMinimes`.
+ * `null` si le montant ne s'écrit pas exactement avec les décimales de la devise (khoums isolés en ouguiya).
+ */
+export function versSaisie(minimes: number, devise: Devise): string | null {
+  if (!Number.isSafeInteger(minimes) || minimes < 0) return null;
+  const echelle = 10 ** devise.decimales;
+  const total = (minimes * echelle) / devise.sousUnites;
+  if (!Number.isSafeInteger(total)) return null;
+  const entier = Math.floor(total / echelle);
+  if (devise.decimales === 0) return String(entier);
+  return `${entier},${String(total % echelle).padStart(devise.decimales, '0')}`;
+}
