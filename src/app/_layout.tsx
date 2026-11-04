@@ -7,6 +7,7 @@ import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useReplanification } from '@/features/priere/useReplanification';
+import { useSurveillanceVerrou } from '@/features/budget/verrou';
 import { useNuitDePriere } from '@/features/priere/veille';
 import { useReglages } from '@/stores/reglages';
 import { polices } from '@/theme/polices';
@@ -24,6 +25,7 @@ export default function RootLayout() {
   const nuit = useNuitDePriere();
   const { i18n } = useTranslation();
   useReplanification();
+  useSurveillanceVerrou();
   const pret = policesChargees || erreurPolices !== null;
 
   useEffect(() => {

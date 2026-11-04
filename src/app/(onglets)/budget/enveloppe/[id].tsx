@@ -3,12 +3,13 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { useFormatMontant } from '@/features/budget/verrou';
 import { depenseDuJour, joursRestants, pasArrondi } from '@/features/budget/cycle';
 import { NOM_ENVELOPPE_MAX } from '@/features/budget/depot';
 import { EtatsBudget } from '@/features/budget/EtatsBudget';
 import { budgetModifie, useBudget } from '@/features/budget/useBudget';
 import { cleJour, formatJourCle } from '@/lib/dates';
-import { formatMontant, versMinimes, versSaisie } from '@/lib/montant';
+import { versMinimes, versSaisie } from '@/lib/montant';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { AmountDisplay } from '@/ui/AmountDisplay';
@@ -26,6 +27,7 @@ import { TopBar } from '@/ui/TopBar';
 /** Une enveloppe du cycle en cours : plafond, dépensé, reste, dépenses ; modifier le plafond, renommer, supprimer. */
 export default function EcranEnveloppe() {
   const { t, i18n } = useTranslation();
+  const formatMontant = useFormatMontant();
   const { couleurs, espace, typographie } = useTheme();
   const params = useLocalSearchParams<{ id?: string | string[] }>();
   const id = (Array.isArray(params.id) ? params.id[0] : params.id) ?? '';

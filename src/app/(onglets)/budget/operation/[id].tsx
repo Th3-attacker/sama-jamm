@@ -3,11 +3,12 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { useFormatMontant } from '@/features/budget/verrou';
 import { EtatsBudget } from '@/features/budget/EtatsBudget';
 import { budgetModifie, useBudget } from '@/features/budget/useBudget';
 import { ajouterJours } from '@/features/budget/cycle';
 import { cleJour, formatJourCle } from '@/lib/dates';
-import { formatMontant, versMinimes, versSaisie } from '@/lib/montant';
+import { versMinimes, versSaisie } from '@/lib/montant';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { Banner } from '@/ui/Banner';
@@ -21,6 +22,7 @@ import { TopBar } from '@/ui/TopBar';
 /** Corriger ou supprimer une opération (dépense ou revenu). Le jour et le cycle ne changent pas. */
 export default function EcranOperation() {
   const { t, i18n } = useTranslation();
+  const formatMontant = useFormatMontant();
   const { couleurs, espace, typographie } = useTheme();
   const { afficher } = useToast();
   const params = useLocalSearchParams<{ id?: string | string[] }>();

@@ -3,11 +3,11 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { useFormatMontant } from '@/features/budget/verrou';
 import type { ChoixBilan } from '@/features/budget/depot';
 import { EtatsBudget } from '@/features/budget/EtatsBudget';
 import { budgetModifie, useBudget } from '@/features/budget/useBudget';
 import { formatJourCle } from '@/lib/dates';
-import { formatMontant } from '@/lib/montant';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { Banner } from '@/ui/Banner';
@@ -21,6 +21,7 @@ const CHOIX: readonly ChoixBilan[] = ['reporter', 'epargner', 'sadaqa'];
 /** Bilan du cycle terminé : pour le reste de chaque enveloppe, reporter (défaut), épargner ou donner en sadaqa. */
 export default function Bilan() {
   const { t, i18n } = useTranslation();
+  const formatMontant = useFormatMontant();
   const { couleurs, espace, typographie } = useTheme();
   const { afficher } = useToast();
   const etat = useBudget((depot, carnet) => depot.bilanAFaire(carnet));

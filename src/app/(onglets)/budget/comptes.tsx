@@ -2,10 +2,11 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { useFormatMontant } from '@/features/budget/verrou';
 import { NOM_ENVELOPPE_MAX, TYPES_COMPTE, type TypeCompte } from '@/features/budget/depot';
 import { EtatsBudget } from '@/features/budget/EtatsBudget';
 import { budgetModifie, useBudget } from '@/features/budget/useBudget';
-import { formatMontant, versMinimes } from '@/lib/montant';
+import { versMinimes } from '@/lib/montant';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { AmountDisplay } from '@/ui/AmountDisplay';
@@ -26,6 +27,7 @@ const ICONES: Record<TypeCompte, IconName> = { especes: 'wallet', mobile: 'bolt'
 /** Où se trouve l'argent du foyer : chaque compte avec son solde, et le total. */
 export default function Comptes() {
   const { t } = useTranslation();
+  const formatMontant = useFormatMontant();
   const { couleurs, espace, typographie } = useTheme();
   const { afficher } = useToast();
   const etat = useBudget((depot, carnet) => depot.comptesAvecSolde(carnet));

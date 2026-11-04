@@ -1,6 +1,6 @@
 import {
   ArrowDown, ArrowLeft, ArrowUp, Bell, BookOpen, Bookmark, Calendar, Car, Check, ChevronDown, ChevronRight, Clock,
-  CloudOff, Compass, Copy, Delete, Download, Ellipsis, Globe, Headphones, Heart, House, Info, List, Lock, MapPin,
+  CloudOff, Compass, Copy, Delete, Download, Ellipsis, Eye, EyeOff, Globe, Headphones, Heart, House, Info, List, Lock, MapPin,
   Minus, Moon, Pause, Pencil, Play, Plus, Repeat, RotateCcw, Scale, Search, Share2, ShoppingCart, SkipBack,
   SkipForward, Settings, Sun, Target, Trash2, TriangleAlert, Type, User, Users, Wallet, X, Zap,
   type LucideIcon,
@@ -20,7 +20,7 @@ const LUCIDE: Record<Exclude<IconName, 'kaaba'>, LucideIcon> = {
   moon: Moon, sun: Sun, globe: Globe, trash: Trash2, edit: Pencil, compass: Compass, pin: MapPin, settings: Settings,
   user: User, users: Users, lock: Lock,
   calendar: Calendar, target: Target, heart: Heart, balance: Scale, list: List, type: Type, bolt: Zap, car: Car,
-  cart: ShoppingCart, copy: Copy,
+  cart: ShoppingCart, copy: Copy, eye: Eye, 'eye-off': EyeOff,
 };
 
 // Icônes de direction : retournées en interface arabe. Jamais les icônes audio.

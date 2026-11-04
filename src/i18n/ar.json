@@ -669,7 +669,13 @@
     "comptesIdentiques": "اختر حسابين مختلفين.",
     "epargneOperation": "ادخار",
     "sadaqaOperation": "صدقة",
-    "virementOperation": "تحويل"
+    "virementOperation": "تحويل",
+    "verrouIndisponible": "فعّل رمزًا أو نمطًا أو بصمة في إعدادات الهاتف لقفل الميزانية.",
+    "verrouCaptures": "على أندرويد، تُمنع حينها لقطات الشاشة للتطبيق.",
+    "verrouPrompt": "فتح ميزانيتك",
+    "masquerLesMontants": "إخفاء المبالغ",
+    "montrerLesMontants": "إظهار المبالغ",
+    "verrouEchec": "أُلغي الفتح. أعد المحاولة متى شئت."
   },
   "epargne": {
     "titre": "الادخار",

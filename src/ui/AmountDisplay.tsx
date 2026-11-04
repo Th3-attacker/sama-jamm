@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native';
 
-import { formatMontant, type Devise } from '@/lib/montant';
+import { useFormatMontant } from '@/features/budget/verrou';
+import { type Devise } from '@/lib/montant';
 import { useTheme } from '@/theme/useTheme';
 
 export type AmountDisplayProps = {
@@ -31,6 +32,7 @@ export function AmountDisplay({
   centre = false,
 }: AmountDisplayProps) {
   const { couleurs, typographie } = useTheme();
+  const formatMontant = useFormatMontant();
   const encre = surEmeraude ? couleurs.surEmeraude : couleurs.encre;
   const secondaire = surEmeraude ? couleurs.surEmeraude : couleurs.encre2;
   const couleurDetail =

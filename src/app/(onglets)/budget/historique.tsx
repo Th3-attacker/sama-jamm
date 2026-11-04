@@ -3,12 +3,12 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, SectionList, StyleSheet, Text, View } from 'react-native';
 
+import { useFormatMontant } from '@/features/budget/verrou';
 import type { FiltreHistorique, OperationHistorique } from '@/features/budget/depot';
 import { iconeEnveloppe } from '@/features/budget/enveloppesDeDepart';
 import { EtatsBudget } from '@/features/budget/EtatsBudget';
 import { useBudget } from '@/features/budget/useBudget';
 import { formatJourCle } from '@/lib/dates';
-import { formatMontant } from '@/lib/montant';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { Chip } from '@/ui/Chip';
@@ -21,6 +21,7 @@ const FILTRES: readonly FiltreHistorique[] = ['tout', 'depenses', 'revenus'];
 /** Toutes les opérations du cycle, groupées par jour ; toucher une opération ouvre sa correction. */
 export default function Historique() {
   const { t, i18n } = useTranslation();
+  const formatMontant = useFormatMontant();
   const { couleurs, espace, typographie } = useTheme();
   const [filtre, setFiltre] = useState<FiltreHistorique>('tout');
   const etat = useBudget((depot, carnet) => depot.historique(carnet, filtre), filtre);
