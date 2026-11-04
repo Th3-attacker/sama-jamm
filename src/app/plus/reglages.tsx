@@ -169,6 +169,13 @@ export default function Reglages() {
             onPress={() => router.push("/priere/rappels")}
           />
         </ListGroup>
+
+        <ListGroup>
+          <ListItem
+            titre={t("reglages.aPropos")}
+            onPress={() => router.push("/plus/a-propos")}
+          />
+        </ListGroup>
       </ScrollView>
 
       <BottomSheet
