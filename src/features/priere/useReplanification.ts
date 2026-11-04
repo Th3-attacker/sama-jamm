@@ -5,7 +5,7 @@ import { AppState } from 'react-native';
 
 import { useReglages } from '@/stores/reglages';
 
-import { creerCanaux, enregistrerTacheQuotidienne, replanifier, URL_PRIERE } from './notifications';
+import { creerCanaux, enregistrerTacheQuotidienne, replanifier, URL_PRIERE, URL_ZAKAT } from './notifications';
 
 // Notification reçue app ouverte : bannière sans son, l'utilisateur est déjà là.
 Notifications.setNotificationHandler({
@@ -55,7 +55,10 @@ export function useReplanification(): void {
       if (etat === 'active') differer();
     });
     const toucher = Notifications.addNotificationResponseReceivedListener((reponse) => {
-      if (reponse.notification.request.content.data?.url === URL_PRIERE) router.push('/priere');
+      const url = reponse.notification.request.content.data?.url;
+      if (url === URL_PRIERE) router.push('/priere');
+      // Rappel de zakat (features/budget/rappelZakat) : l'écran reste derrière le verrou du budget.
+      else if (url === URL_ZAKAT) router.push('/budget/zakat');
     });
 
     return () => {

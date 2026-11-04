@@ -962,3 +962,122 @@ test('jour de paie : versements par objectif et autre épargne', async () => {
   // Tout ou rien : l'échec n'a rien enregistré.
   assert.equal((await depot.epargne(carnet)).total, 35_000);
 });
+
+// --- Zakat indicative ---
+
+test('zakat : sans prix du gramme, pas de verdict ; base sur l’argent par défaut', async () => {
+  const { depot } = monde('2026-11-04');
+  const carnet = await carnetExemple(depot);
+  const z = await depot.zakat(carnet);
+  assert.equal(z.reglages.base, 'argent');
+  assert.equal(z.nisab, null);
+  assert.equal(z.etat.type, 'sansCours');
+  assert.equal(z.reglages.debutHawl, null);
+  // Le revenu de départ (350 000) est sur le compte Espèces : il compte dans la base.
+  assert.equal(z.composition.comptes, 350_000);
+});
+
+test('zakat : composition, nisab, début de l’année lunaire et montant', async () => {
+  const { depot, allerAu } = monde('2026-07-01');
+  const carnet = await carnetExemple(depot);
+  await depot.reglerZakat(carnet, { prixArgent: 600, prixOr: 45_000 });
+  await depot.verserEpargne(carnet, { montant: 100_000, objectifId: null, compteId: null, note: null });
+  await depot.ajouterBien(carnet, { type: 'or', libelle: 'Bijoux', valeur: 10_000 });
+  await depot.ajouterBien(carnet, { type: 'autre', libelle: null, valeur: 50_000 });
+  const pret = await depot.ajouterDette(carnet, {
+    sens: 'prete',
+    personne: 'Awa',
+    montant: 60_000,
+    echeance: null,
+    note: null,
+  });
+  await depot.ajouterPaiement(carnet, pret, { type: 'remboursement', montant: 10_000, date: '2026-07-01', note: null });
+  await depot.ajouterDette(carnet, {
+    sens: 'emprunte',
+    personne: 'Oncle',
+    montant: 30_000,
+    echeance: '2026-12-01',
+    note: null,
+  });
+  // Échéance après l'année lunaire : pas déduite.
+  await depot.ajouterDette(carnet, {
+    sens: 'emprunte',
+    personne: 'Banque',
+    montant: 99_000,
+    echeance: '2028-01-01',
+    note: null,
+  });
+  let z = await depot.zakat(carnet);
+  assert.deepEqual(z.composition, {
+    epargne: 100_000,
+    comptes: 350_000,
+    metaux: 450_000,
+    autres: 50_000,
+    creances: 50_000,
+    dettes: 30_000,
+  });
+  assert.equal(z.nisab, 357_000);
+  assert.equal(z.reglages.debutHawl, '2026-07-01');
+  assert.deepEqual(z.etat, {
+    type: 'due',
+    base: 970_000,
+    nisab: 357_000,
+    montant: 24_250,
+    echeance: '2027-06-20',
+    joursRestants: 354,
+  });
+  // Plus tard : le début reste le même.
+  allerAu('2026-11-04');
+  z = await depot.zakat(carnet);
+  assert.equal(z.reglages.debutHawl, '2026-07-01');
+  assert.equal(z.reglages.prixMajLe, '2026-07-01');
+});
+
+test('zakat : sous le nisab, le début de l’année lunaire est effacé', async () => {
+  const { depot } = monde('2026-07-01');
+  const carnet = await carnetExemple(depot);
+  // 595 g à 500 : nisab de 297 500, sous les 350 000 du compte.
+  await depot.reglerZakat(carnet, { prixArgent: 500 });
+  assert.equal((await depot.zakat(carnet)).reglages.debutHawl, '2026-07-01');
+  // Nisab sur l'or, bien plus haut : la base n'y est plus.
+  await depot.reglerZakat(carnet, { base: 'or', prixOr: 45_000 });
+  const z = await depot.zakat(carnet);
+  assert.equal(z.etat.type, 'sousNisab');
+  assert.equal(z.reglages.debutHawl, null);
+});
+
+test('zakat : biens modifiés et supprimés, saisies refusées', async () => {
+  const { depot } = monde();
+  const carnet = await carnetExemple(depot);
+  const cle = (x: unknown) => (x instanceof SaisieInvalide ? x.cle : String(x));
+  const id = await depot.ajouterBien(carnet, { type: 'argent', libelle: ' Gourmette ', valeur: 20_000 });
+  await depot.modifierBien(carnet, id, { type: 'creance', libelle: 'Prêt à Moussa', valeur: 15_000 });
+  let z = await depot.zakat(carnet);
+  assert.deepEqual(
+    z.biens.map((x) => ({ ...x })),
+    [{ id, type: 'creance', libelle: 'Prêt à Moussa', milligrammes: null, montant: 15_000 }],
+  );
+  await depot.supprimerBien(carnet, id);
+  z = await depot.zakat(carnet);
+  assert.deepEqual(z.biens, []);
+  await assert.rejects(depot.supprimerBien(carnet, id), (x) => cle(x) === 'bienInconnu');
+  await assert.rejects(
+    depot.ajouterBien(carnet, { type: 'or', libelle: null, valeur: 0 }),
+    (x) => cle(x) === 'montantInvalide',
+  );
+  await assert.rejects(depot.reglerZakat(carnet, { prixOr: -1 }), (x) => cle(x) === 'montantInvalide');
+  await assert.rejects(depot.reglerZakat(carnet, { debutHawl: '2030-01-01' }), (x) => cle(x) === 'dateInvalide');
+});
+
+test('zakat versée : sadaqa du cycle et nouvelle année lunaire', async () => {
+  const { depot, allerAu } = monde('2026-07-01');
+  const carnet = await carnetExemple(depot);
+  await depot.reglerZakat(carnet, { prixArgent: 500 });
+  await depot.zakat(carnet);
+  allerAu('2027-06-25');
+  const avant = await depot.mois(carnet);
+  await depot.marquerZakatVersee(carnet, { montant: 8_750, compteId: null });
+  const apres = await depot.mois(carnet);
+  assert.equal(apres.misDeCote, avant.misDeCote + 8_750);
+  assert.equal((await depot.zakat(carnet)).reglages.debutHawl, '2027-06-25');
+});

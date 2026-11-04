@@ -121,6 +121,14 @@ export default function EcranEpargne() {
         <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre2 }]}>
           {t('epargne.sansInteret')}
         </Text>
+        <ListGroup>
+          <ListItem
+            icone="balance"
+            titre={t('zakat.titre')}
+            sousTitre={t('zakat.voir')}
+            onPress={() => router.push('/budget/zakat')}
+          />
+        </ListGroup>
       </ScrollView>
     </View>
   );

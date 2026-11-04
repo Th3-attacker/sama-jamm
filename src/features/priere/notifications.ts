@@ -15,6 +15,8 @@ import { comparerFenetre } from './comparaison';
 import { construireFenetre, type Planifiee } from './fenetre';
 
 export const URL_PRIERE = 'samajamm://priere';
+/** Rappel de zakat (programmé par features/budget/rappelZakat). */
+export const URL_ZAKAT = 'samajamm://budget/zakat';
 const TACHE = 'replanifier-prieres';
 
 // Le son d'un canal ne change plus après sa création : identifiants versionnés pour pouvoir les remplacer.
@@ -25,7 +27,8 @@ const CANAUX: Record<Son, string> = {
   vibration: 'priere-v1-vibration',
   silencieux: 'priere-v1-silencieux',
 };
-const CANAL_RAPPELS = 'rappels-v1';
+/** Canal Android des rappels doux (avant la prière, zakat). */
+export const CANAL_RAPPELS = 'rappels-v1';
 const ANCIEN_CANAL = 'priere-defaut';
 
 /** Crée les canaux Android (nécessaires avant la demande d'autorisation sur Android 13 et plus). */
