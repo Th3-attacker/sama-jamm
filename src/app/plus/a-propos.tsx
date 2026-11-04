@@ -1,6 +1,9 @@
 import Constants from 'expo-constants';
 import { useTranslation } from 'react-i18next';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, Share, StyleSheet, Text, View } from 'react-native';
+
+import { journalDesErreurs } from '@/features/erreur/journal';
+import { journalEnTexte } from '@/lib/journalErreurs';
 
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
@@ -39,6 +42,22 @@ export default function APropos() {
             ))}
           </ListGroup>
         </View>
+
+        <ListGroup>
+          <ListItem
+            icone="share"
+            titre={t('aPropos.signaler')}
+            sousTitre={t('aPropos.signalerAide')}
+            onPress={() => {
+              const journal = journalDesErreurs();
+              const message =
+                journal.length > 0
+                  ? journalEnTexte(journal, t('aPropos.signalerEntete'))
+                  : `${t('aPropos.signalerEntete')}\n${t('aPropos.aucuneErreur')}`;
+              Share.share({ message }).catch((erreur: unknown) => console.warn('Partage impossible', erreur));
+            }}
+          />
+        </ListGroup>
 
         {version ? (
           <Text

@@ -456,7 +456,11 @@
     "polices": "Polices : Cormorant Garamond, Source Serif 4, Source Sans 3, Amiri, Amiri Quran (SIL Open Font License).",
     "remerciements": "Remerciements",
     "contact": "Écrire à l'équipe",
-    "noter": "Donner votre avis sur le store"
+    "noter": "Donner votre avis sur le store",
+    "signaler": "Signaler un problème",
+    "signalerAide": "Partage la liste des dernières erreurs : codes et versions, jamais vos données",
+    "signalerEntete": "Sama Jàmm · erreurs récentes",
+    "aucuneErreur": "Aucune erreur enregistrée."
   },
   "compte": {
     "titre": "Compte",

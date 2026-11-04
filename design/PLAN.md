@@ -23,7 +23,8 @@ Ordre : **A → B1 → B2 → C2 → C3 → C4 → B4 → C1 → C5 → D → E 
 | C5a | Export CSV, sauvegarde chiffrée par mot de passe, restauration | #66 |
 | D1 | Écran d'erreur (repli des écrans qui plantent), mise à jour bloquante via `version.json` | #67 |
 | D2 | Explication avant les demandes de position (qibla) et de notifications (zakat), raisons dans la bienvenue | #68 |
-| D3 | Démarrage animé (relais du démarrage natif, signature, fondu ; réduit si « Réduire les animations ») | cette PR |
+| D3 | Démarrage animé (relais du démarrage natif, signature, fondu ; réduit si « Réduire les animations ») | #69 |
+| D4 | Journal local des erreurs (sans données personnelles), partagé par l'utilisateur depuis À propos | cette PR |
 
 ## A. Vérifier sur un téléphone (bloquant)
 
@@ -65,7 +66,6 @@ Ordre : **A → B1 → B2 → C2 → C3 → C4 → B4 → C1 → C5 → D → E 
 
 | Lot | Contenu |
 | --- | --- |
-| D4 | Suivi des plantages anonymisé |
 
 ## E. Contenus de lecture (après les droits)
 
