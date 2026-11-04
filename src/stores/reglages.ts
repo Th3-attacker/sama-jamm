@@ -44,6 +44,8 @@ type Donnees = {
   veilleVue: string | null;
   theme: ChoixTheme;
   bienvenueTerminee: boolean;
+  /** Échelon de taille du texte de lecture, de 0 à 6 (voir `features/lire/BarreTaille`). */
+  tailleLecture: number;
 };
 
 type Actions = {
@@ -61,6 +63,7 @@ type Actions = {
   marquerVeilleVue: (nuit: string) => void;
   definirTheme: (theme: ChoixTheme) => void;
   terminerBienvenue: () => void;
+  definirTailleLecture: (echelon: number) => void;
 };
 
 export const AJUSTEMENT_MAX = 15;
@@ -82,6 +85,7 @@ const parDefaut: Donnees = {
   veilleVue: null,
   theme: 'auto',
   bienvenueTerminee: false,
+  tailleLecture: 2,
 };
 
 export const useReglages = create<Donnees & Actions>()(
@@ -108,6 +112,7 @@ export const useReglages = create<Donnees & Actions>()(
       marquerVeilleVue: (veilleVue) => set({ veilleVue }),
       definirTheme: (theme) => set({ theme }),
       terminerBienvenue: () => set({ bienvenueTerminee: true }),
+      definirTailleLecture: (echelon) => set({ tailleLecture: Math.max(0, Math.min(6, Math.round(echelon))) }),
     }),
     {
       name: 'reglages',
@@ -133,6 +138,7 @@ export const useReglages = create<Donnees & Actions>()(
         veilleVue: s.veilleVue,
         theme: s.theme,
         bienvenueTerminee: s.bienvenueTerminee,
+        tailleLecture: s.tailleLecture,
       }),
       onRehydrateStorage: () => (_etat, erreur) => {
         if (erreur) console.error('Réglages illisibles : valeurs par défaut', erreur);
