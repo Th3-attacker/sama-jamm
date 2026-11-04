@@ -19,7 +19,10 @@ import { TopBar } from '@/ui/TopBar';
 export default function Revenus() {
   const { t, i18n } = useTranslation();
   const { couleurs, espace, typographie } = useTheme();
-  const etat = useBudget((depot, carnet) => depot.revenusDuCycle(carnet));
+  const etat = useBudget(async (depot, carnet) => ({
+    ...(await depot.revenusDuCycle(carnet)),
+    comptes: await depot.comptes(carnet.id),
+  }));
   const [feuille, setFeuille] = useState(false);
 
   return (
@@ -58,7 +61,13 @@ export default function Revenus() {
         </ScrollView>
       )}
       {etat.etat === 'pret' ? (
-        <FeuilleRevenu ouvert={feuille} onFermer={() => setFeuille(false)} carnet={etat.carnet} depot={etat.depot} />
+        <FeuilleRevenu
+          ouvert={feuille}
+          onFermer={() => setFeuille(false)}
+          carnet={etat.carnet}
+          depot={etat.depot}
+          comptes={etat.donnees.comptes}
+        />
       ) : null}
     </View>
   );

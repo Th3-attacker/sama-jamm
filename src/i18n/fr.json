@@ -600,7 +600,18 @@
     "restaurerEnveloppe": "Restaurer l'enveloppe",
     "enveloppeRestauree": "Enveloppe restaurée",
     "depensesTotal_one": "{{count}} dépense · {{montant}}",
-    "depensesTotal_other": "{{count}} dépenses · {{montant}}"
+    "depensesTotal_other": "{{count}} dépenses · {{montant}}",
+    "totalComptes": "Total sur vos comptes",
+    "nomCompte": "Nom du compte",
+    "typeCompte": "Type de compte",
+    "compteAjoute": "Compte ajouté",
+    "jourOperation": "Jour",
+    "jourOperationAide": "Le jour reste dans le cycle de l'opération.",
+    "aujourdhui": "Aujourd'hui",
+    "hier": "Hier",
+    "dateHorsCycle": "Ce jour est en dehors du cycle de l'opération.",
+    "voirHistorique": "Toutes les opérations du cycle",
+    "voirComptes": "Espèces, mobile money, banque"
   },
   "epargne": {
     "titre": "Épargne",
