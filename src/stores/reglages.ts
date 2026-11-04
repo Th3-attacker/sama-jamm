@@ -97,7 +97,7 @@ const parDefaut: Donnees = {
   veilleVue: null,
   theme: 'auto',
   bienvenueTerminee: false,
-  tailleLecture: 2,
+  tailleLecture: 1,
   affichage: 'arabeTrad',
   verrouBudget: false,
   masquerMontants: false,
@@ -134,12 +134,15 @@ export const useReglages = create<Donnees & Actions>()(
     }),
     {
       name: 'reglages',
-      version: 3,
+      version: 4,
       storage: createJSONStorage(() => stockage),
       // v1 → v2 : réglages de prière ; v2 → v3 : vibrations. Valeurs par défaut pour les clés absentes.
+      // v3 → v4 : la taille de lecture par défaut passe du 3e au 2e cran ; une autre taille choisie est gardée.
       migrate: (etat, version) => {
-        if (version < 3 && etat && typeof etat === 'object') return { ...parDefaut, ...etat };
-        return etat;
+        if (!etat || typeof etat !== 'object') return etat;
+        const migre: Record<string, unknown> = version < 3 ? { ...parDefaut, ...etat } : { ...etat };
+        if (version < 4 && migre.tailleLecture === 2) migre.tailleLecture = 1;
+        return migre;
       },
       partialize: (s) => ({
         langue: s.langue,

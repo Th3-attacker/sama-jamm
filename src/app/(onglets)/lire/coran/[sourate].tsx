@@ -1,9 +1,10 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { FlatList, I18nManager, StyleSheet, Text, View, type LayoutRectangle } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { BarreTaille, useTaillesLecture } from '@/features/lire/BarreTaille';
+import { useTaillesLecture } from '@/features/lire/BarreTaille';
 import {
   basmalaDe,
   nombreDePages,
@@ -11,10 +12,10 @@ import {
   segmentsDePage,
   sourate,
   sourates,
-  type SegmentPage,
   type Sourate,
   versetsAvecTraduction,
 } from '@/features/lire/coran';
+import { PageMushaf } from '@/features/lire/PageMushaf';
 import { cleJour } from '@/lib/dates';
 import { cleVerset, useFavoris } from '@/stores/favoris';
 import { useLecture, type ModeLecture } from '@/stores/lecture';
@@ -31,13 +32,9 @@ import { TopBar } from '@/ui/TopBar';
 /** Une sourate est « lue » après ce délai à l'écran (section Lecture et audio du design). */
 const SECONDES_POUR_UN_JOUR = 30;
 const CONFIG_VISIBILITE = { itemVisiblePercentThreshold: 50 };
-
-const CHIFFRES_ARABES = '٠١٢٣٤٥٦٧٨٩';
-
-/** Marqueur de verset style mushaf : chiffres arabo-indiens entre crochets ornés, ﴿٥﴾. */
-function marqueur(n: number): string {
-  return `﴿${String(n).replace(/\d/g, (d) => CHIFFRES_ARABES[Number(d)])}﴾`;
-}
+/** Une page compte comme affichée quand elle occupe plus de la moitié de l'écran. */
+const CONFIG_PAGE_VISIBLE = { itemVisiblePercentThreshold: 60 };
+const NUMEROS_DE_PAGES = Array.from({ length: nombreDePages }, (_, i) => i + 1);
 
 export default function EcranSourate() {
   const { t } = useTranslation();
@@ -104,6 +101,18 @@ function LectureSourate({
   // Vue mushaf (page justifiée) par défaut ; la bascule ouvre la lecture verset par verset.
   const [modePage, setModePage] = useState(modeInitial === 'page');
   const [page, setPage] = useState(() => pageDe(s.n, versetInitial) ?? 1);
+  // Page sur laquelle s'ouvre la liste des pages ; `page` suit ensuite la page affichée.
+  const [pageDepart, setPageDepart] = useState(page);
+  // Mode page : la barre du haut apparaît et disparaît au toucher ; la zone mesurée dimensionne chaque page.
+  const [barres, setBarres] = useState(false);
+  const [zone, setZone] = useState<LayoutRectangle | null>(null);
+  const insets = useSafeAreaInsets();
+  const basculerBarres = useCallback(() => setBarres((b) => !b), []);
+  // Doit rester stable, comme pour la lecture verset par verset.
+  const surPageVisible = useCallback(({ viewableItems }: { viewableItems: { item: number }[] }) => {
+    const visible = viewableItems[0];
+    if (visible) setPage(visible.item);
+  }, []);
   const versets = useMemo(() => versetsAvecTraduction(s.n), [s.n]);
   const liste = useRef<FlatList>(null);
   // Premier verset visible en lecture verset par verset, enregistré à l'arrêt du défilement.
@@ -149,216 +158,191 @@ function LectureSourate({
       setModePage(false);
       return;
     }
-    setPage(pageDe(s.n, versetVisible.current) ?? 1);
+    const p = pageDe(s.n, versetVisible.current) ?? 1;
+    setPage(p);
+    setPageDepart(p);
     setModePage(true);
   };
 
   // --- Mode page (mushaf) ---------------------------------------------------------------------
-  const segments: SegmentPage[] = modePage ? segmentsDePage(page) : [];
-  const nomPage = segments[0] ? (sourate(segments[0].sourate)?.nom ?? s.nom) : s.nom;
+  const premierSegment = modePage ? segmentsDePage(page)[0] : undefined;
+  const nomPage = premierSegment ? (sourate(premierSegment.sourate)?.nom ?? s.nom) : s.nom;
 
-  const piedPage = (
-    <View
-      style={{
-        gap: espace.espace4,
-        paddingTop: espace.espace5,
-        alignItems: 'center',
-      }}>
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: espace.espace4,
-        }}>
-        {page > 1 ? (
-          <Button variant="secondaire" accessibilityHint={t('lire.pagePrecedente')} onPress={() => setPage(page - 1)}>
-            {`${t('lire.modePage')} ${page - 1}`}
-          </Button>
-        ) : null}
-        <Text
-          accessibilityRole="header"
-          maxFontSizeMultiplier={echelleMax.courant}
-          style={[typographie.titre3, { color: couleurs.emeraude }]}>
-          {`${t('lire.modePage')} ${page}`}
-        </Text>
-        {page < nombreDePages ? (
-          <Button variant="secondaire" accessibilityHint={t('lire.pageSuivante')} onPress={() => setPage(page + 1)}>
-            {`${t('lire.modePage')} ${page + 1}`}
-          </Button>
-        ) : null}
-      </View>
-    </View>
+  const barre = (
+    <TopBar
+      retour
+      titre={modePage ? nomPage : s.nom}
+      sousTitre={modePage ? t('lire.pageN', { n: page }) : sousTitre}
+      actions={[
+        {
+          icone: modePage ? 'list' : 'book',
+          label: modePage ? t('lire.modeVerset') : t('lire.modePage'),
+          onPress: basculerMode,
+        },
+      ]}
+    />
   );
+
+  if (modePage) {
+    return (
+      <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
+        <View style={styles.ecran} onLayout={(e) => setZone(e.nativeEvent.layout)}>
+          {zone ? (
+            <FlatList
+              data={NUMEROS_DE_PAGES}
+              horizontal
+              pagingEnabled
+              // Comme un mushaf : la page suivante arrive par la gauche. En arabe, la liste s'inverse déjà seule.
+              inverted={!I18nManager.isRTL}
+              showsHorizontalScrollIndicator={false}
+              initialScrollIndex={pageDepart - 1}
+              getItemLayout={(_, index) => ({ length: zone.width, offset: zone.width * index, index })}
+              initialNumToRender={1}
+              maxToRenderPerBatch={1}
+              windowSize={3}
+              viewabilityConfig={CONFIG_PAGE_VISIBLE}
+              onViewableItemsChanged={surPageVisible}
+              keyExtractor={(p) => String(p)}
+              renderItem={({ item }) => (
+                <PageMushaf
+                  page={item}
+                  largeur={zone.width}
+                  hauteur={zone.height}
+                  hautSur={insets.top}
+                  onToucher={basculerBarres}
+                />
+              )}
+            />
+          ) : null}
+        </View>
+        {/* Un toucher sur la page affiche la barre par-dessus la page, sans la déplacer. */}
+        {barres ? <View style={[styles.barreFlottante, { borderBottomColor: couleurs.ligne }]}>{barre}</View> : null}
+      </View>
+    );
+  }
 
   return (
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
-      <TopBar
-        retour
-        titre={modePage ? nomPage : s.nom}
-        sousTitre={modePage ? `${t('lire.modePage')} ${page}` : sousTitre}
-        actions={[
-          {
-            icone: modePage ? 'list' : 'book',
-            label: modePage ? t('lire.modeVerset') : t('lire.modePage'),
-            onPress: basculerMode,
-          },
-        ]}
-      />
+      {barre}
 
-      <BarreTaille />
+      <View
+        style={{
+          paddingHorizontal: espace.espace5,
+          paddingBottom: espace.espace3,
+        }}>
+        <SegmentedControl
+          label={t('lire.affichage')}
+          options={[
+            { id: 'arabeSeul', label: t('lire.arabeSeul') },
+            { id: 'arabeTrad', label: t('lire.arabeTrad') },
+            { id: 'tradSeule', label: t('lire.tradSeule') },
+          ]}
+          valeur={mode}
+          onChange={(id) => {
+            const choix = affichagesLecture.find((x) => x === id);
+            if (choix) definirAffichage(choix);
+          }}
+        />
+      </View>
 
-      {modePage ? null : (
-        <View
-          style={{
-            paddingHorizontal: espace.espace5,
-            paddingBottom: espace.espace3,
-          }}>
-          <SegmentedControl
-            label={t('lire.affichage')}
-            options={[
-              { id: 'arabeSeul', label: t('lire.arabeSeul') },
-              { id: 'arabeTrad', label: t('lire.arabeTrad') },
-              { id: 'tradSeule', label: t('lire.tradSeule') },
-            ]}
-            valeur={mode}
-            onChange={(id) => {
-              const choix = affichagesLecture.find((x) => x === id);
-              if (choix) definirAffichage(choix);
-            }}
-          />
-        </View>
-      )}
-
-      {modePage ? (
-        <FlatList
-          key={`page-${page}`}
-          data={segments}
-          keyExtractor={(seg) => `${seg.sourate}-${seg.versets[0]?.verset ?? 0}`}
-          renderItem={({ item }) => {
-            const commence = item.versets[0]?.verset === 1;
-            return (
-              <View style={{ gap: espace.espace3 }}>
-                {commence ? <Entete sourate={item.sourate} mode="arabeSeul" /> : null}
-                {/* Texte continu et justifié, comme une page de mushaf : les versets s'enchaînent. */}
+      <FlatList
+        key={String(s.n)}
+        ref={liste}
+        data={versets}
+        viewabilityConfig={CONFIG_VISIBILITE}
+        onViewableItemsChanged={surVisibles}
+        onScrollEndDrag={enregistrerVerset}
+        onMomentumScrollEnd={enregistrerVerset}
+        onScrollToIndexFailed={({ index, averageItemLength }) => {
+          // Verset pas encore mesuré : on s'en approche, puis on réessaie.
+          liste.current?.scrollToOffset({ offset: averageItemLength * index, animated: false });
+          setTimeout(() => liste.current?.scrollToIndex({ index, animated: false }), 100);
+        }}
+        keyExtractor={(v) => String(v.n)}
+        ListHeaderComponent={<Entete sourate={s.n} mode={mode} />}
+        ItemSeparatorComponent={() => <View style={[styles.ligneFine, { backgroundColor: couleurs.ligne }]} />}
+        renderItem={({ item }) => (
+          <View style={[styles.verset, { gap: espace.espace3 }]}>
+            <View
+              style={[
+                styles.numero,
+                {
+                  backgroundColor: couleurs.orDoux,
+                  borderRadius: rayon.rayonPastille,
+                },
+              ]}>
+              <Text maxFontSizeMultiplier={echelleMax.grand} style={[typographie.libelle, { color: couleurs.orTexte }]}>
+                {item.n}
+              </Text>
+            </View>
+            <View style={styles.textes}>
+              {mode !== 'tradSeule' ? (
                 <Text
                   accessibilityLanguage="ar"
                   maxFontSizeMultiplier={echelleMax.grand}
-                  style={[typographie.coran, tailleArabe, styles.justifie, { color: couleurs.encre }]}>
-                  {item.versets.map((v) => `${v.texte} ${marqueur(v.verset)} `).join('')}
+                  style={[typographie.coran, tailleArabe, styles.arabe, { color: couleurs.encre }]}>
+                  {item.texte}
                 </Text>
-              </View>
-            );
-          }}
-          ListFooterComponent={piedPage}
-          contentContainerStyle={{
-            paddingHorizontal: espace.espace5,
-            paddingBottom: espace.espace8,
-            gap: espace.espace4,
-          }}
-        />
-      ) : (
-        <FlatList
-          key={String(s.n)}
-          ref={liste}
-          data={versets}
-          viewabilityConfig={CONFIG_VISIBILITE}
-          onViewableItemsChanged={surVisibles}
-          onScrollEndDrag={enregistrerVerset}
-          onMomentumScrollEnd={enregistrerVerset}
-          onScrollToIndexFailed={({ index, averageItemLength }) => {
-            // Verset pas encore mesuré : on s'en approche, puis on réessaie.
-            liste.current?.scrollToOffset({ offset: averageItemLength * index, animated: false });
-            setTimeout(() => liste.current?.scrollToIndex({ index, animated: false }), 100);
-          }}
-          keyExtractor={(v) => String(v.n)}
-          ListHeaderComponent={<Entete sourate={s.n} mode={mode} />}
-          ItemSeparatorComponent={() => <View style={[styles.ligneFine, { backgroundColor: couleurs.ligne }]} />}
-          renderItem={({ item }) => (
-            <View style={[styles.verset, { gap: espace.espace3 }]}>
-              <View
-                style={[
-                  styles.numero,
-                  {
-                    backgroundColor: couleurs.orDoux,
-                    borderRadius: rayon.rayonPastille,
-                  },
-                ]}>
+              ) : null}
+              {mode !== 'arabeSeul' && item.trad ? (
                 <Text
                   maxFontSizeMultiplier={echelleMax.grand}
-                  style={[typographie.libelle, { color: couleurs.orTexte }]}>
-                  {item.n}
+                  style={[typographie.lecture, tailleTrad, { color: couleurs.encre2 }]}>
+                  {item.trad}
                 </Text>
-              </View>
-              <View style={styles.textes}>
-                {mode !== 'tradSeule' ? (
-                  <Text
-                    accessibilityLanguage="ar"
-                    maxFontSizeMultiplier={echelleMax.grand}
-                    style={[typographie.coran, tailleArabe, styles.arabe, { color: couleurs.encre }]}>
-                    {item.texte}
-                  </Text>
-                ) : null}
-                {mode !== 'arabeSeul' && item.trad ? (
-                  <Text
-                    maxFontSizeMultiplier={echelleMax.grand}
-                    style={[typographie.lecture, tailleTrad, { color: couleurs.encre2 }]}>
-                    {item.trad}
-                  </Text>
-                ) : null}
-                <View style={styles.actions}>
-                  <IconButton
-                    icone="bookmark"
-                    actif={favoris.includes(cleVerset(s.n, item.n))}
-                    label={t(favoris.includes(cleVerset(s.n, item.n)) ? 'lire.favoriRetirer' : 'lire.favoriAjouter')}
-                    onPress={() => basculerFavori(item.n)}
-                  />
-                </View>
+              ) : null}
+              <View style={styles.actions}>
+                <IconButton
+                  icone="bookmark"
+                  actif={favoris.includes(cleVerset(s.n, item.n))}
+                  label={t(favoris.includes(cleVerset(s.n, item.n)) ? 'lire.favoriRetirer' : 'lire.favoriAjouter')}
+                  onPress={() => basculerFavori(item.n)}
+                />
               </View>
             </View>
-          )}
-          extraData={favoris}
-          contentContainerStyle={{
-            paddingHorizontal: espace.espace5,
-            paddingBottom: espace.espace8,
-            gap: espace.espace4,
-          }}
-          initialNumToRender={8}
-          ListFooterComponent={
-            <View style={{ gap: espace.espace4, paddingTop: espace.espace5 }}>
-              <Text maxFontSizeMultiplier={echelleMax.courant} style={legende}>
-                {t('lire.finSourate')}
-              </Text>
-              {sourates[s.n] ? (
-                <Button
-                  variant="secondaire"
-                  pleineLargeur
-                  onPress={() =>
-                    router.replace({
-                      pathname: '/lire/coran/[sourate]',
-                      params: { sourate: sourates[s.n].n },
-                    })
-                  }>
-                  {`${t('lire.souratesuivante')} · ${sourates[s.n].nom}`}
-                </Button>
-              ) : null}
-              {s.n > 1 ? (
-                <Button
-                  variant="secondaire"
-                  pleineLargeur
-                  onPress={() =>
-                    router.replace({
-                      pathname: '/lire/coran/[sourate]',
-                      params: { sourate: s.n - 1 },
-                    })
-                  }>
-                  {`${t('lire.souratePrecedente')} · ${sourates[s.n - 2].nom}`}
-                </Button>
-              ) : null}
-            </View>
-          }
-        />
-      )}
+          </View>
+        )}
+        extraData={favoris}
+        contentContainerStyle={{
+          paddingHorizontal: espace.espace5,
+          paddingBottom: espace.espace8,
+          gap: espace.espace4,
+        }}
+        initialNumToRender={8}
+        ListFooterComponent={
+          <View style={{ gap: espace.espace4, paddingTop: espace.espace5 }}>
+            <Text maxFontSizeMultiplier={echelleMax.courant} style={legende}>
+              {t('lire.finSourate')}
+            </Text>
+            {sourates[s.n] ? (
+              <Button
+                variant="secondaire"
+                pleineLargeur
+                onPress={() =>
+                  router.replace({
+                    pathname: '/lire/coran/[sourate]',
+                    params: { sourate: sourates[s.n].n },
+                  })
+                }>
+                {`${t('lire.souratesuivante')} · ${sourates[s.n].nom}`}
+              </Button>
+            ) : null}
+            {s.n > 1 ? (
+              <Button
+                variant="secondaire"
+                pleineLargeur
+                onPress={() =>
+                  router.replace({
+                    pathname: '/lire/coran/[sourate]',
+                    params: { sourate: s.n - 1 },
+                  })
+                }>
+                {`${t('lire.souratePrecedente')} · ${sourates[s.n - 2].nom}`}
+              </Button>
+            ) : null}
+          </View>
+        }
+      />
     </View>
   );
 }
@@ -433,5 +417,5 @@ const styles = StyleSheet.create({
   textes: { flex: 1, gap: 4 },
   arabe: { textAlign: 'right', writingDirection: 'rtl' },
   actions: { flexDirection: 'row', justifyContent: 'flex-end' },
-  justifie: { textAlign: 'justify', writingDirection: 'rtl' },
+  barreFlottante: { position: 'absolute', top: 0, left: 0, right: 0, borderBottomWidth: StyleSheet.hairlineWidth },
 });

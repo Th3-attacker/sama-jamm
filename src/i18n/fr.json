@@ -166,7 +166,9 @@
       "repas": "Repas"
     },
     "compterRepetition": "Touchez pour compter",
-    "repetitions": "{{n}} / {{total}}"
+    "repetitions": "{{n}} / {{total}}",
+    "toucherPage": "Touchez la page pour afficher ou cacher la barre",
+    "pageN": "Page {{n}}"
   },
   "khatm": {
     "titre": "Khatm collectif",
@@ -414,7 +416,10 @@
     "aide": "Aide et contact",
     "confidentialite": "Politique de confidentialité",
     "version": "Version {{version}}",
-    "veilleSiAuto": "Seulement avec le thème Auto"
+    "veilleSiAuto": "Seulement avec le thème Auto",
+    "tailleEcriture": "Taille de l’écriture",
+    "tailleNote": "Pour la lecture verset par verset. En mode page, l’écriture s’ajuste pour que la page tienne dans l’écran.",
+    "apercu": "Aperçu"
   },
   "aPropos": {
     "titre": "À propos",

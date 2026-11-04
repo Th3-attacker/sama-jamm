@@ -186,7 +186,9 @@
       "repas": "الطعام"
     },
     "compterRepetition": "المس للعدّ",
-    "repetitions": "{{n}} / {{total}}"
+    "repetitions": "{{n}} / {{total}}",
+    "toucherPage": "المس الصفحة لإظهار الشريط أو إخفائه",
+    "pageN": "صفحة {{n}}"
   },
   "khatm": {
     "titre": "ختمة جماعية",
@@ -442,7 +444,10 @@
     "aide": "المساعدة والتواصل",
     "confidentialite": "سياسة الخصوصية",
     "version": "الإصدار {{version}}",
-    "veilleSiAuto": "فقط مع المظهر التلقائي"
+    "veilleSiAuto": "فقط مع المظهر التلقائي",
+    "tailleEcriture": "حجم الخط",
+    "tailleNote": "للقراءة آية بآية. في وضع الصفحة يتكيّف الخط لتظهر الصفحة كاملة على الشاشة.",
+    "apercu": "معاينة"
   },
   "aPropos": {
     "titre": "حول التطبيق",
