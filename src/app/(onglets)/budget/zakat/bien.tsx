@@ -1,14 +1,15 @@
-import { router, useLocalSearchParams } from 'expo-router';
+import { router } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { LIBELLE_BIEN_MAX, TYPES_BIEN, type TypeBien } from '@/features/budget/depot';
-import { EtatsBudget } from '@/features/budget/EtatsBudget';
+import { EcranBudgetIncomplet } from '@/features/budget/EcranBudgetIncomplet';
 import { budgetModifie, useBudget } from '@/features/budget/useBudget';
 import { grammesVersMg, mgVersGrammes } from '@/features/budget/zakat';
 import { versMinimes, versSaisie } from '@/lib/montant';
 import { echelleMax } from '@/theme/typographie';
+import { useParametre } from '@/hooks/useParametre';
 import { useTheme } from '@/theme/useTheme';
 import { Banner } from '@/ui/Banner';
 import { Button } from '@/ui/Button';
@@ -25,8 +26,7 @@ export default function BienZakat() {
   const { t } = useTranslation();
   const { couleurs, espace, typographie } = useTheme();
   const { afficher } = useToast();
-  const params = useLocalSearchParams<{ id?: string | string[] }>();
-  const id = (Array.isArray(params.id) ? params.id[0] : params.id) ?? '';
+  const id = useParametre('id');
   const etat = useBudget(
     async (depot, carnet) => (await depot.zakat(carnet)).biens.find((b) => b.id === id) ?? null,
     id,
@@ -41,18 +41,7 @@ export default function BienZakat() {
 
   const titre = id ? t('zakat.modifierBien') : t('zakat.ajouterBien');
   if (etat.etat !== 'pret' || (id && etat.donnees === null)) {
-    return (
-      <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
-        <TopBar retour titre={titre} />
-        {etat.etat === 'pret' ? (
-          <View style={{ padding: espace.espace5 }}>
-            <Banner ton="erreur">{t('zakat.introuvable')}</Banner>
-          </View>
-        ) : (
-          <EtatsBudget etat={etat} />
-        )}
-      </View>
-    );
+    return <EcranBudgetIncomplet titre={titre} etat={etat} introuvable={t('zakat.introuvable')} />;
   }
 
   const { carnet, depot, donnees: bien } = etat;

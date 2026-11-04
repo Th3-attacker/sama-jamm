@@ -1,15 +1,16 @@
-import { router, useLocalSearchParams } from 'expo-router';
+import { router } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { useFormatMontant } from '@/features/budget/verrou';
-import { EtatsBudget } from '@/features/budget/EtatsBudget';
+import { EcranBudgetIncomplet } from '@/features/budget/EcranBudgetIncomplet';
 import { budgetModifie, useBudget } from '@/features/budget/useBudget';
 import { ajouterJours } from '@/features/budget/cycle';
 import { cleJour, formatJourCle } from '@/lib/dates';
 import { versMinimes, versSaisie } from '@/lib/montant';
 import { echelleMax } from '@/theme/typographie';
+import { useParametre } from '@/hooks/useParametre';
 import { useTheme } from '@/theme/useTheme';
 import { Banner } from '@/ui/Banner';
 import { Button } from '@/ui/Button';
@@ -25,8 +26,7 @@ export default function EcranOperation() {
   const formatMontant = useFormatMontant();
   const { couleurs, espace, typographie } = useTheme();
   const { afficher } = useToast();
-  const params = useLocalSearchParams<{ id?: string | string[] }>();
-  const id = (Array.isArray(params.id) ? params.id[0] : params.id) ?? '';
+  const id = useParametre('id');
   const etat = useBudget(
     async (depot, carnet) => ({
       operation: await depot.operation(carnet, id),
@@ -52,18 +52,7 @@ export default function EcranOperation() {
 
   const titre = t('budget.modifierOperation');
   if (etat.etat !== 'pret' || etat.donnees.operation === null) {
-    return (
-      <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
-        <TopBar retour titre={titre} />
-        {etat.etat === 'pret' ? (
-          <View style={{ padding: espace.espace5 }}>
-            <Banner ton="erreur">{t('budget.operationIntrouvable')}</Banner>
-          </View>
-        ) : (
-          <EtatsBudget etat={etat} />
-        )}
-      </View>
-    );
+    return <EcranBudgetIncomplet titre={titre} etat={etat} introuvable={t('budget.operationIntrouvable')} />;
   }
 
   const { carnet, depot, donnees } = etat;

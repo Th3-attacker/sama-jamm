@@ -1,4 +1,4 @@
-import { router, useLocalSearchParams } from 'expo-router';
+import { router } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -6,11 +6,12 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useFormatMontant } from '@/features/budget/verrou';
 import { depenseDuJour, joursRestants, pasArrondi } from '@/features/budget/cycle';
 import { NOM_ENVELOPPE_MAX } from '@/features/budget/depot';
-import { EtatsBudget } from '@/features/budget/EtatsBudget';
+import { EcranBudgetIncomplet } from '@/features/budget/EcranBudgetIncomplet';
 import { budgetModifie, useBudget } from '@/features/budget/useBudget';
 import { cleJour, formatJourCle } from '@/lib/dates';
 import { versMinimes, versSaisie } from '@/lib/montant';
 import { echelleMax } from '@/theme/typographie';
+import { useParametre } from '@/hooks/useParametre';
 import { useTheme } from '@/theme/useTheme';
 import { AmountDisplay } from '@/ui/AmountDisplay';
 import { Banner } from '@/ui/Banner';
@@ -29,8 +30,7 @@ export default function EcranEnveloppe() {
   const { t, i18n } = useTranslation();
   const formatMontant = useFormatMontant();
   const { couleurs, espace, typographie } = useTheme();
-  const params = useLocalSearchParams<{ id?: string | string[] }>();
-  const id = (Array.isArray(params.id) ? params.id[0] : params.id) ?? '';
+  const id = useParametre('id');
   const etat = useBudget((depot, carnet) => depot.detailEnveloppe(carnet, id), id);
   // Une seule feuille, pour le plafond ou le nom.
   const [feuille, setFeuille] = useState<'plafond' | 'nom' | null>(null);
@@ -41,18 +41,7 @@ export default function EcranEnveloppe() {
   const { afficher } = useToast();
 
   if (etat.etat !== 'pret' || etat.donnees === null) {
-    return (
-      <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
-        <TopBar retour titre={t('budget.enveloppe')} />
-        {etat.etat === 'pret' ? (
-          <View style={{ padding: espace.espace5 }}>
-            <Banner ton="erreur">{t('budget.enveloppeIntrouvable')}</Banner>
-          </View>
-        ) : (
-          <EtatsBudget etat={etat} />
-        )}
-      </View>
-    );
+    return <EcranBudgetIncomplet titre={t('budget.enveloppe')} etat={etat} introuvable={t('budget.enveloppeIntrouvable')} />;
   }
 
   const { carnet, depot, donnees } = etat;

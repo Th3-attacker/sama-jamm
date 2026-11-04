@@ -5,7 +5,7 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { useFormatMontant } from '@/features/budget/verrou';
 import type { ChoixBilan } from '@/features/budget/depot';
-import { EtatsBudget } from '@/features/budget/EtatsBudget';
+import { EcranBudgetIncomplet } from '@/features/budget/EcranBudgetIncomplet';
 import { budgetModifie, useBudget } from '@/features/budget/useBudget';
 import { formatJourCle } from '@/lib/dates';
 import { echelleMax } from '@/theme/typographie';
@@ -30,12 +30,7 @@ export default function Bilan() {
   const [echec, setEchec] = useState(false);
 
   if (etat.etat !== 'pret') {
-    return (
-      <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
-        <TopBar retour titre={t('budget.bilanTitre')} />
-        <EtatsBudget etat={etat} />
-      </View>
-    );
+    return <EcranBudgetIncomplet titre={t('budget.bilanTitre')} etat={etat} />;
   }
 
   const { carnet, depot, donnees: bilan } = etat;

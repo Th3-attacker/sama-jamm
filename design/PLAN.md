@@ -14,6 +14,10 @@ Ordre : **A → B1 → B2 → C2 → C3 → C4 → B4 → C1 → C5 → D → E 
 | Audit P2 | Dépendances SDK 58, `eas.json`, CI | #54 |
 | Audit P3 | Verrou biométrique, aperçu masqué, icône œil | #55 |
 | B1 | Performance : Veille, index de recherche par paquets, notifications ciblées | #56 |
+| B2 | Tests (horaires, fenêtre, recherche), examen de `npm audit` | #57 |
+| Lecture | Mode page plein écran, taille dans les réglages | #58 |
+| C2 · C3 · C4 | Dettes, épargne avec intention, zakat indicative | #59 à #62 |
+| B4 (partiel) | Découpage du dépôt, aides partagées des écrans du budget | cette PR |
 
 ## A. Vérifier sur un téléphone (bloquant)
 
@@ -30,7 +34,7 @@ Ordre : **A → B1 → B2 → C2 → C3 → C4 → B4 → C1 → C5 → D → E 
 | B1 | Performance : Veille recalculée à la bascule, index de recherche par paquets, notifications reprogrammées seulement si elles changent |
 | B2 | Tests (horaires, fenêtre de notifications, recherche) et examen de `npm audit` |
 | B3 | Trois parcours Maestro : bienvenue, lecture, dépense |
-| B4 | Propreté : découpage de `depot.ts`, composants partagés, code mort, minuteries, sauvegarde Android ciblée, retrait du web |
+| B4 (reste) | Montant facultatif partagé, 3 traductions obsolètes, 2 minuteries, retrait de la config web ; sauvegarde Android ciblée déplacée vers C5 |
 
 ### `npm audit` (examen du 4 novembre 2026)
 
