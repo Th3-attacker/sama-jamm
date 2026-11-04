@@ -20,9 +20,10 @@ import { ListGroup } from '@/ui/ListGroup';
 import { ListItem } from '@/ui/ListItem';
 import { ProgressBar } from '@/ui/ProgressBar';
 import { TextField } from '@/ui/TextField';
+import { useToast } from '@/ui/Toast';
 import { TopBar } from '@/ui/TopBar';
 
-/** Une enveloppe du cycle en cours : plafond, dépensé, reste, dépenses ; modifier le plafond, renommer, archiver. */
+/** Une enveloppe du cycle en cours : plafond, dépensé, reste, dépenses ; modifier le plafond, renommer, supprimer. */
 export default function EcranEnveloppe() {
   const { t, i18n } = useTranslation();
   const { couleurs, espace, typographie } = useTheme();
@@ -33,7 +34,9 @@ export default function EcranEnveloppe() {
   const [feuille, setFeuille] = useState<'plafond' | 'nom' | null>(null);
   const [saisie, setSaisie] = useState('');
   const [echec, setEchec] = useState(false);
-  const [archiver, setArchiver] = useState(false);
+  // Dépenses qui partiront avec l'enveloppe, annoncées dans la confirmation ; null : confirmation fermée.
+  const [suppression, setSuppression] = useState<{ nombre: number; total: number } | null>(null);
+  const { afficher } = useToast();
 
   if (etat.etat !== 'pret' || etat.donnees === null) {
     return (
@@ -82,14 +85,25 @@ export default function EcranEnveloppe() {
     }
   };
 
-  const confirmerArchivage = async () => {
-    setArchiver(false);
+  const demanderSuppression = async () => {
+    setEchec(false);
     try {
-      await depot.archiverEnveloppe(carnet, e.id);
+      setSuppression(await depot.depensesDeLEnveloppe(carnet, e.id));
+    } catch (erreur: unknown) {
+      console.error('Dépenses de l’enveloppe illisibles', erreur);
+      setEchec(true);
+    }
+  };
+
+  const confirmerSuppression = async () => {
+    setSuppression(null);
+    try {
+      await depot.supprimerEnveloppe(carnet, e.id);
       budgetModifie();
+      afficher({ texte: t('budget.enveloppeSupprimee'), icone: 'trash' });
       router.back();
     } catch (erreur: unknown) {
-      console.error('Enveloppe non archivée', erreur);
+      console.error('Enveloppe non supprimée', erreur);
       setEchec(true);
     }
   };
@@ -128,8 +142,8 @@ export default function EcranEnveloppe() {
           <Button variant="secondaire" icone="type" pleineLargeur onPress={() => ouvrir('nom')}>
             {t('budget.renommer')}
           </Button>
-          <Button variant="discret" icone="trash" pleineLargeur onPress={() => setArchiver(true)}>
-            {t('budget.archiver')}
+          <Button variant="danger" icone="trash" pleineLargeur onPress={demanderSuppression}>
+            {t('budget.supprimerEnveloppe')}
           </Button>
           {echec && feuille === null ? <Banner ton="erreur">{t('etats.erreurTexte')}</Banner> : null}
         </View>
@@ -183,13 +197,16 @@ export default function EcranEnveloppe() {
       </BottomSheet>
 
       <Dialog
-        ouvert={archiver}
+        ouvert={suppression !== null}
+        danger
         icone="trash"
-        titre={t('budget.archiverTitre')}
-        confirmer={t('budget.archiver')}
-        onAnnuler={() => setArchiver(false)}
-        onConfirmer={confirmerArchivage}>
-        {t('budget.archiverTexte')}
+        titre={t('budget.supprimerEnveloppeTitre')}
+        confirmer={t('budget.supprimerEnveloppe')}
+        onAnnuler={() => setSuppression(null)}
+        onConfirmer={confirmerSuppression}>
+        {suppression && suppression.nombre > 0
+          ? t('budget.supprimerEnveloppeAvec', { count: suppression.nombre, montant: f(suppression.total) })
+          : t('budget.supprimerEnveloppeVide')}
       </Dialog>
     </View>
   );

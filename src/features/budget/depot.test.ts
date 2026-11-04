@@ -330,3 +330,61 @@ test('enveloppes : nom vide ou trop long, plafond négatif, enveloppe inconnue r
   await assert.rejects(depot.renommerEnveloppe(carnet, 'absente', 'Nom'), SaisieInvalide);
   await assert.rejects(depot.archiverEnveloppe(carnet, 'absente'), SaisieInvalide);
 });
+
+test('supprimer une enveloppe : annonce ses dépenses, les efface avec ses plafonds', async () => {
+  const w = monde();
+  const carnet = await carnetExemple(w.depot);
+  const [quotidien, , transport] = (await w.depot.mois(carnet)).enveloppes;
+  assert.ok(quotidien && transport);
+  const dep = (montant: number, enveloppeId: string) =>
+    w.depot.ajouterDepense(carnet, { carnetId: carnet.id, montant, enveloppeId, compteId: null, note: null });
+  await dep(2_500, transport.id);
+  await dep(10_000, transport.id);
+  await dep(1_000, quotidien.id);
+  w.allerAu('2026-11-25'); // dépense sur un autre cycle : comptée aussi
+  await dep(500, transport.id);
+  assert.deepEqual(await w.depot.depensesDeLEnveloppe(carnet, transport.id), { nombre: 3, total: 13_000 });
+  await w.depot.supprimerEnveloppe(carnet, transport.id);
+  const mois = await w.depot.mois(carnet);
+  assert.equal(
+    mois.enveloppes.some((e) => e.id === transport.id),
+    false,
+  );
+  assert.equal(mois.depense, 0);
+  w.allerAu('2026-10-29');
+  assert.equal((await w.depot.mois(carnet)).depense, 1_000);
+  const { n } = (await w.sql.premier<{ n: number }>(
+    'SELECT COUNT(*) AS n FROM plafonds WHERE enveloppe_id = ?',
+    transport.id,
+  )) ?? { n: -1 };
+  assert.equal(n, 0);
+  await assert.rejects(w.depot.supprimerEnveloppe(carnet, transport.id), SaisieInvalide);
+});
+
+test('supprimer une enveloppe vide', async () => {
+  const { depot } = monde();
+  const carnet = await carnetExemple(depot);
+  const env = (await depot.mois(carnet)).enveloppes[1];
+  assert.ok(env);
+  assert.deepEqual(await depot.depensesDeLEnveloppe(carnet, env.id), { nombre: 0, total: 0 });
+  await depot.supprimerEnveloppe(carnet, env.id);
+  assert.equal((await depot.mois(carnet)).enveloppes.length, 2);
+});
+
+test('ajouter un revenu en cours de cycle : le reçu augmente', async () => {
+  const { depot } = monde();
+  const carnet = await carnetExemple(depot);
+  await depot.ajouterRevenu(carnet, { montant: 50_000, compteId: null, note: '  Aide de la famille ' });
+  const mois = await depot.mois(carnet);
+  assert.equal(mois.recu, 400_000);
+  const { revenus } = await depot.revenusDuCycle(carnet);
+  assert.deepEqual(
+    revenus.map((r) => [r.montant, r.note]).sort(),
+    [
+      [350_000, null],
+      [50_000, 'Aide de la famille'],
+    ].sort(),
+  );
+  await assert.rejects(depot.ajouterRevenu(carnet, { montant: 0, compteId: null, note: null }), SaisieInvalide);
+  await assert.rejects(depot.ajouterRevenu(carnet, { montant: 1.5, compteId: null, note: null }), SaisieInvalide);
+});

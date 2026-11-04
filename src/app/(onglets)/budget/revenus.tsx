@@ -1,13 +1,16 @@
 import { router } from 'expo-router';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { EtatsBudget } from '@/features/budget/EtatsBudget';
+import { FeuilleRevenu } from '@/features/budget/FeuilleRevenu';
 import { useBudget } from '@/features/budget/useBudget';
 import { formatJourCle } from '@/lib/dates';
 import { formatMontant } from '@/lib/montant';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
+import { Button } from '@/ui/Button';
 import { ListGroup } from '@/ui/ListGroup';
 import { ListItem } from '@/ui/ListItem';
 import { TopBar } from '@/ui/TopBar';
@@ -17,6 +20,7 @@ export default function Revenus() {
   const { t, i18n } = useTranslation();
   const { couleurs, espace, typographie } = useTheme();
   const etat = useBudget((depot, carnet) => depot.revenusDuCycle(carnet));
+  const [feuille, setFeuille] = useState(false);
 
   return (
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
@@ -48,8 +52,14 @@ export default function Revenus() {
               ))}
             </ListGroup>
           )}
+          <Button variant="secondaire" icone="plus" pleineLargeur onPress={() => setFeuille(true)}>
+            {t('budget.ajouterRevenu')}
+          </Button>
         </ScrollView>
       )}
+      {etat.etat === 'pret' ? (
+        <FeuilleRevenu ouvert={feuille} onFermer={() => setFeuille(false)} carnet={etat.carnet} depot={etat.depot} />
+      ) : null}
     </View>
   );
 }
