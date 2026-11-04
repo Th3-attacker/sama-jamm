@@ -1,0 +1,40 @@
+import { router, type Href } from 'expo-router';
+import { useState, type ReactElement } from 'react';
+import { useTranslation } from 'react-i18next';
+
+import { BottomSheet } from '@/ui/BottomSheet';
+import { ListGroup } from '@/ui/ListGroup';
+import { ListItem } from '@/ui/ListItem';
+import type { TopBarAction } from '@/ui/TopBar';
+
+/** Laisse la feuille native finir de se fermer avant de changer d'écran. */
+const DELAI_FERMETURE_MS = 250;
+
+/**
+ * Menu Plus des écrans racines : une action « … » pour la `TopBar` et la feuille à afficher dans l'écran.
+ * Seuls les écrans qui existent sont listés ; Compte, Téléchargements et Soutenir s'ajouteront avec les leurs.
+ */
+export function useMenuPlus(): { action: TopBarAction; feuille: ReactElement } {
+  const { t } = useTranslation();
+  const [ouvert, setOuvert] = useState(false);
+
+  const aller = (href: Href) => {
+    setOuvert(false);
+    setTimeout(() => router.push(href), DELAI_FERMETURE_MS);
+  };
+
+  return {
+    action: { icone: 'more', label: t('menuPlus.titre'), onPress: () => setOuvert(true) },
+    feuille: (
+      <BottomSheet ouvert={ouvert} titre={t('menuPlus.titre')} onFermer={() => setOuvert(false)}>
+        <ListGroup>
+          <ListItem icone="search" titre={t('menuPlus.rechercher')} onPress={() => aller('/plus/recherche')} />
+          <ListItem icone="bookmark" titre={t('menuPlus.favoris')} onPress={() => aller('/plus/favoris')} />
+        </ListGroup>
+        <ListGroup>
+          <ListItem icone="settings" titre={t('menuPlus.reglages')} onPress={() => aller('/plus/reglages')} />
+        </ListGroup>
+      </BottomSheet>
+    ),
+  };
+}

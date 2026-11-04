@@ -4,6 +4,7 @@ import { FlatList, StyleSheet, Text, View } from 'react-native';
 
 import { CarteSourate } from '@/features/lire/CarteSourate';
 import { sourates, type Sourate } from '@/features/lire/coran';
+import { useMenuPlus } from '@/features/plus/MenuPlus';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { ListGroup } from '@/ui/ListGroup';
@@ -22,16 +23,33 @@ function ouvrirSourate(n: number) {
 export default function Lire() {
   const { t } = useTranslation();
   const { couleurs, espace, typographie } = useTheme();
+  const menu = useMenuPlus();
 
   return (
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
-      <TopBar grand titre={t('lire.titre')} sousTitre={t('lire.sousTitre')} />
+      <TopBar
+        grand
+        titre={t('lire.titre')}
+        sousTitre={t('lire.sousTitre')}
+        actions={[
+          { icone: 'search', label: t('menuPlus.rechercher'), onPress: () => router.push('/plus/recherche') },
+          menu.action,
+        ]}
+      />
 
-      <View style={[styles.contenu, { paddingHorizontal: espace.espace5, paddingBottom: espace.espace8, gap: espace.espace4 }]}>
+      <View
+        style={[
+          styles.contenu,
+          { paddingHorizontal: espace.espace5, paddingBottom: espace.espace8, gap: espace.espace4 },
+        ]}>
         {/* Xassaïdes et invocations : les catégories sont annoncées, leur contenu arrive plus tard. */}
         <ListGroup>
           <ListItem titre={t('lire.xassaides')} valeur={t('lire.aVenir')} />
-          <ListItem titre={t('lire.invocations')} sousTitre={t('lire.invocationsSousTitre')} valeur={t('lire.aVenir')} />
+          <ListItem
+            titre={t('lire.invocations')}
+            sousTitre={t('lire.invocationsSousTitre')}
+            valeur={t('lire.aVenir')}
+          />
         </ListGroup>
 
         <Text
@@ -51,6 +69,7 @@ export default function Lire() {
           initialNumToRender={12}
         />
       </View>
+      {menu.feuille}
     </View>
   );
 }

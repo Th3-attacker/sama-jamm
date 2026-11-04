@@ -16,11 +16,14 @@ import {
   versetsAvecTraduction,
 } from '@/features/lire/coran';
 import { cleJour } from '@/lib/dates';
+import { cleVerset, useFavoris } from '@/stores/favoris';
 import { useLecture, type ModeLecture } from '@/stores/lecture';
 import { affichagesLecture, useReglages } from '@/stores/reglages';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { Banner } from '@/ui/Banner';
+import { IconButton } from '@/ui/IconButton';
+import { useToast } from '@/ui/Toast';
 import { Button } from '@/ui/Button';
 import { SegmentedControl } from '@/ui/SegmentedControl';
 import { TopBar } from '@/ui/TopBar';
@@ -91,6 +94,13 @@ function LectureSourate({
   const definirAffichage = useReglages((st) => st.definirAffichage);
   const enregistrerPosition = useLecture((st) => st.enregistrerPosition);
   const marquerJour = useLecture((st) => st.marquerJour);
+  const favoris = useFavoris((st) => st.versets);
+  const basculer = useFavoris((st) => st.basculer);
+  const { afficher } = useToast();
+
+  const basculerFavori = (verset: number) => {
+    if (basculer(s.n, verset)) afficher({ texte: t('lire.favoriAjoute'), icone: 'check' });
+  };
   // Vue mushaf (page justifiée) par défaut ; la bascule ouvre la lecture verset par verset.
   const [modePage, setModePage] = useState(modeInitial === 'page');
   const [page, setPage] = useState(() => pageDe(s.n, versetInitial) ?? 1);
@@ -296,9 +306,18 @@ function LectureSourate({
                     {item.trad}
                   </Text>
                 ) : null}
+                <View style={styles.actions}>
+                  <IconButton
+                    icone="bookmark"
+                    actif={favoris.includes(cleVerset(s.n, item.n))}
+                    label={t(favoris.includes(cleVerset(s.n, item.n)) ? 'lire.favoriRetirer' : 'lire.favoriAjouter')}
+                    onPress={() => basculerFavori(item.n)}
+                  />
+                </View>
               </View>
             </View>
           )}
+          extraData={favoris}
           contentContainerStyle={{
             paddingHorizontal: espace.espace5,
             paddingBottom: espace.espace8,
@@ -413,5 +432,6 @@ const styles = StyleSheet.create({
   },
   textes: { flex: 1, gap: 4 },
   arabe: { textAlign: 'right', writingDirection: 'rtl' },
+  actions: { flexDirection: 'row', justifyContent: 'flex-end' },
   justifie: { textAlign: 'justify', writingDirection: 'rtl' },
 });

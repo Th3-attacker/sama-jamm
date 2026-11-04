@@ -386,7 +386,9 @@
     "resultats_many": "{{count}} نتيجة",
     "resultats_other": "{{count}} نتيجة",
     "aucun": "لا نتائج لـ « {{terme}} »",
-    "aucunTexte": "جرّب كلمة أخرى، أو اسم سورة: « الكهف »، « يس »."
+    "aucunTexte": "جرّب كلمة أخرى، أو اسم سورة: « الكهف »، « يس ».",
+    "sourates": "السور",
+    "versets": "الآيات"
   },
   "favoris": {
     "titre": "المفضلة",
