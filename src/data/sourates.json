@@ -1,0 +1,800 @@
+[
+  {
+    "n": 1,
+    "nom": "Al-Fâtiha",
+    "arabe": "ٱلْفَاتِحَةِ",
+    "versets": 7,
+    "mecquoise": true
+  },
+  {
+    "n": 2,
+    "nom": "Al-Baqarah",
+    "arabe": "البَقَرَةِ",
+    "versets": 286,
+    "mecquoise": false
+  },
+  {
+    "n": 3,
+    "nom": "Al-'Imran",
+    "arabe": "آلِ عِمۡرَانَ",
+    "versets": 200,
+    "mecquoise": false
+  },
+  {
+    "n": 4,
+    "nom": "An-Nisâ'",
+    "arabe": "النِّسَاءِ",
+    "versets": 176,
+    "mecquoise": false
+  },
+  {
+    "n": 5,
+    "nom": "Al-Mâ'idah",
+    "arabe": "المَائـِدَةِ",
+    "versets": 120,
+    "mecquoise": false
+  },
+  {
+    "n": 6,
+    "nom": "Al-An'am",
+    "arabe": "الأَنۡعَامِ",
+    "versets": 165,
+    "mecquoise": true
+  },
+  {
+    "n": 7,
+    "nom": "Al-A'raf",
+    "arabe": "الأَعۡرَافِ",
+    "versets": 206,
+    "mecquoise": true
+  },
+  {
+    "n": 8,
+    "nom": "Al-Anfâl",
+    "arabe": "الأَنفَالِ",
+    "versets": 75,
+    "mecquoise": false
+  },
+  {
+    "n": 9,
+    "nom": "At-Tawbah",
+    "arabe": "التَّوۡبَةِ",
+    "versets": 129,
+    "mecquoise": false
+  },
+  {
+    "n": 10,
+    "nom": "Yûnus",
+    "arabe": "يُونُسَ",
+    "versets": 109,
+    "mecquoise": true
+  },
+  {
+    "n": 11,
+    "nom": "Hûd",
+    "arabe": "هُودٍ",
+    "versets": 123,
+    "mecquoise": true
+  },
+  {
+    "n": 12,
+    "nom": "Yûsuf",
+    "arabe": "يُوسُفَ",
+    "versets": 111,
+    "mecquoise": true
+  },
+  {
+    "n": 13,
+    "nom": "Ar-Ra'd",
+    "arabe": "الرَّعۡدِ",
+    "versets": 43,
+    "mecquoise": false
+  },
+  {
+    "n": 14,
+    "nom": "Ibrâhîm",
+    "arabe": "إِبۡرَاهِيمَ",
+    "versets": 52,
+    "mecquoise": true
+  },
+  {
+    "n": 15,
+    "nom": "Al-Hijr",
+    "arabe": "الحِجۡرِ",
+    "versets": 99,
+    "mecquoise": true
+  },
+  {
+    "n": 16,
+    "nom": "An-Nahl",
+    "arabe": "النَّحۡلِ",
+    "versets": 128,
+    "mecquoise": true
+  },
+  {
+    "n": 17,
+    "nom": "Al-Isrâ'",
+    "arabe": "الإِسۡرَاءِ",
+    "versets": 111,
+    "mecquoise": true
+  },
+  {
+    "n": 18,
+    "nom": "Al-Kahf",
+    "arabe": "الكَهۡفِ",
+    "versets": 110,
+    "mecquoise": true
+  },
+  {
+    "n": 19,
+    "nom": "Maryam",
+    "arabe": "مَرۡيَمَ",
+    "versets": 98,
+    "mecquoise": true
+  },
+  {
+    "n": 20,
+    "nom": "Tâ-Hâ",
+    "arabe": "طه",
+    "versets": 135,
+    "mecquoise": true
+  },
+  {
+    "n": 21,
+    "nom": "Al-Anbiyâ'",
+    "arabe": "الأَنبِيَاءِ",
+    "versets": 112,
+    "mecquoise": true
+  },
+  {
+    "n": 22,
+    "nom": "Al-Hajj",
+    "arabe": "الحَجِّ",
+    "versets": 78,
+    "mecquoise": false
+  },
+  {
+    "n": 23,
+    "nom": "Al-Mu'minûn",
+    "arabe": "المُؤۡمِنُونَ",
+    "versets": 118,
+    "mecquoise": true
+  },
+  {
+    "n": 24,
+    "nom": "An-Nûr",
+    "arabe": "النُّورِ",
+    "versets": 64,
+    "mecquoise": false
+  },
+  {
+    "n": 25,
+    "nom": "Al-Furqân",
+    "arabe": "الفُرۡقَانِ",
+    "versets": 77,
+    "mecquoise": true
+  },
+  {
+    "n": 26,
+    "nom": "Ash-Shu'arâ'",
+    "arabe": "الشُّعَرَاءِ",
+    "versets": 227,
+    "mecquoise": true
+  },
+  {
+    "n": 27,
+    "nom": "An-Naml",
+    "arabe": "النَّمۡلِ",
+    "versets": 93,
+    "mecquoise": true
+  },
+  {
+    "n": 28,
+    "nom": "Al-Qasas",
+    "arabe": "القَصَصِ",
+    "versets": 88,
+    "mecquoise": true
+  },
+  {
+    "n": 29,
+    "nom": "Al-'Ankabût",
+    "arabe": "العَنكَبُوتِ",
+    "versets": 69,
+    "mecquoise": true
+  },
+  {
+    "n": 30,
+    "nom": "Ar-Rûm",
+    "arabe": "الرُّومِ",
+    "versets": 60,
+    "mecquoise": true
+  },
+  {
+    "n": 31,
+    "nom": "Luqmân",
+    "arabe": "لُقۡمَانَ",
+    "versets": 34,
+    "mecquoise": true
+  },
+  {
+    "n": 32,
+    "nom": "As-Sajdah",
+    "arabe": "السَّجۡدَةِ",
+    "versets": 30,
+    "mecquoise": true
+  },
+  {
+    "n": 33,
+    "nom": "Al-Ahzâb",
+    "arabe": "الأَحۡزَابِ",
+    "versets": 73,
+    "mecquoise": false
+  },
+  {
+    "n": 34,
+    "nom": "Saba'",
+    "arabe": "سَبَإٍ",
+    "versets": 54,
+    "mecquoise": true
+  },
+  {
+    "n": 35,
+    "nom": "Fâtir",
+    "arabe": "فَاطِرٍ",
+    "versets": 45,
+    "mecquoise": true
+  },
+  {
+    "n": 36,
+    "nom": "Yâ-Sîn",
+    "arabe": "يسٓ",
+    "versets": 83,
+    "mecquoise": true
+  },
+  {
+    "n": 37,
+    "nom": "As-Sâffât",
+    "arabe": "الصَّافَّاتِ",
+    "versets": 182,
+    "mecquoise": true
+  },
+  {
+    "n": 38,
+    "nom": "Sâd",
+    "arabe": "صٓ",
+    "versets": 88,
+    "mecquoise": true
+  },
+  {
+    "n": 39,
+    "nom": "Az-Zumar",
+    "arabe": "الزُّمَرِ",
+    "versets": 75,
+    "mecquoise": true
+  },
+  {
+    "n": 40,
+    "nom": "Ghâfir",
+    "arabe": "غَافِرٍ",
+    "versets": 85,
+    "mecquoise": true
+  },
+  {
+    "n": 41,
+    "nom": "Fussilat",
+    "arabe": "فُصِّلَتۡ",
+    "versets": 54,
+    "mecquoise": true
+  },
+  {
+    "n": 42,
+    "nom": "Ash-Shûrâ",
+    "arabe": "الشُّورَىٰ",
+    "versets": 53,
+    "mecquoise": true
+  },
+  {
+    "n": 43,
+    "nom": "Az-Zukhruf",
+    "arabe": "الزُّخۡرُفِ",
+    "versets": 89,
+    "mecquoise": true
+  },
+  {
+    "n": 44,
+    "nom": "Ad-Dukhân",
+    "arabe": "الدُّخَانِ",
+    "versets": 59,
+    "mecquoise": true
+  },
+  {
+    "n": 45,
+    "nom": "Al-Jâthiyah",
+    "arabe": "الجَاثِيَةِ",
+    "versets": 37,
+    "mecquoise": true
+  },
+  {
+    "n": 46,
+    "nom": "Al-Ahqâf",
+    "arabe": "الأَحۡقَافِ",
+    "versets": 35,
+    "mecquoise": true
+  },
+  {
+    "n": 47,
+    "nom": "Muhammad",
+    "arabe": "مُحَمَّدٍ",
+    "versets": 38,
+    "mecquoise": false
+  },
+  {
+    "n": 48,
+    "nom": "Al-Fath",
+    "arabe": "الفَتۡحِ",
+    "versets": 29,
+    "mecquoise": false
+  },
+  {
+    "n": 49,
+    "nom": "Al-Hujurât",
+    "arabe": "الحُجُرَاتِ",
+    "versets": 18,
+    "mecquoise": false
+  },
+  {
+    "n": 50,
+    "nom": "Qâf",
+    "arabe": "قٓ",
+    "versets": 45,
+    "mecquoise": true
+  },
+  {
+    "n": 51,
+    "nom": "Adh-Dhâriyât",
+    "arabe": "الذَّارِيَاتِ",
+    "versets": 60,
+    "mecquoise": true
+  },
+  {
+    "n": 52,
+    "nom": "At-Tûr",
+    "arabe": "الطُّورِ",
+    "versets": 49,
+    "mecquoise": true
+  },
+  {
+    "n": 53,
+    "nom": "An-Najm",
+    "arabe": "النَّجۡمِ",
+    "versets": 62,
+    "mecquoise": true
+  },
+  {
+    "n": 54,
+    "nom": "Al-Qamar",
+    "arabe": "القَمَرِ",
+    "versets": 55,
+    "mecquoise": true
+  },
+  {
+    "n": 55,
+    "nom": "Ar-Rahmân",
+    "arabe": "الرَّحۡمَٰن",
+    "versets": 78,
+    "mecquoise": false
+  },
+  {
+    "n": 56,
+    "nom": "Al-Wâqi'ah",
+    "arabe": "الوَاقِعَةِ",
+    "versets": 96,
+    "mecquoise": true
+  },
+  {
+    "n": 57,
+    "nom": "Al-Hadîd",
+    "arabe": "الحَدِيدِ",
+    "versets": 29,
+    "mecquoise": false
+  },
+  {
+    "n": 58,
+    "nom": "Al-Mujâdalah",
+    "arabe": "المُجَادلَةِ",
+    "versets": 22,
+    "mecquoise": false
+  },
+  {
+    "n": 59,
+    "nom": "Al-Hashr",
+    "arabe": "الحَشۡرِ",
+    "versets": 24,
+    "mecquoise": false
+  },
+  {
+    "n": 60,
+    "nom": "Al-Mumtahanah",
+    "arabe": "المُمۡتَحنَةِ",
+    "versets": 13,
+    "mecquoise": false
+  },
+  {
+    "n": 61,
+    "nom": "As-Saff",
+    "arabe": "الصَّفِّ",
+    "versets": 14,
+    "mecquoise": false
+  },
+  {
+    "n": 62,
+    "nom": "Al-Jumu'ah",
+    "arabe": "الجُمُعَةِ",
+    "versets": 11,
+    "mecquoise": false
+  },
+  {
+    "n": 63,
+    "nom": "Al-Munâfiqûn",
+    "arabe": "المُنَافِقُونَ",
+    "versets": 11,
+    "mecquoise": false
+  },
+  {
+    "n": 64,
+    "nom": "At-Taghâbun",
+    "arabe": "التَّغَابُنِ",
+    "versets": 18,
+    "mecquoise": false
+  },
+  {
+    "n": 65,
+    "nom": "At-Talâq",
+    "arabe": "الطَّلَاقِ",
+    "versets": 12,
+    "mecquoise": false
+  },
+  {
+    "n": 66,
+    "nom": "At-Tahrîm",
+    "arabe": "التَّحۡرِيمِ",
+    "versets": 12,
+    "mecquoise": false
+  },
+  {
+    "n": 67,
+    "nom": "Al-Mulk",
+    "arabe": "المُلۡكِ",
+    "versets": 30,
+    "mecquoise": true
+  },
+  {
+    "n": 68,
+    "nom": "Al-Qalam",
+    "arabe": "القَلَمِ",
+    "versets": 52,
+    "mecquoise": true
+  },
+  {
+    "n": 69,
+    "nom": "Al-Hâqqah",
+    "arabe": "الحَاقَّةِ",
+    "versets": 52,
+    "mecquoise": true
+  },
+  {
+    "n": 70,
+    "nom": "Al-Ma'ârij",
+    "arabe": "المَعَارِجِ",
+    "versets": 44,
+    "mecquoise": true
+  },
+  {
+    "n": 71,
+    "nom": "Nûh",
+    "arabe": "نُوحٍ",
+    "versets": 28,
+    "mecquoise": true
+  },
+  {
+    "n": 72,
+    "nom": "Al-Jinn",
+    "arabe": "الجِنِّ",
+    "versets": 28,
+    "mecquoise": true
+  },
+  {
+    "n": 73,
+    "nom": "Al-Muzzammil",
+    "arabe": "المُزَّمِّلِ",
+    "versets": 20,
+    "mecquoise": true
+  },
+  {
+    "n": 74,
+    "nom": "Al-Muddaththir",
+    "arabe": "المُدَّثِّرِ",
+    "versets": 56,
+    "mecquoise": true
+  },
+  {
+    "n": 75,
+    "nom": "Al-Qiyâmah",
+    "arabe": "القِيَامَةِ",
+    "versets": 40,
+    "mecquoise": true
+  },
+  {
+    "n": 76,
+    "nom": "Al-Insân",
+    "arabe": "الإِنسَانِ",
+    "versets": 31,
+    "mecquoise": false
+  },
+  {
+    "n": 77,
+    "nom": "Al-Mursalât",
+    "arabe": "المُرۡسَلَاتِ",
+    "versets": 50,
+    "mecquoise": true
+  },
+  {
+    "n": 78,
+    "nom": "An-Naba'",
+    "arabe": "النَّبَإِ",
+    "versets": 40,
+    "mecquoise": true
+  },
+  {
+    "n": 79,
+    "nom": "An-Nâzi'ât",
+    "arabe": "النَّازِعَاتِ",
+    "versets": 46,
+    "mecquoise": true
+  },
+  {
+    "n": 80,
+    "nom": "'Abasa",
+    "arabe": "عَبَسَ",
+    "versets": 42,
+    "mecquoise": true
+  },
+  {
+    "n": 81,
+    "nom": "At-Takwîr",
+    "arabe": "التَّكۡوِيرِ",
+    "versets": 29,
+    "mecquoise": true
+  },
+  {
+    "n": 82,
+    "nom": "Al-Infitâr",
+    "arabe": "الانفِطَارِ",
+    "versets": 19,
+    "mecquoise": true
+  },
+  {
+    "n": 83,
+    "nom": "Al-Mutaffifîn",
+    "arabe": "المُطَفِّفِينَ",
+    "versets": 36,
+    "mecquoise": true
+  },
+  {
+    "n": 84,
+    "nom": "Al-Inshiqâq",
+    "arabe": "الانشِقَاقِ",
+    "versets": 25,
+    "mecquoise": true
+  },
+  {
+    "n": 85,
+    "nom": "Al-Burûj",
+    "arabe": "البُرُوجِ",
+    "versets": 22,
+    "mecquoise": true
+  },
+  {
+    "n": 86,
+    "nom": "At-Târiq",
+    "arabe": "الطَّارِقِ",
+    "versets": 17,
+    "mecquoise": true
+  },
+  {
+    "n": 87,
+    "nom": "Al-A'lâ",
+    "arabe": "الأَعۡلَىٰ",
+    "versets": 19,
+    "mecquoise": true
+  },
+  {
+    "n": 88,
+    "nom": "Al-Ghâshiyah",
+    "arabe": "الغَاشِيَةِ",
+    "versets": 26,
+    "mecquoise": true
+  },
+  {
+    "n": 89,
+    "nom": "Al-Fajr",
+    "arabe": "الفَجۡرِ",
+    "versets": 30,
+    "mecquoise": true
+  },
+  {
+    "n": 90,
+    "nom": "Al-Balad",
+    "arabe": "البَلَدِ",
+    "versets": 20,
+    "mecquoise": true
+  },
+  {
+    "n": 91,
+    "nom": "Ash-Shams",
+    "arabe": "الشَّمۡسِ",
+    "versets": 15,
+    "mecquoise": true
+  },
+  {
+    "n": 92,
+    "nom": "Al-Layl",
+    "arabe": "اللَّيۡلِ",
+    "versets": 21,
+    "mecquoise": true
+  },
+  {
+    "n": 93,
+    "nom": "Ad-Duhâ",
+    "arabe": "الضُّحَىٰ",
+    "versets": 11,
+    "mecquoise": true
+  },
+  {
+    "n": 94,
+    "nom": "Ash-Sharh",
+    "arabe": "الشَّرۡحِ",
+    "versets": 8,
+    "mecquoise": true
+  },
+  {
+    "n": 95,
+    "nom": "At-Tîn",
+    "arabe": "التِّينِ",
+    "versets": 8,
+    "mecquoise": true
+  },
+  {
+    "n": 96,
+    "nom": "Al-'Alaq",
+    "arabe": "العَلَقِ",
+    "versets": 19,
+    "mecquoise": true
+  },
+  {
+    "n": 97,
+    "nom": "Al-Qadr",
+    "arabe": "القَدۡرِ",
+    "versets": 5,
+    "mecquoise": true
+  },
+  {
+    "n": 98,
+    "nom": "Al-Bayyinah",
+    "arabe": "البَيِّنَةِ",
+    "versets": 8,
+    "mecquoise": false
+  },
+  {
+    "n": 99,
+    "nom": "Az-Zalzalah",
+    "arabe": "الزَّلۡزَلَةِ",
+    "versets": 8,
+    "mecquoise": false
+  },
+  {
+    "n": 100,
+    "nom": "Al-'Âdiyât",
+    "arabe": "العَادِيَاتِ",
+    "versets": 11,
+    "mecquoise": true
+  },
+  {
+    "n": 101,
+    "nom": "Al-Qâri'ah",
+    "arabe": "القَارِعَةِ",
+    "versets": 11,
+    "mecquoise": true
+  },
+  {
+    "n": 102,
+    "nom": "At-Takâthur",
+    "arabe": "التَّكَاثُرِ",
+    "versets": 8,
+    "mecquoise": true
+  },
+  {
+    "n": 103,
+    "nom": "Al-'Asr",
+    "arabe": "العَصۡرِ",
+    "versets": 3,
+    "mecquoise": true
+  },
+  {
+    "n": 104,
+    "nom": "Al-Humazah",
+    "arabe": "الهُمَزَةِ",
+    "versets": 9,
+    "mecquoise": true
+  },
+  {
+    "n": 105,
+    "nom": "Al-Fîl",
+    "arabe": "الفِيلِ",
+    "versets": 5,
+    "mecquoise": true
+  },
+  {
+    "n": 106,
+    "nom": "Quraysh",
+    "arabe": "قُرَيۡشٍ",
+    "versets": 4,
+    "mecquoise": true
+  },
+  {
+    "n": 107,
+    "nom": "Al-Mâ'ûn",
+    "arabe": "المَاعُونِ",
+    "versets": 7,
+    "mecquoise": true
+  },
+  {
+    "n": 108,
+    "nom": "Al-Kawthar",
+    "arabe": "الكَوۡثَرِ",
+    "versets": 3,
+    "mecquoise": true
+  },
+  {
+    "n": 109,
+    "nom": "Al-Kâfirûn",
+    "arabe": "الكَافِرُونَ",
+    "versets": 6,
+    "mecquoise": true
+  },
+  {
+    "n": 110,
+    "nom": "An-Nasr",
+    "arabe": "النَّصۡرِ",
+    "versets": 3,
+    "mecquoise": false
+  },
+  {
+    "n": 111,
+    "nom": "Al-Masad",
+    "arabe": "المَسَدِ",
+    "versets": 5,
+    "mecquoise": true
+  },
+  {
+    "n": 112,
+    "nom": "Al-Ikhlâs",
+    "arabe": "الإِخۡلَاصِ",
+    "versets": 4,
+    "mecquoise": true
+  },
+  {
+    "n": 113,
+    "nom": "Al-Falaq",
+    "arabe": "الفَلَقِ",
+    "versets": 5,
+    "mecquoise": true
+  },
+  {
+    "n": 114,
+    "nom": "An-Nâs",
+    "arabe": "النَّاسِ",
+    "versets": 6,
+    "mecquoise": true
+  }
+]
