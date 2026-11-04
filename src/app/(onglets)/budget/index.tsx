@@ -95,7 +95,19 @@ export default function Budget() {
           paddingBottom: espace.espace8,
           gap: espace.espace5,
         }}>
-        <View style={{ padding: espace.espace5, borderRadius: rayon.rayonCarte, backgroundColor: couleurs.emeraude }}>
+        {/* La carte du haut ouvre la liste des revenus du cycle : ajouter, corriger ou supprimer un revenu. */}
+        <Pressable
+          accessibilityRole="button"
+          accessibilityHint={t('budget.voirRevenus')}
+          android_ripple={{ color: couleurs.emeraudeDoux }}
+          onPress={() => router.push('/budget/revenus')}
+          style={({ pressed }) => ({
+            padding: espace.espace5,
+            borderRadius: rayon.rayonCarte,
+            backgroundColor: couleurs.emeraude,
+            overflow: 'hidden',
+            opacity: pressed ? 0.9 : 1,
+          })}>
           <AmountDisplay
             surEmeraude
             montant={duJour}
@@ -107,23 +119,15 @@ export default function Budget() {
                 : t('budget.depenseDuJourDetail', { reste: f(reste), jours: t('budget.jours', { count: jours }) })
             }
           />
-        </View>
+        </Pressable>
 
         <View style={[styles.totaux, { gap: espace.espace3 }]}>
           {[
             [t('budget.recu'), mois.recu],
             [t('budget.depense'), mois.depense],
             [t('budget.epargne'), mois.misDeCote],
-          ].map(([libelle, montant], i) => (
-            // « Reçu » ouvre la liste des revenus du cycle, pour les corriger.
-            <Pressable
-              key={String(libelle)}
-              accessible
-              disabled={i !== 0}
-              accessibilityRole={i === 0 ? 'button' : undefined}
-              accessibilityHint={i === 0 ? t('budget.voirRevenus') : undefined}
-              onPress={() => router.push('/budget/revenus')}
-              style={styles.total}>
+          ].map(([libelle, montant]) => (
+            <View key={String(libelle)} accessible style={styles.total}>
               <Text
                 maxFontSizeMultiplier={echelleMax.courant}
                 style={[typographie.legende, { color: couleurs.encre3 }]}>
@@ -136,7 +140,7 @@ export default function Budget() {
                 style={[typographie.libelle, { color: couleurs.encre, fontVariant: ['tabular-nums'] }]}>
                 {f(Number(montant))}
               </Text>
-            </Pressable>
+            </View>
           ))}
         </View>
 
