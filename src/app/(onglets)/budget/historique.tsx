@@ -6,7 +6,7 @@ import { ScrollView, SectionList, StyleSheet, Text, View } from 'react-native';
 import { useFormatMontant } from '@/features/budget/verrou';
 import type { FiltreHistorique, OperationHistorique } from '@/features/budget/depot';
 import { iconeEnveloppe } from '@/features/budget/enveloppesDeDepart';
-import { EtatsBudget } from '@/features/budget/EtatsBudget';
+import { EcranBudgetIncomplet } from '@/features/budget/EcranBudgetIncomplet';
 import { useBudget } from '@/features/budget/useBudget';
 import { formatJourCle } from '@/lib/dates';
 import { echelleMax } from '@/theme/typographie';
@@ -41,12 +41,7 @@ export default function Historique() {
   );
 
   if (etat.etat !== 'pret') {
-    return (
-      <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
-        <TopBar retour titre={t('budget.historique')} />
-        <EtatsBudget etat={etat} />
-      </View>
-    );
+    return <EcranBudgetIncomplet titre={t('budget.historique')} etat={etat} />;
   }
 
   const devise = etat.carnet.devise;

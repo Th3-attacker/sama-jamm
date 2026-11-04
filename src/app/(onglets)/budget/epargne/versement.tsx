@@ -1,13 +1,14 @@
-import { router, useLocalSearchParams } from 'expo-router';
+import { router } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { EtatsBudget } from '@/features/budget/EtatsBudget';
+import { EcranBudgetIncomplet } from '@/features/budget/EcranBudgetIncomplet';
 import { budgetModifie, useBudget } from '@/features/budget/useBudget';
 import { useFormatMontant } from '@/features/budget/verrou';
 import { echelleMax } from '@/theme/typographie';
+import { useParametre } from '@/hooks/useParametre';
 import { useTheme } from '@/theme/useTheme';
 import { AmountDisplay } from '@/ui/AmountDisplay';
 import { Banner } from '@/ui/Banner';
@@ -25,8 +26,7 @@ export default function Versement() {
   const { couleurs, espace, typographie } = useTheme();
   const insets = useSafeAreaInsets();
   const { afficher } = useToast();
-  const params = useLocalSearchParams<{ objectif?: string | string[] }>();
-  const objectifDemande = (Array.isArray(params.objectif) ? params.objectif[0] : params.objectif) ?? null;
+  const objectifDemande = useParametre('objectif') || null;
   const etat = useBudget(async (depot, carnet) => ({
     epargne: await depot.epargne(carnet),
     comptes: await depot.comptes(carnet.id),
@@ -40,12 +40,7 @@ export default function Versement() {
   const [echec, setEchec] = useState(false);
 
   if (etat.etat !== 'pret') {
-    return (
-      <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
-        <TopBar retour titre={t('epargne.mettreDeCote')} />
-        <EtatsBudget etat={etat} />
-      </View>
-    );
+    return <EcranBudgetIncomplet titre={t('epargne.mettreDeCote')} etat={etat} />;
   }
 
   const { carnet, depot, donnees } = etat;

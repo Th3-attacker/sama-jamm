@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { CarteObjectif } from '@/features/budget/CarteObjectif';
-import { EtatsBudget } from '@/features/budget/EtatsBudget';
+import { EcranBudgetIncomplet } from '@/features/budget/EcranBudgetIncomplet';
 import { useBudget } from '@/features/budget/useBudget';
 import { useFormatMontant } from '@/features/budget/verrou';
 import { echelleMax } from '@/theme/typographie';
@@ -22,12 +22,7 @@ export default function EcranEpargne() {
   const etat = useBudget((depot, carnet) => depot.epargne(carnet));
 
   if (etat.etat !== 'pret') {
-    return (
-      <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
-        <TopBar retour titre={t('epargne.titre')} />
-        <EtatsBudget etat={etat} />
-      </View>
-    );
+    return <EcranBudgetIncomplet titre={t('epargne.titre')} etat={etat} />;
   }
 
   const { carnet, donnees: e } = etat;

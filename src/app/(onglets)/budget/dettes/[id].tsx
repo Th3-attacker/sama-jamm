@@ -1,16 +1,17 @@
-import { router, useLocalSearchParams } from 'expo-router';
+import { router } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, Share, StyleSheet, Text, View } from 'react-native';
 
 import type { PaiementDette } from '@/features/budget/depot';
 import { etatEcheance } from '@/features/budget/dettes';
-import { EtatsBudget } from '@/features/budget/EtatsBudget';
+import { EcranBudgetIncomplet } from '@/features/budget/EcranBudgetIncomplet';
 import { budgetModifie, useBudget } from '@/features/budget/useBudget';
 import { useFormatMontant } from '@/features/budget/verrou';
 import { cleJour, formatJourCle } from '@/lib/dates';
 import { formatMontant as formatMontantReel } from '@/lib/montant';
 import { echelleMax } from '@/theme/typographie';
+import { useParametre } from '@/hooks/useParametre';
 import { useTheme } from '@/theme/useTheme';
 import { AmountDisplay } from '@/ui/AmountDisplay';
 import { Banner } from '@/ui/Banner';
@@ -28,8 +29,7 @@ export default function EcranDette() {
   const formatMontant = useFormatMontant();
   const { couleurs, espace, typographie } = useTheme();
   const { afficher } = useToast();
-  const params = useLocalSearchParams<{ id?: string | string[] }>();
-  const id = (Array.isArray(params.id) ? params.id[0] : params.id) ?? '';
+  const id = useParametre('id');
   const etat = useBudget((depot, carnet) => depot.dette(carnet, id), id);
   const [annuler, setAnnuler] = useState(false);
   const [aSupprimer, setASupprimer] = useState<PaiementDette | null>(null);
@@ -37,18 +37,7 @@ export default function EcranDette() {
   const [echec, setEchec] = useState(false);
 
   if (etat.etat !== 'pret' || etat.donnees === null) {
-    return (
-      <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
-        <TopBar retour titre={t('dettes.titre')} />
-        {etat.etat === 'pret' ? (
-          <View style={{ padding: espace.espace5 }}>
-            <Banner ton="erreur">{t('dettes.introuvable')}</Banner>
-          </View>
-        ) : (
-          <EtatsBudget etat={etat} />
-        )}
-      </View>
-    );
+    return <EcranBudgetIncomplet titre={t('dettes.titre')} etat={etat} introuvable={t('dettes.introuvable')} />;
   }
 
   const { carnet, depot, donnees: d } = etat;

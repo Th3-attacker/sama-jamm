@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { lireSaisieDate, masqueDate, versSaisieDate } from '@/features/budget/dettes';
-import { EtatsBudget } from '@/features/budget/EtatsBudget';
+import { EcranBudgetIncomplet } from '@/features/budget/EcranBudgetIncomplet';
 import { annulerRappelZakat, programmerRappelZakat } from '@/features/budget/rappelZakat';
 import { budgetModifie, useBudget } from '@/features/budget/useBudget';
 import { useFormatMontant } from '@/features/budget/verrou';
@@ -37,12 +37,7 @@ export default function Zakat() {
   const [echec, setEchec] = useState(false);
 
   if (etat.etat !== 'pret') {
-    return (
-      <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
-        <TopBar retour titre={t('zakat.titre')} />
-        <EtatsBudget etat={etat} />
-      </View>
-    );
+    return <EcranBudgetIncomplet titre={t('zakat.titre')} etat={etat} />;
   }
 
   const { carnet, depot, donnees: z } = etat;

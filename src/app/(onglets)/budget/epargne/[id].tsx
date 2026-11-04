@@ -1,15 +1,16 @@
-import { router, useLocalSearchParams } from 'expo-router';
+import { router } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { useRythmeObjectif } from '@/features/budget/CarteObjectif';
 import { progressionObjectif } from '@/features/budget/epargne';
-import { EtatsBudget } from '@/features/budget/EtatsBudget';
+import { EcranBudgetIncomplet } from '@/features/budget/EcranBudgetIncomplet';
 import { budgetModifie, useBudget } from '@/features/budget/useBudget';
 import { useFormatMontant } from '@/features/budget/verrou';
 import { formatJourCle } from '@/lib/dates';
 import { echelleMax } from '@/theme/typographie';
+import { useParametre } from '@/hooks/useParametre';
 import { useTheme } from '@/theme/useTheme';
 import { AmountDisplay } from '@/ui/AmountDisplay';
 import { Banner } from '@/ui/Banner';
@@ -27,8 +28,7 @@ export default function DetailObjectif() {
   const formatMontant = useFormatMontant();
   const { couleurs, espace, typographie } = useTheme();
   const { afficher } = useToast();
-  const params = useLocalSearchParams<{ id?: string | string[] }>();
-  const id = (Array.isArray(params.id) ? params.id[0] : params.id) ?? '';
+  const id = useParametre('id');
   const etat = useBudget((depot, carnet) => depot.objectif(carnet, id), id);
   const rythmeDe = useRythmeObjectif();
   const [confirmer, setConfirmer] = useState(false);
@@ -36,18 +36,7 @@ export default function DetailObjectif() {
   const [echec, setEchec] = useState(false);
 
   if (etat.etat !== 'pret' || etat.donnees === null) {
-    return (
-      <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
-        <TopBar retour titre={t('epargne.titre')} />
-        {etat.etat === 'pret' ? (
-          <View style={{ padding: espace.espace5 }}>
-            <Banner ton="erreur">{t('epargne.introuvable')}</Banner>
-          </View>
-        ) : (
-          <EtatsBudget etat={etat} />
-        )}
-      </View>
-    );
+    return <EcranBudgetIncomplet titre={t('epargne.titre')} etat={etat} introuvable={t('epargne.introuvable')} />;
   }
 
   const { carnet, depot, donnees: o } = etat;

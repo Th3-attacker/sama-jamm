@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { SENS_DETTE, resumeDettes, type SensDette } from '@/features/budget/dettes';
-import { EtatsBudget } from '@/features/budget/EtatsBudget';
+import { EcranBudgetIncomplet } from '@/features/budget/EcranBudgetIncomplet';
 import { LigneDette } from '@/features/budget/LigneDette';
 import { useBudget } from '@/features/budget/useBudget';
 import { useFormatMontant } from '@/features/budget/verrou';
@@ -32,12 +32,7 @@ export default function Dettes() {
   const [filtre, setFiltre] = useState<Filtre>('tous');
 
   if (etat.etat !== 'pret') {
-    return (
-      <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
-        <TopBar retour titre={t('dettes.titre')} />
-        <EtatsBudget etat={etat} />
-      </View>
-    );
+    return <EcranBudgetIncomplet titre={t('dettes.titre')} etat={etat} />;
   }
 
   const { carnet, donnees } = etat;

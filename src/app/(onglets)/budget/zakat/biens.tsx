@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import type { BienZakat } from '@/features/budget/depot';
-import { EtatsBudget } from '@/features/budget/EtatsBudget';
+import { EcranBudgetIncomplet } from '@/features/budget/EcranBudgetIncomplet';
 import { budgetModifie, useBudget } from '@/features/budget/useBudget';
 import { useFormatMontant } from '@/features/budget/verrou';
 import { baseDeCalcul, BASES_NISAB, coursAncien, mgVersGrammes, valeurMetal } from '@/features/budget/zakat';
@@ -35,12 +35,7 @@ export default function BiensZakat() {
   const [echec, setEchec] = useState(false);
 
   if (etat.etat !== 'pret') {
-    return (
-      <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
-        <TopBar retour titre={t('zakat.mesBiens')} />
-        <EtatsBudget etat={etat} />
-      </View>
-    );
+    return <EcranBudgetIncomplet titre={t('zakat.mesBiens')} etat={etat} />;
   }
 
   const { carnet, depot, donnees: z } = etat;
