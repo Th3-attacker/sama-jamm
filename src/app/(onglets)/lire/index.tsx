@@ -16,7 +16,7 @@ function Separateur() {
 }
 
 function ouvrirSourate(n: number) {
-  router.push({ pathname: '/lire/sourate', params: { n } });
+  router.push({ pathname: '/lire/coran/[sourate]', params: { sourate: n } });
 }
 
 export default function Lire() {
