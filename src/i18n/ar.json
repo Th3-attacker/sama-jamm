@@ -630,7 +630,17 @@
     "supprimerEnveloppeAvec_many": "سيُحذف مع {{count}} مصروفًا ({{montant}}). ستنقص مجاميعك بالقدر نفسه.",
     "supprimerEnveloppeAvec_other": "سيُحذف مع {{count}} مصروف ({{montant}}). ستنقص مجاميعك بالقدر نفسه.",
     "enveloppeSupprimee": "تم حذف الظرف",
-    "noteRevenuAide": "مثلًا: راتب، مساعدة من العائلة."
+    "noteRevenuAide": "مثلًا: راتب، مساعدة من العائلة.",
+    "enveloppesArchivees": "الظروف المؤرشفة",
+    "enveloppeArchiveeBandeau": "ظرف مؤرشف: لا تزال مصروفاته ضمن مجاميعك. يمكنك تصحيحها أو استعادة الظرف أو حذفه.",
+    "restaurerEnveloppe": "استعادة الظرف",
+    "enveloppeRestauree": "تمت استعادة الظرف",
+    "depensesTotal_zero": "لا مصروفات · {{montant}}",
+    "depensesTotal_one": "مصروف واحد · {{montant}}",
+    "depensesTotal_two": "مصروفان · {{montant}}",
+    "depensesTotal_few": "{{count}} مصروفات · {{montant}}",
+    "depensesTotal_many": "{{count}} مصروفًا · {{montant}}",
+    "depensesTotal_other": "{{count}} مصروف · {{montant}}"
   },
   "epargne": {
     "titre": "الادخار",

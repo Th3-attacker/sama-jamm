@@ -85,6 +85,18 @@ export default function EcranEnveloppe() {
     }
   };
 
+  const restaurer = async () => {
+    setEchec(false);
+    try {
+      await depot.restaurerEnveloppe(carnet, e.id);
+      budgetModifie();
+      afficher({ texte: t('budget.enveloppeRestauree'), icone: 'check' });
+    } catch (erreur: unknown) {
+      console.error('Enveloppe non restaurée', erreur);
+      setEchec(true);
+    }
+  };
+
   const demanderSuppression = async () => {
     setEchec(false);
     try {
@@ -117,28 +129,39 @@ export default function EcranEnveloppe() {
           paddingBottom: espace.espace8,
           gap: espace.espace5,
         }}>
-        <AmountDisplay
-          montant={Math.max(reste, 0)}
-          devise={devise}
-          libelle={reste >= 0 ? t('budget.resteTitre') : t('budget.depasse', { montant: f(-reste) })}
-          detail={t('budget.sur', { montant: f(e.plafond) })}
-          tonDetail={reste < 0 ? 'erreur' : 'normal'}
-        />
-        <ProgressBar
-          valeur={e.plafond > 0 ? e.depense / e.plafond : e.depense > 0 ? 2 : 0}
-          label={e.nom}
-          detail={`${t('budget.depense')} : ${f(e.depense)} ${t('budget.sur', { montant: f(e.plafond) })}`}
-        />
-        {reste > 0 ? (
-          <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, { color: couleurs.encre2 }]}>
-            {t('budget.parJour', { montant: f(parJour) })}
-          </Text>
-        ) : null}
+        {e.archivee ? <Banner ton="info">{t('budget.enveloppeArchiveeBandeau')}</Banner> : null}
+        {e.archivee ? null : (
+          <>
+            <AmountDisplay
+              montant={Math.max(reste, 0)}
+              devise={devise}
+              libelle={reste >= 0 ? t('budget.resteTitre') : t('budget.depasse', { montant: f(-reste) })}
+              detail={t('budget.sur', { montant: f(e.plafond) })}
+              tonDetail={reste < 0 ? 'erreur' : 'normal'}
+            />
+            <ProgressBar
+              valeur={e.plafond > 0 ? e.depense / e.plafond : e.depense > 0 ? 2 : 0}
+              label={e.nom}
+              detail={`${t('budget.depense')} : ${f(e.depense)} ${t('budget.sur', { montant: f(e.plafond) })}`}
+            />
+            {reste > 0 ? (
+              <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, { color: couleurs.encre2 }]}>
+                {t('budget.parJour', { montant: f(parJour) })}
+              </Text>
+            ) : null}
+          </>
+        )}
 
         <View style={{ gap: espace.espace2 }}>
-          <Button variant="secondaire" icone="edit" pleineLargeur onPress={() => ouvrir('plafond')}>
-            {t('budget.modifierPlafond')}
-          </Button>
+          {e.archivee ? (
+            <Button variant="secondaire" icone="reset" pleineLargeur onPress={restaurer}>
+              {t('budget.restaurerEnveloppe')}
+            </Button>
+          ) : (
+            <Button variant="secondaire" icone="edit" pleineLargeur onPress={() => ouvrir('plafond')}>
+              {t('budget.modifierPlafond')}
+            </Button>
+          )}
           <Button variant="secondaire" icone="type" pleineLargeur onPress={() => ouvrir('nom')}>
             {t('budget.renommer')}
           </Button>

@@ -27,7 +27,14 @@ export default function EcranOperation() {
   const etat = useBudget(
     async (depot, carnet) => ({
       operation: await depot.operation(carnet, id),
-      enveloppes: (await depot.mois(carnet)).enveloppes,
+      enveloppes: await (async () => {
+        // Enveloppes actives, plus celle de la dépense si elle est archivée : la dépense peut la garder.
+        const actives = (await depot.mois(carnet)).enveloppes;
+        const op = await depot.operation(carnet, id);
+        if (!op?.enveloppeId || actives.some((e) => e.id === op.enveloppeId)) return actives;
+        const sienne = (await depot.detailEnveloppe(carnet, op.enveloppeId))?.enveloppe;
+        return sienne ? [sienne, ...actives] : actives;
+      })(),
     }),
     id,
   );
