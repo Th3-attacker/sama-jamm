@@ -66,6 +66,11 @@ export function versMinimes(saisie: string, devise: Devise): number | null {
   return Number.isSafeInteger(total) ? total : null;
 }
 
+/** Saisie d'un montant facultatif : 0 si le champ est vide, sinon comme `versMinimes` (`null` si invalide). */
+export function lireMontantFacultatif(saisie: string, devise: Devise): number | null {
+  return saisie.trim() === '' ? 0 : versMinimes(saisie, devise);
+}
+
 /** Montant en unités principales, pour l'affichage seulement (jamais pour calculer). */
 export function versPrincipal(minimes: number, devise: Devise): number {
   return minimes / devise.sousUnites;

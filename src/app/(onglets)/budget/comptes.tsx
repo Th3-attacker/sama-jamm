@@ -6,7 +6,7 @@ import { useFormatMontant } from '@/features/budget/verrou';
 import { NOM_ENVELOPPE_MAX, TYPES_COMPTE, type TypeCompte } from '@/features/budget/depot';
 import { EcranBudgetIncomplet } from '@/features/budget/EcranBudgetIncomplet';
 import { budgetModifie, useBudget } from '@/features/budget/useBudget';
-import { versMinimes } from '@/lib/montant';
+import { lireMontantFacultatif, versMinimes } from '@/lib/montant';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { AmountDisplay } from '@/ui/AmountDisplay';
@@ -51,11 +51,11 @@ export default function Comptes() {
   const total = comptes.reduce((somme, c) => somme + c.solde, 0);
   const nomPropre = nom.trim();
   const nomValide = nomPropre.length >= 1 && nomPropre.length <= NOM_ENVELOPPE_MAX;
-  const soldeMinimes = solde.trim() === '' ? 0 : versMinimes(solde, devise);
+  const soldeMinimes = lireMontantFacultatif(solde, devise);
 
   const deChoisi = de ?? comptes[0]?.id ?? null;
   const versChoisi = vers ?? comptes.find((c) => c.id !== deChoisi)?.id ?? null;
-  const virementMinimes = montantVirement.trim() === '' ? null : versMinimes(montantVirement, devise);
+  const virementMinimes = versMinimes(montantVirement, devise);
   const virementValide =
     deChoisi !== null &&
     versChoisi !== null &&

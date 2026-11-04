@@ -6,7 +6,7 @@ import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } fr
 import { SaisieInvalide } from '@/features/budget/depot';
 import { postesDeDepart } from '@/features/budget/enveloppesDeDepart';
 import { budgetModifie, depotBudget } from '@/features/budget/useBudget';
-import { devisesIntegrees, versMinimes } from '@/lib/montant';
+import { devisesIntegrees, lireMontantFacultatif } from '@/lib/montant';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { Banner } from '@/ui/Banner';
@@ -36,7 +36,7 @@ export default function PremierBudget() {
   const devise = devisesIntegrees.find((d) => d.code === codeDevise) ?? devisesIntegrees[0];
   const jour = Number(jourPaie);
   const jourValide = /^\d{1,2}$/.test(jourPaie) && jour >= 1 && jour <= 31;
-  const minimes = (saisie: string) => (saisie.trim() === '' ? 0 : devise ? versMinimes(saisie, devise) : null);
+  const minimes = (saisie: string) => (devise ? lireMontantFacultatif(saisie, devise) : null);
   const revenuMinimes = minimes(revenu);
   const plafondsValides = postesDeDepart.every(
     (p) => !postes[p.cle]?.garde || minimes(postes[p.cle]?.plafond ?? '') !== null,

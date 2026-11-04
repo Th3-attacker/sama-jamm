@@ -41,7 +41,9 @@ export default function EcranEnveloppe() {
   const { afficher } = useToast();
 
   if (etat.etat !== 'pret' || etat.donnees === null) {
-    return <EcranBudgetIncomplet titre={t('budget.enveloppe')} etat={etat} introuvable={t('budget.enveloppeIntrouvable')} />;
+    return (
+      <EcranBudgetIncomplet titre={t('budget.enveloppe')} etat={etat} introuvable={t('budget.enveloppeIntrouvable')} />
+    );
   }
 
   const { carnet, depot, donnees } = etat;
@@ -51,7 +53,7 @@ export default function EcranEnveloppe() {
   const reste = e.plafond - e.depense;
   const jours = joursRestants(cleJour(new Date()), cycle.fin);
   const parJour = depenseDuJour(reste, jours, pasArrondi(devise));
-  const nouveauPlafond = saisie.trim() === '' ? null : versMinimes(saisie, devise);
+  const nouveauPlafond = versMinimes(saisie, devise);
   const nouveauNom = saisie.trim();
   const nomValide = nouveauNom.length >= 1 && nouveauNom.length <= NOM_ENVELOPPE_MAX;
   const saisieValide = feuille === 'nom' ? nomValide : nouveauPlafond !== null;

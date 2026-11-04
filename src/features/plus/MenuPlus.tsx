@@ -1,5 +1,5 @@
 import { router, type Href } from 'expo-router';
-import { useState, type ReactElement } from 'react';
+import { useEffect, useRef, useState, type ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { BottomSheet } from '@/ui/BottomSheet';
@@ -17,10 +17,14 @@ const DELAI_FERMETURE_MS = 250;
 export function useMenuPlus(): { action: TopBarAction; feuille: ReactElement } {
   const { t } = useTranslation();
   const [ouvert, setOuvert] = useState(false);
+  const minuteur = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  // Écran quitté avant la fin du délai : pas de navigation tardive.
+  useEffect(() => () => clearTimeout(minuteur.current), []);
 
   const aller = (href: Href) => {
     setOuvert(false);
-    setTimeout(() => router.push(href), DELAI_FERMETURE_MS);
+    clearTimeout(minuteur.current);
+    minuteur.current = setTimeout(() => router.push(href), DELAI_FERMETURE_MS);
   };
 
   return {

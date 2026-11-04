@@ -55,7 +55,7 @@ export default function NouvelleDette() {
   const valEcheance = echeance ?? (dette?.echeance ? versSaisieDate(dette.echeance) : '');
   const valNote = note ?? dette?.note ?? '';
 
-  const minimes = valMontant.trim() === '' ? null : versMinimes(valMontant, devise);
+  const minimes = versMinimes(valMontant, devise);
   const jourEcheance = valEcheance.trim() === '' ? null : lireSaisieDate(valEcheance);
   const personneOk = valPersonne.trim().length >= 1 && valPersonne.trim().length <= PERSONNE_MAX;
   const montantOk = minimes !== null && minimes > 0;
