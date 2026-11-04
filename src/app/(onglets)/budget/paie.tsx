@@ -25,7 +25,10 @@ export default function JourDePaie() {
   const etat = useBudget(async (depot, carnet) => ({
     mois: await depot.mois(carnet),
     comptes: await depot.comptes(carnet.id),
+    objectifs: (await depot.epargne(carnet)).objectifs,
   }));
+  // Versements par objectif modifiés ; les autres gardent le versement prévu à chaque paie.
+  const [versements, setVersements] = useState<Record<string, string>>({});
   const [revenu, setRevenu] = useState('');
   const [compteId, setCompteId] = useState<string | null>(null);
   const [epargne, setEpargne] = useState('');
@@ -45,7 +48,7 @@ export default function JourDePaie() {
   }
 
   const { carnet, depot, donnees } = etat;
-  const { mois, comptes } = donnees;
+  const { mois, comptes, objectifs } = donnees;
   const devise = carnet.devise;
   const f = (m: number) => formatMontant(m, devise);
   const lire = (saisie: string) => (saisie.trim() === '' ? 0 : versMinimes(saisie, devise));
@@ -60,9 +63,21 @@ export default function JourDePaie() {
     const saisie = plafonds[e.id] ?? versSaisie(actuel, devise) ?? '';
     return { e, saisie, montant: lire(saisie) };
   });
-  const valide = [revenuM, epargneM, sadaqaM, ...lignes.map((l) => l.montant)].every((m) => m !== null);
+  const lignesObjectifs = objectifs.map((o) => {
+    const saisie = versements[o.id] ?? (o.versementMensuel ? (versSaisie(o.versementMensuel, devise) ?? '') : '');
+    return { o, saisie, montant: lire(saisie) };
+  });
+  const valide = [
+    revenuM,
+    epargneM,
+    sadaqaM,
+    ...lignes.map((l) => l.montant),
+    ...lignesObjectifs.map((l) => l.montant),
+  ].every((m) => m !== null);
   const reparti = lignes.reduce((total, l) => total + (l.montant ?? 0), 0);
-  const restant = mois.recu + (revenuM ?? 0) - (mois.misDeCote + (epargneM ?? 0) + (sadaqaM ?? 0)) - reparti;
+  const versementsTotal = lignesObjectifs.reduce((total, l) => total + (l.montant ?? 0), 0);
+  const restant =
+    mois.recu + (revenuM ?? 0) - (mois.misDeCote + (epargneM ?? 0) + versementsTotal + (sadaqaM ?? 0)) - reparti;
 
   const valider = async () => {
     if (!valide) return;
@@ -75,6 +90,7 @@ export default function JourDePaie() {
         epargne: epargneM ?? 0,
         sadaqa: sadaqaM ?? 0,
         plafonds: lignes.map((l) => ({ enveloppeId: l.e.id, montant: l.montant ?? 0 })),
+        versements: lignesObjectifs.map((l) => ({ objectifId: l.o.id, montant: l.montant ?? 0 })),
       });
       budgetModifie();
       afficher({ texte: t('budget.paieEnregistree'), icone: 'check' });
@@ -129,8 +145,21 @@ export default function JourDePaie() {
           ) : null}
 
           {titreSection(t('budget.mettreDeCote'))}
+          {lignesObjectifs.map(({ o, saisie, montant }) => (
+            <TextField
+              key={o.id}
+              label={o.nom}
+              valeur={saisie}
+              onChange={(texte) => setVersements((v) => ({ ...v, [o.id]: texte }))}
+              clavier={clavier}
+              suffixe={devise.symbole}
+              placeholder="0"
+              aide={o.intention ?? undefined}
+              erreur={montant === null ? t('budget.montantInvalide') : undefined}
+            />
+          ))}
           <TextField
-            label={t('budget.epargneMontant')}
+            label={objectifs.length > 0 ? t('epargne.autreEpargne') : t('budget.epargneMontant')}
             valeur={epargne}
             onChange={setEpargne}
             clavier={clavier}

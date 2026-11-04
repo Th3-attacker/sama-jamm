@@ -205,7 +205,7 @@ export default function EcranOperation() {
         onConfirmer={supprimer}>
         {t('budget.supprimerOperationTexte', {
           montant: formatMontant(op.montant, devise),
-          enveloppe: estDepense ? nomEnveloppe : t('budget.recu'),
+          enveloppe: estDepense ? nomEnveloppe : op.type === 'epargne' ? t('epargne.titre') : t('budget.recu'),
           date: formatJourCle(op.date, i18n.language),
         })}
       </Dialog>
