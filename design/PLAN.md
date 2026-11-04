@@ -13,6 +13,7 @@ Ordre : **A → B1 → B2 → C2 → C3 → C4 → B4 → C1 → C5 → D → E 
 | Audit P1 | Cycles uniques (migration v2), file d'attente du dépôt | #53 |
 | Audit P2 | Dépendances SDK 58, `eas.json`, CI | #54 |
 | Audit P3 | Verrou biométrique, aperçu masqué, icône œil | #55 |
+| B1 | Performance : Veille, index de recherche par paquets, notifications ciblées | #56 |
 
 ## A. Vérifier sur un téléphone (bloquant)
 
@@ -30,6 +31,17 @@ Ordre : **A → B1 → B2 → C2 → C3 → C4 → B4 → C1 → C5 → D → E 
 | B2 | Tests (horaires, fenêtre de notifications, recherche) et examen de `npm audit` |
 | B3 | Trois parcours Maestro : bienvenue, lecture, dépense |
 | B4 | Propreté : découpage de `depot.ts`, composants partagés, code mort, minuteries, sauvegarde Android ciblée, retrait du web |
+
+### `npm audit` (examen du 4 novembre 2026)
+
+19 alertes (18 moyennes, 1 élevée), **aucune dans le code embarqué dans l'app** : toutes viennent des outils de développement.
+
+| Alerte | Arrive par | Décision |
+| --- | --- | --- |
+| `minimatch`, `glob` (moyennes) | eslint et ses plugins, `@expo/cli`, `@expo/fingerprint` | Rien : outils lancés sur nos propres fichiers. Le seul correctif proposé ramène Expo à la 51, refusé. |
+| `zod` 3.25 (élevée, mémoire épuisée sur des collections géantes) | `eslint-plugin-react-hooks` (lint seulement) | Rien : eslint ne valide aucune donnée externe. `npm audit fix` modifierait aussi `@expo/cli` et une dizaine de paquets. |
+
+À revoir à chaque mise à jour d'Expo ou d'eslint (`npm audit`), sans `npm audit fix --force`.
 
 ## C. Terminer le budget
 
