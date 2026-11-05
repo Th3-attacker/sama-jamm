@@ -1014,7 +1014,9 @@
     },
     "introuvableTexte": "Nous ne trouvons pas ce numéro. Vérifiez-le ou écrivez-nous.",
     "verificationNote": "Nous comparons avec les relevés du wallet, en général sous quelques jours. Le statut se met à jour ici.",
-    "envoiDiffere": "Pas de réseau : votre déclaration sera envoyée dès le retour de la connexion."
+    "envoiDiffere": "Pas de réseau : votre déclaration sera envoyée dès le retour de la connexion.",
+    "merciTitre": "Merci pour votre don",
+    "revenirAccueil": "Revenir à l’accueil"
   },
   "etats": {
     "horsLigne": "Hors ligne",

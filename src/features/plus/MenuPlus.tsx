@@ -44,6 +44,7 @@ export function useMenuPlus(): { action: TopBarAction; feuille: ReactElement } {
         </ListGroup>
         <ListGroup>
           <ListItem icone="users" titre={t('menuPlus.khatm')} onPress={() => aller('/plus/khatms')} />
+          <ListItem icone="heart" titre={t('menuPlus.soutenir')} onPress={() => aller('/plus/soutenir')} />
           <ListItem
             icone="user"
             titre={t('menuPlus.compte')}
