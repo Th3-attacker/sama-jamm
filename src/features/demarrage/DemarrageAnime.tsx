@@ -16,6 +16,7 @@ import iconeDemarrageSombre from '../../../assets/images/splash-icon-dark.png';
 import iconeDemarrage from '../../../assets/images/splash-icon.png';
 
 import { echelleMax } from '@/theme/typographie';
+import { themes } from '@/theme/tokens.generated';
 import { useTheme } from '@/theme/useTheme';
 
 /** Même image et même largeur que le démarrage natif (plugin expo-splash-screen, `imageWidth`). */
@@ -23,14 +24,18 @@ const LARGEUR_IMAGE = 76;
 const RELAIS_MS = 150;
 const SIGNATURE_MS = 500;
 const FONDU_MS = 200;
+/** Signature tenue avant le fondu, le temps de la lire (1,2 s au total). */
+const TENUE_MS = 400;
 const COURBE = Easing.bezier(0.2, 0.8, 0.2, 1);
 
 export function DemarrageAnime({ onFin }: { onFin: () => void }) {
   const { t } = useTranslation();
-  const { couleurs, espace, typographie, latin } = useTheme();
+  const { espace, typographie, latin } = useTheme();
   const reduit = useReducedMotion();
   // Même image que le démarrage natif, qui suit le mode du téléphone (pas le thème choisi dans l'app).
   const sombre = useColorScheme() === 'dark';
+  // Mêmes couleurs que le démarrage natif (mode du téléphone), même si l'app a un autre thème : aucun saut.
+  const couleurs = (sombre ? themes.nuit : themes.jour).couleurs;
   const marque = useSharedValue(0);
   const filet = useSharedValue(0);
   const signature = useSharedValue(0);
@@ -38,7 +43,7 @@ export function DemarrageAnime({ onFin }: { onFin: () => void }) {
 
   useEffect(() => {
     const anim = (duree: number) => ({ duration: reduit ? 0 : duree, easing: COURBE });
-    const signatureMs = reduit ? 0 : SIGNATURE_MS;
+    const signatureMs = reduit ? 0 : SIGNATURE_MS + TENUE_MS;
     marque.value = withDelay(RELAIS_MS, withTiming(1, anim(SIGNATURE_MS)));
     filet.value = withDelay(RELAIS_MS + 100, withTiming(1, anim(SIGNATURE_MS - 100)));
     signature.value = withDelay(RELAIS_MS + 50, withTiming(1, anim(SIGNATURE_MS - 50)));
@@ -64,7 +69,11 @@ export function DemarrageAnime({ onFin }: { onFin: () => void }) {
       accessibilityLabel={t('demarrage.traduction')}
       style={[StyleSheet.absoluteFill, styles.centre, { backgroundColor: couleurs.fond }, styleEcran]}>
       <Animated.View style={styleMarque}>
-        <Image source={sombre ? iconeDemarrageSombre : iconeDemarrage} style={{ width: LARGEUR_IMAGE, height: LARGEUR_IMAGE }} resizeMode="contain" />
+        <Image
+          source={sombre ? iconeDemarrageSombre : iconeDemarrage}
+          style={{ width: LARGEUR_IMAGE, height: LARGEUR_IMAGE }}
+          resizeMode="contain"
+        />
       </Animated.View>
       <Animated.View style={[styles.bas, { gap: espace.espace2 }, styleSignature]}>
         <Animated.View style={[styles.filet, { backgroundColor: couleurs.or }, styleFilet]} />

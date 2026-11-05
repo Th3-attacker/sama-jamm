@@ -16,7 +16,6 @@ import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { Banner } from '@/ui/Banner';
 import { BeadThread, type JourFil } from '@/ui/BeadThread';
-import { Button } from '@/ui/Button';
 import { DayArc, type PriereArc } from '@/ui/DayArc';
 import { Icon } from '@/ui/Icon';
 import { TopBar } from '@/ui/TopBar';
@@ -168,11 +167,6 @@ export default function Accueil() {
           }
         />
 
-        {__DEV__ ? (
-          <Button variant="discret" onPress={() => router.push('/dev/composants')}>
-            Galerie des composants
-          </Button>
-        ) : null}
       </ScrollView>
       {menu.feuille}
     </View>
