@@ -59,6 +59,8 @@ export function useReplanification(): void {
       if (url === URL_PRIERE) router.push('/priere');
       // Rappel de zakat (features/budget/rappelZakat) : l'écran reste derrière le verrou du budget.
       else if (url === URL_ZAKAT) router.push('/budget/zakat');
+      else if (typeof url === 'string' && url.startsWith('samajamm://plus/khatm/'))
+        router.push({ pathname: '/plus/khatm/[id]', params: { id: url.slice('samajamm://plus/khatm/'.length) } });
     });
 
     return () => {

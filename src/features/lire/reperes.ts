@@ -23,6 +23,11 @@ export function creerReperes(d: DonneesReperes) {
   const sajdas = new Map(d.sajdas.map(([s, v, type]) => [cle(s, v), type] as const));
 
   return {
+    /** Premier verset du juz n (1 à 30), ou null. */
+    debutJuz(n: number): { sourate: number; verset: number } | null {
+      const debut = d.juz[n - 1];
+      return debut ? { sourate: debut[0], verset: debut[1] } : null;
+    },
     /** Juz qui contient le verset (1 à 30). */
     juzDe(s: number, v: number): number {
       const k = cle(s, v);
