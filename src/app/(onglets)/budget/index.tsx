@@ -209,18 +209,6 @@ export default function Budget() {
             sousTitre={t('dettes.voir')}
             onPress={() => router.push('/budget/dettes')}
           />
-          <ListItem
-            icone="globe"
-            titre={t('devise.titre')}
-            valeur={carnet.devise.symbole}
-            onPress={() => router.push('/budget/devise')}
-          />
-          <ListItem
-            icone="lock"
-            titre={t('sauvegarde.titre')}
-            sousTitre={t('sauvegarde.voir')}
-            onPress={() => router.push('/budget/sauvegarde')}
-          />
         </ListGroup>
 
         <View>

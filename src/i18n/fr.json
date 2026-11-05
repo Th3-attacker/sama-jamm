@@ -206,7 +206,17 @@
     "votreKhatm": "Votre khatm",
     "khatmRepris": "repris à {{sourate}}, verset {{verset}}",
     "xassaidesAVenir": "Les xassaïdes arrivent bientôt, en arabe et en wolofal.",
-    "invocationsAVenir": "Les invocations pour chaque moment de la journée arrivent bientôt."
+    "invocationsAVenir": "Les invocations pour chaque moment de la journée arrivent bientôt.",
+    "reglagesLecture": "Lecture",
+    "apercuTraduction": "Avec la difficulté vient la facilité.",
+    "chiffresArabes": "Chiffres arabes",
+    "chiffresArabesAide": "Numéros de verset ١٢٣ au lieu de 123",
+    "recitateurDefaut": "Récitateur par défaut",
+    "recitationEnCours": "Récitation en cours",
+    "mode": "Mode de lecture",
+    "modeVersetCourt": "Verset",
+    "modePageCourt": "Page",
+    "verset": "Verset"
   },
   "khatm": {
     "titre": "Khatm collectif",

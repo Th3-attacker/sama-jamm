@@ -126,6 +126,12 @@ function indexPages(): Map<string, number> {
 }
 
 /** Basmala (arabe et traduction), reprise du premier verset d'Al-Fâtiha ; `undefined` pour Al-Fâtiha et At-Tawba. */
+/** Sens du nom de la sourate en français (« L'Ouverture »), ou undefined. Liste à faire relire. */
+export function sensDe(n: number): string | undefined {
+  const sens: { fr: readonly string[] } = require('@/data/sens-sourates.json');
+  return sourate(n) ? sens.fr[n - 1] : undefined;
+}
+
 export function basmalaDe(n: number): { arabe: string; trad: string } | undefined {
   if (SANS_BASMALA_EN_TETE.has(n)) return undefined;
   return { arabe: versetsDe(1)[0] ?? '', trad: traductionDe(1)[0] ?? '' };

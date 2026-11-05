@@ -53,6 +53,8 @@ type Donnees = {
   affichage: AffichageLecture;
   /** Translittération sous le texte arabe (Tanzil, en caractères latins). */
   translitLecture: boolean;
+  /** Numéros de verset en chiffres arabes (١٢٣) au lieu de 123. */
+  chiffresArabes: boolean;
   /** Budget protégé par l'empreinte, le visage ou le code du téléphone. */
   verrouBudget: boolean;
   /** Montants du budget remplacés par « ••• » à l'ouverture de l'app. */
@@ -77,6 +79,7 @@ type Actions = {
   definirTailleLecture: (echelon: number) => void;
   definirAffichage: (affichage: AffichageLecture) => void;
   definirTranslitLecture: (actif: boolean) => void;
+  definirChiffresArabes: (actif: boolean) => void;
   definirVerrouBudget: (actif: boolean) => void;
   definirMasquerMontants: (actif: boolean) => void;
 };
@@ -103,6 +106,7 @@ const parDefaut: Donnees = {
   tailleLecture: 1,
   affichage: 'arabeTrad',
   translitLecture: false,
+  chiffresArabes: false,
   verrouBudget: false,
   masquerMontants: false,
 };
@@ -134,6 +138,7 @@ export const useReglages = create<Donnees & Actions>()(
       definirTailleLecture: (echelon) => set({ tailleLecture: Math.max(0, Math.min(6, Math.round(echelon))) }),
       definirAffichage: (affichage) => set({ affichage }),
       definirTranslitLecture: (translitLecture) => set({ translitLecture }),
+      definirChiffresArabes: (chiffresArabes) => set({ chiffresArabes }),
       definirVerrouBudget: (verrouBudget) => set({ verrouBudget }),
       definirMasquerMontants: (masquerMontants) => set({ masquerMontants }),
     }),
@@ -170,6 +175,7 @@ export const useReglages = create<Donnees & Actions>()(
         tailleLecture: s.tailleLecture,
         affichage: s.affichage,
         translitLecture: s.translitLecture,
+        chiffresArabes: s.chiffresArabes,
       }),
       onRehydrateStorage: () => (_etat, erreur) => {
         if (erreur) console.error('Réglages illisibles : valeurs par défaut', erreur);

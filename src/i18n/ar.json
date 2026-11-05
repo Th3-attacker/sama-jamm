@@ -226,7 +226,17 @@
     "votreKhatm": "ختمتك",
     "khatmRepris": "متابعة من {{sourate}}، الآية {{verset}}",
     "xassaidesAVenir": "القصائد قريبًا، بالعربية وبالولفية.",
-    "invocationsAVenir": "أذكار كل وقت من اليوم قريبًا."
+    "invocationsAVenir": "أذكار كل وقت من اليوم قريبًا.",
+    "reglagesLecture": "القراءة",
+    "apercuTraduction": "إن مع العسر يسرا.",
+    "chiffresArabes": "الأرقام العربية",
+    "chiffresArabesAide": "أرقام الآيات ١٢٣ بدل 123",
+    "recitateurDefaut": "القارئ الافتراضي",
+    "recitationEnCours": "التلاوة جارية",
+    "mode": "وضع القراءة",
+    "modeVersetCourt": "آية",
+    "modePageCourt": "صفحة",
+    "verset": "الآية"
   },
   "khatm": {
     "titre": "ختمة جماعية",

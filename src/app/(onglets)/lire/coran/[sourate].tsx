@@ -7,6 +7,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTaillesLecture } from '@/features/lire/BarreTaille';
 import {
   basmalaDe,
+  sensDe,
   nombreDePages,
   pageDe,
   reperes,
@@ -21,11 +22,15 @@ import { PageMushaf } from '@/features/lire/PageMushaf';
 import { cleJour } from '@/lib/dates';
 import { ecouter, ecouterPage, useLecteur } from '@/features/ecouter/lecteur';
 import { PartageVerset, type VersetAPartager } from '@/features/lire/PartageVerset';
+import { ReglagesLecture } from '@/features/lire/ReglagesLecture';
+import { enChiffresArabes } from '@/lib/chiffres';
+import { Etoile } from '@/ui/Etoile';
+import { Medaillon } from '@/ui/Medaillon';
 import { TranslitVerset } from '@/features/lire/TranslitVerset';
 import { cleVerset, useFavoris } from '@/stores/favoris';
 import { usePleinEcran } from '@/stores/pleinEcran';
 import { useLecture, type ModeLecture } from '@/stores/lecture';
-import { affichagesLecture, useReglages } from '@/stores/reglages';
+import { useReglages } from '@/stores/reglages';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { Banner } from '@/ui/Banner';
@@ -98,7 +103,6 @@ function LectureSourate({
   // Verset en cours d'écoute dans cette sourate : surligné dans la liste.
   const versetEcoute = useLecteur((st) => (st.position?.sourate === s.n ? st.position.verset : null));
   const translits = useMemo(() => (translitActive ? translitDe(s.n) : []), [s.n, translitActive]);
-  const definirAffichage = useReglages((st) => st.definirAffichage);
   const enregistrerPosition = useLecture((st) => st.enregistrerPosition);
   const marquerJour = useLecture((st) => st.marquerJour);
   const favoris = useFavoris((st) => st.versets);
@@ -106,6 +110,10 @@ function LectureSourate({
   const { afficher } = useToast();
 
   const [aPartager, setAPartager] = useState<VersetAPartager | null>(null);
+  const [reglagesOuverts, setReglagesOuverts] = useState(false);
+  const chiffresArabes = useReglages((st) => st.chiffresArabes);
+  /** Verset en haut de l'écran : celui sur lequel agit la barre d'outils du bas. */
+  const [versetHaut, setVersetHaut] = useState(versetInitial);
   const basculerFavori = (verset: number) => {
     if (basculer(s.n, verset)) afficher({ texte: t('lire.favoriAjoute'), icone: 'check' });
   };
@@ -156,7 +164,10 @@ function LectureSourate({
   // Doit rester stable : la FlatList refuse un rappel qui change entre deux rendus.
   const surVisibles = useCallback(({ viewableItems }: { viewableItems: { item: { n: number } }[] }) => {
     const premier = viewableItems[0];
-    if (premier) versetVisible.current = premier.item.n;
+    if (premier) {
+      versetVisible.current = premier.item.n;
+      setVersetHaut(premier.item.n);
+    }
   }, []);
 
   // En vue page : la position est le premier verset de la page affichée.
@@ -172,7 +183,6 @@ function LectureSourate({
     const minuteur = setTimeout(() => liste.current?.scrollToIndex({ index: versetInitial - 1, animated: false }), 0);
     return () => clearTimeout(minuteur);
   }, [modePage, versetInitial]);
-  const sousTitre = `${t('lire.sourate')} ${s.n} · ${t('lire.versets', { count: s.versets })}`;
   const legende = [typographie.legende, { color: couleurs.encre3, textAlign: 'center' as const }];
 
   const basculerMode = () => {
@@ -202,7 +212,7 @@ function LectureSourate({
           ? `${t('lire.pageN', { n: page })} · ${t('lire.juz', { n: reperes().juzDe(premierSegment.sourate, premierSegment.versets[0]?.verset ?? 1) })}`
           : modePage
             ? t('lire.pageN', { n: page })
-            : sousTitre
+            : undefined
       }
       actions={
         modePage
@@ -210,7 +220,7 @@ function LectureSourate({
               { icone: 'list', label: t('lire.modeVerset'), onPress: basculerMode },
               { icone: 'headphones', label: t('ecouter.ecouterPage'), onPress: () => ecouterPage(page) },
             ]
-          : [{ icone: 'book', label: t('lire.modePage'), onPress: basculerMode }]
+          : [{ icone: 'type', label: t('lire.reglagesLecture'), onPress: () => setReglagesOuverts(true) }]
       }
     />
   );
@@ -264,26 +274,6 @@ function LectureSourate({
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
       {barre}
 
-      <View
-        style={{
-          paddingHorizontal: espace.espace5,
-          paddingBottom: espace.espace3,
-        }}>
-        <SegmentedControl
-          label={t('lire.affichage')}
-          options={[
-            { id: 'arabeSeul', label: t('lire.arabeSeul') },
-            { id: 'arabeTrad', label: t('lire.arabeTrad') },
-            { id: 'tradSeule', label: t('lire.tradSeule') },
-          ]}
-          valeur={mode}
-          onChange={(id) => {
-            const choix = affichagesLecture.find((x) => x === id);
-            if (choix) definirAffichage(choix);
-          }}
-        />
-      </View>
-
       <FlatList
         key={String(s.n)}
         ref={liste}
@@ -321,18 +311,12 @@ function LectureSourate({
               { gap: espace.espace3 },
               versetEcoute === item.n ? { backgroundColor: couleurs.orDoux, borderRadius: rayon.rayonCarte } : null,
             ]}>
-            <View
-              style={[
-                styles.numero,
-                {
-                  backgroundColor: couleurs.orDoux,
-                  borderRadius: rayon.rayonPastille,
-                },
-              ]}>
-              <Text maxFontSizeMultiplier={echelleMax.grand} style={[typographie.libelle, { color: couleurs.orTexte }]}>
-                {item.n}
-              </Text>
-            </View>
+            <Medaillon
+              numero={item.n}
+              prefixe={t('lire.verset')}
+              taille={34}
+              affiche={chiffresArabes ? enChiffresArabes(item.n) : undefined}
+            />
             <View style={styles.textes}>
               {mode !== 'tradSeule' ? (
                 <Text
@@ -352,28 +336,11 @@ function LectureSourate({
                   {item.trad}
                 </Text>
               ) : null}
-              <View style={styles.actions}>
-                <IconButton
-                  icone="bookmark"
-                  actif={favoris.includes(cleVerset(s.n, item.n))}
-                  label={t(favoris.includes(cleVerset(s.n, item.n)) ? 'lire.favoriRetirer' : 'lire.favoriAjouter')}
-                  onPress={() => basculerFavori(item.n)}
-                />
-                <IconButton
-                  icone="headphones"
-                  actif={versetEcoute === item.n}
-                  label={t('ecouter.ecouterVerset')}
-                  onPress={() => {
-                    ecouter({ sourate: s.n, verset: item.n });
-                    router.push('/ecouter/lecteur');
-                  }}
-                />
-                <IconButton
-                  icone="share"
-                  label={t('partage.titre')}
-                  onPress={() => setAPartager({ sourate: s.n, nomSourate: s.nom, n: item.n, texte: item.texte, trad: item.trad })}
-                />
-              </View>
+              {versetEcoute === item.n ? (
+                <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.emeraude }]}>
+                  {t('lire.recitationEnCours')}
+                </Text>
+              ) : null}
               {sajda ? (
                 <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.orTexte }]}>
                   {`۩ ${t(sajda === 'obligatoire' ? 'lire.sajdaObligatoire' : 'lire.sajda')}`}
@@ -384,7 +351,7 @@ function LectureSourate({
           </View>
           );
         }}
-        extraData={[favoris, translits, versetEcoute]}
+        extraData={[translits, versetEcoute, chiffresArabes]}
         contentContainerStyle={{
           paddingHorizontal: espace.espace5,
           paddingBottom: espace.espace8,
@@ -425,13 +392,63 @@ function LectureSourate({
           </View>
         }
       />
+      {/* Outils de lecture : mode, et actions sur le verset en haut de l'écran. */}
+      <View
+        style={[
+          styles.outils,
+          {
+            gap: espace.espace2,
+            paddingHorizontal: espace.espace4,
+            borderTopColor: couleurs.ligne,
+            backgroundColor: couleurs.fond,
+          },
+        ]}>
+        <View style={styles.outilsMode}>
+          <SegmentedControl
+            label={t('lire.mode')}
+            options={[
+              { id: 'verset', label: t('lire.modeVersetCourt') },
+              { id: 'page', label: t('lire.modePageCourt') },
+            ]}
+            valeur="verset"
+            onChange={(id) => {
+              if (id === 'page') basculerMode();
+            }}
+          />
+        </View>
+        <IconButton
+          icone="headphones"
+          actif={versetEcoute === versetHaut}
+          label={t('ecouter.ecouterVerset')}
+          onPress={() => {
+            ecouter({ sourate: s.n, verset: versetHaut });
+            router.push('/ecouter/lecteur');
+          }}
+        />
+        <IconButton
+          icone="bookmark"
+          actif={favoris.includes(cleVerset(s.n, versetHaut))}
+          label={t(favoris.includes(cleVerset(s.n, versetHaut)) ? 'lire.favoriRetirer' : 'lire.favoriAjouter')}
+          onPress={() => basculerFavori(versetHaut)}
+        />
+        <IconButton
+          icone="share"
+          label={t('partage.titre')}
+          onPress={() => {
+            const v = versets[versetHaut - 1];
+            if (v) setAPartager({ sourate: s.n, nomSourate: s.nom, n: v.n, texte: v.texte, trad: v.trad });
+          }}
+        />
+      </View>
       <PartageVerset verset={aPartager} onFermer={() => setAPartager(null)} />
+      <ReglagesLecture ouvert={reglagesOuverts} onFermer={() => setReglagesOuverts(false)} />
     </View>
   );
 }
 
 /** En-tête coranique d'une sourate (nom arabe dans un bandeau vert, basmala). */
 function Entete({ sourate: n, mode }: { sourate: number; mode: string }) {
+  const { t, i18n } = useTranslation();
   const { couleurs, espace, rayon, typographie } = useTheme();
   const { tailleArabe, tailleTrad } = useTaillesLecture();
   const meta = sourate(n);
@@ -455,10 +472,26 @@ function Entete({ sourate: n, mode }: { sourate: number; mode: string }) {
             accessibilityLanguage="ar"
             maxFontSizeMultiplier={echelleMax.grand}
             style={[typographie.coran, tailleArabe, styles.centre, { color: couleurs.emeraude }]}>
-            {meta.arabe}
+            {`سورة ${meta.arabe}`}
           </Text>
         </View>
       ) : null}
+      {/* Sens du nom en français (liste à relire), puis numéro, nombre de versets et révélation. */}
+      <View style={{ gap: espace.espace1 }}>
+        {i18n.language !== 'ar' && sensDe(n) ? (
+          <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.titre3, styles.centreLatin, { color: couleurs.encre }]}>
+            {sensDe(n)}
+          </Text>
+        ) : null}
+        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, styles.centreLatin, { color: couleurs.encre3 }]}>
+          {`${t('lire.sourate')} ${n} · ${t('lire.versets', { count: meta.versets })} · ${t(meta.mecquoise ? 'lire.mecquoise' : 'lire.medinoise')}`}
+        </Text>
+      </View>
+      <View accessible={false} style={[styles.ornement, { gap: espace.espace2 }]}>
+        <View style={[styles.trait, { backgroundColor: couleurs.or }]} />
+        <Etoile taille={14} remplissage={couleurs.orDoux} contour={couleurs.or} />
+        <View style={[styles.trait, { backgroundColor: couleurs.or }]} />
+      </View>
 
       {/* Basmala : toujours en arabe, seule sur sa ligne, dans tous les modes. */}
       {basmala ? (
@@ -484,6 +517,9 @@ const styles = StyleSheet.create({
   ecran: { flex: 1 },
   coupe: { overflow: 'hidden' },
   centre: { textAlign: 'center', writingDirection: 'rtl' },
+  centreLatin: { textAlign: 'center' },
+  ornement: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center' },
+  trait: { width: 48, height: StyleSheet.hairlineWidth * 2 },
   bandeau: {
     borderWidth: 1,
     alignItems: 'center',
@@ -491,6 +527,8 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
   },
   ligneFine: { height: StyleSheet.hairlineWidth },
+  outils: { flexDirection: 'row', alignItems: 'center', borderTopWidth: StyleSheet.hairlineWidth, paddingVertical: 6 },
+  outilsMode: { flex: 1 },
   verset: { flexDirection: 'row', alignItems: 'flex-start' },
   numero: {
     minWidth: 32,

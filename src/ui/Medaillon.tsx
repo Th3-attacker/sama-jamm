@@ -10,10 +10,12 @@ type Props = {
   /** Lu avant le numéro : « Verset », « Sourate », « Juz ». */
   prefixe: string;
   taille?: number;
+  /** Numéro affiché autrement (chiffres arabes ١٢٣) ; le lecteur d'écran lit toujours `numero`. */
+  affiche?: string;
 };
 
 // Numéro dans une étoile `or-doux` cerclée d'`or`, chiffre en `or-texte`.
-export function Medaillon({ numero, prefixe, taille = 36 }: Props) {
+export function Medaillon({ numero, prefixe, taille = 36, affiche }: Props) {
   const { couleurs, typographie } = useTheme();
   return (
     <View
@@ -30,7 +32,7 @@ export function Medaillon({ numero, prefixe, taille = 36 }: Props) {
           styles.chiffre,
           { color: couleurs.orTexte, fontSize: taille * 0.33, lineHeight: taille * 0.42 },
         ]}>
-        {numero}
+        {affiche ?? numero}
       </Text>
     </View>
   );
