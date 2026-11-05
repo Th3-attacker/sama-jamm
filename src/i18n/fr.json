@@ -545,7 +545,20 @@
     "supprimerGarder": "Garder mon compte",
     "supprimeTitre": "Compte supprimé",
     "supprimeTexte": "Vos données ont été effacées de nos serveurs.",
-    "supprimerHorsLigne": "La suppression demande le réseau. Réessayez une fois connecté."
+    "supprimerHorsLigne": "La suppression demande le réseau. Réessayez une fois connecté.",
+    "prenomEnregistre": "Prénom enregistré",
+    "votreCompte": "Votre compte",
+    "prenom": "Prénom",
+    "prenomAide": "Facultatif. Visible par les participants de vos khatms.",
+    "synchroBientot": "La synchronisation arrive avec le khatm collectif.",
+    "khatms": "Khatms",
+    "effaceCompte": "Votre compte et votre adresse",
+    "effaceSynchro": "Favoris et réglages synchronisés",
+    "effaceKhatm": "Vos parts de khatm",
+    "effaceKhatmAide": "Elles redeviennent libres pour le groupe",
+    "gardeBudget": "Votre budget",
+    "gardeBudgetAide": "Il n’a jamais quitté le téléphone",
+    "gardeReste": "Favoris, progression, téléchargements"
   },
   "budget": {
     "titre": "Budget",
@@ -1097,5 +1110,18 @@
   "demarrage": {
     "signature": "Jàng, déglu, julli ci jàmm.",
     "traduction": "Lire, écouter, prier, en paix."
+  },
+  "connexion": {
+    "budgetReste": "Votre budget reste sur ce téléphone.",
+    "emailAide": "Nous vous envoyons un code de connexion, sans mot de passe.",
+    "emailInvalide": "Vérifiez l’adresse e-mail.",
+    "recevoirCode": "Recevoir un code",
+    "envoiImpossible": "Le code n’a pas pu être envoyé. Vérifiez votre connexion, puis réessayez.",
+    "codeEnvoye": "Un code à 6 chiffres a été envoyé à {{email}}.",
+    "code": "Code reçu par e-mail",
+    "codeRefuse": "Ce code n’est pas valable ou a expiré. Demandez-en un nouveau.",
+    "seConnecter": "Se connecter",
+    "changerEmail": "Changer d’adresse",
+    "sansCompte": "Continuer sans compte"
   }
 }

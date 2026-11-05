@@ -577,7 +577,20 @@
     "supprimerGarder": "الإبقاء على حسابي",
     "supprimeTitre": "تم حذف الحساب",
     "supprimeTexte": "حُذفت بياناتك من خوادمنا.",
-    "supprimerHorsLigne": "الحذف يتطلب الاتصال. أعد المحاولة عند الاتصال."
+    "supprimerHorsLigne": "الحذف يتطلب الاتصال. أعد المحاولة عند الاتصال.",
+    "prenomEnregistre": "تم حفظ الاسم",
+    "votreCompte": "حسابك",
+    "prenom": "الاسم",
+    "prenomAide": "اختياري. يراه المشاركون في ختماتك.",
+    "synchroBientot": "المزامنة قادمة مع الختمة الجماعية.",
+    "khatms": "الختمات",
+    "effaceCompte": "حسابك وبريدك",
+    "effaceSynchro": "المفضلة والإعدادات المزامنة",
+    "effaceKhatm": "أجزاؤك من الختمة",
+    "effaceKhatmAide": "تعود متاحة للمجموعة",
+    "gardeBudget": "ميزانيتك",
+    "gardeBudgetAide": "لم تغادر الهاتف قط",
+    "gardeReste": "المفضلة والتقدّم والتنزيلات"
   },
   "budget": {
     "titre": "الميزانية",
@@ -1149,5 +1162,18 @@
   "demarrage": {
     "signature": "Jàng, déglu, julli ci jàmm.",
     "traduction": "اقرأ، استمع، صلِّ، في سلام."
+  },
+  "connexion": {
+    "budgetReste": "ميزانيتك تبقى على هذا الهاتف.",
+    "emailAide": "نرسل لك رمز دخول، دون كلمة مرور.",
+    "emailInvalide": "تحقق من البريد الإلكتروني.",
+    "recevoirCode": "تلقي رمز",
+    "envoiImpossible": "تعذّر إرسال الرمز. تحقق من اتصالك ثم أعد المحاولة.",
+    "codeEnvoye": "أُرسل رمز من 6 أرقام إلى {{email}}.",
+    "code": "الرمز المستلم بالبريد",
+    "codeRefuse": "هذا الرمز غير صالح أو منتهٍ. اطلب رمزًا جديدًا.",
+    "seConnecter": "تسجيل الدخول",
+    "changerEmail": "تغيير البريد",
+    "sansCompte": "المتابعة دون حساب"
   }
 }

@@ -2,6 +2,7 @@ import { router, type Href } from 'expo-router';
 import { useEffect, useRef, useState, type ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { useSession } from '@/features/compte/compte';
 import { BottomSheet } from '@/ui/BottomSheet';
 import { ListGroup } from '@/ui/ListGroup';
 import { ListItem } from '@/ui/ListItem';
@@ -12,11 +13,12 @@ const DELAI_FERMETURE_MS = 250;
 
 /**
  * Menu Plus des écrans racines : une action « … » pour la `TopBar` et la feuille à afficher dans l'écran.
- * Seuls les écrans qui existent sont listés ; Compte et Soutenir s'ajouteront avec les leurs.
+ * Seuls les écrans qui existent sont listés ; Soutenir s'ajoutera avec le sien.
  */
 export function useMenuPlus(): { action: TopBarAction; feuille: ReactElement } {
   const { t } = useTranslation();
   const [ouvert, setOuvert] = useState(false);
+  const connecte = useSession((s) => s.session !== null);
   const minuteur = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   // Écran quitté avant la fin du délai : pas de navigation tardive.
   useEffect(() => () => clearTimeout(minuteur.current), []);
@@ -41,6 +43,11 @@ export function useMenuPlus(): { action: TopBarAction; feuille: ReactElement } {
           />
         </ListGroup>
         <ListGroup>
+          <ListItem
+            icone="user"
+            titre={t('menuPlus.compte')}
+            onPress={() => aller(connecte ? '/plus/compte' : '/plus/connexion')}
+          />
           <ListItem icone="settings" titre={t('menuPlus.reglages')} onPress={() => aller('/plus/reglages')} />
         </ListGroup>
       </BottomSheet>

@@ -82,7 +82,7 @@ F4 détection du réseau en continu (expo-network), si besoin.
 
 ## G. Compte et partage (facultatif en v1)
 
-G1 compte et synchronisation (Supabase) · G2 khatm collectif · G3 dons.
+G1 compte (code par e-mail, profil, suppression) fait ; synchronisation avec G2 · G2 khatm collectif · G3 dons.
 
 ## H. Publication
 
