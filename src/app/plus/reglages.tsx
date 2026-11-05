@@ -1,5 +1,5 @@
 import { router } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 
@@ -8,6 +8,9 @@ import {
   demandeRedemarrage,
 } from "@/features/bienvenue/sensDeLecture";
 import { authentifier, verrouPossible } from "@/features/budget/verrou";
+import { depotBudget } from "@/features/budget/useBudget";
+import { EtatAutorisations } from "@/features/autorisation/EtatAutorisations";
+import { useSession } from "@/features/compte/compte";
 import { ReglageTaille } from "@/features/lire/BarreTaille";
 import { estLangue, langues, type Langue } from "@/i18n/langues";
 import { useReglages } from "@/stores/reglages";
@@ -52,6 +55,22 @@ export default function Reglages() {
   const definirVerrouBudget = useReglages((s) => s.definirVerrouBudget);
   const definirMasquerMontants = useReglages((s) => s.definirMasquerMontants);
   const [verrouImpossible, setVerrouImpossible] = useState(false);
+  const traduction = useReglages((s) => s.traduction);
+  const connecte = useSession((s) => s.session !== null);
+  // Devise du budget, si un budget existe : « Ouguiya · MRU ».
+  const [devise, setDevise] = useState<string | null>(null);
+  useEffect(() => {
+    let actif = true;
+    depotBudget()
+      .then((d) => d.carnetActif())
+      .then((c) => {
+        if (actif && c) setDevise(`${c.devise.nom} · ${c.devise.personnelle ? c.devise.symbole : c.devise.code}`);
+      })
+      .catch((e: unknown) => console.warn("Devise du budget non lue", e));
+    return () => {
+      actif = false;
+    };
+  }, []);
 
   // Activer le verrou demande d'abord une authentification réussie : on ne s'enferme pas dehors.
   const changerVerrou = (actif: boolean) => {
@@ -192,6 +211,7 @@ export default function Reglages() {
             sousTitre={t("reglages.translitAide")}
             droite={<Switch label={t("reglages.translit")} active={translitLecture} onChange={definirTranslitLecture} />}
           />
+          <ListItem icone="globe" titre={t("reglages.traduction")} valeur={NOMS_LANGUES[traduction]} />
         </ListGroup>
 
         <ListGroup titre={t("reglages.priere")}>
@@ -233,6 +253,7 @@ export default function Reglages() {
           <ListItem
             icone="globe"
             titre={t("devise.titre")}
+            valeur={devise ?? undefined}
             sousTitre={t("reglages.deviseDetail")}
             onPress={() => router.push("/budget/devise")}
           />
@@ -246,6 +267,20 @@ export default function Reglages() {
         {verrouImpossible ? (
           <Banner ton="info">{t("budget.verrouIndisponible")}</Banner>
         ) : null}
+
+        <ListGroup titre={t("reglages.compteOption")}>
+          <ListItem
+            icone="user"
+            titre={t("menuPlus.compte")}
+            sousTitre={t("compte.sousTitre")}
+            onPress={() => router.push(connecte ? "/plus/compte" : "/plus/connexion")}
+          />
+          {connecte ? (
+            <ListItem icone="trash" danger titre={t("compte.supprimer")} onPress={() => router.push("/plus/compte-supprimer")} />
+          ) : null}
+        </ListGroup>
+
+        <EtatAutorisations />
 
         <ListGroup>
           <ListItem

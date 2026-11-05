@@ -142,6 +142,15 @@
         "sansPubliciteAide": "تضبط كل تذكير، أو توقفها كلها",
         "demande": "سيطلب منك الهاتف الإذن. يمكنك تغييره في أي وقت."
       }
+    },
+    "titre": "أذونات الهاتف",
+    "note": "يمكنك تغييرها في أي وقت من إعدادات الهاتف.",
+    "position": "الموقع",
+    "notifications": "الإشعارات",
+    "etats": {
+      "accordee": "مسموح",
+      "refusee": "مرفوض",
+      "aDemander": "لم يُطلب بعد"
     }
   },
   "accueil": {
@@ -563,7 +572,8 @@
     "apercu": "معاينة",
     "translit": "النقحرة",
     "translitAide": "تحت النص العربي بالحروف اللاتينية (Tanzil، بالإنجليزية)",
-    "deviseDetail": "تغيير عملة الميزانية أو إضافة عملتك"
+    "deviseDetail": "تغيير عملة الميزانية أو إضافة عملتك",
+    "compteOption": "الحساب، اختياري"
   },
   "aPropos": {
     "titre": "حول التطبيق",
@@ -581,7 +591,27 @@
     "signalerEntete": "سما جام · الأخطاء الأخيرة",
     "aucuneErreur": "لا توجد أخطاء مسجّلة.",
     "sourceTanzil": "النقحرة والأجزاء والأحزاب والسجدات: مشروع تنزيل (tanzil.net)، رخصة CC BY 3.0، دون تعديل.",
-    "sourceRecitations": "التلاوات: alquran.cloud (Islamic Network)، بإذن القرّاء أو ورثتهم للنشر المجاني غير التجاري."
+    "sourceRecitations": "التلاوات: alquran.cloud (Islamic Network)، بإذن القرّاء أو ورثتهم للنشر المجاني غير التجاري.",
+    "version": "سما جام · الإصدار {{version}}",
+    "confidentialite": "سياسة الخصوصية",
+    "groupes": {
+      "coran": {
+        "titre": "نص القرآن",
+        "resume": "الرسم العثماني · علامات تنزيل، CC BY 3.0"
+      },
+      "traductions": {
+        "titre": "الترجمات",
+        "resume": "محمد حميد الله (الفرنسية)"
+      },
+      "recitations": {
+        "titre": "التلاوات والأذان",
+        "resume": "alquran.cloud · ويكيميديا كومنز (CC0)"
+      },
+      "polices": {
+        "titre": "الخطوط",
+        "resume": "Cormorant وSource Serif وSource Sans وAmiri · SIL OFL"
+      }
+    }
   },
   "compte": {
     "titre": "الحساب",

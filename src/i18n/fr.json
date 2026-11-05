@@ -134,6 +134,15 @@
         "sansPubliciteAide": "Vous réglez chaque rappel, ou les coupez tous",
         "demande": "Le téléphone va vous demander l’autorisation. Vous pourrez la changer à tout moment."
       }
+    },
+    "titre": "Autorisations du téléphone",
+    "note": "Vous pouvez les changer à tout moment dans les réglages du téléphone.",
+    "position": "Position",
+    "notifications": "Notifications",
+    "etats": {
+      "accordee": "Autorisée",
+      "refusee": "Refusée",
+      "aDemander": "Pas encore demandée"
     }
   },
   "accueil": {
@@ -527,7 +536,8 @@
     "apercu": "Aperçu",
     "translit": "Translittération",
     "translitAide": "Sous le texte arabe, en caractères latins (Tanzil, en anglais)",
-    "deviseDetail": "Changer la devise du budget, ou ajouter la vôtre"
+    "deviseDetail": "Changer la devise du budget, ou ajouter la vôtre",
+    "compteOption": "Compte, en option"
   },
   "aPropos": {
     "titre": "À propos",
@@ -545,7 +555,27 @@
     "signalerEntete": "Sama Jàmm · erreurs récentes",
     "aucuneErreur": "Aucune erreur enregistrée.",
     "sourceTanzil": "Translittération, juz, hizb et prosternations : Tanzil Project (tanzil.net), licence CC BY 3.0, reproduits sans modification.",
-    "sourceRecitations": "Récitations : alquran.cloud (Islamic Network), autorisées par les récitateurs ou leurs ayants droit pour une diffusion gratuite et non commerciale."
+    "sourceRecitations": "Récitations : alquran.cloud (Islamic Network), autorisées par les récitateurs ou leurs ayants droit pour une diffusion gratuite et non commerciale.",
+    "version": "Sama Jàmm · version {{version}}",
+    "confidentialite": "Politique de confidentialité",
+    "groupes": {
+      "coran": {
+        "titre": "Texte du Coran",
+        "resume": "Édition uthmani · repères Tanzil, CC BY 3.0"
+      },
+      "traductions": {
+        "titre": "Traductions",
+        "resume": "Muhammad Hamidullah (français)"
+      },
+      "recitations": {
+        "titre": "Récitations et appel à la prière",
+        "resume": "alquran.cloud · Wikimedia Commons (CC0)"
+      },
+      "polices": {
+        "titre": "Polices",
+        "resume": "Cormorant, Source Serif, Source Sans, Amiri · SIL OFL"
+      }
+    }
   },
   "compte": {
     "titre": "Compte",
