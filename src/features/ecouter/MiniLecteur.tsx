@@ -7,6 +7,7 @@ import { usePleinEcran } from '@/stores/pleinEcran';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { IconButton } from '@/ui/IconButton';
+import { Logo } from '@/ui/Logo';
 
 import { arreter, basculer, useLecteur } from './lecteur';
 import { recitateur } from './recitateurs';
@@ -28,6 +29,7 @@ export function MiniLecteur() {
         styles.barre,
         { backgroundColor: couleurs.surface, borderTopColor: couleurs.ligne, paddingHorizontal: espace.espace4 },
       ]}>
+      <Logo taille={28} />
       <Pressable
         accessibilityRole="button"
         accessibilityLabel={t('ecouter.ouvrirLecteur')}
@@ -58,5 +60,5 @@ export function MiniLecteur() {
 
 const styles = StyleSheet.create({
   barre: { flexDirection: 'row', alignItems: 'center', borderTopWidth: StyleSheet.hairlineWidth, paddingVertical: 6 },
-  texte: { flex: 1 },
+  texte: { flex: 1, marginStart: 10 },
 });

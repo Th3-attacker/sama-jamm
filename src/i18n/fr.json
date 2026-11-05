@@ -201,7 +201,12 @@
       "2": "½ du hizb {{n}}",
       "3": "¾ du hizb {{n}}"
     },
-    "sajdaObligatoire": "Prosternation obligatoire"
+    "sajdaObligatoire": "Prosternation obligatoire",
+    "bibliotheque": "Bibliothèque",
+    "votreKhatm": "Votre khatm",
+    "khatmRepris": "repris à {{sourate}}, verset {{verset}}",
+    "xassaidesAVenir": "Les xassaïdes arrivent bientôt, en arabe et en wolofal.",
+    "invocationsAVenir": "Les invocations pour chaque moment de la journée arrivent bientôt."
   },
   "khatm": {
     "titre": "Khatm collectif",

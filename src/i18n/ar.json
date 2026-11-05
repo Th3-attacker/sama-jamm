@@ -221,7 +221,12 @@
       "2": "نصف الحزب {{n}}",
       "3": "ثلاثة أرباع الحزب {{n}}"
     },
-    "sajdaObligatoire": "سجدة واجبة"
+    "sajdaObligatoire": "سجدة واجبة",
+    "bibliotheque": "المكتبة",
+    "votreKhatm": "ختمتك",
+    "khatmRepris": "متابعة من {{sourate}}، الآية {{verset}}",
+    "xassaidesAVenir": "القصائد قريبًا، بالعربية وبالولفية.",
+    "invocationsAVenir": "أذكار كل وقت من اليوم قريبًا."
   },
   "khatm": {
     "titre": "ختمة جماعية",
