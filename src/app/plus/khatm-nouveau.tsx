@@ -11,6 +11,8 @@ import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { Banner } from '@/ui/Banner';
 import { Button } from '@/ui/Button';
+import { ListGroup } from '@/ui/ListGroup';
+import { ListItem } from '@/ui/ListItem';
 import { TextField } from '@/ui/TextField';
 import { TopBar } from '@/ui/TopBar';
 
@@ -78,6 +80,10 @@ export default function NouveauKhatm() {
             aide={t('khatm.echeanceAide')}
             erreur={dateOk ? undefined : t('khatm.dateInvalide')}
           />
+          <ListGroup titre={t('khatm.participants')}>
+            <ListItem icone="share" titre={t('khatm.rejoindreLien')} sousTitre={t('khatm.rejoindreLienAide')} />
+            <ListItem icone="bell" titre={t('khatm.rappelParticipants')} sousTitre={t('khatm.rappelParticipantsAide')} />
+          </ListGroup>
           {erreur ? <Banner ton="erreur">{t('etats.erreurTexte')}</Banner> : null}
           <Button icone="share" pleineLargeur disabled={!nomOk || !dateOk || envoi} onPress={creer}>
             {t('khatm.creer')}

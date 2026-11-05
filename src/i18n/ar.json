@@ -309,7 +309,12 @@
     "libresRestants_two": "جزءان متاحان",
     "libresRestants_few": "{{count}} أجزاء متاحة",
     "libresRestants_many": "{{count}} جزءًا متاحًا",
-    "libresRestants_other": "{{count}} جزء متاح"
+    "libresRestants_other": "{{count}} جزء متاح",
+    "participants": "المشاركون",
+    "rejoindreLien": "الانضمام عبر الرابط",
+    "rejoindreLienAide": "كل من يتلقى الرابط يمكنه أخذ جزء",
+    "rappelParticipants": "تذكير المشاركين",
+    "rappelParticipantsAide": "قبل يومين من النهاية، على هاتف كل واحد إن لم ينتهِ"
   },
   "ecouter": {
     "titre": "استمع",
@@ -538,7 +543,7 @@
   "recherche": {
     "titre": "بحث",
     "placeholder": "كلمة، آية، قصيدة",
-    "aide": "بالفرنسية أو الولوفية أو العربية، حتى دون اتصال.",
+    "aide": "بالفرنسية أو الولوفية أو العربية أو بالنقحرة، حتى دون اتصال.",
     "resultats_zero": "لا نتائج",
     "resultats_one": "نتيجة واحدة",
     "resultats_two": "نتيجتان",
@@ -548,7 +553,8 @@
     "aucun": "لا نتائج لـ « {{terme}} »",
     "aucunTexte": "جرّب كلمة أخرى، أو اسم سورة: « الكهف »، « يس ».",
     "sourates": "السور",
-    "versets": "الآيات"
+    "versets": "الآيات",
+    "videTitre": "ابحث كما تتكلم"
   },
   "favoris": {
     "titre": "المفضلة",
@@ -558,7 +564,9 @@
     "chants": "قصائد",
     "invocations": "أذكار",
     "videTexte": "لا شيء هنا بعد. المس علامة آية أو قصيدة أو ذكر لتجده هنا، حتى دون اتصال.",
-    "ouvrirBibliotheque": "فتح المكتبة"
+    "ouvrirBibliotheque": "فتح المكتبة",
+    "filtrer": "تصفية",
+    "chantsAVenir": "القصائد والأذكار قريبًا."
   },
   "partage": {
     "titre": "مشاركة",
@@ -1122,13 +1130,15 @@
     "voirTelechargements": "عرض التنزيلات",
     "erreurTitre": "حدث خطأ ما",
     "erreurTexte": "ليس بسببك. أعد المحاولة؛ وإن استمر، راسلنا.",
-    "miseAJourTitre": "إصدار جديد جاهز",
-    "miseAJourTexte": "هذا الإصدار من Sama Jàmm لم يعد مدعومًا. حدّثه للمتابعة.",
+    "miseAJourTitre": "إصدار جديد في انتظارك",
+    "miseAJourTexte": "لم يعد هذا الإصدار يحسب بعض المواقيت بدقة. يستغرق التحديث أقل من دقيقة.",
     "miseAJour": "تحديث",
     "maintenance": "تعود الخدمة قريبًا. نصوصك وميزانيتك تبقى متاحة.",
     "erreurCode": "الرمز الذي تعطيه للدعم: {{code}}",
-    "miseAJourNote": "ميزانيتك ومفضلاتك وإعداداتك محفوظة.",
-    "miseAJourVersions": "الإصدار المثبّت {{installee}} · الحد الأدنى {{minimum}}"
+    "miseAJourNote": "ميزانيتك ومفضلاتك وتنزيلاتك محفوظة.",
+    "miseAJourVersions": "الإصدار المثبّت {{installee}} · الحد الأدنى {{minimum}}",
+    "erreurTitreWo": "Dafa jàpp.",
+    "erreurBloque": "حدث عائق ما."
   },
   "accessibilite": {
     "marque": "Sama Jàmm",

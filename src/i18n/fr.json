@@ -285,7 +285,12 @@
     "invitationTitre": "Invitation au khatm",
     "quelquun": "Quelqu’un",
     "libresRestants_one": "{{count}} juz encore libre",
-    "libresRestants_other": "{{count}} juz encore libres"
+    "libresRestants_other": "{{count}} juz encore libres",
+    "participants": "Participants",
+    "rejoindreLien": "Rejoindre par le lien",
+    "rejoindreLienAide": "Toute personne qui reçoit le lien peut prendre un juz",
+    "rappelParticipants": "Rappel aux participants",
+    "rappelParticipantsAide": "Deux jours avant la fin, sur le téléphone de chacun, s’il n’a pas terminé"
   },
   "ecouter": {
     "titre": "Écouter",
@@ -502,13 +507,14 @@
   "recherche": {
     "titre": "Recherche",
     "placeholder": "Un mot, un verset, un chant",
-    "aide": "En français, en wolof ou en arabe, même sans réseau.",
+    "aide": "En français, en wolof, en arabe ou en translittération, même sans réseau.",
     "resultats_one": "{{count}} résultat",
     "resultats_other": "{{count}} résultats",
     "aucun": "Aucun résultat pour « {{terme}} »",
     "aucunTexte": "Essayez un autre mot, ou le nom d'une sourate : « kahf », « yasin ».",
     "sourates": "Sourates",
-    "versets": "Versets"
+    "versets": "Versets",
+    "videTitre": "Cherchez comme vous parlez"
   },
   "favoris": {
     "titre": "Favoris",
@@ -518,7 +524,9 @@
     "chants": "Chants",
     "invocations": "Invocations",
     "videTexte": "Rien ici pour l'instant. Touchez le signet d'un verset, d'un chant ou d'une invocation pour le retrouver ici, même hors ligne.",
-    "ouvrirBibliotheque": "Ouvrir la bibliothèque"
+    "ouvrirBibliotheque": "Ouvrir la bibliothèque",
+    "filtrer": "Filtrer",
+    "chantsAVenir": "Les chants et les invocations arrivent bientôt."
   },
   "partage": {
     "titre": "Partager",
@@ -1070,13 +1078,15 @@
     "voirTelechargements": "Voir les téléchargements",
     "erreurTitre": "Quelque chose s'est mal passé",
     "erreurTexte": "Ce n'est pas de votre fait. Réessayez ; si cela continue, écrivez-nous.",
-    "miseAJourTitre": "Une nouvelle version est prête",
-    "miseAJourTexte": "Cette version de Sama Jàmm n'est plus prise en charge. Mettez-la à jour pour continuer.",
+    "miseAJourTitre": "Une nouvelle version vous attend",
+    "miseAJourTexte": "Cette version ne peut plus calculer correctement certains horaires. La mise à jour prend moins d’une minute.",
     "miseAJour": "Mettre à jour",
     "maintenance": "Le service revient bientôt. Vos textes et votre budget restent accessibles.",
     "erreurCode": "Code à donner au support : {{code}}",
-    "miseAJourNote": "Votre budget, vos favoris et vos réglages sont conservés.",
-    "miseAJourVersions": "Version installée {{installee}} · minimum {{minimum}}"
+    "miseAJourNote": "Votre budget, vos favoris et vos téléchargements sont conservés.",
+    "miseAJourVersions": "Version installée {{installee}} · minimum {{minimum}}",
+    "erreurTitreWo": "Dafa jàpp.",
+    "erreurBloque": "Quelque chose a bloqué."
   },
   "accessibilite": {
     "marque": "Sama Jàmm",

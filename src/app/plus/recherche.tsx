@@ -78,11 +78,9 @@ export default function Recherche() {
           keyExtractor={(ligne) => ('versets' in ligne ? `s${ligne.n}` : `v${ligne.sourate}:${ligne.verset}`)}
           stickySectionHeadersEnabled={false}
           ListEmptyComponent={
-            <Text
-              maxFontSizeMultiplier={echelleMax.courant}
-              style={[typographie.legende, { color: couleurs.encre3, textAlign: 'center' }]}>
-              {recherche ? '' : t('recherche.aide')}
-            </Text>
+            recherche ? undefined : (
+              <EmptyState icone="search" lang="fr" titre={t('recherche.videTitre')} texte={t('recherche.aide')} />
+            )
           }
           renderSectionHeader={({ section }) => (
             <Text
