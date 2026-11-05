@@ -4,7 +4,7 @@
 export type IconName =
   | 'play' | 'pause' | 'skip-back' | 'skip-forward' | 'repeat'
   | 'bookmark' | 'share' | 'search' | 'home' | 'book' | 'headphones' | 'clock' | 'download' | 'reset' | 'wallet' | 'bell'
-  | 'arrow-left' | 'arrow-down' | 'arrow-up' | 'chevron-right' | 'chevron-down' | 'more'
+  | 'arrow-left' | 'arrow-down' | 'arrow-up' | 'chevron-right' | 'chevron-down' | 'more' | 'reglages'
   | 'check' | 'close' | 'plus' | 'minus' | 'backspace' | 'info' | 'alert' | 'offline'
   | 'moon' | 'sun' | 'globe' | 'trash' | 'edit' | 'compass' | 'pin' | 'settings' | 'user' | 'users' | 'lock'
   | 'calendar' | 'target' | 'heart' | 'balance' | 'list' | 'type' | 'bolt' | 'car' | 'cart' | 'copy' | 'kaaba' | 'eye' | 'eye-off';

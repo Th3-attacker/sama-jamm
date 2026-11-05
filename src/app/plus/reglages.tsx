@@ -230,6 +230,18 @@ export default function Reglages() {
               />
             }
           />
+          <ListItem
+            icone="globe"
+            titre={t("devise.titre")}
+            sousTitre={t("reglages.deviseDetail")}
+            onPress={() => router.push("/budget/devise")}
+          />
+          <ListItem
+            icone="download"
+            titre={t("sauvegarde.titre")}
+            sousTitre={t("sauvegarde.voir")}
+            onPress={() => router.push("/budget/sauvegarde")}
+          />
         </ListGroup>
         {verrouImpossible ? (
           <Banner ton="info">{t("budget.verrouIndisponible")}</Banner>

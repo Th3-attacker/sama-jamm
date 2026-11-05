@@ -28,7 +28,7 @@ export function useMenuPlus(): { action: TopBarAction; feuille: ReactElement } {
   };
 
   return {
-    action: { icone: 'more', label: t('menuPlus.titre'), onPress: () => setOuvert(true) },
+    action: { icone: 'reglages', label: t('menuPlus.titre'), onPress: () => setOuvert(true) },
     feuille: (
       <BottomSheet ouvert={ouvert} titre={t('menuPlus.titre')} onFermer={() => setOuvert(false)}>
         <ListGroup>
