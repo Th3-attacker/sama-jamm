@@ -633,7 +633,7 @@
     "signalerEntete": "Sama Jàmm · erreurs récentes",
     "aucuneErreur": "Aucune erreur enregistrée.",
     "sourceTanzil": "Translittération, juz, hizb et prosternations : Tanzil Project (tanzil.net), licence CC BY 3.0, reproduits sans modification.",
-    "sourceInvocations": "Invocations : La citadelle du musulman (Hisn al-Muslim) de Sa'id bin Ali bin Wahf al-Qahtani. Texte arabe tiré du fichier adhkar.json de rn0x (github.com/rn0x/Adhkar-json), dont l'auteur déclare un usage libre. Titres français établis pour Sama Jàmm, à faire valider.",
+    "sourceInvocations": "Invocations : La citadelle du musulman (Hisn al-Muslim) de Sa'id bin Ali bin Wahf al-Qahtani. Texte arabe tiré du fichier adhkar.json de rn0x (github.com/rn0x/Adhkar-json). Licence : fichier publié sans licence formelle, dont l'auteur déclare l'usage libre et gratuit. Titres français établis pour Sama Jàmm, à faire valider.",
     "sourceRecitations": "Récitations : alquran.cloud (Islamic Network), autorisées par les récitateurs ou leurs ayants droit pour une diffusion gratuite et non commerciale.",
     "version": "Sama Jàmm · version {{version}}",
     "confidentialite": "Politique de confidentialité",
