@@ -1121,7 +1121,13 @@
     "verificationNote": "نقارن مع كشوف المحفظة، عادة خلال أيام. تتحدّث الحالة هنا.",
     "envoiDiffere": "لا يوجد اتصال: سيُرسل تصريحك عند عودة الاتصال.",
     "merciTitre": "شكرًا على تبرعك",
-    "revenirAccueil": "العودة إلى الرئيسية"
+    "revenirAccueil": "العودة إلى الرئيسية",
+    "paysDevise": "{{pays}} · MRU",
+    "retourWallets": "العودة إلى المحافظ",
+    "referenceOu": "مرجع {{wallet}} موجود في رسالة التأكيد القصيرة.",
+    "prenomPlaceholder": "لنشكرك باسمك",
+    "messagePlaceholder": "اقتراح، أو دعاء…",
+    "referenceCourte": "المرجع {{reference}}"
   },
   "etats": {
     "horsLigne": "دون اتصال",
@@ -1297,6 +1303,9 @@
     "codeRefuse": "هذا الرمز غير صالح أو منتهٍ. اطلب رمزًا جديدًا.",
     "seConnecter": "تسجيل الدخول",
     "changerEmail": "تغيير البريد",
-    "sansCompte": "المتابعة دون حساب"
+    "sansCompte": "المتابعة دون حساب",
+    "google": "المتابعة باستخدام Google",
+    "ou": "أو",
+    "fournisseurImpossible": "لم يكتمل تسجيل الدخول. أعد المحاولة، أو اطلب رمزًا بالبريد."
   }
 }

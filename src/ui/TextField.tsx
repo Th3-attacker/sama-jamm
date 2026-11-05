@@ -18,6 +18,8 @@ export type TextFieldProps = {
   maxLength?: number;
   /** Saisie masquée (mot de passe), sans correction ni suggestion. */
   secret?: boolean;
+  /** Saisie en capitales, sans correction : références de transaction. */
+  majuscules?: boolean;
 };
 
 /** Champ de saisie avec son libellé visible au-dessus, l'aide ou l'erreur en dessous. */
@@ -32,6 +34,7 @@ export function TextField({
   clavier = 'default',
   maxLength,
   secret = false,
+  majuscules = false,
 }: TextFieldProps) {
   const { couleurs, espace, rayon, cible, typographie } = useTheme();
 
@@ -62,8 +65,8 @@ export function TextField({
           keyboardType={clavier}
           maxLength={maxLength}
           secureTextEntry={secret}
-          autoCorrect={secret ? false : undefined}
-          autoCapitalize={secret ? 'none' : undefined}
+          autoCorrect={secret || majuscules ? false : undefined}
+          autoCapitalize={secret ? 'none' : majuscules ? 'characters' : undefined}
           maxFontSizeMultiplier={echelleMax.courant}
           style={[typographie.corps, styles.saisie, { color: couleurs.encre }]}
         />

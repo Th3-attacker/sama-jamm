@@ -1,9 +1,11 @@
+import * as AppleAuthentication from 'expo-apple-authentication';
 import { router } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { envoyerCode, verifierCode } from '@/features/compte/compte';
+import { appleDisponible, connecterApple, connecterGoogle, type IssueConnexion } from '@/features/compte/fournisseurs';
 import { codePropre, emailPropre, LONGUEUR_CODE } from '@/features/compte/validation';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
@@ -15,7 +17,7 @@ import { TopBar } from '@/ui/TopBar';
 /** Connexion par code reçu par e-mail (sans mot de passe). Le budget reste toujours sur le téléphone. */
 export default function Connexion() {
   const { t } = useTranslation();
-  const { couleurs, espace, typographie } = useTheme();
+  const { couleurs, espace, rayon, typographie, nom } = useTheme();
   const [email, setEmail] = useState('');
   const [code, setCode] = useState('');
   const [etape, setEtape] = useState<'email' | 'code'>('email');
@@ -23,6 +25,33 @@ export default function Connexion() {
   const [erreur, setErreur] = useState<string | null>(null);
   const emailOk = emailPropre(email);
   const codeOk = codePropre(code);
+  const [apple, setApple] = useState(false);
+
+  useEffect(() => {
+    let actif = true;
+    appleDisponible()
+      .then((oui) => {
+        if (actif) setApple(oui);
+      })
+      .catch((e: unknown) => console.warn('Connexion Apple indisponible', e));
+    return () => {
+      actif = false;
+    };
+  }, []);
+
+  const avecFournisseur = async (connecter: () => Promise<IssueConnexion>) => {
+    if (envoi) return;
+    setEnvoi(true);
+    setErreur(null);
+    try {
+      if ((await connecter()) === 'connecte') router.replace('/plus/compte');
+    } catch (e: unknown) {
+      console.warn('Connexion par fournisseur refusée', e);
+      setErreur(t('connexion.fournisseurImpossible'));
+    } finally {
+      setEnvoi(false);
+    }
+  };
 
   const demander = async () => {
     if (!emailOk || envoi) return;
@@ -70,6 +99,29 @@ export default function Connexion() {
           </Text>
           {etape === 'email' ? (
             <>
+              {apple ? (
+                <AppleAuthentication.AppleAuthenticationButton
+                  buttonType={AppleAuthentication.AppleAuthenticationButtonType.CONTINUE}
+                  buttonStyle={
+                    nom !== 'jour'
+                      ? AppleAuthentication.AppleAuthenticationButtonStyle.WHITE
+                      : AppleAuthentication.AppleAuthenticationButtonStyle.BLACK
+                  }
+                  cornerRadius={rayon.rayonCarte}
+                  style={styles.apple}
+                  onPress={() => void avecFournisseur(connecterApple)}
+                />
+              ) : null}
+              <Button variant="secondaire" pleineLargeur disabled={envoi} onPress={() => void avecFournisseur(connecterGoogle)}>
+                {t('connexion.google')}
+              </Button>
+              <View accessibilityRole="none" style={[styles.separateur, { gap: espace.espace3 }]}>
+                <View style={[styles.trait, { backgroundColor: couleurs.ligne }]} />
+                <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre3 }]}>
+                  {t('connexion.ou')}
+                </Text>
+                <View style={[styles.trait, { backgroundColor: couleurs.ligne }]} />
+              </View>
               <TextField
                 label={t('compte.email')}
                 valeur={email}
@@ -79,7 +131,7 @@ export default function Connexion() {
                 erreur={email !== '' && !emailOk ? t('connexion.emailInvalide') : undefined}
               />
               {erreur ? <Banner ton="erreur">{erreur}</Banner> : null}
-              <Button pleineLargeur disabled={!emailOk || envoi} onPress={demander}>
+              <Button variant="secondaire" pleineLargeur disabled={!emailOk || envoi} onPress={demander}>
                 {t('connexion.recevoirCode')}
               </Button>
             </>
@@ -114,4 +166,7 @@ export default function Connexion() {
 
 const styles = StyleSheet.create({
   ecran: { flex: 1 },
+  apple: { height: 48, width: '100%' },
+  separateur: { flexDirection: 'row', alignItems: 'center' },
+  trait: { flex: 1, height: StyleSheet.hairlineWidth },
 });

@@ -3,9 +3,18 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import { MESSAGE_MAX, PRENOM_DON_MAX, montantDon, referenceDon, validerDeclaration } from '@/features/dons/declaration';
+import {
+  MESSAGE_MAX,
+  PRENOM_DON_MAX,
+  montantDon,
+  referenceDon,
+  validerDeclaration,
+  walletConnu,
+} from '@/features/dons/declaration';
 import { dejaDeclaree, declarer } from '@/features/dons/depot';
+import { PiedDon } from '@/features/dons/PiedDon';
 import { WALLETS } from '@/features/dons/wallets';
+import { useParametre } from '@/hooks/useParametre';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { Banner } from '@/ui/Banner';
@@ -18,8 +27,11 @@ import { TopBar } from '@/ui/TopBar';
 export default function DeclarerDon() {
   const { t } = useTranslation();
   const { couleurs, espace, typographie } = useTheme();
-  const [wallet, setWallet] = useState<string>(WALLETS[0].id);
-  const [montant, setMontant] = useState('');
+  // Wallet et montant choisis sur Soutenir, s'ils sont valables.
+  const walletRecu = walletConnu(useParametre('wallet'));
+  const montantRecu = montantDon(useParametre('montant'));
+  const [wallet, setWallet] = useState<string>(walletRecu ?? WALLETS[0].id);
+  const [montant, setMontant] = useState(montantRecu === null ? '' : String(montantRecu));
   const [reference, setReference] = useState('');
   const [prenom, setPrenom] = useState('');
   const [message, setMessage] = useState('');
@@ -43,13 +55,13 @@ export default function DeclarerDon() {
 
   return (
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
-      <TopBar retour titre={t('dons.declarerTitre')} />
+      <TopBar retour={t('dons.retourWallets')} titre={t('dons.declarerTitre')} />
       <KeyboardAvoidingView style={styles.ecran} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <ScrollView
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={{
             paddingHorizontal: espace.espace5,
-            paddingBottom: espace.espace8,
+            paddingBottom: espace.espace6,
             gap: espace.espace5,
           }}>
           <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, { color: couleurs.encre2 }]}>
@@ -77,6 +89,8 @@ export default function DeclarerDon() {
               setDouble(false);
             }}
             placeholder={t('dons.referencePlaceholder')}
+            aide={t('dons.referenceOu', { wallet: nomWallet })}
+            majuscules
             erreur={
               double
                 ? t('dons.referenceDouble')
@@ -85,16 +99,27 @@ export default function DeclarerDon() {
                   : undefined
             }
           />
-          <TextField label={t('dons.prenom')} valeur={prenom} onChange={setPrenom} maxLength={PRENOM_DON_MAX} />
-          <TextField label={t('dons.message')} valeur={message} onChange={setMessage} maxLength={MESSAGE_MAX} />
+          <TextField
+            label={t('dons.prenom')}
+            valeur={prenom}
+            onChange={setPrenom}
+            placeholder={t('dons.prenomPlaceholder')}
+            maxLength={PRENOM_DON_MAX}
+          />
+          <TextField
+            label={t('dons.message')}
+            valeur={message}
+            onChange={setMessage}
+            placeholder={t('dons.messagePlaceholder')}
+            maxLength={MESSAGE_MAX}
+          />
           {double ? <Banner ton="attention">{t('dons.referenceDouble')}</Banner> : null}
+        </ScrollView>
+        <PiedDon note={t('dons.pasDeCode')}>
           <Button pleineLargeur disabled={!declaration || envoi} onPress={envoyer}>
             {t('dons.envoyer')}
           </Button>
-          <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre3 }]}>
-            {t('dons.pasDeCode')}
-          </Text>
-        </ScrollView>
+        </PiedDon>
       </KeyboardAvoidingView>
     </View>
   );

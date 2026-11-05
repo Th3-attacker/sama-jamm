@@ -1069,7 +1069,13 @@
     "verificationNote": "Nous comparons avec les relevés du wallet, en général sous quelques jours. Le statut se met à jour ici.",
     "envoiDiffere": "Pas de réseau : votre déclaration sera envoyée dès le retour de la connexion.",
     "merciTitre": "Merci pour votre don",
-    "revenirAccueil": "Revenir à l’accueil"
+    "revenirAccueil": "Revenir à l’accueil",
+    "paysDevise": "{{pays}} · MRU",
+    "retourWallets": "Retour aux wallets",
+    "referenceOu": "La référence {{wallet}} figure dans le SMS de confirmation.",
+    "prenomPlaceholder": "Pour vous remercier par votre nom",
+    "messagePlaceholder": "Une suggestion, une douʿā…",
+    "referenceCourte": "Référence {{reference}}"
   },
   "etats": {
     "horsLigne": "Hors ligne",
@@ -1237,6 +1243,9 @@
     "codeRefuse": "Ce code n’est pas valable ou a expiré. Demandez-en un nouveau.",
     "seConnecter": "Se connecter",
     "changerEmail": "Changer d’adresse",
-    "sansCompte": "Continuer sans compte"
+    "sansCompte": "Continuer sans compte",
+    "google": "Continuer avec Google",
+    "ou": "ou",
+    "fournisseurImpossible": "La connexion n’a pas abouti. Réessayez, ou recevez un code par e-mail."
   }
 }

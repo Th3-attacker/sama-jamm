@@ -19,6 +19,8 @@ export const supabase = createClient(SUPABASE_URL, SUPABASE_CLE_PUBLIQUE, {
     autoRefreshToken: true,
     persistSession: true,
     detectSessionInUrl: false,
+    // Connexion Google par le navigateur : le code reçu au retour est échangé contre la session (PKCE).
+    flowType: 'pkce',
   },
 });
 

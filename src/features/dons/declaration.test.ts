@@ -2,7 +2,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { montantDon, referenceDon, validerDeclaration } from './declaration.ts';
+import { montantDon, referenceDon, validerDeclaration, walletConnu } from './declaration.ts';
 
 test('montant : ouguiyas entières', () => {
   assert.equal(montantDon('200'), 200);
@@ -26,4 +26,10 @@ test('déclaration : champs facultatifs nettoyés', () => {
     validerDeclaration({ wallet: 'paypal', montant: '200', reference: 'TX1234', prenom: '', message: '' }),
     null,
   );
+});
+
+test('wallet passé par Soutenir : seulement un wallet connu', () => {
+  assert.equal(walletConnu('masrvi'), 'masrvi');
+  assert.equal(walletConnu(''), null);
+  assert.equal(walletConnu('wave'), null);
 });

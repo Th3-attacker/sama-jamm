@@ -13,6 +13,11 @@ export type Declaration = {
   message: string | null;
 };
 
+/** Wallet reçu d'un écran précédent (paramètre de route), ou null s'il n'est pas connu. */
+export function walletConnu(saisie: string): IdWallet | null {
+  return WALLETS.find((w) => w.id === saisie)?.id ?? null;
+}
+
 /** Montant en ouguiyas entières, de 1 à 10 000 000. */
 export function montantDon(saisie: string): number | null {
   const propre = saisie.replace(/[\s\u00a0\u202f]/g, '');
@@ -34,7 +39,7 @@ const facultatif = (s: string, max: number) => {
 
 /** Déclaration prête à envoyer, ou null si le wallet, le montant ou la référence ne conviennent pas. */
 export function validerDeclaration(s: SaisieDeclaration): Declaration | null {
-  const wallet = WALLETS.find((w) => w.id === s.wallet)?.id;
+  const wallet = walletConnu(s.wallet);
   const montant = montantDon(s.montant);
   const reference = referenceDon(s.reference);
   if (!wallet || montant === null || reference === null) return null;

@@ -21,3 +21,30 @@ export function prenomPropre(saisie: string): string | null | undefined {
   if (p === '') return null;
   return p.length <= PRENOM_MAX ? p : undefined;
 }
+
+/** Chemin de retour de la connexion Google (samajamm://auth?code=…) : géré par l'écran de connexion. */
+export function estRetourConnexion(chemin: string): boolean {
+  return /^(?:[a-z][a-z0-9+.-]*:\/\/[^/?#]*)?\/?(?:--\/)?auth(?:[/?#]|$)/i.test(chemin);
+}
+
+export type RetourOAuth = { code: string } | { erreur: string };
+
+/** Lit le code (flux PKCE) ou l'erreur dans l'adresse de retour du fournisseur ; null si l'adresse est vide. */
+export function lireRetourOAuth(adresse: string): RetourOAuth | null {
+  const params = new Map<string, string>();
+  for (const partie of adresse.split(/[?#]/).slice(1)) {
+    for (const paire of partie.split('&')) {
+      const [cle, valeur = ''] = paire.split('=');
+      if (!cle) continue;
+      try {
+        params.set(cle, decodeURIComponent(valeur.replace(/\+/g, ' ')));
+      } catch {
+        params.set(cle, valeur);
+      }
+    }
+  }
+  const code = params.get('code');
+  if (code) return { code };
+  const erreur = params.get('error_description') ?? params.get('error');
+  return erreur ? { erreur } : null;
+}
