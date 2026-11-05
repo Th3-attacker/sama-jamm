@@ -559,6 +559,12 @@
     "compterAide": "المس للعدّ",
     "terminee": "تمّ",
     "sourceCoran": "القرآن · {{ref}} · {{fois}}",
+    "hisn": "حصن المسلم",
+    "chapitre": "الفصل",
+    "hisnAide": "حصن المسلم · النص العربي",
+    "sectionVersets": "آيات من القرآن",
+    "sourceHisn": "حصن المسلم · {{fois}}",
+    "noteHisn": "النص العربي من حصن المسلم، دون ترجمة في الوقت الحالي. عناوين الفصول بالفرنسية تحتاج إلى مراجعة.",
     "fois_zero": "{{count}} مرة",
     "fois_one": "مرة واحدة",
     "fois_two": "مرتان",
@@ -671,6 +677,7 @@
     "signalerEntete": "سما جام · الأخطاء الأخيرة",
     "aucuneErreur": "لا توجد أخطاء مسجّلة.",
     "sourceTanzil": "النقحرة والأجزاء والأحزاب والسجدات: مشروع تنزيل (tanzil.net)، رخصة CC BY 3.0، دون تعديل.",
+    "sourceInvocations": "الأدعية: حصن المسلم لسعيد بن علي بن وهف القحطاني. النص العربي من ملف adhkar.json للمطوّر rn0x (github.com/rn0x/Adhkar-json) الذي أعلن إباحة استعماله. عناوين الفصول بالفرنسية أُعدّت لتطبيق سما جام وتحتاج إلى مراجعة.",
     "sourceRecitations": "التلاوات: alquran.cloud (Islamic Network)، بإذن القرّاء أو ورثتهم للنشر المجاني غير التجاري.",
     "version": "سما جام · الإصدار {{version}}",
     "confidentialite": "سياسة الخصوصية",
@@ -682,6 +689,10 @@
       "traductions": {
         "titre": "الترجمات",
         "resume": "محمد حميد الله (الفرنسية)"
+      },
+      "invocations": {
+        "titre": "الأدعية",
+        "resume": "حصن المسلم · سعيد القحطاني"
       },
       "recitations": {
         "titre": "التلاوات والأذان",

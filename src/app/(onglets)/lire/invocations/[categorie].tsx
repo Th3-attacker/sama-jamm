@@ -11,6 +11,7 @@ import {
   type CategorieId,
   type Invocation,
 } from '@/features/invocations/donnees';
+import { BarreCompteur } from '@/features/invocations/BarreCompteur';
 import { useTaillesLecture } from '@/features/lire/BarreTaille';
 import { sourate, traductionDe, translitDe, versetsDe } from '@/features/lire/coran';
 import { marqueur } from '@/features/lire/PageMushaf';
@@ -77,7 +78,7 @@ export default function EcranInvocations() {
 
 function Moments({ initiale }: { initiale: CategorieId }) {
   const { t } = useTranslation();
-  const { couleurs, espace, rayon, typographie } = useTheme();
+  const { couleurs, espace } = useTheme();
   const { afficher } = useToast();
   const [categorie, setCategorie] = useState<CategorieId>(initiale);
   const [comptes, setComptes] = useState<Record<string, number>>({});
@@ -169,31 +170,8 @@ function Moments({ initiale }: { initiale: CategorieId }) {
         <Banner ton="info">{t('invocations.note')}</Banner>
       </ScrollView>
 
-      {/* Compteur : l'invocation en cours et un grand bouton rond, toujours sous la main. */}
       {actif ? (
-        <View
-          style={[
-            styles.barre,
-            { backgroundColor: couleurs.surface, borderTopColor: couleurs.ligne, paddingHorizontal: espace.espace5, paddingVertical: espace.espace3, gap: espace.espace3 },
-          ]}>
-          <View style={styles.titreBarre}>
-            <Text numberOfLines={1} maxFontSizeMultiplier={echelleMax.courant} style={[typographie.titre3, { color: couleurs.encre }]}>
-              {`${libelleActif}…`}
-            </Text>
-            <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre3 }]}>
-              {t('invocations.compterAide')}
-            </Text>
-          </View>
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel={`${t('invocations.compteur', { n: comptes[actif.id] ?? 0, total: actif.repetitions })}. ${t('invocations.compterAide')}`}
-            onPress={compter}
-            style={[styles.bouton, { backgroundColor: couleurs.emeraude, borderRadius: rayon.rayonPastille }]}>
-            <Text maxFontSizeMultiplier={echelleMax.onglets} style={[typographie.titre3, styles.chiffres, { color: couleurs.surEmeraude }]}>
-              {t('invocations.compteur', { n: comptes[actif.id] ?? 0, total: actif.repetitions })}
-            </Text>
-          </Pressable>
-        </View>
+        <BarreCompteur titre={libelleActif} n={comptes[actif.id] ?? 0} total={actif.repetitions} onCompter={compter} />
       ) : null}
       <PartageVerset verset={aPartager} onFermer={() => setAPartager(null)} />
     </View>
@@ -288,8 +266,4 @@ const styles = StyleSheet.create({
   ecouter: { flexDirection: 'row', alignItems: 'center', minHeight: 44 },
   sortie: { flex: 1, flexDirection: 'row', justifyContent: 'flex-end' },
   icone: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
-  barre: { flexDirection: 'row', alignItems: 'center', borderTopWidth: StyleSheet.hairlineWidth },
-  titreBarre: { flex: 1 },
-  bouton: { minWidth: 88, height: 48, paddingHorizontal: 16, alignItems: 'center', justifyContent: 'center' },
-  chiffres: { fontVariant: ['tabular-nums'] },
 });

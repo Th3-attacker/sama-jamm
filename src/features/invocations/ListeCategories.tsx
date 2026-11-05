@@ -7,20 +7,32 @@ import { ListGroup } from '@/ui/ListGroup';
 import { ListItem } from '@/ui/ListItem';
 
 import { CATEGORIES } from './donnees';
+import { chapitresHisn, titreDe } from './hisn';
 
-/** Les moments de la journée : un toucher ouvre les invocations de ce moment. */
+/** Bibliothèque des invocations : les moments du Coran, puis les chapitres de la Citadelle du musulman. */
 export function ListeCategories() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { espace } = useTheme();
   return (
-    <View style={{ paddingTop: espace.espace3 }}>
-      <ListGroup>
+    <View style={{ paddingTop: espace.espace3, gap: espace.espace5 }}>
+      <ListGroup titre={t('invocations.sectionVersets')}>
         {CATEGORIES.map((c) => (
           <ListItem
             key={c}
             icone="book"
             titre={t(`invocations.${c}`)}
             onPress={() => router.push({ pathname: '/lire/invocations/[categorie]', params: { categorie: c } })}
+          />
+        ))}
+      </ListGroup>
+      <ListGroup titre={t('invocations.hisn')} note={t('invocations.noteHisn')}>
+        {chapitresHisn().map((c) => (
+          <ListItem
+            key={c.id}
+            numero={c.id}
+            prefixe={t('invocations.chapitre')}
+            titre={titreDe(c, i18n.language)}
+            onPress={() => router.push({ pathname: '/lire/hisn/[chapitre]', params: { chapitre: c.id } })}
           />
         ))}
       </ListGroup>

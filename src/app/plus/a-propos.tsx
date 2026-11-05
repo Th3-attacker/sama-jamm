@@ -19,6 +19,7 @@ const SOURCES = [
   { cle: 'coran', details: ['sourceCoran', 'sourceTanzil'] },
   { cle: 'traductions', details: ['sourceTraduction'] },
   { cle: 'recitations', details: ['sourceRecitations', 'sourceAdhan'] },
+  { cle: 'invocations', details: ['sourceInvocations'] },
   { cle: 'polices', details: ['polices'] },
 ] as const;
 type CleSource = (typeof SOURCES)[number]['cle'];
