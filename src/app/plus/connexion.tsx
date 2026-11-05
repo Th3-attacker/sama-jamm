@@ -3,6 +3,7 @@ import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { envoyerCode, verifierCode } from '@/features/compte/compte';
 import { appleDisponible, connecterApple, connecterGoogle, type IssueConnexion } from '@/features/compte/fournisseurs';
@@ -11,13 +12,15 @@ import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { Banner } from '@/ui/Banner';
 import { Button } from '@/ui/Button';
+import { IconButton } from '@/ui/IconButton';
+import { Logo } from '@/ui/Logo';
 import { TextField } from '@/ui/TextField';
-import { TopBar } from '@/ui/TopBar';
 
 /** Connexion par code reçu par e-mail (sans mot de passe). Le budget reste toujours sur le téléphone. */
 export default function Connexion() {
   const { t } = useTranslation();
   const { couleurs, espace, rayon, typographie, nom } = useTheme();
+  const insets = useSafeAreaInsets();
   const [email, setEmail] = useState('');
   const [code, setCode] = useState('');
   const [etape, setEtape] = useState<'email' | 'code'>('email');
@@ -85,7 +88,10 @@ export default function Connexion() {
 
   return (
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
-      <TopBar retour titre={t('compte.connexionTitre')} />
+      {/* Fermer en haut à gauche, puis la marque et le titre, comme sur la maquette. */}
+      <View style={{ paddingTop: insets.top + espace.espace2, paddingHorizontal: espace.espace4 }}>
+        <IconButton icone="close" label={t('commun.fermer')} onPress={() => router.back()} />
+      </View>
       <KeyboardAvoidingView style={styles.ecran} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <ScrollView
           keyboardShouldPersistTaps="handled"
@@ -94,6 +100,13 @@ export default function Connexion() {
             paddingBottom: espace.espace8,
             gap: espace.espace5,
           }}>
+          <Logo taille={44} />
+          <Text
+            accessibilityRole="header"
+            maxFontSizeMultiplier={echelleMax.grand}
+            style={[typographie.titre1, { color: couleurs.emeraude, marginBottom: -espace.espace3 }]}>
+            {t('compte.connexionTitre')}
+          </Text>
           <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, { color: couleurs.encre2 }]}>
             {`${t('compte.connexionTexte')} ${t('connexion.budgetReste')}`}
           </Text>
@@ -155,10 +168,13 @@ export default function Connexion() {
               </Button>
             </>
           )}
+        </ScrollView>
+        {/* « Continuer sans compte » reste en bas de l'écran. */}
+        <View style={{ paddingHorizontal: espace.espace5, paddingBottom: Math.max(insets.bottom, espace.espace4) }}>
           <Button variant="discret" pleineLargeur onPress={() => router.back()}>
             {t('connexion.sansCompte')}
           </Button>
-        </ScrollView>
+        </View>
       </KeyboardAvoidingView>
     </View>
   );
