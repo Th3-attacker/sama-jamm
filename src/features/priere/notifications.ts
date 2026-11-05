@@ -1,5 +1,6 @@
 // Notifications locales de prière : canaux Android, programmation de la fenêtre, tâche quotidienne.
 import * as BackgroundTask from 'expo-background-task';
+import Constants, { ExecutionEnvironment } from 'expo-constants';
 import * as Notifications from 'expo-notifications';
 import { AndroidImportance, SchedulableTriggerInputTypes } from 'expo-notifications';
 import * as TaskManager from 'expo-task-manager';
@@ -30,6 +31,25 @@ const CANAUX: Record<Son, string> = {
 };
 /** Fichiers de `assets/sons`, copiés dans les ressources Android par le plugin (nom avec l'extension). */
 const SONS_ADHAN: Partial<Record<Son, string>> = { complet: 'adhan_complet.ogg', court: 'adhan_court.ogg' };
+/**
+ * iOS : pas de canaux, le son se désigne dans la notification elle-même. Extraits de 30 secondes au plus (limite d'iOS)
+ * tirés des mêmes enregistrements CC0, en WAV.
+ */
+const SONS_ADHAN_IOS: Partial<Record<Son, string>> = { complet: 'adhan_complet_ios.wav', court: 'adhan_court_ios.wav' };
+
+/**
+ * Expo Go n'embarque pas les sons déclarés dans le plugin (adhan) : il ne connaît que le son par défaut.
+ * Les builds (développement, preview, production) les contiennent.
+ */
+const DANS_EXPO_GO = Constants.executionEnvironment === ExecutionEnvironment.StoreClient;
+
+/** Son d'une notification d'appel : l'extrait d'adhan sur iOS, le son du canal (booléen) sur Android. */
+export function sonDeNotification(son: Son): boolean | string {
+  const avecSon = son === 'complet' || son === 'court' || son === 'doux';
+  if (Platform.OS === 'ios' && !DANS_EXPO_GO) return SONS_ADHAN_IOS[son] ?? avecSon;
+  return avecSon;
+}
+
 /** Canal Android des rappels doux (avant la prière, zakat). */
 export const CANAL_RAPPELS = 'rappels-v1';
 const ANCIENS_CANAUX = [
@@ -46,7 +66,8 @@ export async function creerCanaux(): Promise<void> {
     await Notifications.setNotificationChannelAsync(CANAUX[son], {
       name: t(`notifications.canaux.${son}`),
       importance: AndroidImportance.HIGH,
-      sound: SONS_ADHAN[son] ?? 'default',
+      // Dans Expo Go, un fichier inconnu fait échouer la création du canal (NullPointerException) : son par défaut.
+      sound: DANS_EXPO_GO ? 'default' : (SONS_ADHAN[son] ?? 'default'),
     });
   }
   await Notifications.setNotificationChannelAsync(CANAUX.vibration, {
@@ -81,7 +102,7 @@ export async function essayerSon(son: Son): Promise<boolean> {
     content: {
       title: t('notifications.essaiTitre'),
       body: t('notifications.appelTexte'),
-      sound: son === 'complet' || son === 'court' || son === 'doux',
+      sound: sonDeNotification(son),
     },
     trigger: { type: SchedulableTriggerInputTypes.TIME_INTERVAL, seconds: 2, channelId: CANAUX[son] },
   });
@@ -103,7 +124,7 @@ function contenu(n: Planifiee): Notifications.NotificationContentInput {
   return {
     title: t('notifications.appelTitre', { priere, heure: formatHeure(n.date) }),
     body: n.priere === 'fajr' ? t('notifications.fajrTexte') : t('notifications.appelTexte'),
-    sound: avecSon,
+    sound: sonDeNotification(n.son),
     data: { url: URL_PRIERE },
   };
 }
