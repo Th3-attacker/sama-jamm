@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
@@ -23,6 +23,7 @@ import {
   resteMinuterie,
 } from '@/features/ecouter/minuterie';
 import { recitateur } from '@/features/ecouter/recitateurs';
+import { sourateTelechargee, telechargerSourate, useTelechargements } from '@/features/ecouter/telechargements';
 import { sourate, versetsDe } from '@/features/lire/coran';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
@@ -47,6 +48,15 @@ export default function LecteurPleinEcran() {
   const erreur = useLecteur((s) => s.erreur);
   const vitesse = useLecteur((s) => s.vitesse);
   const page = useLecteur((s) => s.page);
+  const idRecitateur = useLecteur((s) => s.recitateur);
+  const versionTelechargements = useTelechargements((s) => s.version);
+  const partTelechargee = useTelechargements((s) =>
+    position ? s.enCours[`${idRecitateur}:${position.sourate}`] : undefined,
+  );
+  const telechargee = useMemo(
+    () => versionTelechargements >= 0 && !!position && sourateTelechargee(idRecitateur, position.sourate),
+    [versionTelechargements, position, idRecitateur],
+  );
   const minuterie = useLecteur((s) => s.minuterie);
   const repetitionVerset = useLecteur((s) => s.repetitionVerset);
   const repeterSourate = useLecteur((s) => s.repeterSourate);
@@ -58,14 +68,34 @@ export default function LecteurPleinEcran() {
     return () => clearInterval(tic);
   }, [minuterie]);
   const reste = resteMinuterie(minuterie, maintenant);
-  const idRecitateur = useLecteur((s) => s.recitateur);
 
   const s = position ? sourate(position.sourate) : undefined;
   const texte = position ? versetsDe(position.sourate)[position.verset - 1] : undefined;
 
   return (
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
-      <TopBar retour titre={s?.nom ?? t('ecouter.titre')} sousTitre={recitateur(idRecitateur)?.nom} />
+      <TopBar
+        retour={t('ecouter.reduire')}
+        titre={s?.nom ?? t('ecouter.titre')}
+        sousTitre={recitateur(idRecitateur)?.nom}
+        actions={
+          position && page === null
+            ? [
+                {
+                  icone: telechargee ? 'check' : 'download',
+                  actif: telechargee,
+                  label: telechargee ? t('telechargements.disponible') : t('ecouter.telechargerHorsLigne'),
+                  onPress: () => {
+                    if (telechargee || partTelechargee !== undefined) return;
+                    telechargerSourate(idRecitateur, position.sourate).catch((e: unknown) =>
+                      console.warn('Téléchargement interrompu', e),
+                    );
+                  },
+                },
+              ]
+            : undefined
+        }
+      />
       <ScrollView contentContainerStyle={{ padding: espace.espace5, gap: espace.espace5, flexGrow: 1 }}>
         {position && s ? (
           <>
@@ -123,13 +153,13 @@ export default function LecteurPleinEcran() {
             </View>
 
             <SegmentedControl
-              label={t('ecouter.vitesse')}
+              label={t('ecouter.vitesseLecture')}
               options={VITESSES.map((v) => ({ id: String(v), label: `${String(v).replace('.', ',')}×` }))}
               valeur={String(vitesse)}
               onChange={(id) => definirVitesse(Number(id))}
             />
             <SegmentedControl
-              label={t('ecouter.repeterVerset')}
+              label={t('ecouter.repeterLeVerset')}
               options={REPETITIONS_VERSET.map((n) => ({
                 id: String(n),
                 label: n === 0 ? t('ecouter.sansFin') : t('ecouter.fois', { count: n }),

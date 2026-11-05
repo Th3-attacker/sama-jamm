@@ -316,7 +316,7 @@
     "reprendre": "متابعة",
     "recitateurs": "القرّاء",
     "chants": "القصائد",
-    "telecharges": "المُنزَّلة",
+    "telecharges": "منزّلة · متاحة دون اتصال",
     "recitateur": "القارئ",
     "ecouterAvec": "الاستماع بهذا القارئ",
     "vitesse": "سرعة التلاوة",
@@ -353,7 +353,18 @@
     "minutes_two": "{{count}} دقيقتان",
     "minutes_few": "{{count}} دقائق",
     "minutes_many": "{{count}} دقيقة",
-    "minutes_other": "{{count}} دقيقة"
+    "minutes_other": "{{count}} دقيقة",
+    "reduire": "تصغير المشغّل",
+    "telechargerHorsLigne": "تنزيل للاستماع دون اتصال",
+    "vitesseLecture": "سرعة التلاوة",
+    "repeterLeVerset": "تكرار الآية",
+    "chercherSourate": "البحث عن سورة",
+    "resumeRecitateur_zero": "مرتل · 114 سورة · لا شيء منزّل",
+    "resumeRecitateur_one": "مرتل · 114 سورة · سورة منزّلة",
+    "resumeRecitateur_two": "مرتل · 114 سورة · سورتان منزّلتان",
+    "resumeRecitateur_few": "مرتل · 114 سورة · {{count}} سور منزّلة",
+    "resumeRecitateur_many": "مرتل · 114 سورة · {{count}} سورة منزّلة",
+    "resumeRecitateur_other": "مرتل · 114 سورة · {{count}} سورة منزّلة"
   },
   "telechargements": {
     "titre": "التنزيلات",
@@ -373,7 +384,12 @@
     "supprimerTitre": "حذف هذا التنزيل؟",
     "telecharger": "تنزيل {{sourate}}",
     "disponible": "متاح دون اتصال",
-    "echec": "توقف التنزيل. الآيات المستلمة محفوظة: المس مرة أخرى للمتابعة."
+    "echec": "توقف التنزيل. الآيات المستلمة محفوظة: المس مرة أخرى للمتابعة.",
+    "toutTelecharger": "تنزيل الكل",
+    "toutTitre": "تنزيل السور الـ114؟",
+    "toutTexte": "نحو 500 ميغابايت على الهاتف. أبقِ التطبيق مفتوحًا ويُفضّل الواي فاي.",
+    "toutConfirmer": "تنزيل",
+    "enCoursPart": "{{part}} %"
   },
   "priere": {
     "titre": "الصلاة",

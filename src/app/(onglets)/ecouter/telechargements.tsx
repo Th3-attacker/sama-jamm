@@ -20,6 +20,7 @@ export default function Telechargements() {
   const { t } = useTranslation();
   const { couleurs, espace, typographie } = useTheme();
   const version = useTelechargements((s) => s.version);
+  const enCours = useTelechargements((s) => s.enCours);
   // Relu après chaque téléchargement ou suppression (`version` change alors).
   const liste = useMemo(() => (version >= 0 ? listeTelechargements() : []), [version]);
   const total = liste.reduce((n, x) => n + x.octets, 0);
@@ -40,7 +41,23 @@ export default function Telechargements() {
           paddingBottom: espace.espace8,
           gap: espace.espace5,
         }}>
-        {liste.length === 0 ? (
+        {Object.keys(enCours).length > 0 ? (
+          <ListGroup titre={t('telechargements.enCours')}>
+            {Object.entries(enCours).map(([cle, part]) => {
+              const [idR, n] = cle.split(':');
+              return (
+                <ListItem
+                  key={cle}
+                  icone="download"
+                  titre={sourate(Number(n))?.nom ?? String(n)}
+                  sousTitre={`${recitateur(idR ?? '')?.nom ?? idR} · ${t('telechargements.reprend')}`}
+                  valeur={t('telechargements.enCoursPart', { part: Math.round(part * 100) })}
+                />
+              );
+            })}
+          </ListGroup>
+        ) : null}
+        {liste.length === 0 && Object.keys(enCours).length === 0 ? (
           <EmptyState
             icone="download"
             lang="fr"
@@ -75,6 +92,9 @@ export default function Telechargements() {
                 );
               })}
             </ListGroup>
+            <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre3 }]}>
+              {t('telechargements.supprimerNote')}
+            </Text>
           </>
         )}
       </ScrollView>

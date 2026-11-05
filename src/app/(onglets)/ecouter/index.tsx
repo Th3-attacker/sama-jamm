@@ -1,10 +1,12 @@
 import { router } from 'expo-router';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { useMenuPlus } from '@/features/plus/MenuPlus';
 import { ecouter, useLecteur } from '@/features/ecouter/lecteur';
 import { RECITATEURS, recitateur } from '@/features/ecouter/recitateurs';
+import { listeTelechargements, useTelechargements } from '@/features/ecouter/telechargements';
 import { sourate } from '@/features/lire/coran';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
@@ -19,6 +21,12 @@ export default function Ecouter() {
   const menu = useMenuPlus();
   const derniere = useLecteur((s) => s.derniere);
   const idRecitateur = useLecteur((s) => s.recitateur);
+  const version = useTelechargements((s) => s.version);
+  // Sourates complètes sur le téléphone : écoute sans réseau.
+  const disponibles = useMemo(
+    () => (version >= 0 ? listeTelechargements().filter((x) => x.versets === (sourate(x.sourate)?.versets ?? -1)) : []),
+    [version],
+  );
 
   return (
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
@@ -60,6 +68,22 @@ export default function Ecouter() {
             />
           ))}
         </ListGroup>
+        {disponibles.length > 0 ? (
+          <ListGroup titre={t('ecouter.telecharges')}>
+            {disponibles.slice(0, 5).map((x) => (
+              <ListItem
+                key={`${x.recitateur}:${x.sourate}`}
+                icone="play"
+                titre={sourate(x.sourate)?.nom ?? String(x.sourate)}
+                sousTitre={recitateur(x.recitateur)?.nom}
+                onPress={() => {
+                  ecouter({ sourate: x.sourate, verset: 1 }, x.recitateur);
+                  router.push('/ecouter/lecteur');
+                }}
+              />
+            ))}
+          </ListGroup>
+        ) : null}
         <ListGroup>
           <ListItem
             icone="download"

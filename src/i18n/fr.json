@@ -292,7 +292,7 @@
     "reprendre": "Reprendre",
     "recitateurs": "Récitateurs",
     "chants": "Chants",
-    "telecharges": "Téléchargés",
+    "telecharges": "Téléchargés · disponibles hors ligne",
     "recitateur": "Récitateur",
     "ecouterAvec": "Écouter avec ce récitateur",
     "vitesse": "Vitesse de récitation",
@@ -321,7 +321,14 @@
     "ecouterVerset": "Écouter à partir de ce verset",
     "ecouterPage": "Écouter à partir de cette page",
     "minutes_one": "{{count}} min",
-    "minutes_other": "{{count}} min"
+    "minutes_other": "{{count}} min",
+    "reduire": "Réduire le lecteur",
+    "telechargerHorsLigne": "Télécharger pour l’écoute sans connexion",
+    "vitesseLecture": "Vitesse de lecture",
+    "repeterLeVerset": "Répéter le verset",
+    "chercherSourate": "Chercher une sourate",
+    "resumeRecitateur_one": "Murattal · 114 sourates · {{count}} téléchargée",
+    "resumeRecitateur_other": "Murattal · 114 sourates · {{count}} téléchargées"
   },
   "telechargements": {
     "titre": "Téléchargements",
@@ -341,7 +348,12 @@
     "supprimerTitre": "Supprimer ce téléchargement ?",
     "telecharger": "Télécharger {{sourate}}",
     "disponible": "Disponible hors ligne",
-    "echec": "Le téléchargement s’est interrompu. Les versets déjà reçus sont gardés : touchez de nouveau pour reprendre."
+    "echec": "Le téléchargement s’est interrompu. Les versets déjà reçus sont gardés : touchez de nouveau pour reprendre.",
+    "toutTelecharger": "Tout télécharger",
+    "toutTitre": "Télécharger les 114 sourates ?",
+    "toutTexte": "Environ 500 Mo sur le téléphone. Gardez l’app ouverte et préférez le Wi-Fi.",
+    "toutConfirmer": "Télécharger",
+    "enCoursPart": "{{part}} %"
   },
   "priere": {
     "titre": "Prière",
