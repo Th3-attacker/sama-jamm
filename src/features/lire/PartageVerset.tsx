@@ -7,6 +7,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { captureRef } from 'react-native-view-shot';
 
 import { themes } from '@/theme/tokens.generated';
+import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { BottomSheet } from '@/ui/BottomSheet';
 import { Button } from '@/ui/Button';
@@ -40,7 +41,7 @@ export const lienVerset = (sourate: number, verset: number) => `https://quran.co
 
 export function PartageVerset({ verset, onFermer }: { verset: VersetAPartager | null; onFermer: () => void }) {
   const { t } = useTranslation();
-  const { espace, rayon, typographie } = useTheme();
+  const { couleurs, espace, latin, rayon, typographie } = useTheme();
   const { afficher } = useToast();
   const carte = useRef<ComponentRef<typeof View>>(null);
   const [fond, setFond] = useState<Fond>('emeraude');
@@ -83,6 +84,20 @@ export function PartageVerset({ verset, onFermer }: { verset: VersetAPartager | 
     <BottomSheet ouvert={verset !== null} titre={t('partage.titreFeuille')} onFermer={onFermer}>
       {verset ? (
         <>
+          {/* Proverbe de la maquette : le partage comme remède. */}
+          <View style={{ gap: espace.espace1 }}>
+            <Text
+              accessibilityLanguage="wo"
+              maxFontSizeMultiplier={echelleMax.courant}
+              style={[latin.titre3, { color: couleurs.emeraude, writingDirection: 'ltr' }]}>
+              {t('formules.partage')}
+            </Text>
+            <Text
+              maxFontSizeMultiplier={echelleMax.courant}
+              style={[typographie.translitteration, { color: couleurs.encre2 }]}>
+              {t('formules.partageTrad')}
+            </Text>
+          </View>
           {/* Carte capturée telle quelle en image : rien d'interactif à l'intérieur. */}
           <View
             ref={carte}
