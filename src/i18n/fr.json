@@ -250,7 +250,7 @@
     "versetN": "verset {{n}}",
     "versetSur": "Verset {{n}} sur {{total}}",
     "murattal": "Murattal · verset par verset",
-    "reseau": "L’écoute demande une connexion Internet. Les téléchargements pour écouter hors ligne arriveront bientôt.",
+    "reseau": "L’écoute passe par Internet, sauf pour les sourates téléchargées.",
     "sourates114": "114 sourates",
     "recitateurInconnu": "Ce récitateur n’existe pas.",
     "erreurLecture": "Ce verset n’a pas pu être lu. Vérifiez votre connexion, puis réessayez.",
@@ -258,7 +258,9 @@
     "rien": "Aucune écoute en cours. Choisissez un récitateur dans l’onglet Écouter.",
     "ouvrirLecteur": "Ouvrir le lecteur",
     "ecouterVerset": "Écouter à partir de ce verset",
-    "ecouterPage": "Écouter à partir de cette page"
+    "ecouterPage": "Écouter à partir de cette page",
+    "minutes_one": "{{count}} min",
+    "minutes_other": "{{count}} min"
   },
   "telechargements": {
     "titre": "Téléchargements",
@@ -271,7 +273,14 @@
     "surTelephone": "Sur ce téléphone",
     "reprend": "Reprend si le réseau coupe",
     "supprimerNote": "Supprimer un téléchargement ne retire ni vos favoris ni votre progression.",
-    "placeInsuffisante": "Pas assez de place sur le téléphone. Libérez {{taille}} pour continuer."
+    "placeInsuffisante": "Pas assez de place sur le téléphone. Libérez {{taille}} pour continuer.",
+    "vide": "Rien de téléchargé",
+    "videTexte": "Sur l’écran d’un récitateur, touchez l’icône de téléchargement d’une sourate pour l’écouter sans réseau.",
+    "versets": "{{n}} versets sur {{total}}",
+    "supprimerTitre": "Supprimer ce téléchargement ?",
+    "telecharger": "Télécharger {{sourate}}",
+    "disponible": "Disponible hors ligne",
+    "echec": "Le téléchargement s’est interrompu. Les versets déjà reçus sont gardés : touchez de nouveau pour reprendre."
   },
   "priere": {
     "titre": "Prière",

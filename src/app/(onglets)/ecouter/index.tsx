@@ -23,7 +23,12 @@ export default function Ecouter() {
   return (
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
       <TopBar titre={t('ecouter.titre')} actions={[menu.action]} />
-      <ScrollView contentContainerStyle={{ paddingHorizontal: espace.espace5, paddingBottom: espace.espace8, gap: espace.espace5 }}>
+      <ScrollView
+        contentContainerStyle={{
+          paddingHorizontal: espace.espace5,
+          paddingBottom: espace.espace8,
+          gap: espace.espace5,
+        }}>
         {derniere ? (
           <ListGroup titre={t('ecouter.reprendre')}>
             <ListItem
@@ -48,6 +53,14 @@ export default function Ecouter() {
               onPress={() => router.push({ pathname: '/ecouter/[recitateur]', params: { recitateur: r.id } })}
             />
           ))}
+        </ListGroup>
+        <ListGroup>
+          <ListItem
+            icone="download"
+            titre={t('telechargements.titre')}
+            sousTitre={t('telechargements.sousTitre')}
+            onPress={() => router.push('/ecouter/telechargements')}
+          />
         </ListGroup>
         <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre2 }]}>
           {t('ecouter.reseau')}

@@ -6,6 +6,7 @@ import { test } from 'node:test';
 import {
   numeroGlobal,
   pistesDePages,
+  positionDeNumero,
   positionValide,
   urlVerset,
   versetPrecedent,
@@ -61,4 +62,11 @@ test('versets d’une suite de pages, à cheval sur deux sourates', () => {
     pistesDePages(3, 3, (p) => pages[p] ?? []),
     [],
   );
+});
+
+test('numéro global vers sourate et verset', () => {
+  assert.deepEqual(positionDeNumero(262, versets), { sourate: 2, verset: 255 });
+  assert.deepEqual(positionDeNumero(6236, versets), { sourate: 114, verset: 6 });
+  assert.equal(positionDeNumero(6237, versets), null);
+  assert.equal(positionDeNumero(0, versets), null);
 });

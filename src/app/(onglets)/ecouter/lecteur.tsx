@@ -1,25 +1,40 @@
 import { router } from 'expo-router';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import {
   arreter,
   basculer,
+  definirMinuterie,
+  definirRepetitionVerset,
+  definirRepeterSourate,
   definirVitesse,
   precedent,
   suivant,
   useLecteur,
   VITESSES,
 } from '@/features/ecouter/lecteur';
+import {
+  DUREES_MINUTERIE,
+  formatReste,
+  minuterieDans,
+  REPETITIONS_VERSET,
+  resteMinuterie,
+} from '@/features/ecouter/minuterie';
 import { recitateur } from '@/features/ecouter/recitateurs';
 import { sourate, versetsDe } from '@/features/lire/coran';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { Banner } from '@/ui/Banner';
 import { Button } from '@/ui/Button';
+import { Chip } from '@/ui/Chip';
 import { Icon } from '@/ui/Icon';
 import { IconButton } from '@/ui/IconButton';
+import { ListGroup } from '@/ui/ListGroup';
+import { ListItem } from '@/ui/ListItem';
 import { SegmentedControl } from '@/ui/SegmentedControl';
+import { Switch } from '@/ui/Switch';
 import { TopBar } from '@/ui/TopBar';
 
 /** Lecteur plein écran : sourate et récitateur, verset en cours affiché, commandes et vitesse. */
@@ -32,6 +47,17 @@ export default function LecteurPleinEcran() {
   const erreur = useLecteur((s) => s.erreur);
   const vitesse = useLecteur((s) => s.vitesse);
   const page = useLecteur((s) => s.page);
+  const minuterie = useLecteur((s) => s.minuterie);
+  const repetitionVerset = useLecteur((s) => s.repetitionVerset);
+  const repeterSourate = useLecteur((s) => s.repeterSourate);
+  // Le temps restant de la minuterie se redessine chaque seconde.
+  const [maintenant, setMaintenant] = useState(() => Date.now());
+  useEffect(() => {
+    if (minuterie.type !== 'duree') return;
+    const tic = setInterval(() => setMaintenant(Date.now()), 1000);
+    return () => clearInterval(tic);
+  }, [minuterie]);
+  const reste = resteMinuterie(minuterie, maintenant);
   const idRecitateur = useLecteur((s) => s.recitateur);
 
   const s = position ? sourate(position.sourate) : undefined;
@@ -58,7 +84,18 @@ export default function LecteurPleinEcran() {
                 {texte}
               </Text>
             ) : null}
-            {erreur ? <Banner ton="erreur">{t('ecouter.erreurLecture')}</Banner> : null}
+            {erreur ? (
+              <Banner
+                ton="attention"
+                icone="offline"
+                titre={t('etats.horsLigne')}
+                action={{
+                  label: t('etats.voirTelechargements'),
+                  onPress: () => router.push('/ecouter/telechargements'),
+                }}>
+                {t('etats.horsLigneEcouter')}
+              </Banner>
+            ) : null}
 
             <View style={[styles.commandes, { gap: espace.espace5 }]}>
               <IconButton icone="skip-back" label={t('ecouter.precedent')} taille={28} onPress={precedent} />
@@ -91,6 +128,57 @@ export default function LecteurPleinEcran() {
               valeur={String(vitesse)}
               onChange={(id) => definirVitesse(Number(id))}
             />
+            <SegmentedControl
+              label={t('ecouter.repeterVerset')}
+              options={REPETITIONS_VERSET.map((n) => ({
+                id: String(n),
+                label: n === 0 ? t('ecouter.sansFin') : t('ecouter.fois', { count: n }),
+              }))}
+              valeur={String(repetitionVerset)}
+              onChange={(id) => {
+                const choix = REPETITIONS_VERSET.find((n) => String(n) === id);
+                if (choix !== undefined) definirRepetitionVerset(choix);
+              }}
+            />
+            {page === null ? (
+              <ListGroup>
+                <ListItem
+                  icone="repeat"
+                  titre={t('ecouter.repeterSourate')}
+                  droite={
+                    <Switch
+                      label={t('ecouter.repeterSourate')}
+                      active={repeterSourate}
+                      onChange={definirRepeterSourate}
+                    />
+                  }
+                />
+              </ListGroup>
+            ) : null}
+            <View style={{ gap: espace.espace2 }}>
+              <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, { color: couleurs.encre }]}>
+                {reste !== null
+                  ? t('ecouter.minuterieArret', { duree: formatReste(reste) })
+                  : minuterie.type === 'finSourate'
+                    ? t('ecouter.minuterieFinSourate')
+                    : t('ecouter.minuterie')}
+              </Text>
+              <View style={[styles.puces, { gap: espace.espace2 }]}>
+                <Chip selectionne={minuterie.type === 'aucune'} onPress={() => definirMinuterie({ type: 'aucune' })}>
+                  {t('ecouter.minuterieOff')}
+                </Chip>
+                {DUREES_MINUTERIE.map((m) => (
+                  <Chip key={m} selectionne={false} onPress={() => definirMinuterie(minuterieDans(m, Date.now()))}>
+                    {t('ecouter.minutes', { count: m })}
+                  </Chip>
+                ))}
+                <Chip
+                  selectionne={minuterie.type === 'finSourate'}
+                  onPress={() => definirMinuterie({ type: 'finSourate' })}>
+                  {t('ecouter.minuterieFinSourate')}
+                </Chip>
+              </View>
+            </View>
             <Button
               variant="discret"
               pleineLargeur
@@ -115,4 +203,5 @@ const styles = StyleSheet.create({
   arabe: { textAlign: 'center', writingDirection: 'rtl' },
   commandes: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center' },
   principal: { alignItems: 'center', justifyContent: 'center' },
+  puces: { flexDirection: 'row', flexWrap: 'wrap' },
 });
