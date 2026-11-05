@@ -138,7 +138,7 @@ function ContenuAjout() {
         {donnees.comptes.length > 1 ? (
           <View style={{ gap: espace.espace2 }}>
             <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, { color: couleurs.encre }]}>
-              {t('budget.compte')}
+              {t('budget.payeAvec')}
             </Text>
             <ScrollView
               horizontal
@@ -153,7 +153,13 @@ function ContenuAjout() {
           </View>
         ) : null}
 
-        <TextField label={t('budget.note')} valeur={note} onChange={setNote} maxLength={120} />
+        <TextField
+          label={t('budget.note')}
+          valeur={note}
+          onChange={setNote}
+          maxLength={120}
+          placeholder={t('budget.noteExemple')}
+        />
 
         <Keypad onTouche={(touche) => setSaisie((s) => appliquerTouche(s, touche))} />
 

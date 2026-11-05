@@ -6,7 +6,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { basculerMontants, useEtatVerrou, useFormatMontant } from '@/features/budget/verrou';
 import { depassement, depenseDuJour, joursRestants, pasArrondi, resteAVivre } from '@/features/budget/cycle';
 import { iconeEnveloppe } from '@/features/budget/enveloppesDeDepart';
-import { NOM_ENVELOPPE_MAX } from '@/features/budget/depot';
+import { NOM_ENVELOPPE_MAX, nonReparti } from '@/features/budget/depot';
 import { EtatsBudget } from '@/features/budget/EtatsBudget';
 import { FeuilleRevenu } from '@/features/budget/FeuilleRevenu';
 import { budgetModifie, useBudget } from '@/features/budget/useBudget';
@@ -142,6 +142,12 @@ export default function Budget() {
           />
         </Pressable>
 
+        <Text
+          accessibilityRole="header"
+          maxFontSizeMultiplier={echelleMax.courant}
+          style={[typographie.libelle, { color: couleurs.encre2 }]}>
+          {t('budget.repartitionMois')}
+        </Text>
         <View style={[styles.totaux, { gap: espace.espace3 }]}>
           {[
             [t('budget.recu'), mois.recu],
@@ -218,6 +224,11 @@ export default function Budget() {
             style={[typographie.titre3, { color: couleurs.encre }]}>
             {t('budget.enveloppes')}
           </Text>
+          {nonReparti(mois) > 0 ? (
+            <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre2 }]}>
+              {t('budget.nonRepartiMontant', { montant: f(nonReparti(mois)) })}
+            </Text>
+          ) : null}
           {mois.enveloppes.map((e) => (
             <Envelope
               key={e.id}

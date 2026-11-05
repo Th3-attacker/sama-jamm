@@ -92,7 +92,8 @@ export type OperationHistorique = Operation & {
   icone: string | null;
 };
 export type TypeCompte = Compte['type'];
-export type CompteAvecSolde = Compte & { solde: number };
+/** Avec le jour de la dernière opération qui touche le compte (null s'il n'y en a aucune). */
+export type CompteAvecSolde = Compte & { solde: number; dernierMouvement: Jour | null };
 export const TYPES_COMPTE: readonly TypeCompte[] = ['especes', 'mobile', 'banque'];
 export type ModificationOperation = {
   montant: number;
@@ -225,7 +226,8 @@ export function creerDepot(sql: Sql, outils: Outils) {
                                           WHEN o.type IN ('depense','epargne','sadaqa','virement') THEN -o.montant END)
                           FROM operations o WHERE o.compte_id = c.id), 0)
               + COALESCE((SELECT SUM(o.montant) FROM operations o
-                          WHERE o.compte_dest_id = c.id AND o.type = 'virement'), 0) AS solde
+                          WHERE o.compte_dest_id = c.id AND o.type = 'virement'), 0) AS solde,
+              (SELECT MAX(o.date) FROM operations o WHERE o.compte_id = c.id OR o.compte_dest_id = c.id) AS dernierMouvement
        FROM comptes c WHERE c.carnet_id = ? ORDER BY c.rowid`,
       carnet.id,
     );

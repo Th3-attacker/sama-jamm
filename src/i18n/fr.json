@@ -823,7 +823,15 @@
     "verrouPrompt": "Déverrouiller votre budget",
     "masquerLesMontants": "Masquer les montants",
     "montrerLesMontants": "Montrer les montants",
-    "verrouEchec": "Déverrouillage annulé. Réessayez quand vous voulez."
+    "verrouEchec": "Déverrouillage annulé. Réessayez quand vous voulez.",
+    "repartitionMois": "Répartition du mois",
+    "nonRepartiMontant": "Non réparti : {{montant}}",
+    "payeAvec": "Payé avec",
+    "noteExemple": "Note, facultative (ex. marché du matin)",
+    "operations": "Opérations",
+    "comptesIntro": "Où se trouve l’argent du foyer, aujourd’hui.",
+    "virementNote": "Un virement entre deux comptes n’est ni une dépense ni un revenu : il ne touche pas vos enveloppes.",
+    "dernierMouvement": "dernier mouvement le {{date}}"
   },
   "epargne": {
     "titre": "Épargne",

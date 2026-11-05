@@ -871,7 +871,15 @@
     "verrouPrompt": "فتح ميزانيتك",
     "masquerLesMontants": "إخفاء المبالغ",
     "montrerLesMontants": "إظهار المبالغ",
-    "verrouEchec": "أُلغي الفتح. أعد المحاولة متى شئت."
+    "verrouEchec": "أُلغي الفتح. أعد المحاولة متى شئت.",
+    "repartitionMois": "توزيع الشهر",
+    "nonRepartiMontant": "غير موزّع: {{montant}}",
+    "payeAvec": "دُفع من",
+    "noteExemple": "ملاحظة اختيارية (مثل: سوق الصباح)",
+    "operations": "العمليات",
+    "comptesIntro": "أين يوجد مال البيت اليوم.",
+    "virementNote": "التحويل بين حسابين ليس مصروفًا ولا دخلًا: لا يمسّ أظرفك.",
+    "dernierMouvement": "آخر حركة في {{date}}"
   },
   "epargne": {
     "titre": "الادخار",

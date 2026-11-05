@@ -6,6 +6,7 @@ import { useFormatMontant } from '@/features/budget/verrou';
 import { NOM_ENVELOPPE_MAX, TYPES_COMPTE, type TypeCompte } from '@/features/budget/depot';
 import { EcranBudgetIncomplet } from '@/features/budget/EcranBudgetIncomplet';
 import { budgetModifie, useBudget } from '@/features/budget/useBudget';
+import { formatJourCle } from '@/lib/dates';
 import { lireMontantFacultatif, versMinimes } from '@/lib/montant';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
@@ -26,7 +27,7 @@ const ICONES: Record<TypeCompte, IconName> = { especes: 'wallet', mobile: 'bolt'
 
 /** Où se trouve l'argent du foyer : chaque compte avec son solde, et le total. */
 export default function Comptes() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const formatMontant = useFormatMontant();
   const { couleurs, espace, typographie } = useTheme();
   const { afficher } = useToast();
@@ -118,6 +119,9 @@ export default function Comptes() {
           paddingBottom: espace.espace8,
           gap: espace.espace5,
         }}>
+        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, { color: couleurs.encre2 }]}>
+          {t('budget.comptesIntro')}
+        </Text>
         <AmountDisplay montant={total} devise={devise} libelle={t('budget.totalComptes')} />
         <ListGroup>
           {comptes.map((c) => (
@@ -125,7 +129,11 @@ export default function Comptes() {
               key={c.id}
               icone={ICONES[c.type]}
               titre={c.nom}
-              sousTitre={t(`budget.comptesTypes.${c.type}`)}
+              sousTitre={
+                c.dernierMouvement
+                  ? `${t(`budget.comptesTypes.${c.type}`)} · ${t('budget.dernierMouvement', { date: formatJourCle(c.dernierMouvement, i18n.language) })}`
+                  : t(`budget.comptesTypes.${c.type}`)
+              }
               valeur={formatMontant(c.solde, devise)}
             />
           ))}
@@ -158,6 +166,9 @@ export default function Comptes() {
             {t('budget.virement')}
           </Button>
         ) : null}
+        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre3 }]}>
+          {t('budget.virementNote')}
+        </Text>
       </ScrollView>
 
       <BottomSheet ouvert={virement} titre={t('budget.virementTitre')} onFermer={() => setVirement(false)}>

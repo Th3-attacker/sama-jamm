@@ -169,7 +169,7 @@ export default function EcranEnveloppe() {
             {t('budget.aucuneDepense')}
           </Text>
         ) : (
-          <ListGroup titre={t('budget.historique')}>
+          <ListGroup titre={t('budget.operations')}>
             {operations.map((o) => (
               <ListItem
                 key={o.id}
