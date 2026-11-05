@@ -545,6 +545,15 @@
     "sansObjectif": "بدون هدف",
     "sousTitre": "العدّاد"
   },
+  "invocations": {
+    "matin": "الصباح",
+    "soir": "المساء",
+    "sommeil": "قبل النوم",
+    "compteur": "{{n}} من {{total}}",
+    "compteurAide": "المس للعدّ عند كل قراءة",
+    "terminee": "تمّ",
+    "note": "في الوقت الحالي آيات من القرآن. تُضاف بقية الأدعية بعد التحقق من نصوصها ومصادرها."
+  },
   "recherche": {
     "titre": "بحث",
     "placeholder": "كلمة، آية، قصيدة",

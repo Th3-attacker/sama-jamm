@@ -509,6 +509,15 @@
     "sansObjectif": "Sans objectif",
     "sousTitre": "Compteur"
   },
+  "invocations": {
+    "matin": "Matin",
+    "soir": "Soir",
+    "sommeil": "Avant de dormir",
+    "compteur": "{{n}} sur {{total}}",
+    "compteurAide": "Touchez pour compter chaque lecture",
+    "terminee": "Terminé",
+    "note": "Pour l'instant, des versets du Coran. Les autres invocations arrivent quand leurs textes et leurs sources sont validés."
+  },
   "recherche": {
     "titre": "Recherche",
     "placeholder": "Un mot, un verset, un chant",

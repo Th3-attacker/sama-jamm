@@ -3,6 +3,7 @@ import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { ListeCategories } from '@/features/invocations/ListeCategories';
 import { CarteSourate } from '@/features/lire/CarteSourate';
 import { sourate, sourates, type Sourate } from '@/features/lire/coran';
 import { pourcentageKhatm, progressionKhatm } from '@/features/lire/progression';
@@ -118,12 +119,16 @@ export default function Lire() {
           </View>
         }
         ListEmptyComponent={
+          onglet === 'invocations' ? (
+            <ListeCategories />
+          ) : (
           <EmptyState
             icone="book"
             lang="fr"
             titre={t('lire.aVenir')}
             texte={onglet === 'xassaides' ? t('lire.xassaidesAVenir') : t('lire.invocationsAVenir')}
           />
+          )
         }
         contentContainerStyle={{ paddingHorizontal: espace.espace5, paddingBottom: espace.espace8 }}
         initialNumToRender={10}
