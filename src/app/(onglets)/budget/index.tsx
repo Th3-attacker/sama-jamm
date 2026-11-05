@@ -1,5 +1,5 @@
-import { router } from 'expo-router';
-import { useState } from 'react';
+import { router, useScrollToTop } from 'expo-router';
+import { ComponentRef, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
@@ -25,6 +25,9 @@ import { TextField } from '@/ui/TextField';
 import { TopBar } from '@/ui/TopBar';
 
 export default function Budget() {
+  // Toucher l'onglet actif ramène la liste en haut.
+  const defilement = useRef<ComponentRef<typeof ScrollView>>(null);
+  useScrollToTop(defilement);
   const { t, i18n } = useTranslation();
   const formatMontant = useFormatMontant();
   const masques = useEtatVerrou((s) => s.montantsMasques);
@@ -101,7 +104,7 @@ export default function Budget() {
   return (
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
       <TopBar grand titre={t('budget.titre')} sousTitre={sousTitre} actions={[oeil]} />
-      <ScrollView
+      <ScrollView ref={defilement}
         contentContainerStyle={{
           paddingHorizontal: espace.espace5,
           paddingBottom: espace.espace8,

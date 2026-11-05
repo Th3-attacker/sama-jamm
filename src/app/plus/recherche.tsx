@@ -1,7 +1,8 @@
 import { router } from 'expo-router';
 import { useDeferredValue, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, SectionList, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, SectionList, StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { CarteSourate } from '@/features/lire/CarteSourate';
 import { CarteVerset } from '@/features/lire/CarteVerset';
@@ -9,15 +10,19 @@ import { indexPret, preparerIndex, rechercher, VIDE, type ResultatVerset } from 
 import type { Sourate } from '@/features/lire/coran';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
+import { Chip } from '@/ui/Chip';
 import { EmptyState } from '@/ui/EmptyState';
 import { SearchField } from '@/ui/SearchField';
-import { TopBar } from '@/ui/TopBar';
 
 type Ligne = Sourate | ResultatVerset;
+type Filtre = 'tout' | 'coran' | 'xassaides' | 'invocations';
+const FILTRES: Filtre[] = ['tout', 'coran', 'xassaides', 'invocations'];
 
 export default function Recherche() {
   const { t } = useTranslation();
-  const { couleurs, espace, typographie } = useTheme();
+  const { couleurs, espace, rayon, typographie } = useTheme();
+  const insets = useSafeAreaInsets();
+  const [filtre, setFiltre] = useState<Filtre>('tout');
   // La requête reste dans l'état de l'écran : elle survit à l'ouverture d'un verset et au retour.
   const [requete, setRequete] = useState('');
   // La frappe reste fluide : la recherche suit avec un léger retard.
@@ -53,12 +58,37 @@ export default function Recherche() {
 
   return (
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
-      <TopBar retour titre={t('recherche.titre')} />
-      <View style={{ paddingHorizontal: espace.espace5, paddingBottom: espace.espace3 }}>
-        <SearchField autoFocus placeholder={t('recherche.placeholder')} valeur={requete} onChange={setRequete} />
+      {/* Champ de recherche et « Fermer », puis les filtres. */}
+      <View
+        style={[
+          styles.entete,
+          { paddingTop: insets.top + espace.espace3, paddingHorizontal: espace.espace5, gap: espace.espace3 },
+        ]}>
+        <View style={styles.champ}>
+          <SearchField autoFocus placeholder={t('recherche.placeholder')} valeur={requete} onChange={setRequete} />
+        </View>
+        <Pressable accessibilityRole="button" accessibilityLabel={t('commun.fermer')} hitSlop={8} onPress={() => router.back()}>
+          <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, { color: couleurs.emeraude }]}>
+            {t('commun.fermer')}
+          </Text>
+        </Pressable>
+      </View>
+      <View style={[styles.filtres, { paddingHorizontal: espace.espace5, paddingVertical: espace.espace3, gap: espace.espace2 }]}>
+        {FILTRES.map((f) => (
+          <Chip key={f} selectionne={filtre === f} onPress={() => setFiltre(f)}>
+            {f === 'tout' ? t('recherche.tout') : t(`lire.${f}`)}
+          </Chip>
+        ))}
       </View>
 
-      {enAttente ? (
+      {filtre === 'xassaides' || filtre === 'invocations' ? (
+        <EmptyState
+          icone="search"
+          lang="fr"
+          titre={t(`lire.${filtre}`)}
+          texte={t(filtre === 'xassaides' ? 'lire.xassaidesAVenir' : 'lire.invocationsAVenir')}
+        />
+      ) : enAttente ? (
         <ActivityIndicator
           accessibilityLabel={t('recherche.titre')}
           color={couleurs.emeraude}
@@ -77,6 +107,25 @@ export default function Recherche() {
           keyboardShouldPersistTaps="handled"
           keyExtractor={(ligne) => ('versets' in ligne ? `s${ligne.n}` : `v${ligne.sourate}:${ligne.verset}`)}
           stickySectionHeadersEnabled={false}
+          ListFooterComponent={
+            recherche && sections.length > 0 ? (
+              <View
+                style={{
+                  marginTop: espace.espace5,
+                  padding: espace.espace4,
+                  gap: espace.espace1,
+                  backgroundColor: couleurs.surfaceCreux,
+                  borderRadius: rayon.rayonCarte,
+                }}>
+                <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, { color: couleurs.encre }]}>
+                  {t('recherche.videTitre')}
+                </Text>
+                <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, { color: couleurs.encre2 }]}>
+                  {t('recherche.aide')}
+                </Text>
+              </View>
+            ) : undefined
+          }
           ListEmptyComponent={
             recherche ? undefined : (
               <EmptyState icone="search" lang="fr" titre={t('recherche.videTitre')} texte={t('recherche.aide')} />
@@ -86,7 +135,7 @@ export default function Recherche() {
             <Text
               accessibilityRole="header"
               maxFontSizeMultiplier={echelleMax.courant}
-              style={[typographie.libelle, { color: couleurs.encre2, paddingVertical: espace.espace2 }]}>
+              style={[typographie.libelle, { color: couleurs.encre3, paddingVertical: espace.espace2, textTransform: 'uppercase', letterSpacing: 0.6 }]}>
               {section.titre}
             </Text>
           )}
@@ -121,4 +170,7 @@ export default function Recherche() {
 
 const styles = StyleSheet.create({
   ecran: { flex: 1 },
+  entete: { flexDirection: 'row', alignItems: 'center' },
+  champ: { flex: 1 },
+  filtres: { flexDirection: 'row', flexWrap: 'wrap' },
 });

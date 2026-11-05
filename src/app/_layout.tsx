@@ -64,8 +64,11 @@ export default function RootLayout() {
     <ThemeProvider choix={theme} veilleAuto={veilleAuto} nuitDePriere={nuit?.active ?? false} interfaceArabe={i18n.language === 'ar'}>
       <ToastProvider>
         <Stack screenOptions={{ headerShown: false }}>
-          {/* Ajout de dépense : feuille modale, fermée par « × » ou le geste vers le bas (section Navigation). */}
-          <Stack.Screen name="budget-ajout" options={{ presentation: 'formSheet', sheetGrabberVisible: true }} />
+          {/* Ajout de dépense : route transparente portant la feuille native `BottomSheet`, fermée par « × » ou le geste vers le bas. */}
+          <Stack.Screen
+            name="budget-ajout"
+            options={{ presentation: 'transparentModal', animation: 'none', contentStyle: { backgroundColor: 'transparent' } }}
+          />
         </Stack>
       </ToastProvider>
       {demarrage ? <DemarrageAnime onFin={finDemarrage} /> : null}

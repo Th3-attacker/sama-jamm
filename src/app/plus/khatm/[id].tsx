@@ -20,6 +20,7 @@ import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { Banner } from '@/ui/Banner';
 import { Button } from '@/ui/Button';
+import { ProgressBar } from '@/ui/ProgressBar';
 import { TopBar } from '@/ui/TopBar';
 
 /** Un khatm collectif : les 30 juz en direct, mon juz, inviter. */
@@ -64,14 +65,15 @@ export default function EcranKhatm() {
     }
   };
 
+  // Lu : plein émeraude · en cours : or doux · le vôtre : contour émeraude · libre : contour discret.
   const couleurDe = (v: VuePart) =>
     v === 'lu'
-      ? { fond: couleurs.emeraude, texte: couleurs.surEmeraude }
+      ? { fond: couleurs.emeraude, texte: couleurs.surEmeraude, bord: couleurs.emeraude }
       : v === 'leVotre'
-        ? { fond: couleurs.or, texte: couleurs.encre }
+        ? { fond: couleurs.emeraudeDoux, texte: couleurs.emeraude, bord: couleurs.emeraude }
         : v === 'enCours'
-          ? { fond: couleurs.orDoux, texte: couleurs.orTexte }
-          : { fond: couleurs.surface, texte: couleurs.encre2 };
+          ? { fond: couleurs.orDoux, texte: couleurs.orTexte, bord: couleurs.or }
+          : { fond: couleurs.surface, texte: couleurs.encre, bord: couleurs.ligneForte };
 
   const ouvrirMonJuz = () => {
     const debut = resume.monJuz ? reperes().debutJuz(resume.monJuz) : null;
@@ -102,8 +104,8 @@ export default function EcranKhatm() {
         <View>
           <Text
             accessibilityLanguage="wo"
-            maxFontSizeMultiplier={echelleMax.courant}
-            style={[latin.titre3, { color: couleurs.emeraude }]}>
+            maxFontSizeMultiplier={echelleMax.grand}
+            style={[latin.titre1, { color: couleurs.emeraude }]}>
             {t('formules.entraide')}
           </Text>
           <Text
@@ -112,31 +114,41 @@ export default function EcranKhatm() {
             {t('formules.entraideTrad')}
           </Text>
         </View>
-        <View style={{ gap: espace.espace1 }}>
-          <Text
-            accessibilityRole="header"
-            maxFontSizeMultiplier={echelleMax.courant}
-            style={[typographie.titre2, { color: couleurs.encre }]}>
-            {khatm.nom}
-          </Text>
+        {/* Carte du groupe : nom, objectif, avancée et résumé. */}
+        <View
+          style={[
+            styles.carte,
+            { backgroundColor: couleurs.surface, borderColor: couleurs.ligne, borderRadius: rayon.rayonCarte, padding: espace.espace4, gap: espace.espace3 },
+          ]}>
+          <View style={[styles.ligneCarte, { gap: espace.espace3 }]}>
+            <Text
+              accessibilityRole="header"
+              numberOfLines={2}
+              maxFontSizeMultiplier={echelleMax.courant}
+              style={[typographie.titre3, { color: couleurs.encre, flexShrink: 1 }]}>
+              {khatm.nom}
+            </Text>
+            {echeance ? (
+              <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre3 }]}>
+                {t('khatm.objectif', { date: echeance })}
+              </Text>
+            ) : null}
+          </View>
           {khatm.intention ? (
             <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, { color: couleurs.encre2 }]}>
               {khatm.intention}
             </Text>
           ) : null}
-          {echeance ? (
-            <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre3 }]}>
-              {t('khatm.objectif', { date: echeance })}
-            </Text>
-          ) : null}
-          <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, { color: couleurs.encre }]}>
-            {t('khatm.resumeComplet', {
+          <ProgressBar
+            valeur={resume.lus / 30}
+            label={khatm.nom}
+            detail={t('khatm.resumeComplet', {
               lus: resume.lus,
               enCours: resume.enCours,
               libres: resume.libres,
               dont: resume.dontLeVotre ? t('khatm.dontLeVotre') : '',
             })}
-          </Text>
+          />
         </View>
 
         {/* Grille des 30 juz : toucher un juz libre pour le prendre. */}
@@ -159,7 +171,7 @@ export default function EcranKhatm() {
                   {
                     borderRadius: rayon.rayonCarte,
                     backgroundColor: c.fond,
-                    borderColor: couleurs.ligne,
+                    borderColor: c.bord,
                     opacity: pressed ? 0.8 : 1,
                   },
                 ]}>
@@ -171,7 +183,7 @@ export default function EcranKhatm() {
         <View style={[styles.legende, { gap: espace.espace3 }]}>
           {(['lu', 'enCours', 'leVotre', 'libre'] as const).map((v) => (
             <View key={v} style={[styles.legendeLigne, { gap: espace.espace1 }]}>
-              <View style={[styles.pastille, { backgroundColor: couleurDe(v).fond, borderColor: couleurs.ligne }]} />
+              <View style={[styles.pastille, { backgroundColor: couleurDe(v).fond, borderColor: couleurDe(v).bord }]} />
               <Text style={[typographie.legende, { color: couleurs.encre2 }]}>
                 {t(`khatm.${v === 'leVotre' ? 'vous' : v}`)}
               </Text>
@@ -235,6 +247,8 @@ export default function EcranKhatm() {
 const styles = StyleSheet.create({
   ecran: { flex: 1 },
   grille: { flexDirection: 'row', flexWrap: 'wrap' },
+  carte: { borderWidth: 1 },
+  ligneCarte: { flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between' },
   case: { width: '15%', aspectRatio: 1, alignItems: 'center', justifyContent: 'center', borderWidth: 1 },
   legende: { flexDirection: 'row', flexWrap: 'wrap' },
   legendeLigne: { flexDirection: 'row', alignItems: 'center' },

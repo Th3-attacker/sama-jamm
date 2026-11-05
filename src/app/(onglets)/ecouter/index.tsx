@@ -1,5 +1,5 @@
-import { router } from 'expo-router';
-import { useMemo } from 'react';
+import { router, useScrollToTop } from 'expo-router';
+import { ComponentRef, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
@@ -16,6 +16,9 @@ import { TopBar } from '@/ui/TopBar';
 
 /** Onglet Écouter : reprendre l'écoute en cours, puis choisir un récitateur. */
 export default function Ecouter() {
+  // Toucher l'onglet actif ramène la liste en haut.
+  const defilement = useRef<ComponentRef<typeof ScrollView>>(null);
+  useScrollToTop(defilement);
   const { t } = useTranslation();
   const { couleurs, espace, typographie } = useTheme();
   const menu = useMenuPlus();
@@ -37,7 +40,7 @@ export default function Ecouter() {
         titre={t('ecouter.titre')}
         actions={[menu.action]}
       />
-      <ScrollView
+      <ScrollView ref={defilement}
         contentContainerStyle={{
           paddingHorizontal: espace.espace5,
           paddingBottom: espace.espace8,

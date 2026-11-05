@@ -102,14 +102,14 @@ export default function EcranLangue() {
 
       <View
         accessibilityRole="radiogroup"
-        accessibilityLabel={t("bienvenue.langueQuestion")}
+        accessibilityLabel={t("bienvenue.langueChoisir")}
         style={{ gap: espace.espace3 }}
       >
         <Text
           maxFontSizeMultiplier={echelleMax.courant}
           style={[typographie.libelle, { color: ivoire, opacity: 0.85 }]}
         >
-          {t("bienvenue.langueQuestion")}
+          {t("bienvenue.langueChoisir")}
         </Text>
         {OPTIONS.map((o) => {
           const on = o.id === choisie;

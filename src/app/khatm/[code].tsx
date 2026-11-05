@@ -15,8 +15,8 @@ import { TopBar } from '@/ui/TopBar';
 
 /** Invitation au khatm, ouverte par le lien samajamm://khatm/CODE (ou un code saisi). */
 export default function Invitation() {
-  const { t } = useTranslation();
-  const { couleurs, espace, typographie, latin } = useTheme();
+  const { t, i18n } = useTranslation();
+  const { couleurs, espace, rayon, typographie, latin } = useTheme();
   const code = lireCode(useParametre('code'));
   const connecte = useSession((s) => s.session !== null);
   const [apercu, setApercu] = useState<Apercu | null | 'chargement'>('chargement');
@@ -80,17 +80,38 @@ export default function Invitation() {
           <ActivityIndicator />
         ) : code && apercu && apercu !== 'chargement' ? (
           <>
-            <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.titre3, { color: couleurs.encre }]}>
-              {t('khatm.invitation', { prenom: apercu.invite_par ?? t('khatm.quelquun'), nom: apercu.nom })}
-            </Text>
-            {apercu.intention ? (
-              <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, { color: couleurs.encre2 }]}>
-                {apercu.intention}
+            {/* Carte d'invitation : qui invite, pour quoi, et ce qu'il reste à prendre. */}
+            <View
+              style={{
+                backgroundColor: couleurs.orDoux,
+                borderRadius: rayon.rayonCarte,
+                padding: espace.espace4,
+                gap: espace.espace1,
+              }}>
+              <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, { color: couleurs.encre }]}>
+                {t('khatm.invitation', { prenom: apercu.invite_par ?? t('khatm.quelquun'), nom: apercu.nom })}
               </Text>
-            ) : null}
-            <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre3 }]}>
-              {t('khatm.libresRestants', { count: apercu.libres })}
-            </Text>
+              {apercu.intention ? (
+                <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, { color: couleurs.encre2 }]}>
+                  {apercu.intention}
+                </Text>
+              ) : null}
+              <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre2 }]}>
+                {[
+                  t('khatm.libresRestants', { count: apercu.libres }),
+                  apercu.echeance
+                    ? t('khatm.objectif', {
+                        date: new Date(`${apercu.echeance}T12:00:00`).toLocaleDateString(i18n.language, {
+                          day: 'numeric',
+                          month: 'long',
+                        }),
+                      })
+                    : null,
+                ]
+                  .filter(Boolean)
+                  .join(' · ')}
+              </Text>
+            </View>
             {erreur ? <Banner ton="erreur">{t('etats.erreurTexte')}</Banner> : null}
             <Button icone="users" pleineLargeur onPress={rejoindre}>
               {t('khatm.rejoindre')}

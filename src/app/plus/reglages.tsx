@@ -1,7 +1,7 @@
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
 import {
   appliquerSensEtRedemarrer,
@@ -12,9 +12,11 @@ import { depotBudget } from "@/features/budget/useBudget";
 import { EtatAutorisations } from "@/features/autorisation/EtatAutorisations";
 import { useSession } from "@/features/compte/compte";
 import { ReglageTaille } from "@/features/lire/BarreTaille";
+import { ReglagesLecture } from "@/features/lire/ReglagesLecture";
 import { estLangue, langues, type Langue } from "@/i18n/langues";
 import { useReglages } from "@/stores/reglages";
 import { echelleMax } from "@/theme/typographie";
+import { themes } from "@/theme/tokens.generated";
 import { useTheme } from "@/theme/useTheme";
 import type { ChoixTheme } from "@/theme/veille";
 import { Banner } from "@/ui/Banner";
@@ -23,7 +25,6 @@ import { Button } from "@/ui/Button";
 import { ListGroup } from "@/ui/ListGroup";
 import { ListItem } from "@/ui/ListItem";
 import { RadioGroup } from "@/ui/RadioGroup";
-import { SegmentedControl } from "@/ui/SegmentedControl";
 import { Switch } from "@/ui/Switch";
 import { TopBar } from "@/ui/TopBar";
 
@@ -37,7 +38,8 @@ const THEMES: readonly ChoixTheme[] = ["auto", "jour", "nuit", "veille"];
 
 export default function Reglages() {
   const { t, i18n } = useTranslation();
-  const { couleurs, espace, typographie } = useTheme();
+  const { couleurs, espace, rayon, typographie } = useTheme();
+  const [feuilleLecture, setFeuilleLecture] = useState(false);
   const theme = useReglages((s) => s.theme);
   const translitLecture = useReglages((s) => s.translitLecture);
   const definirTranslitLecture = useReglages((s) => s.definirTranslitLecture);
@@ -152,19 +154,48 @@ export default function Reglages() {
         ) : null}
 
         <View style={{ gap: espace.espace3 }}>
-          <SegmentedControl
-            label={t("reglages.theme")}
-            options={THEMES.map((id) => ({
-              id,
-              label: t(`reglages.themes.${id}`),
-            }))}
-            valeur={theme}
-            onChange={(id) => {
-              const choix = THEMES.find((x) => x === id);
-              if (choix) definirTheme(choix);
-            }}
-          />
-          <ListGroup titre={t("reglages.apparence")}>
+          {/* Quatre cartes : chacune montre le thème qu'elle applique. */}
+          <View accessibilityRole="radiogroup" accessibilityLabel={t("reglages.theme")} style={[styles.themes, { gap: espace.espace2 }]}>
+            {THEMES.map((id) => {
+              const on = id === theme;
+              return (
+                <Pressable
+                  key={id}
+                  accessibilityRole="radio"
+                  accessibilityState={{ checked: on }}
+                  onPress={() => definirTheme(id)}
+                  style={[
+                    styles.carteTheme,
+                    {
+                      borderRadius: rayon.rayonCarte,
+                      borderWidth: on ? 2 : 1,
+                      borderColor: on ? couleurs.emeraude : couleurs.ligneForte,
+                      backgroundColor: on ? couleurs.emeraudeDoux : couleurs.surface,
+                      padding: espace.espace2,
+                      gap: espace.espace2,
+                    },
+                  ]}>
+                  <View style={[styles.echantillon, { borderColor: couleurs.ligneForte }]}>
+                    {id === "auto" ? (
+                      <>
+                        <View style={{ flex: 1, backgroundColor: themes.jour.couleurs.fond }} />
+                        <View style={{ flex: 1, backgroundColor: themes.nuit.couleurs.fond }} />
+                      </>
+                    ) : (
+                      <View style={{ flex: 1, backgroundColor: themes[id].couleurs.fond, borderBottomWidth: id === "veille" ? 2 : 0, borderBottomColor: themes.veille.couleurs.or }} />
+                    )}
+                  </View>
+                  <Text
+                    numberOfLines={1}
+                    maxFontSizeMultiplier={echelleMax.onglets}
+                    style={[typographie.libelle, { color: on ? couleurs.emeraude : couleurs.encre, textAlign: "center" }]}>
+                    {t(`reglages.themes.${id}`)}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </View>
+          <ListGroup titre={t("reglages.apparence")} note={t("reglages.tailleNote")}>
             <ListItem
               icone="moon"
               titre={t("reglages.veilleAuto")}
@@ -194,24 +225,29 @@ export default function Reglages() {
                 />
               }
             />
+            <ReglageTaille />
           </ListGroup>
         </View>
 
-        <ListGroup titre={t("reglages.lecture")} note={t("reglages.tailleNote")}>
+        <ListGroup titre={t("reglages.lecture")}>
           <ListItem
             icone="globe"
             titre={t("reglages.langueApp")}
             valeur={NOMS_LANGUES[langue]}
             onPress={() => setFeuilleLangue(true)}
           />
-          <ReglageTaille />
+          <ListItem
+            icone="globe"
+            titre={t("reglages.traduction")}
+            valeur={NOMS_LANGUES[traduction]}
+            onPress={() => setFeuilleLecture(true)}
+          />
           <ListItem
             icone="type"
             titre={t("reglages.translit")}
             sousTitre={t("reglages.translitAide")}
             droite={<Switch label={t("reglages.translit")} active={translitLecture} onChange={definirTranslitLecture} />}
           />
-          <ListItem icone="globe" titre={t("reglages.traduction")} valeur={NOMS_LANGUES[traduction]} />
         </ListGroup>
 
         <ListGroup titre={t("reglages.priere")}>
@@ -290,6 +326,7 @@ export default function Reglages() {
         </ListGroup>
       </ScrollView>
 
+      <ReglagesLecture ouvert={feuilleLecture} onFermer={() => setFeuilleLecture(false)} />
       <BottomSheet
         ouvert={feuilleLangue}
         titre={t("reglages.langueApp")}
@@ -338,4 +375,7 @@ export default function Reglages() {
 
 const styles = StyleSheet.create({
   ecran: { flex: 1 },
+  themes: { flexDirection: "row" },
+  carteTheme: { flex: 1 },
+  echantillon: { height: 40, borderRadius: 6, borderWidth: StyleSheet.hairlineWidth, flexDirection: "row", overflow: "hidden" },
 });

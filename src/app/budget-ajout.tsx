@@ -1,8 +1,7 @@
 import { router } from 'expo-router';
-import { useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { EcranVerrou } from '@/features/budget/EcranVerrou';
 import { EtatsBudget } from '@/features/budget/EtatsBudget';
@@ -12,27 +11,53 @@ import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { AmountDisplay } from '@/ui/AmountDisplay';
 import { Banner } from '@/ui/Banner';
+import { BottomSheet } from '@/ui/BottomSheet';
 import { Button } from '@/ui/Button';
 import { Chip } from '@/ui/Chip';
-import { IconButton } from '@/ui/IconButton';
 import { appliquerTouche, Keypad } from '@/ui/Keypad';
 import { TextField } from '@/ui/TextField';
 import { useToast } from '@/ui/Toast';
 
-/** Ajouter une dépense : montant au pavé, enveloppe, compte, note. Feuille ouverte depuis le budget. */
-/** La feuille s'ouvre hors de l'onglet Budget : elle applique le verrou elle-même, avant toute lecture. */
+/**
+ * Ajouter une dépense : montant au pavé, enveloppe, compte, note. Feuille ouverte depuis le budget.
+ * Même feuille native que le reste de l'app (`BottomSheet`), identique sur iOS et Android : sa hauteur suit le
+ * contenu, plafonnée à 90 % de l'écran, avec défilement au-delà. La route est transparente, la feuille par-dessus.
+ * La feuille s'ouvre hors de l'onglet Budget : elle applique le verrou elle-même, avant toute lecture.
+ */
 export default function AjoutDepense() {
   const { t } = useTranslation();
+  const { couleurs } = useTheme();
   const { verrouille, deverrouiller } = useVerrouBudget(t('budget.verrouPrompt'));
-  if (verrouille) return <EcranVerrou deverrouiller={deverrouiller} />;
-  return <ContenuAjout />;
+  const [ouvert, setOuvert] = useState(true);
+  const ferme = useRef(false);
+  const minuteur = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  useEffect(() => () => clearTimeout(minuteur.current), []);
+  // Ferme la feuille (elle glisse vers le bas), puis quitte la route. Appelée aussi par la feuille après un geste : une seule fois.
+  const fermer = useCallback(() => {
+    if (ferme.current) return;
+    ferme.current = true;
+    setOuvert(false);
+    minuteur.current = setTimeout(() => router.back(), 300);
+  }, []);
+
+  if (verrouille) {
+    return (
+      <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
+        <EcranVerrou deverrouiller={deverrouiller} />
+      </View>
+    );
+  }
+  return (
+    <BottomSheet ouvert={ouvert} titre={t('budget.nouvelleDepense')} onFermer={fermer}>
+      <ContenuAjout fermer={fermer} />
+    </BottomSheet>
+  );
 }
 
-function ContenuAjout() {
+function ContenuAjout({ fermer }: { fermer: () => void }) {
   const { t } = useTranslation();
   const formatMontant = useFormatMontant();
-  const { couleurs, espace, typographie } = useTheme();
-  const insets = useSafeAreaInsets();
+  const { espace, typographie, couleurs } = useTheme();
   const { afficher } = useToast();
   const etat = useBudget(async (depot, carnet) => ({
     mois: await depot.mois(carnet),
@@ -45,26 +70,7 @@ function ContenuAjout() {
   const [envoi, setEnvoi] = useState(false);
   const [echec, setEchec] = useState(false);
 
-  const entete = (
-    <View style={[styles.entete, { paddingHorizontal: espace.espace5, paddingTop: espace.espace3 }]}>
-      <Text
-        accessibilityRole="header"
-        maxFontSizeMultiplier={echelleMax.courant}
-        style={[typographie.titre3, styles.titre, { color: couleurs.encre }]}>
-        {t('budget.nouvelleDepense')}
-      </Text>
-      <IconButton icone="close" label={t('commun.fermer')} onPress={() => router.back()} />
-    </View>
-  );
-
-  if (etat.etat !== 'pret') {
-    return (
-      <View style={[styles.ecran, { backgroundColor: couleurs.surface }]}>
-        {entete}
-        <EtatsBudget etat={etat} />
-      </View>
-    );
-  }
+  if (etat.etat !== 'pret') return <EtatsBudget etat={etat} />;
 
   const { carnet, depot, donnees } = etat;
   const devise = carnet.devise;
@@ -89,7 +95,7 @@ function ContenuAjout() {
       });
       budgetModifie();
       afficher({ texte: t('budget.depenseEnregistree', { montant: f(montant) }), icone: 'check' });
-      router.back();
+      fermer();
     } catch (erreur: unknown) {
       console.error('Dépense non enregistrée', erreur);
       setEchec(true);
@@ -98,15 +104,7 @@ function ContenuAjout() {
   };
 
   return (
-    <View style={[styles.ecran, { backgroundColor: couleurs.surface }]}>
-      {entete}
-      <ScrollView
-        keyboardShouldPersistTaps="handled"
-        contentContainerStyle={{
-          paddingHorizontal: espace.espace5,
-          paddingBottom: insets.bottom + espace.espace5,
-          gap: espace.espace4,
-        }}>
+    <View style={{ gap: espace.espace4 }}>
         <AmountDisplay
           centre
           montant={montant}
@@ -168,13 +166,10 @@ function ContenuAjout() {
         <Button pleineLargeur disabled={!choix || montant <= 0 || envoi} onPress={enregistrer}>
           {t('commun.enregistrer')}
         </Button>
-      </ScrollView>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   ecran: { flex: 1 },
-  entete: { flexDirection: 'row', alignItems: 'center' },
-  titre: { flex: 1 },
 });

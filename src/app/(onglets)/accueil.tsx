@@ -1,5 +1,5 @@
-import { router } from 'expo-router';
-import { useMemo } from 'react';
+import { router, useScrollToTop } from 'expo-router';
+import { ComponentRef, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
@@ -32,6 +32,9 @@ function joursDuMois(maintenant: Date, lus: readonly string[]): JourFil[] {
 }
 
 export default function Accueil() {
+  // Toucher l'onglet actif ramène la liste en haut.
+  const defilement = useRef<ComponentRef<typeof ScrollView>>(null);
+  useScrollToTop(defilement);
   const { t, i18n } = useTranslation();
   const { couleurs, espace, rayon, typographie, latin } = useTheme();
   const maintenant = useMaintenant();
@@ -79,7 +82,7 @@ export default function Accueil() {
           menu.action,
         ]}
       />
-      <ScrollView
+      <ScrollView ref={defilement}
         contentContainerStyle={{
           paddingHorizontal: espace.espace6,
           paddingBottom: espace.espace8,

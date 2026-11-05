@@ -1,9 +1,13 @@
 import * as Notifications from 'expo-notifications';
-import { useEffect, useState } from 'react';
+import { router } from 'expo-router';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { calculerHoraires } from '@/features/priere/horaires';
 import { essayerSon } from '@/features/priere/notifications';
+import { useOptionsCalcul } from '@/features/priere/useOptionsCalcul';
+import { formatHeure } from '@/lib/dates';
 import { prieres, sons, useReglages, type NomPriere } from '@/stores/reglages';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
@@ -30,6 +34,11 @@ export default function AppelEtRappels() {
   const definirRappelAvant = useReglages((s) => s.definirRappelAvant);
   const [ouverte, setOuverte] = useState<NomPriere | null>(null);
   const [alarmesRefusees, setAlarmesRefusees] = useState(false);
+  const lieu = useReglages((s) => s.lieu);
+  const methode = useReglages((s) => s.methode);
+  const options = useOptionsCalcul();
+  // Heures du jour, affichées à côté du nom de chaque prière.
+  const horaires = useMemo(() => (lieu ? calculerHoraires(lieu, new Date(), options) : null), [lieu, options]);
 
   // Android 12+ : sans alarmes exactes, l'appel peut arriver avec quelques minutes de retard.
   useEffect(() => {
@@ -58,24 +67,41 @@ export default function AppelEtRappels() {
         <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, { color: couleurs.encre2 }]}>
           {t('priere.rappelsSousTitre')}
         </Text>
+        {/* Une seule carte : une ligne par prière, le réglage du son s'ouvre en touchant la ligne. */}
+        <ListGroup>
+          {prieres.map((p) => {
+            const nom = t(`priere.noms.${p}`);
+            const heure = horaires ? ` · ${formatHeure(horaires[p])}` : '';
+            return (
+              <ListItem
+                key={p}
+                titre={`${nom} · ${t(`priere.nomsLocaux.${p}`)}${heure}`}
+                sousTitre={resume(p)}
+                fin="chevron"
+                onPress={() => setOuverte(p)}
+                droite={
+                  <Switch
+                    label={t('priere.notificationDe', { priere: nom })}
+                    active={rappels[p]}
+                    onChange={(actif) => definirRappel(p, actif)}
+                  />
+                }
+              />
+            );
+          })}
+        </ListGroup>
+        <ListGroup>
+          <ListItem
+            titre={t('priere.methodeTitre')}
+            sousTitre={t(`priere.methodes.${methode}`)}
+            onPress={() => router.push('/priere/methode')}
+          />
+        </ListGroup>
         {alarmesRefusees ? (
-          <Banner ton="attention" titre={t('autorisations.alarmesTitre')} action={{ label: t('autorisations.ouvrirReglages'), onPress: autoriserAlarmes }}>
+          <Banner ton="info" titre={t('autorisations.alarmesTitre')} action={{ label: t('autorisations.ouvrirReglages'), onPress: autoriserAlarmes }}>
             {t('autorisations.alarmesTexte')}
           </Banner>
         ) : null}
-        {prieres.map((p) => {
-          const nom = t(`priere.noms.${p}`);
-          return (
-            <ListGroup key={p} titre={`${nom} · ${t(`priere.nomsLocaux.${p}`)}`}>
-              <ListItem
-                icone="bell"
-                titre={t('priere.notificationDe', { priere: nom })}
-                droite={<Switch label={t('priere.notificationDe', { priere: nom })} active={rappels[p]} onChange={(actif) => definirRappel(p, actif)} />}
-              />
-              {rappels[p] ? <ListItem titre={t('priere.son')} sousTitre={resume(p)} onPress={() => setOuverte(p)} /> : null}
-            </ListGroup>
-          );
-        })}
       </ScrollView>
 
       <BottomSheet ouvert={ouverte !== null} titre={ouverte ? t(`priere.noms.${ouverte}`) : ''} onFermer={() => setOuverte(null)}>

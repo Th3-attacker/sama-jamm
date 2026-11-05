@@ -2,7 +2,7 @@ import { memo, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, Text, View, type LayoutChangeEvent } from 'react-native';
 
-import { basmalaDe, segmentsDePage, sourate } from '@/features/lire/coran';
+import { basmalaDe, reperes, segmentsDePage, sourate } from '@/features/lire/coran';
 import { useTheme } from '@/theme/useTheme';
 
 const CHIFFRES_ARABES = '٠١٢٣٤٥٦٧٨٩';
@@ -56,6 +56,7 @@ export const PageMushaf = memo(function PageMushaf({ page, largeur, hauteur, hau
   const hTexte = useRef(0);
 
   const nomPage = segments[0] ? (sourate(segments[0].sourate)?.nom ?? '') : '';
+  const juz = segments[0] ? reperes().juzDe(segments[0].sourate, segments[0].versets[0]?.verset ?? 1) : null;
   const enTete = espace.espace6;
 
   const mesurerCadre = (e: LayoutChangeEvent) => {
@@ -106,17 +107,28 @@ export const PageMushaf = memo(function PageMushaf({ page, largeur, hauteur, hau
         paddingBottom: basSur,
         paddingHorizontal: espace.espace4,
       }}>
+      {/* En-tête : juz à gauche, numéro de page au centre, sourate à droite. */}
       <View style={[styles.ligne, { height: enTete }]}>
-        <Text allowFontScaling={false} style={[typographie.legende, { color: couleurs.encre3 }]}>
-          {nomPage}
+        <Text allowFontScaling={false} style={[typographie.legende, styles.cote, { color: couleurs.encre3 }]}>
+          {juz !== null ? t('lire.juz', { n: juz }) : ''}
         </Text>
         <Text allowFontScaling={false} style={[typographie.libelle, { color: couleurs.emeraude }]}>
           {page}
         </Text>
+        <Text allowFontScaling={false} style={[typographie.legende, styles.cote, styles.droite, { color: couleurs.encre3 }]}>
+          {nomPage}
+        </Text>
       </View>
+      {/* Cadre à double filet, comme une page de mushaf ; le numéro de page en chiffres arabes en bas. */}
+      <View
+        style={[
+          styles.cadreExterieur,
+          { borderColor: couleurs.or, borderRadius: rayon.rayonCarte, padding: 3, marginTop: espace.espace2, marginBottom: espace.espace2 },
+        ]}>
+        <View style={[styles.cadreInterieur, { borderColor: couleurs.or, borderRadius: rayon.rayonCarte - 2, paddingHorizontal: espace.espace2 }]}>
       <View
         onLayout={mesurerCadre}
-        style={[styles.cadre, { opacity: pret ? 1 : 0, marginTop: espace.espace2, marginBottom: espace.espace4 }]}>
+        style={[styles.cadre, { opacity: pret ? 1 : 0, marginTop: espace.espace2 }]}>
         <View onLayout={mesurerTexte} style={{ gap: espace.espace2 * coef }}>
           {segments.map((seg) => {
             const meta = sourate(seg.sourate);
@@ -129,8 +141,8 @@ export const PageMushaf = memo(function PageMushaf({ page, largeur, hauteur, hau
                     style={[
                       styles.bandeau,
                       {
-                        borderColor: couleurs.emeraude,
-                        backgroundColor: couleurs.emeraudeDoux,
+                        borderColor: couleurs.or,
+                        backgroundColor: couleurs.orDoux,
                         borderRadius: rayon.rayonCarte,
                       },
                     ]}>
@@ -138,8 +150,8 @@ export const PageMushaf = memo(function PageMushaf({ page, largeur, hauteur, hau
                       accessibilityRole="header"
                       accessibilityLanguage="ar"
                       allowFontScaling={false}
-                      style={[typographie.coran, texte, styles.centre, { color: couleurs.emeraude }]}>
-                      {meta.arabe}
+                      style={[typographie.coran, texte, styles.centre, { color: couleurs.orTexte }]}>
+                      {`سورة ${meta.arabe}`}
                     </Text>
                   </View>
                 ) : null}
@@ -163,12 +175,23 @@ export const PageMushaf = memo(function PageMushaf({ page, largeur, hauteur, hau
           })}
         </View>
       </View>
+          <Text
+            allowFontScaling={false}
+            style={[typographie.libelle, styles.centre, { color: couleurs.orTexte, paddingVertical: espace.espace1 }]}>
+            {String(page).replace(/\d/g, (d) => CHIFFRES_ARABES[Number(d)] ?? d)}
+          </Text>
+        </View>
+      </View>
     </Pressable>
   );
 });
 
 const styles = StyleSheet.create({
   ligne: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  cote: { flex: 1 },
+  droite: { textAlign: 'right' },
+  cadreExterieur: { flex: 1, borderWidth: 1 },
+  cadreInterieur: { flex: 1, borderWidth: 1 },
   cadre: { flex: 1, overflow: 'hidden', justifyContent: 'center' },
   centre: { textAlign: 'center', writingDirection: 'rtl' },
   bandeau: { borderWidth: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: 2 },
