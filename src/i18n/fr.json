@@ -587,6 +587,7 @@
     "tailleNote": "Pour la lecture verset par verset. En mode page, l’écriture s’ajuste pour que la page tienne dans l’écran.",
     "apercu": "Aperçu",
     "translit": "Translittération",
+    "traductionAucune": "Aucune",
     "translitAide": "Sous le texte arabe, en caractères latins (Tanzil, en anglais)",
     "deviseDetail": "Changer la devise du budget, ou ajouter la vôtre",
     "compteOption": "Compte, en option"

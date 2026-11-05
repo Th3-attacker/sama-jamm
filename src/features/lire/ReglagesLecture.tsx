@@ -6,6 +6,7 @@ import { Text, View } from 'react-native';
 import { useLecteur } from '@/features/ecouter/lecteur';
 import { RECITATEURS } from '@/features/ecouter/recitateurs';
 import { affichagesLecture, useReglages } from '@/stores/reglages';
+import type { Langue } from '@/i18n/langues';
 import { useTheme } from '@/theme/useTheme';
 import { BottomSheet } from '@/ui/BottomSheet';
 import { Chip } from '@/ui/Chip';
@@ -18,7 +19,7 @@ import { ReglageTaille, useTaillesLecture } from './BarreTaille';
 
 export function ReglagesLecture({ ouvert, onFermer }: { ouvert: boolean; onFermer: () => void }) {
   const { t } = useTranslation();
-  const { couleurs, espace, typographie } = useTheme();
+  const { couleurs, espace, rayon, typographie } = useTheme();
   const { tailleArabe, tailleTrad } = useTaillesLecture();
   const affichage = useReglages((s) => s.affichage);
   const definirAffichage = useReglages((s) => s.definirAffichage);
@@ -27,11 +28,23 @@ export function ReglagesLecture({ ouvert, onFermer }: { ouvert: boolean; onFerme
   const chiffres = useReglages((s) => s.chiffresArabes);
   const definirChiffres = useReglages((s) => s.definirChiffresArabes);
   const idRecitateur = useLecteur((s) => s.recitateur);
+  const traduction = useReglages((s) => s.traduction);
+  const definirTraduction = useReglages((s) => s.definirTraduction);
+  // « Aucune » = arabe seul ; sinon la traduction choisie.
+  const choixTraduction = affichage === 'arabeSeul' ? 'aucune' : traduction;
 
   return (
     <BottomSheet ouvert={ouvert} titre={t('lire.reglagesLecture')} onFermer={onFermer}>
       {/* Aperçu : Ash-Sharh, verset 6. */}
-      <View style={{ gap: espace.espace1 }}>
+      <View
+        style={{
+          gap: espace.espace1,
+          padding: espace.espace4,
+          backgroundColor: couleurs.surface,
+          borderColor: couleurs.ligne,
+          borderWidth: 1,
+          borderRadius: rayon.rayonCarte,
+        }}>
         <Text
           accessibilityLanguage="ar"
           style={[typographie.coran, tailleArabe, { color: couleurs.encre, textAlign: 'center' }]}>
@@ -44,13 +57,32 @@ export function ReglagesLecture({ ouvert, onFermer }: { ouvert: boolean; onFerme
         ) : null}
         {affichage !== 'arabeSeul' ? (
           <Text style={[typographie.lecture, tailleTrad, { color: couleurs.encre2, textAlign: 'center' }]}>
-            {t('lire.apercuTraduction')}
+            {`${t('lire.apercuTraduction')} (94:6)`}
           </Text>
         ) : null}
       </View>
       <ListGroup>
         <ReglageTaille />
       </ListGroup>
+      <SegmentedControl
+        label={t('reglages.traduction')}
+        options={[
+          { id: 'fr', label: 'Français' },
+          { id: 'wo', label: 'Wolof' },
+          { id: 'aucune', label: t('reglages.traductionAucune') },
+        ]}
+        valeur={choixTraduction}
+        onChange={(id) => {
+          if (id === 'aucune') {
+            definirAffichage('arabeSeul');
+            return;
+          }
+          if (id === 'fr' || id === 'wo') {
+            definirTraduction(id satisfies Langue);
+            if (affichage === 'arabeSeul') definirAffichage('arabeTrad');
+          }
+        }}
+      />
       <SegmentedControl
         label={t('lire.affichage')}
         options={[
