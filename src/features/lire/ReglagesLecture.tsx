@@ -99,7 +99,7 @@ export function ReglagesLecture({ ouvert, onFermer }: { ouvert: boolean; onFerme
       <ListGroup>
         <ListItem
           titre={t('reglages.translit')}
-          sousTitre={t('reglages.translitAide')}
+          sousTitre={t('reglages.translitAideCourte')}
           droite={<Switch label={t('reglages.translit')} active={translit} onChange={definirTranslit} />}
         />
         <ListItem

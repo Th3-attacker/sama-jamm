@@ -90,7 +90,8 @@ export function ListItem({
           {valeur}
         </Text>
       ) : null}
-      {droite}
+      {/* L'élément de droite ne rétrécit jamais : c'est le texte qui se raccourcit. */}
+      {droite ? <View style={styles.droite}>{droite}</View> : null}
       {finEffective === 'chevron' ? <Icon name="chevron-right" size={18} color={couleurs.encre3} /> : null}
       {finEffective === 'coche' ? <Icon name="check" size={20} color={couleurs.emeraude} /> : null}
     </>
@@ -115,7 +116,8 @@ export function ListItem({
 const styles = StyleSheet.create({
   ligne: { flexDirection: 'row', alignItems: 'center', minHeight: 56 },
   pastille: { width: 36, height: 36, alignItems: 'center', justifyContent: 'center' },
-  textes: { flex: 1 },
+  textes: { flex: 1, minWidth: 0 },
+  droite: { flexShrink: 0 },
   arabe: { fontFamily: 'Amiri_400Regular', fontSize: 20, lineHeight: 36, writingDirection: 'rtl', textAlign: 'right' },
   valeur: { fontVariant: ['tabular-nums'] },
 });
