@@ -22,7 +22,13 @@ export default function Ecouter() {
 
   return (
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
-      <TopBar titre={t('ecouter.titre')} actions={[menu.action]} />
+      <TopBar
+        retour
+        // Onglet de départ : sans écran précédent, la flèche ramène à l'Accueil.
+        onRetour={() => (router.canGoBack() ? router.back() : router.replace('/accueil'))}
+        titre={t('ecouter.titre')}
+        actions={[menu.action]}
+      />
       <ScrollView
         contentContainerStyle={{
           paddingHorizontal: espace.espace5,
