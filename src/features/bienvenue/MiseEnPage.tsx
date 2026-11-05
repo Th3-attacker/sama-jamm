@@ -1,7 +1,9 @@
 import type { ReactNode } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { PageDots } from '@/ui/PageDots';
 import { TopBar } from '@/ui/TopBar';
@@ -16,7 +18,8 @@ type Props = {
 
 // Mise en page commune des étapes 2 et 3 : retour « ← », contenu défilant, actions et étape en bas.
 export function MiseEnPage({ etape, actions, children }: Props) {
-  const { couleurs, espace } = useTheme();
+  const { t } = useTranslation();
+  const { couleurs, espace, typographie } = useTheme();
   return (
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
       <TopBar retour />
@@ -27,6 +30,12 @@ export function MiseEnPage({ etape, actions, children }: Props) {
         {actions}
         <View style={[styles.etape, { marginTop: espace.espace3 }]}>
           <PageDots total={3} actif={etape} />
+          <Text
+            importantForAccessibility="no"
+            maxFontSizeMultiplier={echelleMax.courant}
+            style={[typographie.legende, { color: couleurs.encre3, marginTop: espace.espace2 }]}>
+            {t('bienvenue.etape', { n: etape + 1, total: 3 })}
+          </Text>
         </View>
       </SafeAreaView>
     </View>

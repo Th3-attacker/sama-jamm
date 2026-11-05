@@ -88,20 +88,29 @@
     "langueTraduction": "ترجمة القرآن",
     "langueRedemarrage": "الواجهة العربية تُقرأ من اليمين إلى اليسار: سيُعاد تشغيل التطبيق.",
     "positionTitre": "مواقيتك تُحسب هنا.",
-    "positionTexte": "يُستخدم موقعك لحساب المواقيت والقبلة على هذا الهاتف، ولا يُرسل إلى أي مكان.",
-    "positionAutoriser": "استخدام موقعي",
-    "positionVille": "اختيار مدينتي",
+    "positionTexte": "يستخدم سما جام موقعك مرة واحدة لحساب الصلوات الخمس والقبلة على الهاتف.",
+    "positionAutoriser": "السماح بالموقع",
+    "positionVille": "اختيار مدينة",
     "rappelsTitre": "Waxtu julli jot na.",
     "rappelsSousTitre": "حان وقت الصلاة.",
     "rappelsTexte": "اختر الصلوات التي تريد التذكير بها. يمكنك التغيير لاحقًا.",
     "veilleAuto": "الوضع الليلي التلقائي",
-    "veilleAutoDetail": "شاشة هادئة بين العشاء والفجر",
+    "veilleAutoDetail": "إضاءة خافتة بين العشاء والفجر",
     "commencer": "ابدأ",
     "positionIntrouvable": "تعذّر تحديد الموقع. اختر مدينتك لحساب المواقيت.",
     "notificationsRefusees": "تم رفض الإشعارات. يمكنك السماح بها لاحقًا من إعدادات الهاتف.",
     "langueRedemarrageLtr": "ستعود الواجهة من اليسار إلى اليمين: سيُعاد تشغيل التطبيق.",
     "redemarrer": "إعادة التشغيل",
-    "redemarrerManuel": "أغلق Sama Jàmm ثم أعد فتحه لإتمام تغيير اللغة."
+    "redemarrerManuel": "أغلق Sama Jàmm ثم أعد فتحه لإتمام تغيير اللغة.",
+    "positionTexte2": "لا يُرسل إلى أي خادم. وبدون اتصال تبقى المواقيت صحيحة.",
+    "arcExemple": "قوس اليوم: الصلوات على مسار الشمس (أوقات للتوضيح).",
+    "apercuNotification": "معاينة الإشعار",
+    "maintenant": "الآن",
+    "heureExemple": "{{heure}} · وقت للتوضيح",
+    "appelTitre": "الأذان",
+    "appelDetail": "صوت هادئ عند كل صلاة",
+    "rappelAvantTitre": "تذكير قبل 10 دقائق",
+    "rappelAvantDetail": "للاستعداد دون عجلة"
   },
   "autorisations": {
     "positionTitre": "موقعك، لمواقيتك",
@@ -480,7 +489,22 @@
       "15": "شمال الشمال الغربي"
     },
     "boussole": "البوصلة",
-    "nord": "ش"
+    "nord": "ش",
+    "sansBoussoleExplication": "يُعطى الاتجاه بالدرجات من الشمال. حدّد الشمال بالشمس أو بخريطة أو ببوصلة أخرى.",
+    "directionDepuis": "{{direction}} · من {{lieu}}",
+    "etapeNord": "اتجه نحو الشمال.",
+    "etapeTourner": {
+      "droite": "استدر إلى اليمين {{part}}: {{degres}}°.",
+      "gauche": "استدر إلى اليسار {{part}}: {{degres}}°."
+    },
+    "parts": {
+      "unPeu": "بزاوية صغيرة",
+      "moinsQuart": "أقل قليلًا من ربع دورة",
+      "quart": "ربع دورة",
+      "entreQuartDemi": "أكثر من ربع دورة",
+      "demi": "نصف دورة"
+    },
+    "trouvee": "اهتز الهاتف مرة واحدة. حافظ على هذا الاتجاه للصلاة."
   },
   "dhikr": {
     "titre": "الذكر",
@@ -492,7 +516,8 @@
     "confirmerZeroTexte": "وصلت إلى {{n}}.",
     "objectif": "الهدف",
     "formuleLibre": "ذكر حرّ",
-    "sansObjectif": "بدون هدف"
+    "sansObjectif": "بدون هدف",
+    "sousTitre": "العدّاد"
   },
   "recherche": {
     "titre": "بحث",

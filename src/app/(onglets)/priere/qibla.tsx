@@ -6,6 +6,7 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useAvantAutorisation } from '@/features/autorisation/AvantAutorisation';
 import { ChoixVille } from '@/features/priere/ChoixVille';
 import { relevementQibla } from '@/features/priere/horaires';
+import { rotationDepuisNord } from '@/features/priere/rotation';
 import { useCap } from '@/features/priere/useCap';
 import { useReglages } from '@/stores/reglages';
 import { echelleMax } from '@/theme/typographie';
@@ -59,6 +60,7 @@ export default function Qibla() {
   }, [ecart]);
 
   const direction = qibla !== null ? t(`qibla.directions.${DIRECTIONS[Math.round(qibla / 22.5) % 16]}`) : '';
+  const rotation = rotationDepuisNord(qibla ?? 0);
 
   return (
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
@@ -72,12 +74,31 @@ export default function Qibla() {
             <ChoixVille onChoisir={(v) => definirLieu({ type: 'ville', id: v.id, nom: v.nom, latitude: v.lat, longitude: v.lon })} />
           </>
         ) : cap.etat === 'indisponible' || (cap.etat === 'autorisation' && essai > 0) ? (
-          <Banner ton="info" titre={t('qibla.sansBoussole')}>
-            {t('qibla.sansBoussoleTexte', { degres: Math.round(qibla), direction })}
-          </Banner>
+          <>
+            <Banner ton="info" titre={t('qibla.sansBoussole')}>
+              {t('qibla.sansBoussoleExplication')}
+            </Banner>
+            <View style={[styles.centreBloc, { gap: espace.espace1 }]}>
+              <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.chiffre, { color: couleurs.emeraude }]}>
+                {`${Math.round(qibla)}°`}
+              </Text>
+              <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre2 }]}>
+                {t('qibla.directionDepuis', { direction, lieu: nomLieu })}
+              </Text>
+            </View>
+            <View style={{ gap: espace.espace2 }}>
+              <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, { color: couleurs.encre }]}>
+                {`1. ${t('qibla.etapeNord')}`}
+              </Text>
+              <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, { color: couleurs.encre }]}>
+                {`2. ${t(`qibla.etapeTourner.${rotation.sens}`, { part: t(`qibla.parts.${rotation.part}`), degres: rotation.angle })}`}
+              </Text>
+            </View>
+          </>
         ) : (
           <>
             {cap.etat === 'actif' && cap.imprecis ? <Banner ton="info">{t('qibla.calibration')}</Banner> : null}
+            {ecart !== null && ecart <= TOLERANCE ? <Banner ton="succes">{t('qibla.trouvee')}</Banner> : null}
             <QiblaCompass cap={cap.etat === 'actif' ? cap.cap : 0} qibla={qibla} tolerance={TOLERANCE} lieu={nomLieu} />
             <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.centre, { color: couleurs.encre2 }]}>
               {t('qibla.consigne')}
@@ -91,6 +112,7 @@ export default function Qibla() {
 }
 
 const styles = StyleSheet.create({
+  centreBloc: { alignItems: 'center' },
   ecran: { flex: 1 },
   centre: { textAlign: 'center' },
 });

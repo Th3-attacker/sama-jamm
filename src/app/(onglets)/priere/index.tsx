@@ -109,7 +109,7 @@ export default function Priere() {
             />
             <ListGroup>
               <ListItem icone="compass" ton="emeraude" titre={t('qibla.titre')} sousTitre={t('qibla.boussole')} onPress={() => router.push('/priere/qibla')} />
-              <ListItem icone="target" ton="emeraude" titre={t('dhikr.titre')} onPress={() => router.push('/priere/dhikr')} />
+              <ListItem icone="target" ton="emeraude" titre={t('dhikr.titre')} sousTitre={t('dhikr.sousTitre')} onPress={() => router.push('/priere/dhikr')} />
               <ListItem
                 icone="settings"
                 titre={t('priere.methodeTitre')}

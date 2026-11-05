@@ -2,7 +2,7 @@ import * as Notifications from 'expo-notifications';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Linking, Text } from 'react-native';
+import { Linking, StyleSheet, Text, View } from 'react-native';
 
 import { MiseEnPage } from '@/features/bienvenue/MiseEnPage';
 import { creerCanaux, replanifier } from '@/features/priere/notifications';
@@ -34,10 +34,12 @@ async function demanderAutorisation(): Promise<boolean> {
 
 export default function Rappels() {
   const { t } = useTranslation();
-  const { couleurs, typographie, latin } = useTheme();
+  const { couleurs, espace, rayon, typographie, latin } = useTheme();
   const rappels = useReglages((s) => s.rappels);
   const veilleAuto = useReglages((s) => s.veilleAuto);
   const definirRappel = useReglages((s) => s.definirRappel);
+  const rappelAvant = useReglages((s) => s.rappelAvant);
+  const definirRappelAvant = useReglages((s) => s.definirRappelAvant);
   const definirVeilleAuto = useReglages((s) => s.definirVeilleAuto);
   const terminerBienvenue = useReglages((s) => s.terminerBienvenue);
   const [refusees, setRefusees] = useState(false);
@@ -81,17 +83,20 @@ export default function Rappels() {
           </Button>
         </>
       }>
+      {/* Aperçu de la notification (maquette), avec une heure d'exemple. */}
+      <View
+        accessible
+        accessibilityLabel={`${t('bienvenue.apercuNotification')} : ${t('formules.appel')} · Asr`}
+        style={[styles.notification, { gap: espace.espace1, padding: espace.espace4, borderRadius: rayon.rayonCarte, backgroundColor: couleurs.surface, borderColor: couleurs.ligne }]}>
+        <Text style={[typographie.legende, { color: couleurs.encre3 }]}>{`Sama Jàmm · ${t('bienvenue.maintenant')}`}</Text>
+        <Text style={[typographie.libelle, { color: couleurs.encre }]}>{`${t('formules.appel').replace(/\.$/, '')} · Asr`}</Text>
+        <Text style={[typographie.legende, { color: couleurs.encre2 }]}>{t('bienvenue.heureExemple', { heure: '16:35' })}</Text>
+      </View>
       <Text accessibilityRole="header" accessibilityLanguage="wo" maxFontSizeMultiplier={echelleMax.courant} style={[latin.titre1, { color: couleurs.emeraude, writingDirection: 'ltr' }]}>
         {t('bienvenue.rappelsTitre')}
       </Text>
       <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.translitteration, { color: couleurs.encre2 }]}>
         {t('bienvenue.rappelsSousTitre')}
-      </Text>
-      <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, { color: couleurs.encre }]}>
-        {t('bienvenue.rappelsTexte')}
-      </Text>
-      <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre2 }]}>
-        {t('autorisations.avant.notifications.demande')}
       </Text>
       {refusees ? (
         <Banner ton="attention" action={{ label: t('autorisations.ouvrirReglages'), onPress: ouvrirReglagesTelephone }}>
@@ -99,20 +104,30 @@ export default function Rappels() {
         </Banner>
       ) : null}
       <ListGroup>
-        {prieres.map((p) => (
-          <ListItem
-            key={p}
-            titre={t(`priere.noms.${p}`)}
-            sousTitre={t(`priere.nomsLocaux.${p}`)}
-            droite={
-              <Switch
-                label={t('priere.notificationDe', { priere: t(`priere.noms.${p}`) })}
-                active={rappels[p]}
-                onChange={(actif) => definirRappel(p, actif)}
-              />
-            }
-          />
-        ))}
+        <ListItem
+          icone="bell"
+          titre={t('bienvenue.appelTitre')}
+          sousTitre={t('bienvenue.appelDetail')}
+          droite={
+            <Switch
+              label={t('bienvenue.appelTitre')}
+              active={prieres.every((p) => rappels[p])}
+              onChange={(actif) => prieres.forEach((p) => definirRappel(p, actif))}
+            />
+          }
+        />
+        <ListItem
+          icone="clock"
+          titre={t('bienvenue.rappelAvantTitre')}
+          sousTitre={t('bienvenue.rappelAvantDetail')}
+          droite={
+            <Switch
+              label={t('bienvenue.rappelAvantTitre')}
+              active={prieres.every((p) => rappelAvant[p] === 10)}
+              onChange={(actif) => prieres.forEach((p) => definirRappelAvant(p, actif ? 10 : null))}
+            />
+          }
+        />
       </ListGroup>
       <ListGroup>
         <ListItem
@@ -125,3 +140,7 @@ export default function Rappels() {
     </MiseEnPage>
   );
 }
+
+const styles = StyleSheet.create({
+  notification: { borderWidth: 1 },
+});

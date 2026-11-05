@@ -80,20 +80,29 @@
     "langueTraduction": "Traduction du Coran",
     "langueRedemarrage": "L'interface en arabe se lit de droite à gauche : l'app va redémarrer.",
     "positionTitre": "Vos horaires, calculés ici.",
-    "positionTexte": "Votre position sert à calculer les horaires et la qibla sur ce téléphone. Elle n'est envoyée nulle part.",
-    "positionAutoriser": "Utiliser ma position",
-    "positionVille": "Choisir ma ville",
+    "positionTexte": "Sama Jàmm utilise votre position une seule fois pour calculer les cinq prières et la qibla sur le téléphone.",
+    "positionAutoriser": "Autoriser la position",
+    "positionVille": "Choisir une ville",
     "rappelsTitre": "Waxtu julli jot na.",
     "rappelsSousTitre": "L'heure de la prière est arrivée.",
     "rappelsTexte": "Choisissez les prières pour lesquelles vous voulez un rappel. Vous pourrez changer plus tard.",
     "veilleAuto": "Veille automatique",
-    "veilleAutoDetail": "Écran adouci entre Isha et Fajr",
+    "veilleAutoDetail": "Lumière atténuée entre Isha et Fajr",
     "commencer": "Commencer",
     "positionIntrouvable": "Position introuvable. Choisissez votre ville pour calculer les horaires.",
     "notificationsRefusees": "Notifications refusées. Vous pourrez les autoriser dans les réglages du téléphone.",
     "langueRedemarrageLtr": "L'interface va repasser de gauche à droite : l'app va redémarrer.",
     "redemarrer": "Redémarrer",
-    "redemarrerManuel": "Fermez puis rouvrez Sama Jàmm pour terminer le changement de langue."
+    "redemarrerManuel": "Fermez puis rouvrez Sama Jàmm pour terminer le changement de langue.",
+    "positionTexte2": "Elle n’est envoyée à aucun serveur. Sans réseau, les horaires restent justes.",
+    "arcExemple": "L’arc du jour : les prières posées sur la course du soleil (heures d’exemple).",
+    "apercuNotification": "Aperçu de la notification",
+    "maintenant": "maintenant",
+    "heureExemple": "{{heure}} · heure d’exemple",
+    "appelTitre": "Appel à la prière",
+    "appelDetail": "Un son doux à chaque prière",
+    "rappelAvantTitre": "Rappel 10 minutes avant",
+    "rappelAvantDetail": "Pour se préparer sans se presser"
   },
   "autorisations": {
     "positionTitre": "Votre position, pour vos horaires",
@@ -448,7 +457,22 @@
       "15": "nord-nord-ouest"
     },
     "boussole": "Boussole",
-    "nord": "N"
+    "nord": "N",
+    "sansBoussoleExplication": "La direction est donnée en degrés depuis le nord. Repérez le nord avec le soleil, une carte ou une autre boussole.",
+    "directionDepuis": "{{direction}} · depuis {{lieu}}",
+    "etapeNord": "Tournez-vous vers le nord.",
+    "etapeTourner": {
+      "droite": "Tournez vers la droite {{part}} : {{degres}}°.",
+      "gauche": "Tournez vers la gauche {{part}} : {{degres}}°."
+    },
+    "parts": {
+      "unPeu": "d’un petit angle",
+      "moinsQuart": "d’un peu moins d’un quart de tour",
+      "quart": "d’un quart de tour",
+      "entreQuartDemi": "de plus d’un quart de tour",
+      "demi": "d’un demi-tour"
+    },
+    "trouvee": "Le téléphone a vibré une fois. Gardez cette direction pour la prière."
   },
   "dhikr": {
     "titre": "Dhikr",
@@ -460,7 +484,8 @@
     "confirmerZeroTexte": "Vous en êtes à {{n}}.",
     "objectif": "Objectif",
     "formuleLibre": "Formule libre",
-    "sansObjectif": "Sans objectif"
+    "sansObjectif": "Sans objectif",
+    "sousTitre": "Compteur"
   },
   "recherche": {
     "titre": "Recherche",
