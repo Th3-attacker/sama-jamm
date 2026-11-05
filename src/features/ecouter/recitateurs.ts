@@ -26,6 +26,18 @@ export function numeroGlobal(p: Position, versetsParSourate: readonly number[]):
   return n + p.verset;
 }
 
+/** Inverse de `numeroGlobal` : sourate et verset du verset n (1 à 6236), ou null hors limites. */
+export function positionDeNumero(n: number, versetsParSourate: readonly number[]): Position | null {
+  if (!Number.isInteger(n) || n < 1) return null;
+  let reste = n;
+  for (let s = 1; s <= versetsParSourate.length; s++) {
+    const total = versetsParSourate[s - 1] ?? 0;
+    if (reste <= total) return { sourate: s, verset: reste };
+    reste -= total;
+  }
+  return null;
+}
+
 /** Adresse du fichier audio d'un verset. */
 export function urlVerset(idRecitateur: string, p: Position, versetsParSourate: readonly number[]): string {
   return `https://cdn.islamic.network/quran/audio/${DEBIT}/${idRecitateur}/${numeroGlobal(p, versetsParSourate)}.mp3`;

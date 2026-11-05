@@ -7,7 +7,9 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 import { nombreDePages, pageDe, sourate, sourates, versetsDePage } from '@/features/lire/coran';
 import { stockage } from '@/stores/stockage';
 
-import { positionValide, recitateur, RECITATEURS, pistesDePages, urlVerset, type Position } from './recitateurs';
+import { rejouerVerset, resteMinuterie, type Minuterie, type RepetitionVerset } from './minuterie';
+import { positionValide, recitateur, RECITATEURS, pistesDePages, type Position } from './recitateurs';
+import { sourceVerset } from './telechargements';
 
 const VERSETS = sourates.map((s) => s.versets);
 export const VITESSES = [0.75, 1, 1.25, 1.5] as const;
@@ -25,6 +27,11 @@ type EtatLecteur = {
   page: number | null;
   /** Le fichier n'a pas pu être lu (réseau). */
   erreur: boolean;
+  minuterie: Minuterie;
+  /** Écoutes de chaque verset : 1, 3, 5, ou 0 pour sans fin. */
+  repetitionVerset: RepetitionVerset;
+  /** Recommencer la sourate à la fin (écoute par sourate). */
+  repeterSourate: boolean;
 };
 
 export const useLecteur = create<EtatLecteur>()(
@@ -38,12 +45,21 @@ export const useLecteur = create<EtatLecteur>()(
       chargement: false,
       page: null,
       erreur: false,
+      minuterie: { type: 'aucune' },
+      repetitionVerset: 1,
+      repeterSourate: false,
     }),
     {
       name: 'lecteur',
       version: 1,
       storage: createJSONStorage(() => stockage),
-      partialize: ({ derniere, recitateur: r, vitesse }) => ({ derniere, recitateur: r, vitesse }),
+      partialize: ({ derniere, recitateur: r, vitesse, repetitionVerset, repeterSourate }) => ({
+        derniere,
+        recitateur: r,
+        vitesse,
+        repetitionVerset,
+        repeterSourate,
+      }),
       onRehydrateStorage: () => (_etat, erreur) => {
         if (erreur) console.error('Lecteur illisible : valeurs par défaut', erreur);
       },
@@ -67,18 +83,93 @@ function metadonnees(p: Position) {
   return { title: `${sourate(p.sourate)?.nom ?? ''} · ${p.verset}`, artist: r?.nom ?? '' };
 }
 
+/** Délai de chargement au-delà duquel le verset est considéré comme injoignable (hors ligne). */
+const DELAI_RESEAU_MS = 15_000;
+let attenteReseau: ReturnType<typeof setTimeout> | undefined;
+let lectureDemandee = false;
+
 function surStatut(statut: AudioPlaylistStatus): void {
   useLecteur.setState({ enLecture: statut.playing, chargement: statut.isBuffering });
+  // Pas d'événement d'erreur dans la liste de lecture : un chargement qui n'aboutit pas vaut échec réseau.
+  if (statut.playing || !lectureDemandee) {
+    clearTimeout(attenteReseau);
+    attenteReseau = undefined;
+  } else if (statut.isBuffering && attenteReseau === undefined) {
+    attenteReseau = setTimeout(() => {
+      attenteReseau = undefined;
+      lectureDemandee = false;
+      liste?.pause();
+      useLecteur.setState({ erreur: true, enLecture: false, chargement: false });
+    }, DELAI_RESEAU_MS);
+  }
+}
+
+// --- Répétition et minuterie ---------------------------------------------------------------------
+let ecoutesDuVerset = 1;
+/** Saut demandé (suivant, précédent, nouvelle écoute) : ce n'est pas la fin naturelle d'un verset. */
+let sautManuel = false;
+let minuteur: ReturnType<typeof setTimeout> | undefined;
+
+function appliquerBoucle(): void {
+  if (!liste) return;
+  const { repeterSourate, minuterie } = useLecteur.getState();
+  liste.loop = enFile?.mode === 'sourate' && repeterSourate && minuterie.type !== 'finSourate' ? 'all' : 'none';
+}
+
+/** Arrêt par la minuterie : pause, la position reste pour reprendre. */
+function finMinuterie(): void {
+  clearTimeout(minuteur);
+  minuteur = undefined;
+  lectureDemandee = false;
+  liste?.pause();
+  useLecteur.setState({ minuterie: { type: 'aucune' } });
+  appliquerBoucle();
+}
+
+export function definirMinuterie(m: Minuterie): void {
+  clearTimeout(minuteur);
+  minuteur = undefined;
+  useLecteur.setState({ minuterie: m });
+  const reste = resteMinuterie(m, Date.now());
+  if (reste !== null) minuteur = setTimeout(finMinuterie, reste);
+  appliquerBoucle();
+}
+
+export function definirRepetitionVerset(r: RepetitionVerset): void {
+  useLecteur.setState({ repetitionVerset: r });
+}
+
+export function definirRepeterSourate(actif: boolean): void {
+  useLecteur.setState({ repeterSourate: actif });
+  appliquerBoucle();
 }
 
 function ajouterPistes(pistes: Position[], idRecitateur: string): void {
-  for (const p of pistes) file().add({ uri: urlVerset(idRecitateur, p, VERSETS) });
+  // Fichier téléchargé s'il existe, sinon en ligne.
+  for (const p of pistes) file().add({ uri: sourceVerset(idRecitateur, p) });
 }
 
-function surChangementDePiste({ currentIndex }: { currentIndex: number }): void {
+function surChangementDePiste({ previousIndex, currentIndex }: { previousIndex: number; currentIndex: number }): void {
   const f = enFile;
   const p = f?.pistes[currentIndex];
   if (!f || !p) return;
+  const manuel = sautManuel;
+  sautManuel = false;
+  if (!manuel && currentIndex === previousIndex + 1) {
+    // Fin naturelle d'un verset : répétition demandée, puis minuterie « fin de la sourate » en écoute par page.
+    if (rejouerVerset(useLecteur.getState().repetitionVerset, ecoutesDuVerset)) {
+      ecoutesDuVerset += 1;
+      sautManuel = true;
+      liste?.skipTo(previousIndex);
+      return;
+    }
+    const avant = f.pistes[previousIndex];
+    if (useLecteur.getState().minuterie.type === 'finSourate' && avant && avant.sourate !== p.sourate) {
+      finMinuterie();
+      return;
+    }
+  }
+  ecoutesDuVerset = 1;
   useLecteur.setState({
     position: p,
     derniere: p,
@@ -119,7 +210,11 @@ function lire(nouvelleFile: NonNullable<typeof enFile> | null, index: number): v
     }
     const p = enFile?.pistes[index];
     if (!p) return;
+    sautManuel = true;
+    ecoutesDuVerset = 1;
+    lectureDemandee = true;
     l.skipTo(index);
+    appliquerBoucle();
     l.playbackRate = etat.vitesse;
     useLecteur.setState({
       position: p,
@@ -162,16 +257,24 @@ export function basculer(): void {
     return;
   }
   const l = file();
+  lectureDemandee = !enLecture;
   if (enLecture) l.pause();
-  else l.play();
+  else {
+    useLecteur.setState({ erreur: false });
+    l.play();
+  }
 }
 
 export function suivant(): void {
-  if (useLecteur.getState().position) liste?.next();
+  if (!useLecteur.getState().position) return;
+  sautManuel = true;
+  liste?.next();
 }
 
 export function precedent(): void {
-  if (useLecteur.getState().position) liste?.previous();
+  if (!useLecteur.getState().position) return;
+  sautManuel = true;
+  liste?.previous();
 }
 
 export function definirVitesse(vitesse: number): void {
@@ -181,6 +284,8 @@ export function definirVitesse(vitesse: number): void {
 
 /** Arrête l'écoute et retire les commandes de l'écran verrouillé ; la dernière position reste. */
 export function arreter(): void {
+  lectureDemandee = false;
+  definirMinuterie({ type: 'aucune' });
   liste?.pause();
   liste?.clearLockScreenControls();
   useLecteur.setState({ position: null, page: null, enLecture: false, chargement: false });

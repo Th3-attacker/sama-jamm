@@ -12,7 +12,7 @@ const DELAI_FERMETURE_MS = 250;
 
 /**
  * Menu Plus des écrans racines : une action « … » pour la `TopBar` et la feuille à afficher dans l'écran.
- * Seuls les écrans qui existent sont listés ; Compte, Téléchargements et Soutenir s'ajouteront avec les leurs.
+ * Seuls les écrans qui existent sont listés ; Compte et Soutenir s'ajouteront avec les leurs.
  */
 export function useMenuPlus(): { action: TopBarAction; feuille: ReactElement } {
   const { t } = useTranslation();
@@ -34,6 +34,11 @@ export function useMenuPlus(): { action: TopBarAction; feuille: ReactElement } {
         <ListGroup>
           <ListItem icone="search" titre={t('menuPlus.rechercher')} onPress={() => aller('/plus/recherche')} />
           <ListItem icone="bookmark" titre={t('menuPlus.favoris')} onPress={() => aller('/plus/favoris')} />
+          <ListItem
+            icone="download"
+            titre={t('menuPlus.telechargements')}
+            onPress={() => aller('/ecouter/telechargements')}
+          />
         </ListGroup>
         <ListGroup>
           <ListItem icone="settings" titre={t('menuPlus.reglages')} onPress={() => aller('/plus/reglages')} />
