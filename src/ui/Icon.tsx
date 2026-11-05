@@ -1,6 +1,6 @@
 import {
   ArrowDown, ArrowLeft, ArrowUp, Bell, BookOpen, Bookmark, Calendar, Car, Check, ChevronDown, ChevronRight, Clock,
-  CloudOff, Compass, Copy, Delete, Download, Ellipsis, Eye, EyeOff, Globe, Headphones, Heart, House, Info, List, Lock, MapPin,
+  CircleCheck, CloudOff, Compass, Copy, Delete, Download, Ellipsis, Eye, EyeOff, Globe, Headphones, Heart, House, Info, List, Lock, MapPin,
   Minus, Moon, Pause, Pencil, Play, Plus, Repeat, RotateCcw, Scale, Search, Share2, ShoppingCart, SkipBack,
   SkipForward, Settings, SlidersHorizontal, Sun, Target, Trash2, TriangleAlert, Type, User, Users, Wallet, X, Zap,
   type LucideIcon,
@@ -16,7 +16,7 @@ const LUCIDE: Record<Exclude<IconName, 'kaaba'>, LucideIcon> = {
   clock: Clock, download: Download, reset: RotateCcw, wallet: Wallet, bell: Bell,
   'arrow-left': ArrowLeft, 'arrow-down': ArrowDown, 'arrow-up': ArrowUp, 'chevron-right': ChevronRight,
   'chevron-down': ChevronDown, more: Ellipsis, reglages: SlidersHorizontal,
-  check: Check, close: X, plus: Plus, minus: Minus, backspace: Delete, info: Info, alert: TriangleAlert, offline: CloudOff,
+  check: Check, 'check-circle': CircleCheck, close: X, plus: Plus, minus: Minus, backspace: Delete, info: Info, alert: TriangleAlert, offline: CloudOff,
   moon: Moon, sun: Sun, globe: Globe, trash: Trash2, edit: Pencil, compass: Compass, pin: MapPin, settings: Settings,
   user: User, users: Users, lock: Lock,
   calendar: Calendar, target: Target, heart: Heart, balance: Scale, list: List, type: Type, bolt: Zap, car: Car,

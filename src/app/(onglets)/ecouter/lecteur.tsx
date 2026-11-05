@@ -135,8 +135,8 @@ export default function LecteurPleinEcran() {
         </View>
         {position && page === null ? (
           <IconButton
-            icone={telechargee ? 'check' : 'download'}
-            actif={telechargee}
+            icone={telechargee ? 'check-circle' : 'download'}
+            couleur={telechargee ? couleurs.emeraude : undefined}
             label={telechargee ? t('telechargements.disponible') : t('ecouter.telechargerHorsLigne')}
             onPress={() => {
               if (telechargee || partTelechargee !== undefined) return;

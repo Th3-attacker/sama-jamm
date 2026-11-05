@@ -124,15 +124,16 @@ export default function EcranRecitateur() {
                   <Text style={[typographie.legende, { color: couleurs.encre2 }]}>{`${Math.round(part * 100)} %`}</Text>
                 ) : (
                   <IconButton
-                    icone={telechargee ? 'check' : 'download'}
-                    actif={telechargee}
-                    disabled={telechargee}
+                    icone={telechargee ? 'check-circle' : 'download'}
+                    // Déjà téléchargée : coche cerclée, aux couleurs du thème, sans l'estomper.
+                    couleur={telechargee ? couleurs.emeraude : undefined}
                     label={
                       telechargee
                         ? t('telechargements.disponible')
                         : t('telechargements.telecharger', { sourate: item.nom })
                     }
                     onPress={() => {
+                      if (telechargee) return;
                       telechargerSourate(r.id, item.n).catch((erreur: unknown) => {
                         console.warn('Téléchargement interrompu', erreur);
                         setEchec(true);
