@@ -65,7 +65,9 @@
           "defaultChannel": "rappels-v1",
           "sounds": [
             "./assets/sons/adhan_complet.ogg",
-            "./assets/sons/adhan_court.ogg"
+            "./assets/sons/adhan_court.ogg",
+            "./assets/sons/adhan_complet_ios.wav",
+            "./assets/sons/adhan_court_ios.wav"
           ]
         }
       ],

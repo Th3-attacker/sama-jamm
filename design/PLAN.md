@@ -26,7 +26,7 @@ Ordre : **A → B1 → B2 → C2 → C3 → C4 → B4 → C1 → C5 → D → E 
 | D3 | Démarrage animé (relais du démarrage natif, signature, fondu ; réduit si « Réduire les animations ») | #69 |
 | D4 | Journal local des erreurs (sans données personnelles), partagé par l'utilisateur depuis À propos | #70 |
 | E3 | Partage d'un verset : image (fond émeraude ou nuit, traduction au choix) ou texte avec lien | #71 |
-| Adhan | Appel à la prière dans les notifications (Android, sons CC0), icône de notification, essai du son ; iOS à faire (WAV ≤ 30 s, ffmpeg) | #72 à #74 |
+| Adhan | Appel à la prière dans les notifications (Android, sons CC0), icône de notification, essai du son ; iOS : extraits WAV de 29 s et 23 s tirés des sons CC0 (cette branche), à entendre sur un iPhone | #72 à #74 |
 | E1 · E2 | Crédit Tanzil ; translittération (réglage), repères juz et quarts de hizb, prosternations, juz en mode page | #75 |
 | F1 | Écouter : 5 récitateurs (alquran.cloud), lecteur verset par verset, plein écran, mini-lecteur, verset surligné, écoute écran éteint, écoute page par page (la page tourne seule), page mushaf en plein écran | #76 |
 | F2 · F3 | Téléchargements par sourate, minuterie, répétition du verset et de la sourate, hors ligne (échec de chargement) | cette PR |

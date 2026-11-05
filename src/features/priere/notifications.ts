@@ -30,6 +30,19 @@ const CANAUX: Record<Son, string> = {
 };
 /** Fichiers de `assets/sons`, copiés dans les ressources Android par le plugin (nom avec l'extension). */
 const SONS_ADHAN: Partial<Record<Son, string>> = { complet: 'adhan_complet.ogg', court: 'adhan_court.ogg' };
+/**
+ * iOS : pas de canaux, le son se désigne dans la notification elle-même. Extraits de 30 secondes au plus (limite d'iOS)
+ * tirés des mêmes enregistrements CC0, en WAV.
+ */
+const SONS_ADHAN_IOS: Partial<Record<Son, string>> = { complet: 'adhan_complet_ios.wav', court: 'adhan_court_ios.wav' };
+
+/** Son d'une notification d'appel : l'extrait d'adhan sur iOS, le son du canal (booléen) sur Android. */
+export function sonDeNotification(son: Son): boolean | string {
+  const avecSon = son === 'complet' || son === 'court' || son === 'doux';
+  if (Platform.OS === 'ios') return SONS_ADHAN_IOS[son] ?? avecSon;
+  return avecSon;
+}
+
 /** Canal Android des rappels doux (avant la prière, zakat). */
 export const CANAL_RAPPELS = 'rappels-v1';
 const ANCIENS_CANAUX = [
@@ -81,7 +94,7 @@ export async function essayerSon(son: Son): Promise<boolean> {
     content: {
       title: t('notifications.essaiTitre'),
       body: t('notifications.appelTexte'),
-      sound: son === 'complet' || son === 'court' || son === 'doux',
+      sound: sonDeNotification(son),
     },
     trigger: { type: SchedulableTriggerInputTypes.TIME_INTERVAL, seconds: 2, channelId: CANAUX[son] },
   });
@@ -103,7 +116,7 @@ function contenu(n: Planifiee): Notifications.NotificationContentInput {
   return {
     title: t('notifications.appelTitre', { priere, heure: formatHeure(n.date) }),
     body: n.priere === 'fajr' ? t('notifications.fajrTexte') : t('notifications.appelTexte'),
-    sound: avecSon,
+    sound: sonDeNotification(n.son),
     data: { url: URL_PRIERE },
   };
 }
