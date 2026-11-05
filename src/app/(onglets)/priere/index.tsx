@@ -1,5 +1,5 @@
-import { router } from 'expo-router';
-import { useMemo } from 'react';
+import { router, useScrollToTop } from 'expo-router';
+import { ComponentRef, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
@@ -22,6 +22,9 @@ import { TopBar } from '@/ui/TopBar';
 const JOURS_SEMAINE = 7;
 
 export default function Priere() {
+  // Toucher l'onglet actif ramène la liste en haut.
+  const defilement = useRef<ComponentRef<typeof ScrollView>>(null);
+  useScrollToTop(defilement);
   const { t, i18n } = useTranslation();
   const { couleurs, espace, typographie } = useTheme();
   const maintenant = useMaintenant();
@@ -56,7 +59,7 @@ export default function Priere() {
         sousTitre={t('priere.sousTitre')}
         actions={[{ icone: 'bell', label: t('priere.rappelsTitre'), onPress: () => router.push('/priere/rappels') }]}
       />
-      <ScrollView contentContainerStyle={{ paddingHorizontal: espace.espace5, paddingBottom: espace.espace8, gap: espace.espace4 }}>
+      <ScrollView ref={defilement} contentContainerStyle={{ paddingHorizontal: espace.espace5, paddingBottom: espace.espace8, gap: espace.espace4 }}>
         <BandeauVeille />
 
         {!lieu || !donnees ? (

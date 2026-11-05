@@ -1,5 +1,5 @@
-import { router } from 'expo-router';
-import { useState } from 'react';
+import { router, useScrollToTop } from 'expo-router';
+import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 
@@ -26,6 +26,9 @@ function ouvrirSourate(n: number) {
 }
 
 export default function Lire() {
+  // Toucher l'onglet actif ramène la liste en haut.
+  const defilement = useRef<FlatList<Sourate>>(null);
+  useScrollToTop(defilement);
   const { t } = useTranslation();
   const { couleurs, espace, rayon, typographie } = useTheme();
   const menu = useMenuPlus();
@@ -48,7 +51,7 @@ export default function Lire() {
       />
 
       {/* Un seul défilement jusqu'à la barre des onglets : onglets, khatm, puis les 114 sourates. */}
-      <FlatList
+      <FlatList ref={defilement}
         data={onglet === 'coran' ? sourates : []}
         keyExtractor={(s: Sourate) => String(s.n)}
         renderItem={({ item }) => <CarteSourate sourate={item} onPress={() => ouvrirSourate(item.n)} />}
