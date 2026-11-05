@@ -19,9 +19,11 @@ import {
 } from '@/features/lire/coran';
 import { PageMushaf } from '@/features/lire/PageMushaf';
 import { cleJour } from '@/lib/dates';
+import { ecouter, ecouterPage, useLecteur } from '@/features/ecouter/lecteur';
 import { PartageVerset, type VersetAPartager } from '@/features/lire/PartageVerset';
 import { TranslitVerset } from '@/features/lire/TranslitVerset';
 import { cleVerset, useFavoris } from '@/stores/favoris';
+import { usePleinEcran } from '@/stores/pleinEcran';
 import { useLecture, type ModeLecture } from '@/stores/lecture';
 import { affichagesLecture, useReglages } from '@/stores/reglages';
 import { echelleMax } from '@/theme/typographie';
@@ -93,6 +95,8 @@ function LectureSourate({
   const { tailleArabe, tailleTrad } = useTaillesLecture();
   const mode = useReglages((st) => st.affichage);
   const translitActive = useReglages((st) => st.translitLecture);
+  // Verset en cours d'écoute dans cette sourate : surligné dans la liste.
+  const versetEcoute = useLecteur((st) => (st.position?.sourate === s.n ? st.position.verset : null));
   const translits = useMemo(() => (translitActive ? translitDe(s.n) : []), [s.n, translitActive]);
   const definirAffichage = useReglages((st) => st.definirAffichage);
   const enregistrerPosition = useLecture((st) => st.enregistrerPosition);
@@ -114,6 +118,11 @@ function LectureSourate({
   const [barres, setBarres] = useState(false);
   const [zone, setZone] = useState<LayoutRectangle | null>(null);
   const insets = useSafeAreaInsets();
+  // Mode page : plein écran, sans la barre des onglets ; un toucher sur la page la fait revenir avec la barre du haut.
+  useEffect(() => {
+    usePleinEcran.setState({ actif: modePage && !barres });
+    return () => usePleinEcran.setState({ actif: false });
+  }, [modePage, barres]);
   const basculerBarres = useCallback(() => setBarres((b) => !b), []);
   // Doit rester stable, comme pour la lecture verset par verset.
   const surPageVisible = useCallback(({ viewableItems }: { viewableItems: { item: number }[] }) => {
@@ -122,6 +131,13 @@ function LectureSourate({
   }, []);
   const versets = useMemo(() => versetsAvecTraduction(s.n), [s.n]);
   const liste = useRef<FlatList>(null);
+  const listePages = useRef<FlatList<number>>(null);
+  // Écoute page par page : la page suit la récitation, comme si l'on suivait dans le mushaf.
+  const pageEcoutee = useLecteur((st) => st.page);
+  useEffect(() => {
+    if (!modePage || pageEcoutee === null) return;
+    listePages.current?.scrollToIndex({ index: pageEcoutee - 1, animated: true });
+  }, [modePage, pageEcoutee]);
   // Premier verset visible en lecture verset par verset, enregistré à l'arrêt du défilement.
   const versetVisible = useRef(versetInitial);
   const reessai = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
@@ -188,22 +204,29 @@ function LectureSourate({
             ? t('lire.pageN', { n: page })
             : sousTitre
       }
-      actions={[
-        {
-          icone: modePage ? 'list' : 'book',
-          label: modePage ? t('lire.modeVerset') : t('lire.modePage'),
-          onPress: basculerMode,
-        },
-      ]}
+      actions={
+        modePage
+          ? [
+              { icone: 'list', label: t('lire.modeVerset'), onPress: basculerMode },
+              { icone: 'headphones', label: t('ecouter.ecouterPage'), onPress: () => ecouterPage(page) },
+            ]
+          : [{ icone: 'book', label: t('lire.modePage'), onPress: basculerMode }]
+      }
     />
   );
 
   if (modePage) {
     return (
       <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
-        <View style={styles.ecran} onLayout={(e) => setZone(e.nativeEvent.layout)}>
+        <View
+          style={[styles.ecran, styles.coupe]}
+          // Mesurée barres masquées : la barre des onglets passe ensuite par-dessus, la page ne se recalcule pas.
+          onLayout={(e) => {
+            if (!barres || !zone) setZone(e.nativeEvent.layout);
+          }}>
           {zone ? (
             <FlatList
+              ref={listePages}
               data={NUMEROS_DE_PAGES}
               horizontal
               pagingEnabled
@@ -224,6 +247,7 @@ function LectureSourate({
                   largeur={zone.width}
                   hauteur={zone.height}
                   hautSur={insets.top}
+                  basSur={insets.bottom + espace.espace2}
                   onToucher={basculerBarres}
                 />
               )}
@@ -291,7 +315,12 @@ function LectureSourate({
                   : `۞ ${t(`lire.quartsHizb.${repere.quart}`, { n: repere.hizb })}`}
               </Text>
             ) : null}
-          <View style={[styles.verset, { gap: espace.espace3 }]}>
+          <View
+            style={[
+              styles.verset,
+              { gap: espace.espace3 },
+              versetEcoute === item.n ? { backgroundColor: couleurs.orDoux, borderRadius: rayon.rayonCarte } : null,
+            ]}>
             <View
               style={[
                 styles.numero,
@@ -331,6 +360,15 @@ function LectureSourate({
                   onPress={() => basculerFavori(item.n)}
                 />
                 <IconButton
+                  icone="headphones"
+                  actif={versetEcoute === item.n}
+                  label={t('ecouter.ecouterVerset')}
+                  onPress={() => {
+                    ecouter({ sourate: s.n, verset: item.n });
+                    router.push('/ecouter/lecteur');
+                  }}
+                />
+                <IconButton
                   icone="share"
                   label={t('partage.titre')}
                   onPress={() => setAPartager({ sourate: s.n, nomSourate: s.nom, n: item.n, texte: item.texte, trad: item.trad })}
@@ -346,7 +384,7 @@ function LectureSourate({
           </View>
           );
         }}
-        extraData={[favoris, translits]}
+        extraData={[favoris, translits, versetEcoute]}
         contentContainerStyle={{
           paddingHorizontal: espace.espace5,
           paddingBottom: espace.espace8,
@@ -444,6 +482,7 @@ function Entete({ sourate: n, mode }: { sourate: number; mode: string }) {
 
 const styles = StyleSheet.create({
   ecran: { flex: 1 },
+  coupe: { overflow: 'hidden' },
   centre: { textAlign: 'center', writingDirection: 'rtl' },
   bandeau: {
     borderWidth: 1,

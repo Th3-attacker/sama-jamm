@@ -1,6 +1,9 @@
 import { Tabs } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+import { View } from 'react-native';
 
+import { MiniLecteur } from '@/features/ecouter/MiniLecteur';
+import { usePleinEcran } from '@/stores/pleinEcran';
 import { ErreurDeRoute } from '@/features/erreur/ErreurDeRoute';
 import { TabBar, type Onglet } from '@/ui/TabBar';
 
@@ -9,6 +12,7 @@ export const ErrorBoundary = ErreurDeRoute;
 
 export default function OngletsLayout() {
   const { t } = useTranslation();
+  const pleinEcran = usePleinEcran((s) => s.actif);
 
   const onglets: Onglet[] = [
     { id: 'accueil', label: t('onglets.accueil'), icone: 'home' },
@@ -22,24 +26,30 @@ export default function OngletsLayout() {
     <Tabs
       screenOptions={{ headerShown: false }}
       tabBar={({ state, emitter, navigateToTab }) => {
+        // Page mushaf ouverte : toute la hauteur pour la page.
+        if (pleinEcran) return null;
         const routeActive = state.routes[state.index];
         const cle = (id: string) => state.routes.find((r) => r.name === id)?.key;
         return (
-          <TabBar
-            onglets={onglets}
-            actif={routeActive?.name ?? 'accueil'}
-            // Même logique que la barre par défaut : l'événement tabPress permet aux écrans de remonter en haut.
-            onChange={(id) => {
-              const target = cle(id);
-              if (!target) return;
-              const event = emitter.emit({ type: 'tabPress', target, canPreventDefault: true });
-              if (target !== routeActive?.key && !event.defaultPrevented) navigateToTab(target);
-            }}
-            onAppuiLong={(id) => {
-              const target = cle(id);
-              if (target) emitter.emit({ type: 'tabLongPress', target });
-            }}
-          />
+          <View>
+            {/* Pendant une écoute, le mini-lecteur se place juste au-dessus des onglets. */}
+            <MiniLecteur />
+            <TabBar
+              onglets={onglets}
+              actif={routeActive?.name ?? 'accueil'}
+              // Même logique que la barre par défaut : l'événement tabPress permet aux écrans de remonter en haut.
+              onChange={(id) => {
+                const target = cle(id);
+                if (!target) return;
+                const event = emitter.emit({ type: 'tabPress', target, canPreventDefault: true });
+                if (target !== routeActive?.key && !event.defaultPrevented) navigateToTab(target);
+              }}
+              onAppuiLong={(id) => {
+                const target = cle(id);
+                if (target) emitter.emit({ type: 'tabLongPress', target });
+              }}
+            />
+          </View>
         );
       }}>
       <Tabs.Screen name="accueil" options={{ title: t('onglets.accueil') }} />
