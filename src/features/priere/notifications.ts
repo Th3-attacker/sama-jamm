@@ -1,5 +1,6 @@
 // Notifications locales de prière : canaux Android, programmation de la fenêtre, tâche quotidienne.
 import * as BackgroundTask from 'expo-background-task';
+import Constants, { ExecutionEnvironment } from 'expo-constants';
 import * as Notifications from 'expo-notifications';
 import { AndroidImportance, SchedulableTriggerInputTypes } from 'expo-notifications';
 import * as TaskManager from 'expo-task-manager';
@@ -39,7 +40,10 @@ const SONS_ADHAN_IOS: Partial<Record<Son, string>> = { complet: 'adhan_complet_i
 /** Son d'une notification d'appel : l'extrait d'adhan sur iOS, le son du canal (booléen) sur Android. */
 export function sonDeNotification(son: Son): boolean | string {
   const avecSon = son === 'complet' || son === 'court' || son === 'doux';
-  if (Platform.OS === 'ios') return SONS_ADHAN_IOS[son] ?? avecSon;
+  // Expo Go n'embarque pas les sons du plugin : il ne connaît que le son par défaut. Les builds (développement, preview,
+  // production) contiennent les extraits.
+  const dansExpoGo = Constants.executionEnvironment === ExecutionEnvironment.StoreClient;
+  if (Platform.OS === 'ios' && !dansExpoGo) return SONS_ADHAN_IOS[son] ?? avecSon;
   return avecSon;
 }
 
