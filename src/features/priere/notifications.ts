@@ -37,13 +37,16 @@ const SONS_ADHAN: Partial<Record<Son, string>> = { complet: 'adhan_complet.ogg',
  */
 const SONS_ADHAN_IOS: Partial<Record<Son, string>> = { complet: 'adhan_complet_ios.wav', court: 'adhan_court_ios.wav' };
 
+/**
+ * Expo Go n'embarque pas les sons déclarés dans le plugin (adhan) : il ne connaît que le son par défaut.
+ * Les builds (développement, preview, production) les contiennent.
+ */
+const DANS_EXPO_GO = Constants.executionEnvironment === ExecutionEnvironment.StoreClient;
+
 /** Son d'une notification d'appel : l'extrait d'adhan sur iOS, le son du canal (booléen) sur Android. */
 export function sonDeNotification(son: Son): boolean | string {
   const avecSon = son === 'complet' || son === 'court' || son === 'doux';
-  // Expo Go n'embarque pas les sons du plugin : il ne connaît que le son par défaut. Les builds (développement, preview,
-  // production) contiennent les extraits.
-  const dansExpoGo = Constants.executionEnvironment === ExecutionEnvironment.StoreClient;
-  if (Platform.OS === 'ios' && !dansExpoGo) return SONS_ADHAN_IOS[son] ?? avecSon;
+  if (Platform.OS === 'ios' && !DANS_EXPO_GO) return SONS_ADHAN_IOS[son] ?? avecSon;
   return avecSon;
 }
 
@@ -63,7 +66,8 @@ export async function creerCanaux(): Promise<void> {
     await Notifications.setNotificationChannelAsync(CANAUX[son], {
       name: t(`notifications.canaux.${son}`),
       importance: AndroidImportance.HIGH,
-      sound: SONS_ADHAN[son] ?? 'default',
+      // Dans Expo Go, un fichier inconnu fait échouer la création du canal (NullPointerException) : son par défaut.
+      sound: DANS_EXPO_GO ? 'default' : (SONS_ADHAN[son] ?? 'default'),
     });
   }
   await Notifications.setNotificationChannelAsync(CANAUX.vibration, {
