@@ -1,5 +1,5 @@
 import * as Localization from 'expo-localization';
-import i18n, { changeLanguage } from 'i18next';
+import i18n, { changeLanguage, use as brancherPlugin } from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
 import { useReglages } from '@/stores/reglages';
@@ -15,8 +15,7 @@ function langueDuTelephone(): Langue {
   return estLangue(code) ? code : 'fr';
 }
 
-i18n
-  .use(initReactI18next)
+brancherPlugin(initReactI18next)
   .init({
     resources: { fr: { translation: fr }, wo: { translation: wo }, ar: { translation: ar } },
     lng: useReglages.getState().langue ?? langueDuTelephone(),
