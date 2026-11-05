@@ -2,7 +2,7 @@
 // puis fondu vers l'app. Moins d'une seconde ; l'app se charge dessous, l'animation ne la retarde jamais.
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Image, StyleSheet, Text, useColorScheme } from 'react-native';
+import { StyleSheet, Text, useColorScheme } from 'react-native';
 import Animated, {
   Easing,
   useAnimatedStyle,
@@ -12,12 +12,10 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-import iconeDemarrageSombre from '../../../assets/images/splash-icon-dark.png';
-import iconeDemarrage from '../../../assets/images/splash-icon.png';
-
 import { echelleMax } from '@/theme/typographie';
 import { themes } from '@/theme/tokens.generated';
 import { useTheme } from '@/theme/useTheme';
+import { Logo } from '@/ui/Logo';
 
 /** Même image et même largeur que le démarrage natif (plugin expo-splash-screen, `imageWidth`). */
 const LARGEUR_IMAGE = 76;
@@ -69,11 +67,7 @@ export function DemarrageAnime({ onFin }: { onFin: () => void }) {
       accessibilityLabel={t('demarrage.traduction')}
       style={[StyleSheet.absoluteFill, styles.centre, { backgroundColor: couleurs.fond }, styleEcran]}>
       <Animated.View style={styleMarque}>
-        <Image
-          source={sombre ? iconeDemarrageSombre : iconeDemarrage}
-          style={{ width: LARGEUR_IMAGE, height: LARGEUR_IMAGE }}
-          resizeMode="contain"
-        />
+        <Logo taille={LARGEUR_IMAGE} selon="telephone" />
       </Animated.View>
       <Animated.View style={[styles.bas, { gap: espace.espace2 }, styleSignature]}>
         <Animated.View style={[styles.filet, { backgroundColor: couleurs.or }, styleFilet]} />

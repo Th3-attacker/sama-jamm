@@ -1,10 +1,7 @@
 import { router } from 'expo-router';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-
-import marqueSombre from '../../../assets/images/splash-icon-dark.png';
-import marque from '../../../assets/images/splash-icon.png';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { proverbeDuJour } from '@/features/accueil/sagesse';
 import { calculerHoraires, prochainePriere } from '@/features/priere/horaires';
@@ -22,6 +19,7 @@ import { Banner } from '@/ui/Banner';
 import { BeadThread, type JourFil } from '@/ui/BeadThread';
 import { DayArc, type PriereArc } from '@/ui/DayArc';
 import { Icon } from '@/ui/Icon';
+import { Logo } from '@/ui/Logo';
 import { TopBar } from '@/ui/TopBar';
 
 /** Un grain par jour du mois ; `lus` : clés de jour « 2026-10-29 » où une lecture a eu lieu. */
@@ -35,7 +33,7 @@ function joursDuMois(maintenant: Date, lus: readonly string[]): JourFil[] {
 
 export default function Accueil() {
   const { t, i18n } = useTranslation();
-  const { nom, couleurs, espace, rayon, typographie, latin } = useTheme();
+  const { couleurs, espace, rayon, typographie, latin } = useTheme();
   const maintenant = useMaintenant();
   const lieu = useReglages((s) => s.lieu);
   const options = useOptionsCalcul();
@@ -75,15 +73,7 @@ export default function Accueil() {
   return (
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
       <TopBar
-        gauche={
-          <Image
-            source={nom === 'jour' ? marque : marqueSombre}
-            accessibilityRole="image"
-            accessibilityLabel="Sama Jàmm"
-            style={styles.logo}
-            resizeMode="contain"
-          />
-        }
+        gauche={<Logo taille={28} />}
         actions={[
           { icone: 'search', label: t('menuPlus.rechercher'), onPress: () => router.push('/plus/recherche') },
           menu.action,
@@ -234,5 +224,4 @@ const styles = StyleSheet.create({
   lecture: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center' },
   texteCarte: { flex: 1, gap: 4 },
   piste: { height: 4 },
-  logo: { width: 28, height: 28 },
 });
