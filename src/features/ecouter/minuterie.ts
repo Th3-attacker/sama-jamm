@@ -1,7 +1,7 @@
 // Minuterie et répétition du lecteur : règles pures.
 
 export type Minuterie = { type: 'aucune' } | { type: 'duree'; finA: number } | { type: 'finSourate' };
-export const DUREES_MINUTERIE = [15, 30, 60] as const;
+export const DUREES_MINUTERIE = [15, 30, 45, 60] as const;
 
 /** Répéter chaque verset : 1 (une seule écoute), 3, 5, ou 0 pour sans fin. */
 export const REPETITIONS_VERSET = [1, 3, 5, 0] as const;

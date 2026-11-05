@@ -1,7 +1,9 @@
 import { router } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Svg, { Circle } from 'react-native-svg';
 
 import {
   arreter,
@@ -24,24 +26,26 @@ import {
 } from '@/features/ecouter/minuterie';
 import { recitateur } from '@/features/ecouter/recitateurs';
 import { sourateTelechargee, telechargerSourate, useTelechargements } from '@/features/ecouter/telechargements';
-import { sourate, versetsDe } from '@/features/lire/coran';
+import { sourate, traductionDe, versetsDe } from '@/features/lire/coran';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { Banner } from '@/ui/Banner';
+import { BottomSheet } from '@/ui/BottomSheet';
 import { Button } from '@/ui/Button';
 import { Chip } from '@/ui/Chip';
 import { Icon } from '@/ui/Icon';
 import { IconButton } from '@/ui/IconButton';
-import { ListGroup } from '@/ui/ListGroup';
-import { ListItem } from '@/ui/ListItem';
+import { Logo } from '@/ui/Logo';
 import { SegmentedControl } from '@/ui/SegmentedControl';
-import { Switch } from '@/ui/Switch';
-import { TopBar } from '@/ui/TopBar';
 
-/** Lecteur plein écran : sourate et récitateur, verset en cours affiché, commandes et vitesse. */
+type Repetition = 'non' | 'verset' | 'sourate';
+
+/** Lecteur plein écran : anneau de progression, verset récité avec ses voisins, commandes ; réglages dans la feuille « Écoute ». */
 export default function LecteurPleinEcran() {
   const { t } = useTranslation();
   const { couleurs, espace, rayon, cible, typographie } = useTheme();
+  const insets = useSafeAreaInsets();
+  const { height } = useWindowDimensions();
   const position = useLecteur((s) => s.position ?? s.derniere);
   const enLecture = useLecteur((s) => s.enLecture);
   const chargement = useLecteur((s) => s.chargement);
@@ -60,6 +64,9 @@ export default function LecteurPleinEcran() {
   const minuterie = useLecteur((s) => s.minuterie);
   const repetitionVerset = useLecteur((s) => s.repetitionVerset);
   const repeterSourate = useLecteur((s) => s.repeterSourate);
+  const [feuille, setFeuille] = useState(false);
+  // Durée choisie dans la feuille, pour la surligner pendant que le temps restant s'écoule.
+  const [dureeChoisie, setDureeChoisie] = useState<number | null>(null);
   // Le temps restant de la minuterie se redessine chaque seconde.
   const [maintenant, setMaintenant] = useState(() => Date.now());
   useEffect(() => {
@@ -70,50 +77,110 @@ export default function LecteurPleinEcran() {
   const reste = resteMinuterie(minuterie, maintenant);
 
   const s = position ? sourate(position.sourate) : undefined;
-  const texte = position ? versetsDe(position.sourate)[position.verset - 1] : undefined;
+  const arabes = position ? versetsDe(position.sourate) : [];
+  const traductions = position ? traductionDe(position.sourate) : [];
+  const texte = position ? arabes[position.verset - 1] : undefined;
+  const avant = position ? arabes[position.verset - 2] : undefined;
+  const apres = position ? arabes[position.verset] : undefined;
+  const trad = position ? traductions[position.verset - 1] : undefined;
+
+  // Anneau : avancée dans la sourate, par versets (la durée du son n'est pas connue à l'avance).
+  const TAILLE_ANNEAU = height < 700 ? 150 : 220;
+  const RAYON = TAILLE_ANNEAU / 2 - 8;
+  const circonference = 2 * Math.PI * RAYON;
+  const avance = position && s ? position.verset / s.versets : 0;
+
+  const repetition: Repetition = repeterSourate ? 'sourate' : repetitionVerset === 1 ? 'non' : 'verset';
+  const choisirRepetition = (r: Repetition) => {
+    if (r === 'non') {
+      definirRepetitionVerset(1);
+      definirRepeterSourate(false);
+    } else if (r === 'verset') {
+      definirRepeterSourate(false);
+      if (repetitionVerset === 1) definirRepetitionVerset(3);
+    } else {
+      definirRepetitionVerset(1);
+      definirRepeterSourate(true);
+    }
+  };
+
+  const etiquetteMinuterie =
+    reste !== null
+      ? t('ecouter.minuterieSommeilDuree', { duree: formatReste(reste) })
+      : minuterie.type === 'finSourate'
+        ? t('ecouter.minuterieSommeilDuree', { duree: t('ecouter.minuterieFinSourate') })
+        : t('ecouter.minuterieSommeil');
 
   return (
-    <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
-      <TopBar
-        retour={t('ecouter.reduire')}
-        titre={s?.nom ?? t('ecouter.titre')}
-        sousTitre={recitateur(idRecitateur)?.nom}
-        actions={
-          position && page === null
-            ? [
-                {
-                  icone: telechargee ? 'check' : 'download',
-                  actif: telechargee,
-                  label: telechargee ? t('telechargements.disponible') : t('ecouter.telechargerHorsLigne'),
-                  onPress: () => {
-                    if (telechargee || partTelechargee !== undefined) return;
-                    telechargerSourate(idRecitateur, position.sourate).catch((e: unknown) =>
-                      console.warn('Téléchargement interrompu', e),
-                    );
-                  },
-                },
-              ]
-            : undefined
-        }
-      />
-      <ScrollView contentContainerStyle={{ padding: espace.espace5, gap: espace.espace5, flexGrow: 1 }}>
-        {position && s ? (
-          <>
-            <Text
-              maxFontSizeMultiplier={echelleMax.courant}
-              style={[typographie.libelle, styles.centre, { color: couleurs.orTexte }]}>
-              {page !== null
-                ? `${t('lire.pageN', { n: page })} · ${t('ecouter.versetSur', { n: position.verset, total: s.versets })}`
-                : t('ecouter.versetSur', { n: position.verset, total: s.versets })}
-            </Text>
-            {texte ? (
-              <Text
-                accessibilityLanguage="ar"
-                maxFontSizeMultiplier={echelleMax.grand}
-                style={[typographie.coran, styles.arabe, { color: couleurs.encre }]}>
-                {texte}
-              </Text>
-            ) : null}
+    <View
+      style={[
+        styles.ecran,
+        { backgroundColor: couleurs.fond, paddingTop: insets.top + espace.espace2, paddingBottom: Math.max(insets.bottom, espace.espace5) },
+      ]}>
+      <View style={[styles.entete, { paddingHorizontal: espace.espace4 }]}>
+        <IconButton icone="chevron-down" label={t('ecouter.reduire')} onPress={() => router.back()} />
+        <View style={styles.titres}>
+          <Text
+            numberOfLines={1}
+            maxFontSizeMultiplier={echelleMax.courant}
+            style={[typographie.libelle, { color: couleurs.encre }]}>
+            {s?.nom ?? t('ecouter.titre')}
+          </Text>
+          <Text
+            numberOfLines={1}
+            maxFontSizeMultiplier={echelleMax.courant}
+            style={[typographie.legende, { color: couleurs.encre3 }]}>
+            {recitateur(idRecitateur)?.nom}
+          </Text>
+        </View>
+        {position && page === null ? (
+          <IconButton
+            icone={telechargee ? 'check' : 'download'}
+            actif={telechargee}
+            label={telechargee ? t('telechargements.disponible') : t('ecouter.telechargerHorsLigne')}
+            onPress={() => {
+              if (telechargee || partTelechargee !== undefined) return;
+              telechargerSourate(idRecitateur, position.sourate).catch((e: unknown) =>
+                console.warn('Téléchargement interrompu', e),
+              );
+            }}
+          />
+        ) : (
+          <View style={{ width: cible.cibleIos }} />
+        )}
+      </View>
+
+      {position && s ? (
+        <>
+          <ScrollView
+            contentContainerStyle={[styles.centreScroll, { paddingHorizontal: espace.espace6, gap: espace.espace3 }]}>
+            <View style={{ width: TAILLE_ANNEAU, height: TAILLE_ANNEAU, alignItems: 'center', justifyContent: 'center' }}>
+              <Svg width={TAILLE_ANNEAU} height={TAILLE_ANNEAU} style={StyleSheet.absoluteFill}>
+                <Circle
+                  cx={TAILLE_ANNEAU / 2}
+                  cy={TAILLE_ANNEAU / 2}
+                  r={RAYON}
+                  fill="none"
+                  stroke={couleurs.surfaceCreux}
+                  strokeWidth={6}
+                />
+                <Circle
+                  cx={TAILLE_ANNEAU / 2}
+                  cy={TAILLE_ANNEAU / 2}
+                  r={RAYON}
+                  fill="none"
+                  stroke={couleurs.or}
+                  strokeWidth={6}
+                  strokeLinecap="round"
+                  strokeDasharray={circonference}
+                  strokeDashoffset={circonference * (1 - avance)}
+                  rotation={-90}
+                  origin={`${TAILLE_ANNEAU / 2}, ${TAILLE_ANNEAU / 2}`}
+                />
+              </Svg>
+              <Logo taille={TAILLE_ANNEAU - 30} />
+            </View>
+
             {erreur ? (
               <Banner
                 ton="attention"
@@ -127,111 +194,218 @@ export default function LecteurPleinEcran() {
               </Banner>
             ) : null}
 
-            <View style={[styles.commandes, { gap: espace.espace5 }]}>
-              <IconButton icone="skip-back" label={t('ecouter.precedent')} taille={28} onPress={precedent} />
-              <Pressable
-                accessibilityRole="button"
-                accessibilityLabel={enLecture ? t('commun.pause') : t('commun.ecouter')}
-                onPress={basculer}
-                style={({ pressed }) => [
-                  styles.principal,
-                  {
-                    width: cible.cibleAndroid * 1.6,
-                    height: cible.cibleAndroid * 1.6,
-                    borderRadius: rayon.rayonPastille,
-                    backgroundColor: couleurs.emeraude,
-                    opacity: pressed ? 0.85 : 1,
-                  },
-                ]}>
-                {chargement && !enLecture ? (
-                  <ActivityIndicator color={couleurs.surEmeraude} />
-                ) : (
-                  <Icon name={enLecture ? 'pause' : 'play'} size={32} color={couleurs.surEmeraude} />
-                )}
-              </Pressable>
-              <IconButton icone="skip-forward" label={t('ecouter.suivant')} taille={28} onPress={suivant} />
-            </View>
-
-            <SegmentedControl
-              label={t('ecouter.vitesseLecture')}
-              options={VITESSES.map((v) => ({ id: String(v), label: `${String(v).replace('.', ',')}×` }))}
-              valeur={String(vitesse)}
-              onChange={(id) => definirVitesse(Number(id))}
-            />
-            <SegmentedControl
-              label={t('ecouter.repeterLeVerset')}
-              options={REPETITIONS_VERSET.map((n) => ({
-                id: String(n),
-                label: n === 0 ? t('ecouter.sansFin') : t('ecouter.fois', { count: n }),
-              }))}
-              valeur={String(repetitionVerset)}
-              onChange={(id) => {
-                const choix = REPETITIONS_VERSET.find((n) => String(n) === id);
-                if (choix !== undefined) definirRepetitionVerset(choix);
-              }}
-            />
-            {page === null ? (
-              <ListGroup>
-                <ListItem
-                  icone="repeat"
-                  titre={t('ecouter.repeterSourate')}
-                  droite={
-                    <Switch
-                      label={t('ecouter.repeterSourate')}
-                      active={repeterSourate}
-                      onChange={definirRepeterSourate}
-                    />
-                  }
-                />
-              </ListGroup>
-            ) : null}
-            <View style={{ gap: espace.espace2 }}>
-              <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, { color: couleurs.encre }]}>
-                {reste !== null
-                  ? t('ecouter.minuterieArret', { duree: formatReste(reste) })
-                  : minuterie.type === 'finSourate'
-                    ? t('ecouter.minuterieFinSourate')
-                    : t('ecouter.minuterie')}
+            {/* Le verset en cours, entouré du précédent et du suivant. */}
+            {avant ? (
+              <Text
+                accessibilityLanguage="ar"
+                numberOfLines={1}
+                maxFontSizeMultiplier={echelleMax.grand}
+                style={[typographie.arabe, styles.arabe, { color: couleurs.encre3 }]}>
+                {avant}
               </Text>
-              <View style={[styles.puces, { gap: espace.espace2 }]}>
-                <Chip selectionne={minuterie.type === 'aucune'} onPress={() => definirMinuterie({ type: 'aucune' })}>
-                  {t('ecouter.minuterieOff')}
-                </Chip>
-                {DUREES_MINUTERIE.map((m) => (
-                  <Chip key={m} selectionne={false} onPress={() => definirMinuterie(minuterieDans(m, Date.now()))}>
-                    {t('ecouter.minutes', { count: m })}
-                  </Chip>
-                ))}
-                <Chip
-                  selectionne={minuterie.type === 'finSourate'}
-                  onPress={() => definirMinuterie({ type: 'finSourate' })}>
-                  {t('ecouter.minuterieFinSourate')}
-                </Chip>
-              </View>
+            ) : null}
+            {texte ? (
+              <Text
+                accessibilityLanguage="ar"
+                maxFontSizeMultiplier={echelleMax.grand}
+                style={[typographie.coran, styles.arabe, { color: couleurs.encre }]}>
+                {texte}
+              </Text>
+            ) : null}
+            {trad ? (
+              <Text
+                maxFontSizeMultiplier={echelleMax.courant}
+                style={[typographie.lecture, styles.centre, { color: couleurs.encre2 }]}>
+                {trad}
+              </Text>
+            ) : null}
+            {apres ? (
+              <Text
+                accessibilityLanguage="ar"
+                numberOfLines={1}
+                maxFontSizeMultiplier={echelleMax.grand}
+                style={[typographie.arabe, styles.arabe, { color: couleurs.encre3 }]}>
+                {apres}
+              </Text>
+            ) : null}
+          </ScrollView>
+
+          <View style={{ paddingHorizontal: espace.espace6, gap: espace.espace2 }}>
+            <View
+              accessibilityRole="progressbar"
+              accessibilityValue={{ min: 0, max: s.versets, now: position.verset }}
+              style={[styles.piste, { backgroundColor: couleurs.surfaceCreux }]}>
+              <View style={[styles.remplissage, { width: `${Math.round(avance * 100)}%`, backgroundColor: couleurs.or }]} />
             </View>
-            <Button
-              variant="discret"
-              pleineLargeur
-              onPress={() => {
-                arreter();
-                router.back();
-              }}>
-              {t('ecouter.arreter')}
-            </Button>
-          </>
-        ) : (
+            <Text
+              maxFontSizeMultiplier={echelleMax.courant}
+              style={[typographie.legende, styles.centre, { color: couleurs.encre3 }]}>
+              {page !== null
+                ? `${t('lire.pageN', { n: page })} · ${t('ecouter.versetSur', { n: position.verset, total: s.versets })}`
+                : t('ecouter.versetSur', { n: position.verset, total: s.versets })}
+            </Text>
+          </View>
+
+          <View style={[styles.commandes, { paddingHorizontal: espace.espace6, marginTop: espace.espace4 }]}>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={t('ecouter.vitesseLecture')}
+              onPress={() => setFeuille(true)}
+              style={styles.commandeSimple}>
+              <Text maxFontSizeMultiplier={echelleMax.onglets} style={[typographie.libelle, { color: couleurs.encre }]}>
+                {`${String(vitesse).replace('.', ',')}×`}
+              </Text>
+            </Pressable>
+            <IconButton icone="skip-back" label={t('ecouter.precedent')} taille={26} couleur={couleurs.encre} onPress={precedent} />
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={enLecture ? t('commun.pause') : t('commun.ecouter')}
+              onPress={basculer}
+              style={({ pressed }) => [
+                styles.principal,
+                {
+                  width: 72,
+                  height: 72,
+                  borderRadius: rayon.rayonPastille,
+                  backgroundColor: couleurs.emeraude,
+                  opacity: pressed ? 0.85 : 1,
+                },
+              ]}>
+              {chargement && !enLecture ? (
+                <ActivityIndicator color={couleurs.surEmeraude} />
+              ) : (
+                <Icon name={enLecture ? 'pause' : 'play'} size={32} color={couleurs.surEmeraude} />
+              )}
+            </Pressable>
+            <IconButton icone="skip-forward" label={t('ecouter.suivant')} taille={26} couleur={couleurs.encre} onPress={suivant} />
+            <IconButton
+              icone="reset"
+              label={t('ecouter.repeterLeVerset')}
+              taille={22}
+              couleur={repetition === 'non' ? couleurs.encre : couleurs.emeraude}
+              onPress={() => setFeuille(true)}
+            />
+          </View>
+
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={etiquetteMinuterie}
+            onPress={() => setFeuille(true)}
+            style={[
+              styles.minuterie,
+              { borderColor: couleurs.ligneForte, borderRadius: rayon.rayonPastille, gap: espace.espace2, marginTop: espace.espace4 },
+            ]}>
+            <Icon name="moon" size={18} color={couleurs.encre} />
+            <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, { color: couleurs.encre }]}>
+              {etiquetteMinuterie}
+            </Text>
+          </Pressable>
+        </>
+      ) : (
+        <View style={{ padding: espace.espace5 }}>
           <Banner ton="info">{t('ecouter.rien')}</Banner>
-        )}
-      </ScrollView>
+        </View>
+      )}
+
+      <BottomSheet ouvert={feuille} titre={t('ecouter.titreFeuille')} onFermer={() => setFeuille(false)}>
+        <SegmentedControl
+          label={t('ecouter.vitesse')}
+          options={VITESSES.map((v) => ({ id: String(v), label: `${String(v).replace('.', ',')}×` }))}
+          valeur={String(vitesse)}
+          onChange={(id) => definirVitesse(Number(id))}
+        />
+        <SegmentedControl
+          label={t('ecouter.repeter')}
+          options={[
+            { id: 'non', label: t('ecouter.repetitionNon') },
+            { id: 'verset', label: t('ecouter.repeterVerset') },
+            ...(page === null ? [{ id: 'sourate', label: t('ecouter.repeterSourate') }] : []),
+          ]}
+          valeur={repetition}
+          onChange={(id) => {
+            if (id === 'non' || id === 'verset' || id === 'sourate') choisirRepetition(id);
+          }}
+        />
+        {repetition === 'verset' ? (
+          <View style={[styles.puces, { gap: espace.espace2 }]}>
+            {REPETITIONS_VERSET.filter((n) => n !== 1).map((n) => (
+              <Chip key={n} selectionne={repetitionVerset === n} onPress={() => definirRepetitionVerset(n)}>
+                {n === 0 ? t('ecouter.sansFin') : t('ecouter.fois', { count: n })}
+              </Chip>
+            ))}
+          </View>
+        ) : null}
+        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, { color: couleurs.encre }]}>
+          {t('ecouter.minuterie')}
+        </Text>
+        <View style={[styles.puces, { gap: espace.espace2 }]}>
+          <Chip
+            selectionne={minuterie.type === 'aucune'}
+            onPress={() => {
+              setDureeChoisie(null);
+              definirMinuterie({ type: 'aucune' });
+            }}>
+            {t('ecouter.minuterieOff')}
+          </Chip>
+          {DUREES_MINUTERIE.map((m) => (
+            <Chip
+              key={m}
+              selectionne={minuterie.type === 'duree' && dureeChoisie === m}
+              onPress={() => {
+                setDureeChoisie(m);
+                definirMinuterie(minuterieDans(m, Date.now()));
+              }}>
+              {t('ecouter.minutes', { count: m })}
+            </Chip>
+          ))}
+          <Chip
+            selectionne={minuterie.type === 'finSourate'}
+            onPress={() => {
+              setDureeChoisie(null);
+              definirMinuterie({ type: 'finSourate' });
+            }}>
+            {t('ecouter.minuterieFinSourate')}
+          </Chip>
+        </View>
+        {reste !== null ? (
+          <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre3 }]}>
+            {t('ecouter.minuterieArret', { duree: formatReste(reste) })}
+          </Text>
+        ) : null}
+        <Button
+          variant="discret"
+          pleineLargeur
+          onPress={() => {
+            setFeuille(false);
+            arreter();
+            router.back();
+          }}>
+          {t('ecouter.arreter')}
+        </Button>
+      </BottomSheet>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   ecran: { flex: 1 },
+  entete: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  titres: { flex: 1, alignItems: 'center' },
+  centreScroll: { alignItems: 'center', flexGrow: 1, justifyContent: 'center' },
   centre: { textAlign: 'center' },
-  arabe: { textAlign: 'center', writingDirection: 'rtl' },
-  commandes: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center' },
+  arabe: { textAlign: 'center', writingDirection: 'rtl', alignSelf: 'stretch' },
+  piste: { height: 4, borderRadius: 999, overflow: 'hidden' },
+  remplissage: { height: 4, borderRadius: 999 },
+  commandes: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  commandeSimple: { width: 48, height: 48, alignItems: 'center', justifyContent: 'center' },
   principal: { alignItems: 'center', justifyContent: 'center' },
+  minuterie: {
+    alignSelf: 'center',
+    minHeight: 40,
+    paddingHorizontal: 16,
+    borderWidth: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   puces: { flexDirection: 'row', flexWrap: 'wrap' },
 });

@@ -333,6 +333,10 @@
     "vitesseLecture": "Vitesse de lecture",
     "repeterLeVerset": "Répéter le verset",
     "chercherSourate": "Chercher une sourate",
+    "titreFeuille": "Écoute",
+    "repetitionNon": "Non",
+    "minuterieSommeil": "Minuterie de sommeil",
+    "minuterieSommeilDuree": "Minuterie de sommeil · {{duree}}",
     "resumeRecitateur_one": "Murattal · 114 sourates · {{count}} téléchargée",
     "resumeRecitateur_other": "Murattal · 114 sourates · {{count}} téléchargées"
   },
