@@ -27,7 +27,8 @@ Ordre : **A → B1 → B2 → C2 → C3 → C4 → B4 → C1 → C5 → D → E 
 | D4 | Journal local des erreurs (sans données personnelles), partagé par l'utilisateur depuis À propos | #70 |
 | E3 | Partage d'un verset : image (fond émeraude ou nuit, traduction au choix) ou texte avec lien | #71 |
 | Adhan | Appel à la prière dans les notifications (Android, sons CC0), icône de notification, essai du son ; iOS à faire (WAV ≤ 30 s, ffmpeg) | #72 à #74 |
-| E1 · E2 | Crédit Tanzil ; translittération (réglage), repères juz et quarts de hizb, prosternations, juz en mode page | cette PR |
+| E1 · E2 | Crédit Tanzil ; translittération (réglage), repères juz et quarts de hizb, prosternations, juz en mode page | #75 |
+| F1 | Écouter : 5 récitateurs (alquran.cloud), lecteur verset par verset, plein écran, mini-lecteur, verset surligné, écoute écran éteint, écoute page par page (la page tourne seule), page mushaf en plein écran | cette PR |
 
 ## A. Vérifier sur un téléphone (bloquant)
 
@@ -76,7 +77,7 @@ E1 bis : licence du texte arabe d'alquran.cloud à confirmer (ou passer au texte
 
 ## F. Écouter (après les droits audio)
 
-F1 lecteur audio, mini-lecteur, récitateurs · F2 téléchargements, minuterie, verset surligné · F3 état hors ligne et erreur de chargement audio (déplacés de D1).
+F2 téléchargements, minuterie, verset surligné · F3 état hors ligne et erreur de chargement audio (déplacés de D1).
 
 ## G. Compte et partage (facultatif en v1)
 

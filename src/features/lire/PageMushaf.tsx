@@ -30,6 +30,8 @@ type Props = {
   hauteur: number;
   /** Marge du haut (barre d'état) : la ligne « page · sourate » passe dessous. */
   hautSur: number;
+  /** Marge du bas (zone des gestes du téléphone), la barre des onglets étant masquée. */
+  basSur?: number;
   onToucher: () => void;
 };
 
@@ -37,11 +39,11 @@ type Props = {
  * Une page du mushaf qui tient dans l'écran, sans défilement : la taille du texte s'ajuste à la hauteur
  * disponible. Pendant les mesures (deux ou trois passes), la page reste invisible pour ne pas « sauter ».
  */
-export const PageMushaf = memo(function PageMushaf({ page, largeur, hauteur, hautSur, onToucher }: Props) {
+export const PageMushaf = memo(function PageMushaf({ page, largeur, hauteur, hautSur, basSur = 0, onToucher }: Props) {
   const { t } = useTranslation();
   const { couleurs, espace, rayon, typographie } = useTheme();
   const segments = useMemo(() => segmentsDePage(page), [page]);
-  const cle = `${page}:${Math.round(largeur)}x${Math.round(hauteur)}`;
+  const cle = `${page}:${Math.round(largeur)}x${Math.round(hauteur)}:${Math.round(hautSur + basSur)}`;
   const connu = coefsConnus.get(cle);
   const [coef, setCoef] = useState(connu ?? 0.7);
   const [pret, setPret] = useState(connu !== undefined);
@@ -97,7 +99,13 @@ export const PageMushaf = memo(function PageMushaf({ page, largeur, hauteur, hau
     <Pressable
       accessibilityHint={t('lire.toucherPage')}
       onPress={onToucher}
-      style={{ width: largeur, height: hauteur, paddingTop: hautSur, paddingHorizontal: espace.espace4 }}>
+      style={{
+        width: largeur,
+        height: hauteur,
+        paddingTop: hautSur,
+        paddingBottom: basSur,
+        paddingHorizontal: espace.espace4,
+      }}>
       <View style={[styles.ligne, { height: enTete }]}>
         <Text allowFontScaling={false} style={[typographie.legende, { color: couleurs.encre3 }]}>
           {nomPage}

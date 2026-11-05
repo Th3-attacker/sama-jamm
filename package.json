@@ -12,6 +12,7 @@
     "@expo/ui": "~58.0.27",
     "adhan": "4.4.6",
     "expo": "~58.0.23",
+    "expo-audio": "~58.0.11",
     "expo-background-task": "~58.0.12",
     "expo-clipboard": "~58.0.4",
     "expo-constants": "~58.0.14",

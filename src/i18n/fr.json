@@ -246,7 +246,19 @@
     "minuterieArret": "Arrêt dans {{duree}}",
     "minuterieOff": "Sans minuterie",
     "precedent": "Précédent",
-    "suivant": "Suivant"
+    "suivant": "Suivant",
+    "versetN": "verset {{n}}",
+    "versetSur": "Verset {{n}} sur {{total}}",
+    "murattal": "Murattal · verset par verset",
+    "reseau": "L’écoute demande une connexion Internet. Les téléchargements pour écouter hors ligne arriveront bientôt.",
+    "sourates114": "114 sourates",
+    "recitateurInconnu": "Ce récitateur n’existe pas.",
+    "erreurLecture": "Ce verset n’a pas pu être lu. Vérifiez votre connexion, puis réessayez.",
+    "arreter": "Arrêter l’écoute",
+    "rien": "Aucune écoute en cours. Choisissez un récitateur dans l’onglet Écouter.",
+    "ouvrirLecteur": "Ouvrir le lecteur",
+    "ecouterVerset": "Écouter à partir de ce verset",
+    "ecouterPage": "Écouter à partir de cette page"
   },
   "telechargements": {
     "titre": "Téléchargements",
@@ -479,7 +491,8 @@
     "signalerAide": "Partage la liste des dernières erreurs : codes et versions, jamais vos données",
     "signalerEntete": "Sama Jàmm · erreurs récentes",
     "aucuneErreur": "Aucune erreur enregistrée.",
-    "sourceTanzil": "Translittération, juz, hizb et prosternations : Tanzil Project (tanzil.net), licence CC BY 3.0, reproduits sans modification."
+    "sourceTanzil": "Translittération, juz, hizb et prosternations : Tanzil Project (tanzil.net), licence CC BY 3.0, reproduits sans modification.",
+    "sourceRecitations": "Récitations : alquran.cloud (Islamic Network), autorisées par les récitateurs ou leurs ayants droit pour une diffusion gratuite et non commerciale."
   },
   "compte": {
     "titre": "Compte",
