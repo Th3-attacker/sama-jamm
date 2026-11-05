@@ -173,7 +173,7 @@ export default function BiensZakat() {
             />
             <ListItem
               icone="users"
-              titre={t('zakat.ligneCreances')}
+              titre={t('zakat.biensCreances')}
               sousTitre={t('zakat.sousCreances')}
               valeur={f(creancesAuto)}
             />
@@ -182,7 +182,7 @@ export default function BiensZakat() {
           <ListGroup titre={t('zakat.aDeduire')}>
             <ListItem
               icone="minus"
-              titre={t('zakat.ligneDettes')}
+              titre={t('zakat.biensDettes')}
               sousTitre={t('zakat.sousDettes')}
               valeur={`− ${f(dettesAuto)}`}
             />

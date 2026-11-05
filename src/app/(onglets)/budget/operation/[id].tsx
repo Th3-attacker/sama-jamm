@@ -188,15 +188,20 @@ export default function EcranOperation() {
         ouvert={confirmer}
         danger
         icone="trash"
-        titre={t('budget.supprimerOperationTitre')}
+        titre={t(estDepense ? 'budget.supprimerDepenseTitre' : 'budget.supprimerOperationTitre')}
         confirmer={t('budget.supprimerOperation')}
         onAnnuler={() => setConfirmer(false)}
         onConfirmer={supprimer}>
-        {t('budget.supprimerOperationTexte', {
-          montant: formatMontant(op.montant, devise),
-          enveloppe: estDepense ? nomEnveloppe : op.type === 'epargne' ? t('epargne.titre') : t('budget.recu'),
-          date: formatJourCle(op.date, i18n.language),
-        })}
+        {estDepense
+          ? t('budget.supprimerDepenseTexte', {
+              montant: formatMontant(op.montant, devise),
+              enveloppe: nomEnveloppe,
+            })
+          : t('budget.supprimerOperationTexte', {
+              montant: formatMontant(op.montant, devise),
+              enveloppe: op.type === 'epargne' ? t('epargne.titre') : t('budget.recu'),
+              date: formatJourCle(op.date, i18n.language),
+            })}
       </Dialog>
     </View>
   );
