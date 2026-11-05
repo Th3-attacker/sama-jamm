@@ -12,10 +12,12 @@ type Props = {
   taille?: number;
   /** Numéro affiché autrement (chiffres arabes ١٢٣) ; le lecteur d'écran lit toujours `numero`. */
   affiche?: string;
+  /** Verset en cours de récitation : étoile pleine émeraude. */
+  actif?: boolean;
 };
 
 // Numéro dans une étoile `or-doux` cerclée d'`or`, chiffre en `or-texte`.
-export function Medaillon({ numero, prefixe, taille = 36, affiche }: Props) {
+export function Medaillon({ numero, prefixe, taille = 36, affiche, actif = false }: Props) {
   const { couleurs, typographie } = useTheme();
   return (
     <View
@@ -23,14 +25,18 @@ export function Medaillon({ numero, prefixe, taille = 36, affiche }: Props) {
       accessibilityLabel={`${prefixe} ${numero}`}
       style={[styles.medaillon, { width: taille, height: taille }]}>
       <View style={StyleSheet.absoluteFill}>
-        <Etoile taille={taille} remplissage={couleurs.orDoux} contour={couleurs.or} />
+        <Etoile
+          taille={taille}
+          remplissage={actif ? couleurs.emeraude : couleurs.orDoux}
+          contour={actif ? couleurs.emeraude : couleurs.or}
+        />
       </View>
       <Text
         maxFontSizeMultiplier={echelleMax.grand}
         style={[
           typographie.libelle,
           styles.chiffre,
-          { color: couleurs.orTexte, fontSize: taille * 0.33, lineHeight: taille * 0.42 },
+          { color: actif ? couleurs.surEmeraude : couleurs.orTexte, fontSize: taille * 0.33, lineHeight: taille * 0.42 },
         ]}>
         {affiche ?? numero}
       </Text>

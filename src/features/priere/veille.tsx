@@ -54,9 +54,9 @@ export function BandeauVeille() {
   return (
     <Banner
       ton="veille"
-      titre={`${t('reglages.veilleActive')} · ${t('formules.repos')}`}
+      titre={t('formules.repos')}
       onFermer={() => marquerVeilleVue(nuit.cle)}>
-      {t('reglages.veilleActiveTexte', { heure: formatHeure(nuit.fin) })}
+      {t('reglages.veilleJusqua', { heure: formatHeure(nuit.fin) })}
     </Banner>
   );
 }

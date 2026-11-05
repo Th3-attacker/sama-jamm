@@ -563,6 +563,7 @@
     "veilleAutoDetail": "Entre Isha et Fajr",
     "veilleActive": "Veille activée",
     "veilleActiveTexte": "Lumière adoucie jusqu'à Fajr, {{heure}}.",
+    "veilleJusqua": "Veille jusqu'à Fajr, {{heure}} · lumière atténuée",
     "tailleTexte": "Taille du texte",
     "lecture": "Lecture",
     "langueApp": "Langue de l'app",

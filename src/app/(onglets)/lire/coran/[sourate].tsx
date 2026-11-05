@@ -1,7 +1,7 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FlatList, I18nManager, StyleSheet, Text, View, type LayoutRectangle } from 'react-native';
+import { FlatList, I18nManager, Pressable, StyleSheet, Text, View, type LayoutRectangle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useTaillesLecture } from '@/features/lire/BarreTaille';
@@ -35,6 +35,8 @@ import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { Banner } from '@/ui/Banner';
 import { IconButton } from '@/ui/IconButton';
+import { BandeauVeille } from '@/features/priere/veille';
+import { Icon } from '@/ui/Icon';
 import { useToast } from '@/ui/Toast';
 import { Button } from '@/ui/Button';
 import { SegmentedControl } from '@/ui/SegmentedControl';
@@ -96,7 +98,7 @@ function LectureSourate({
   modeInitial: ModeLecture;
 }) {
   const { t } = useTranslation();
-  const { couleurs, espace, rayon, typographie } = useTheme();
+  const { couleurs, ombres, espace, rayon, cible, typographie } = useTheme();
   const { tailleArabe, tailleTrad } = useTaillesLecture();
   const mode = useReglages((st) => st.affichage);
   const translitActive = useReglages((st) => st.translitLecture);
@@ -273,6 +275,10 @@ function LectureSourate({
   return (
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
       {barre}
+      {/* Veille : le bandeau de la nuit, une seule fois. */}
+      <View style={{ paddingHorizontal: espace.espace5 }}>
+        <BandeauVeille />
+      </View>
 
       <FlatList
         key={String(s.n)}
@@ -309,12 +315,15 @@ function LectureSourate({
             style={[
               styles.verset,
               { gap: espace.espace3 },
-              versetEcoute === item.n ? { backgroundColor: couleurs.orDoux, borderRadius: rayon.rayonCarte } : null,
+              versetEcoute === item.n
+                ? { backgroundColor: couleurs.emeraudeDoux, borderRadius: rayon.rayonCarte, padding: espace.espace3 }
+                : null,
             ]}>
             <Medaillon
               numero={item.n}
               prefixe={t('lire.verset')}
               taille={34}
+              actif={versetEcoute === item.n}
               affiche={chiffresArabes ? enChiffresArabes(item.n) : undefined}
             />
             <View style={styles.textes}>
@@ -392,16 +401,21 @@ function LectureSourate({
           </View>
         }
       />
-      {/* Outils de lecture : mode, et actions sur le verset en haut de l'écran. */}
+      {/* Outils de lecture : une pilule flottante (mode, écouter, favori, partage) sur le verset en haut de l'écran. */}
       <View
         style={[
           styles.outils,
           {
             gap: espace.espace2,
-            paddingHorizontal: espace.espace4,
-            borderTopColor: couleurs.ligne,
-            backgroundColor: couleurs.fond,
+            marginHorizontal: espace.espace4,
+            marginBottom: espace.espace3,
+            paddingHorizontal: espace.espace3,
+            paddingVertical: espace.espace2,
+            borderColor: couleurs.ligne,
+            backgroundColor: couleurs.surface,
+            borderRadius: rayon.rayonPastille,
           },
+          ombres.ombre2 !== 'none' ? { boxShadow: ombres.ombre2 } : null,
         ]}>
         <View style={styles.outilsMode}>
           <SegmentedControl
@@ -416,15 +430,19 @@ function LectureSourate({
             }}
           />
         </View>
-        <IconButton
-          icone="headphones"
-          actif={versetEcoute === versetHaut}
-          label={t('ecouter.ecouterVerset')}
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={t('ecouter.ecouterVerset')}
           onPress={() => {
             ecouter({ sourate: s.n, verset: versetHaut });
             router.push('/ecouter/lecteur');
           }}
-        />
+          style={[
+            styles.ecouter,
+            { width: cible.cibleAndroid, height: cible.cibleAndroid, backgroundColor: couleurs.emeraude },
+          ]}>
+          <Icon name="play" size={22} color={couleurs.surEmeraude} />
+        </Pressable>
         <IconButton
           icone="bookmark"
           actif={favoris.includes(cleVerset(s.n, versetHaut))}
@@ -449,7 +467,7 @@ function LectureSourate({
 /** En-tête coranique d'une sourate (nom arabe dans un bandeau vert, basmala). */
 function Entete({ sourate: n, mode }: { sourate: number; mode: string }) {
   const { t, i18n } = useTranslation();
-  const { couleurs, espace, rayon, typographie } = useTheme();
+  const { couleurs, espace, typographie } = useTheme();
   const { tailleArabe, tailleTrad } = useTaillesLecture();
   const meta = sourate(n);
   const basmala = basmalaDe(n);
@@ -458,28 +476,18 @@ function Entete({ sourate: n, mode }: { sourate: number; mode: string }) {
   return (
     <View style={{ gap: espace.espace4, paddingBottom: espace.espace2 }}>
       {mode !== 'tradSeule' ? (
-        <View
-          style={[
-            styles.bandeau,
-            {
-              borderColor: couleurs.emeraude,
-              backgroundColor: couleurs.emeraudeDoux,
-              borderRadius: rayon.rayonCarte,
-            },
-          ]}>
-          <Text
-            accessibilityRole="header"
-            accessibilityLanguage="ar"
-            maxFontSizeMultiplier={echelleMax.grand}
-            style={[typographie.coran, tailleArabe, styles.centre, { color: couleurs.emeraude }]}>
-            {`سورة ${meta.arabe}`}
-          </Text>
-        </View>
+        <Text
+          accessibilityRole="header"
+          accessibilityLanguage="ar"
+          maxFontSizeMultiplier={echelleMax.grand}
+          style={[typographie.coran, tailleArabe, styles.centre, { color: couleurs.emeraude }]}>
+          {`سورة ${meta.arabe}`}
+        </Text>
       ) : null}
       {/* Sens du nom en français (liste à relire), puis numéro, nombre de versets et révélation. */}
       <View style={{ gap: espace.espace1 }}>
         {i18n.language !== 'ar' && sensDe(n) ? (
-          <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.titre3, styles.centreLatin, { color: couleurs.encre }]}>
+          <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.titre1, styles.centreLatin, { color: couleurs.encre }]}>
             {sensDe(n)}
           </Text>
         ) : null}
@@ -527,7 +535,8 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
   },
   ligneFine: { height: StyleSheet.hairlineWidth },
-  outils: { flexDirection: 'row', alignItems: 'center', borderTopWidth: StyleSheet.hairlineWidth, paddingVertical: 6 },
+  outils: { flexDirection: 'row', alignItems: 'center', borderWidth: StyleSheet.hairlineWidth },
+  ecouter: { borderRadius: 999, alignItems: 'center', justifyContent: 'center' },
   outilsMode: { flex: 1 },
   verset: { flexDirection: 'row', alignItems: 'flex-start' },
   numero: {

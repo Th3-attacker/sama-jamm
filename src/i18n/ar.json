@@ -603,6 +603,7 @@
     "veilleAutoDetail": "بين العشاء والفجر",
     "veilleActive": "الوضع الهادئ مفعّل",
     "veilleActiveTexte": "إضاءة هادئة حتى الفجر، {{heure}}.",
+    "veilleJusqua": "الوضع الهادئ حتى الفجر، {{heure}} · إضاءة خافتة",
     "tailleTexte": "حجم النص",
     "lecture": "القراءة",
     "langueApp": "لغة التطبيق",
