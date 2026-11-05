@@ -1,7 +1,7 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { EcranVerrou } from '@/features/budget/EcranVerrou';
@@ -45,8 +45,10 @@ function ContenuAjout() {
   const [envoi, setEnvoi] = useState(false);
   const [echec, setEchec] = useState(false);
 
+  // iOS : quand la feuille monte jusqu'en haut, la zone de sécurité du haut (heure, îlot) passe sur l'en-tête ; on la compte.
+  const hautSur = Platform.OS === 'ios' ? insets.top : 0;
   const entete = (
-    <View style={[styles.entete, { paddingHorizontal: espace.espace5, paddingTop: espace.espace3 }]}>
+    <View style={[styles.entete, { paddingHorizontal: espace.espace5, paddingTop: espace.espace3 + hautSur }]}>
       <Text
         accessibilityRole="header"
         maxFontSizeMultiplier={echelleMax.courant}
@@ -102,6 +104,7 @@ function ContenuAjout() {
       {entete}
       <ScrollView
         keyboardShouldPersistTaps="handled"
+        automaticallyAdjustKeyboardInsets
         contentContainerStyle={{
           paddingHorizontal: espace.espace5,
           paddingBottom: insets.bottom + espace.espace5,

@@ -65,7 +65,7 @@ export default function RootLayout() {
       <ToastProvider>
         <Stack screenOptions={{ headerShown: false }}>
           {/* Ajout de dépense : feuille modale, fermée par « × » ou le geste vers le bas (section Navigation). */}
-          <Stack.Screen name="budget-ajout" options={{ presentation: 'formSheet', sheetGrabberVisible: true }} />
+          <Stack.Screen name="budget-ajout" options={{ presentation: 'formSheet', sheetGrabberVisible: true, sheetExpandsWhenScrolledToEdge: false }} />
         </Stack>
       </ToastProvider>
       {demarrage ? <DemarrageAnime onFin={finDemarrage} /> : null}
