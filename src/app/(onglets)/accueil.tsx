@@ -1,8 +1,12 @@
 import { router } from 'expo-router';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import marqueSombre from '../../../assets/images/splash-icon-dark.png';
+import marque from '../../../assets/images/splash-icon.png';
+
+import { proverbeDuJour } from '@/features/accueil/sagesse';
 import { calculerHoraires, prochainePriere } from '@/features/priere/horaires';
 import { useOptionsCalcul } from '@/features/priere/useOptionsCalcul';
 import { BandeauVeille } from '@/features/priere/veille';
@@ -31,7 +35,7 @@ function joursDuMois(maintenant: Date, lus: readonly string[]): JourFil[] {
 
 export default function Accueil() {
   const { t, i18n } = useTranslation();
-  const { couleurs, espace, rayon, typographie, latin } = useTheme();
+  const { nom, couleurs, espace, rayon, typographie, latin } = useTheme();
   const maintenant = useMaintenant();
   const lieu = useReglages((s) => s.lieu);
   const options = useOptionsCalcul();
@@ -65,11 +69,21 @@ export default function Accueil() {
   const reprise = position ? sourate(position.sourate) : undefined;
 
   const jour = formatJour(maintenant, i18n.language);
+  const sagesse = proverbeDuJour(maintenant);
   const hegirien = formatHegirien(maintenant, i18n.language);
 
   return (
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
       <TopBar
+        gauche={
+          <Image
+            source={nom === 'jour' ? marque : marqueSombre}
+            accessibilityRole="image"
+            accessibilityLabel="Sama Jàmm"
+            style={styles.logo}
+            resizeMode="contain"
+          />
+        }
         actions={[
           { icone: 'search', label: t('menuPlus.rechercher'), onPress: () => router.push('/plus/recherche') },
           menu.action,
@@ -152,9 +166,51 @@ export default function Accueil() {
                 {t('accueil.versetSur', { n: position.verset, total: reprise.versets })}
               </Text>
             ) : null}
+            {reprise && position ? (
+              // Avancée dans la sourate : le texte au-dessus la donne déjà en mots.
+              <View
+                importantForAccessibility="no-hide-descendants"
+                style={[styles.piste, { backgroundColor: couleurs.ligne, borderRadius: rayon.rayonPastille }]}>
+                <View
+                  style={[
+                    styles.piste,
+                    {
+                      width: `${Math.min(100, (position.verset / reprise.versets) * 100)}%`,
+                      backgroundColor: couleurs.emeraude,
+                      borderRadius: rayon.rayonPastille,
+                    },
+                  ]}
+                />
+              </View>
+            ) : null}
           </View>
           <Icon name="chevron-right" size={18} color={couleurs.encre3} />
         </Pressable>
+
+        {/* Wax ju rafet : un proverbe wolof par jour, avec sa traduction. */}
+        <View
+          accessible
+          style={{
+            gap: espace.espace2,
+            padding: espace.espace4,
+            borderRadius: rayon.rayonCarte,
+            backgroundColor: couleurs.orDoux,
+          }}>
+          <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, { color: couleurs.orTexte }]}>
+            {t('accueil.sagesse')}
+          </Text>
+          <Text
+            accessibilityLanguage="wo"
+            maxFontSizeMultiplier={echelleMax.courant}
+            style={[latin.titre3, { color: couleurs.encre, writingDirection: 'ltr' }]}>
+            {t(`formules.${sagesse}`)}
+          </Text>
+          <Text
+            maxFontSizeMultiplier={echelleMax.courant}
+            style={[typographie.translitteration, { color: couleurs.encre2 }]}>
+            {t(`formules.${sagesse}Trad`)}
+          </Text>
+        </View>
 
         <BeadThread
           titre={t('accueil.fil')}
@@ -166,7 +222,6 @@ export default function Accueil() {
               : undefined
           }
         />
-
       </ScrollView>
       {menu.feuille}
     </View>
@@ -177,5 +232,7 @@ const styles = StyleSheet.create({
   ecran: { flex: 1 },
   carte: { flexDirection: 'row', alignItems: 'center', borderWidth: 1 },
   lecture: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center' },
-  texteCarte: { flex: 1 },
+  texteCarte: { flex: 1, gap: 4 },
+  piste: { height: 4 },
+  logo: { width: 28, height: 28 },
 });

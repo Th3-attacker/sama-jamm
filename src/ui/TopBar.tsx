@@ -1,4 +1,5 @@
 import { useRouter } from 'expo-router';
+import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -26,9 +27,21 @@ export type TopBarProps = {
   lang?: string;
   /** Sans fond, au-dessus d'une image ou du lecteur plein écran. */
   transparent?: boolean;
+  /** Élément à gauche à la place du titre (logo de l'Accueil). */
+  gauche?: ReactNode;
 };
 
-export function TopBar({ retour, onRetour, titre, sousTitre, actions, grand = false, lang, transparent = false }: TopBarProps) {
+export function TopBar({
+  retour,
+  onRetour,
+  titre,
+  sousTitre,
+  actions,
+  grand = false,
+  lang,
+  transparent = false,
+  gauche,
+}: TopBarProps) {
   const { t } = useTranslation();
   const router = useRouter();
   const insets = useSafeAreaInsets();
@@ -53,6 +66,7 @@ export function TopBar({ retour, onRetour, titre, sousTitre, actions, grand = fa
           />
         ) : null}
         <View style={[styles.titres, { paddingHorizontal: avecRetour ? 0 : espace.espace3 }]}>
+          {gauche}
           {!grand && titre ? (
             <Text
               accessibilityRole="header"
