@@ -39,4 +39,3 @@ if (total !== 6236) throw new Error(`Translittération incomplète : ${total} ve
 
 writeFileSync('src/data/coran/reperes.json', JSON.stringify({ juz, quartsHizb, sajdas }) + '\n');
 writeFileSync('src/data/coran/translit.json', JSON.stringify(translit) + '\n');
-console.log('ok', { juz: juz.length, quartsHizb: quartsHizb.length, sajdas: sajdas.length, versets: total });

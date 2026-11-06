@@ -26,4 +26,3 @@ export type Couleurs = (typeof themes)[NomTheme]['couleurs'];
 export type Ombres = (typeof themes)[NomTheme]['ombres'];
 `;
 fs.writeFileSync('src/theme/tokens.generated.ts', out);
-console.log(`tokens.generated.ts : ${ids.length} thèmes, ${t.color.tokens.length} couleurs.`);
