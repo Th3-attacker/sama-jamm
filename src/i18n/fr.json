@@ -509,6 +509,30 @@
     "sansObjectif": "Sans objectif",
     "sousTitre": "Compteur"
   },
+  "invocations": {
+    "matin": "Matin",
+    "soir": "Soir",
+    "sommeil": "Avant de dormir",
+    "sousTitre": "Pour chaque moment de la journée.",
+    "moments": "Moments",
+    "titreMatin": "Invocations du matin",
+    "titreSoir": "Invocations du soir",
+    "titreSommeil": "Invocations avant de dormir",
+    "progression": "{{n}} sur {{total}}",
+    "compteur": "{{n}} / {{total}}",
+    "compterAide": "Touchez pour compter",
+    "terminee": "Terminé",
+    "sourceCoran": "Coran · {{ref}} · {{fois}}",
+    "hisn": "La citadelle du musulman",
+    "chapitre": "Chapitre",
+    "hisnAide": "Hisn al-Muslim · texte arabe",
+    "sectionVersets": "Versets du Coran",
+    "sourceHisn": "La citadelle du musulman · {{fois}}",
+    "noteHisn": "Texte arabe de la Citadelle du musulman, sans traduction pour l'instant. Les titres français sont à faire valider.",
+    "fois_one": "une fois",
+    "fois_other": "{{count}} fois",
+    "note": "Pour l'instant, des versets du Coran. Les autres invocations arrivent quand leurs textes et leurs sources sont validés."
+  },
   "recherche": {
     "titre": "Recherche",
     "placeholder": "Un mot, un verset, un chant",
@@ -609,6 +633,7 @@
     "signalerEntete": "Sama Jàmm · erreurs récentes",
     "aucuneErreur": "Aucune erreur enregistrée.",
     "sourceTanzil": "Translittération, juz, hizb et prosternations : Tanzil Project (tanzil.net), licence CC BY 3.0, reproduits sans modification.",
+    "sourceInvocations": "Invocations : La citadelle du musulman (Hisn al-Muslim) de Sa'id bin Ali bin Wahf al-Qahtani. Texte arabe tiré du fichier adhkar.json de rn0x (github.com/rn0x/Adhkar-json). Licence : fichier publié sans licence formelle, dont l'auteur déclare l'usage libre et gratuit. Titres français établis pour Sama Jàmm, à faire valider.",
     "sourceRecitations": "Récitations : alquran.cloud (Islamic Network), autorisées par les récitateurs ou leurs ayants droit pour une diffusion gratuite et non commerciale.",
     "version": "Sama Jàmm · version {{version}}",
     "confidentialite": "Politique de confidentialité",
@@ -624,6 +649,10 @@
       "recitations": {
         "titre": "Récitations et appel à la prière",
         "resume": "alquran.cloud · Wikimedia Commons (CC0)"
+      },
+      "invocations": {
+        "titre": "Invocations",
+        "resume": "La citadelle du musulman · Sa'id al-Qahtani"
       },
       "polices": {
         "titre": "Polices",
