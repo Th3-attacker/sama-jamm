@@ -24,7 +24,7 @@ export async function appliquerSensEtRedemarrer(langue: Langue): Promise<boolean
     await Updates.reloadAsync();
     return true;
   } catch (erreur: unknown) {
-    // expo-updates n'est pas encore configuré (étape Publication) : redémarrage manuel.
+    // Rechargement indisponible (app installée sans canal de mise à jour) : redémarrage manuel.
     console.warn('Redémarrage automatique impossible', erreur);
     return false;
   }
