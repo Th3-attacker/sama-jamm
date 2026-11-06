@@ -9,7 +9,7 @@
     "userInterfaceStyle": "automatic",
     "ios": {
       "bundleIdentifier": "com.samajamm.app",
-      "usesAppleSignIn": true
+      "usesAppleSignIn": true,
     },
     "android": {
       "adaptiveIcon": {
