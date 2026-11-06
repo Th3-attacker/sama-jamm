@@ -43,6 +43,13 @@ const SONS_ADHAN_IOS: Partial<Record<Son, string>> = { complet: 'adhan_complet_i
  */
 const DANS_EXPO_GO = Constants.executionEnvironment === ExecutionEnvironment.StoreClient;
 
+/**
+ * Expo Go n'accepte pas `sound: null` dans les options d'un canal : le pont natif lève une NullPointerException,
+ * qui interrompt la création du canal et de tous les suivants. Les canaux muets y gardent le son par défaut.
+ * Les builds (développement, preview, production) conservent un vrai canal silencieux.
+ */
+const SON_MUET = DANS_EXPO_GO ? 'default' : null;
+
 /** Son d'une notification d'appel : l'extrait d'adhan sur iOS, le son du canal (booléen) sur Android. */
 export function sonDeNotification(son: Son): boolean | string {
   const avecSon = son === 'complet' || son === 'court' || son === 'doux';
@@ -66,20 +73,20 @@ export async function creerCanaux(): Promise<void> {
     await Notifications.setNotificationChannelAsync(CANAUX[son], {
       name: t(`notifications.canaux.${son}`),
       importance: AndroidImportance.HIGH,
-      // Dans Expo Go, un fichier inconnu fait échouer la création du canal (NullPointerException) : son par défaut.
+      // Dans Expo Go, un fichier inconnu fait échouer la création du canal : son par défaut.
       sound: DANS_EXPO_GO ? 'default' : (SONS_ADHAN[son] ?? 'default'),
     });
   }
   await Notifications.setNotificationChannelAsync(CANAUX.vibration, {
     name: t('notifications.canaux.vibration'),
     importance: AndroidImportance.HIGH,
-    sound: null,
+    sound: SON_MUET,
     enableVibrate: true,
   });
   await Notifications.setNotificationChannelAsync(CANAUX.silencieux, {
     name: t('notifications.canaux.silencieux'),
     importance: AndroidImportance.DEFAULT,
-    sound: null,
+    sound: SON_MUET,
     enableVibrate: false,
   });
   await Notifications.setNotificationChannelAsync(CANAL_RAPPELS, {
