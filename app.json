@@ -3,6 +3,12 @@
     "name": "Sama Jàmm",
     "slug": "sama-jamm",
     "version": "1.0.0",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/40baf6c7-a3b9-418d-b7b1-d258fcc829b1"
+    },
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "samajamm",
@@ -10,6 +16,9 @@
     "ios": {
       "bundleIdentifier": "com.samajamm.app",
       "usesAppleSignIn": true,
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {

@@ -1,10 +1,10 @@
-# Vérifications à chaque PR et à chaque push sur dev et main : types, lint, tests.
+# Vérifications à chaque PR et à chaque push sur dev, staging et main : types, lint, tests.
 name: CI
 
 on:
   pull_request:
   push:
-    branches: [dev, main]
+    branches: [dev, staging, main]
 
 concurrency:
   group: ci-${{ github.ref }}
