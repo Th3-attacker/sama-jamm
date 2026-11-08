@@ -4,6 +4,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { useDessousOutil } from '@/features/ecouter/placeMiniLecteur';
 import { usePlaceBas } from '@/stores/placeBas';
+import { miseEnPage } from '@/theme/tokens.generated';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 
@@ -37,8 +38,8 @@ export function BarreCompteur({ titre, arabe = false, n, total, onCompter }: Pro
           borderTopColor: couleurs.ligne,
           paddingHorizontal: espace.espace5,
           paddingVertical: espace.espace3,
-          // Au-dessus de la barre d'onglets : le fond de la barre passe derrière elle.
-          paddingBottom: espace.espace3 + marge,
+          // Au-dessus de la barre d'onglets, à 8 de la couche du dessous : le fond s'arrête à la hauteur du compteur.
+          marginBottom: marge + miseEnPage.ecartCouches,
           gap: espace.espace3,
         },
       ]}>

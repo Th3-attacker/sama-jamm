@@ -26,7 +26,8 @@ function useHauteurBarre(): number {
   const mesuree = usePlaceBas((s) => s.hauteurBarre);
   if (Platform.OS === 'android') return reperesBarre.androidMaterial + insets.bottom;
   if (mesuree > 0) return mesuree;
-  return (ACCESSOIRE_NATIF ? reperesBarre.ios26 : reperesBarre.iosClassique) + insets.bottom;
+  // Avant mesure : la zone de sécurité du bas d'iOS inclut déjà la barre d'onglets, on ne l'ajoute pas deux fois.
+  return insets.bottom;
 }
 
 /** La pile du bas (design 18) : barre d'onglets, mini-lecteur, compteur ou pilule, avec plafond de 35 %. */
