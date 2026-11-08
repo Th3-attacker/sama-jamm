@@ -23,6 +23,8 @@ export function MiniLecteur() {
   const idRecitateur = useLecteur((s) => s.recitateur);
   const page = useLecteur((s) => s.page);
   const pleinEcran = usePleinEcran((s) => s.actif);
+  // Mince quand le compteur fixe est visible : titre et lecture seulement (design 18).
+  const mince = usePlaceBas((s) => s.outil) === 'compteur';
   const visible = Boolean(position) && !pleinEcran;
   // Hauteur réelle (texte agrandi compris) pour que le contenu lui laisse exactement sa place.
   useEffect(() => {
@@ -34,7 +36,7 @@ export function MiniLecteur() {
     <View
       onLayout={(e) => {
         const h = Math.round(e.nativeEvent.layout.height);
-        if (h > usePlaceBas.getState().hauteurMini) usePlaceBas.setState({ hauteurMini: h });
+        if (h !== usePlaceBas.getState().hauteurMini) usePlaceBas.setState({ hauteurMini: h });
       }}
       style={[
         styles.barre,
@@ -52,19 +54,21 @@ export function MiniLecteur() {
           style={[typographie.libelle, { color: couleurs.encre }]}>
           {`${sourate(position.sourate)?.nom ?? ''} · ${t('ecouter.versetN', { n: position.verset })}${page !== null ? ` · ${t('lire.pageN', { n: page })}` : ''}`}
         </Text>
-        <Text
-          numberOfLines={1}
-          maxFontSizeMultiplier={echelleMax.courant}
-          style={[typographie.legende, { color: couleurs.encre2 }]}>
-          {recitateur(idRecitateur)?.nom ?? ''}
-        </Text>
+        {mince ? null : (
+          <Text
+            numberOfLines={1}
+            maxFontSizeMultiplier={echelleMax.courant}
+            style={[typographie.legende, { color: couleurs.encre2 }]}>
+            {recitateur(idRecitateur)?.nom ?? ''}
+          </Text>
+        )}
       </Pressable>
       <IconButton
         icone={enLecture ? 'pause' : 'play'}
         label={enLecture ? t('commun.pause') : t('commun.ecouter')}
         onPress={basculer}
       />
-      <IconButton icone="close" label={t('ecouter.arreter')} onPress={arreter} />
+      {mince ? null : <IconButton icone="close" label={t('ecouter.arreter')} onPress={arreter} />}
     </View>
   );
 }

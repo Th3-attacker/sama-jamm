@@ -1,7 +1,9 @@
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
+import { useDessousOutil } from '@/features/ecouter/placeMiniLecteur';
+import { usePlaceBas } from '@/stores/placeBas';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 
@@ -19,7 +21,12 @@ type Props = {
 export function BarreCompteur({ titre, arabe = false, n, total, onCompter }: Props) {
   const { t } = useTranslation();
   const { couleurs, espace, rayon, typographie } = useTheme();
-  const marge = useMargeBasse();
+  const marge = useDessousOutil();
+  // Le compteur est l'outil fixe du bas : le mini-lecteur passe en version mince et la pile compte sa hauteur.
+  useEffect(() => {
+    usePlaceBas.setState({ outil: 'compteur' });
+    return () => usePlaceBas.setState({ outil: 'aucun' });
+  }, []);
   const valeur = t('invocations.compteur', { n, total });
   return (
     <View

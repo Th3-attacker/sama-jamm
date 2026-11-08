@@ -53,3 +53,16 @@ test('échelles fermées : tailles de texte, arabe et espacements du design', ()
   assert.deepEqual([...echelleEspace], [0, 4, 8, 12, 16, 20, 24, 32, 40, 48, 56, 64, 80, 96, 128]);
   assert.equal(miseEnPage.plafondPile, 0.35);
 });
+
+test('dessous de l\'outil : barre + écart + mini, sans le compteur', () => {
+  const p = calculerPile({ hauteurFenetre: 852, hauteurBarre: 83, miniActif: true, outil: 'compteur' });
+  assert.equal(p.dessousOutil, 83 + 8 + 40);
+  const seul = calculerPile({ hauteurFenetre: 852, hauteurBarre: 83, miniActif: false, outil: 'compteur' });
+  assert.equal(seul.dessousOutil, 83);
+});
+
+test('mini-lecteur agrandi par le texte : la hauteur mesurée prime sur la cible', () => {
+  const p = calculerPile({ hauteurFenetre: 852, hauteurBarre: 83, miniActif: true, outil: 'aucun', miniMesure: 80 });
+  assert.equal(p.mini, 80);
+  assert.equal(p.total, 83 + 8 + 80);
+});
