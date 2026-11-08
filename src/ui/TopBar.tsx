@@ -1,13 +1,17 @@
-import { useRouter } from 'expo-router';
+import { usePathname, useRouter } from 'expo-router';
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { useBottomStack } from '@/features/ecouter/placeMiniLecteur';
+import { useLecteur } from '@/features/ecouter/lecteur';
+import { miseEnPage } from '@/theme/tokens.generated';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 
 import { IconButton } from './IconButton';
+import { montrerCasque } from './casqueBarreHaut';
 import type { IconName } from './types';
 
 export type TopBarAction = { icone: IconName; label: string; onPress?: () => void; actif?: boolean };
@@ -46,6 +50,10 @@ export function TopBar({
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { couleurs, espace, typographie, latin } = useTheme();
+  const chemin = usePathname();
+  const enEcoute = useLecteur((s) => s.position !== null);
+  const { miniRange } = useBottomStack();
+  const casque = montrerCasque({ enEcoute, miniRange, chemin });
   const avecRetour = retour !== undefined && retour !== false;
 
   return (
@@ -85,6 +93,9 @@ export function TopBar({
         {actions?.map((a) => (
           <IconButton key={a.label} icone={a.icone} label={a.label} actif={a.actif} onPress={a.onPress} />
         ))}
+        {casque ? (
+          <IconButton icone="headphones" label={t('ecouter.ouvrirLecteur')} onPress={() => router.push('/lecteur')} />
+        ) : null}
       </View>
       {grand && titre ? (
         <View style={{ paddingHorizontal: espace.espace3, paddingBottom: espace.espace3 }}>
@@ -107,6 +118,6 @@ export function TopBar({
 }
 
 const styles = StyleSheet.create({
-  rangee: { flexDirection: 'row', alignItems: 'center', minHeight: 56 },
+  rangee: { flexDirection: 'row', alignItems: 'center', minHeight: miseEnPage.barreHaut },
   titres: { flex: 1, justifyContent: 'center' },
 });
