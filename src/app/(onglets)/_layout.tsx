@@ -10,7 +10,9 @@ import {
   useMiniLecteurVisible,
 } from '@/features/ecouter/placeMiniLecteur';
 import { usePleinEcran } from '@/stores/pleinEcran';
+import { miseEnPage } from '@/theme/tokens.generated';
 import { useTheme } from '@/theme/useTheme';
+import { useWindowClass } from '@/theme/useWindowClass';
 
 /** Un onglet qui plante affiche l'écran d'erreur à sa place, sans fermer l'app. */
 export const ErrorBoundary = ErreurDeRoute;
@@ -28,13 +30,27 @@ export default function OngletsLayout() {
   // Plein écran : le contenu défile derrière la barre ; chaque écran garde sa marge basse (`useMargeBasse`).
   const contentStyle = { backgroundColor: couleurs.fond };
   const manuel = Platform.OS === 'ios';
+  const { largeur } = useWindowClass();
+  // iPad : barre en haut convertible en barre latérale dès que la largeur n'est plus compacte (design 18).
+  const barreLaterale = Platform.OS === 'ios' && largeur !== 'compacte';
+  const tailleLibelle = Platform.OS === 'ios' ? miseEnPage.libelleOngletIos : miseEnPage.libelleOngletAndroid;
 
   return (
     <View style={{ flex: 1 }}>
-      <NativeTabs tintColor={couleurs.emeraude} hidden={pleinEcran} labelStyle={{ fontSize: 10 }}>
+      <NativeTabs
+        tintColor={couleurs.emeraude}
+        hidden={pleinEcran}
+        minimizeBehavior="onScrollDown"
+        sidebarAdaptable={barreLaterale}
+        indicatorColor={couleurs.emeraudeDoux}
+        iconColor={{ default: couleurs.encre3, selected: couleurs.emeraude }}
+        labelStyle={{
+          default: { fontSize: tailleLibelle, fontWeight: '500', color: couleurs.encre3 },
+          selected: { fontSize: tailleLibelle, fontWeight: '600', color: couleurs.emeraude },
+        }}>
         <NativeTabs.Trigger name='accueil' contentStyle={contentStyle} disableAutomaticContentInsets={manuel}>
           <NativeTabs.Trigger.Icon
-            sf={{ default: 'house', selected: 'house.fill' }}
+            sf='house.fill'
             md='home'
           />
           <NativeTabs.Trigger.Label>
@@ -43,7 +59,7 @@ export default function OngletsLayout() {
         </NativeTabs.Trigger>
         <NativeTabs.Trigger name='lire' contentStyle={contentStyle} disableAutomaticContentInsets={manuel}>
           <NativeTabs.Trigger.Icon
-            sf={{ default: 'book', selected: 'book.fill' }}
+            sf='book.fill'
             md='menu_book'
           />
           <NativeTabs.Trigger.Label>
@@ -51,14 +67,14 @@ export default function OngletsLayout() {
           </NativeTabs.Trigger.Label>
         </NativeTabs.Trigger>
         <NativeTabs.Trigger name='priere' contentStyle={contentStyle} disableAutomaticContentInsets={manuel}>
-          <NativeTabs.Trigger.Icon sf='clock' md='schedule' />
+          <NativeTabs.Trigger.Icon sf='clock.fill' md='schedule' />
           <NativeTabs.Trigger.Label>
             {t('onglets.priere')}
           </NativeTabs.Trigger.Label>
         </NativeTabs.Trigger>
         <NativeTabs.Trigger name='budget' contentStyle={contentStyle} disableAutomaticContentInsets={manuel}>
           <NativeTabs.Trigger.Icon
-            sf={{ default: 'wallet.pass', selected: 'wallet.pass.fill' }}
+            sf='creditcard.fill'
             md='account_balance_wallet'
           />
           <NativeTabs.Trigger.Label>
@@ -66,7 +82,7 @@ export default function OngletsLayout() {
           </NativeTabs.Trigger.Label>
         </NativeTabs.Trigger>
         <NativeTabs.Trigger name='plus' contentStyle={contentStyle} disableAutomaticContentInsets={manuel}>
-          <NativeTabs.Trigger.Icon sf='square.grid.2x2' md='apps' />
+          <NativeTabs.Trigger.Icon sf='square.grid.2x2.fill' md='apps' />
           <NativeTabs.Trigger.Label>
             {t('onglets.plus')}
           </NativeTabs.Trigger.Label>
