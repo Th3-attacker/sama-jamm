@@ -41,7 +41,9 @@ import { useToast } from '@/ui/Toast';
 import { Button } from '@/ui/Button';
 import { SegmentedControl } from '@/ui/SegmentedControl';
 import { TopBar } from '@/ui/TopBar';
-import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
+import { useDessousOutil } from '@/features/ecouter/placeMiniLecteur';
+import { usePlaceBas } from '@/stores/placeBas';
+import { miseEnPage } from '@/theme/tokens.generated';
 
 /** Une sourate est « lue » après ce délai à l'écran (section Lecture et audio du design). */
 const SECONDES_POUR_UN_JOUR = 30;
@@ -100,7 +102,12 @@ function LectureSourate({
 }) {
   const { t } = useTranslation();
   const { couleurs, ombres, espace, rayon, cible, typographie } = useTheme();
-  const marge = useMargeBasse();
+  // La pilule d'outils est l'outil fixe du bas : la pile la compte, le contenu lui laisse sa place.
+  const dessous = useDessousOutil();
+  useEffect(() => {
+    usePlaceBas.setState({ outil: 'pilule' });
+    return () => usePlaceBas.setState({ outil: 'aucun', hauteurOutil: 0 });
+  }, []);
   const { tailleArabe, tailleTrad } = useTaillesLecture();
   const mode = useReglages((st) => st.affichage);
   const translitActive = useReglages((st) => st.translitLecture);
@@ -405,13 +412,14 @@ function LectureSourate({
       />
       {/* Outils de lecture : une pilule flottante (mode, écouter, favori, partage) sur le verset en haut de l'écran. */}
       <View
+        onLayout={(e) => usePlaceBas.setState({ hauteurOutil: Math.round(e.nativeEvent.layout.height) })}
         style={[
           styles.outils,
           {
             gap: espace.espace2,
             marginHorizontal: espace.espace4,
-            // La pilule flotte au-dessus de la barre d'onglets et du mini-lecteur.
-            marginBottom: espace.espace3 + marge,
+            // La pilule flotte à 16 au-dessus de la couche du dessous (barre d'onglets, mini-lecteur).
+            marginBottom: miseEnPage.margeContenuBas + dessous,
             paddingHorizontal: espace.espace3,
             paddingVertical: espace.espace2,
             borderColor: couleurs.ligne,

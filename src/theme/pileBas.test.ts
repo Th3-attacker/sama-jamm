@@ -66,3 +66,15 @@ test('mini-lecteur agrandi par le texte : la hauteur mesurée prime sur la cible
   assert.equal(p.mini, 80);
   assert.equal(p.total, 83 + 8 + 80);
 });
+
+test('pilule mesurée plus haute que 48 : la mesure prime, 16 au-dessus de la couche du dessous', () => {
+  const p = calculerPile({ hauteurFenetre: 852, hauteurBarre: 83, miniActif: false, outil: 'pilule', outilMesure: 64 });
+  assert.equal(p.outil, 64);
+  assert.equal(p.total, 83 + 16 + 64);
+  assert.equal(p.dessousOutil, 83);
+});
+
+test('sans outil, la mesure d\'un outil absent est ignorée', () => {
+  const p = calculerPile({ hauteurFenetre: 852, hauteurBarre: 83, miniActif: false, outil: 'aucun', outilMesure: 64 });
+  assert.equal(p.total, 83);
+});

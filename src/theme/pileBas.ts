@@ -13,6 +13,8 @@ export type EntreePile = {
   outil: OutilBas;
   /** Hauteur réelle du mini-lecteur (texte agrandi compris) : prime sur la cible du design si elle est plus grande. */
   miniMesure?: number;
+  /** Hauteur réelle du compteur ou de la pilule (marges comprises) : prime sur la cible si elle est plus grande. */
+  outilMesure?: number;
 };
 
 export type PileBas = {
@@ -29,8 +31,9 @@ export type PileBas = {
   margeContenu: number;
 };
 
-function empiler(barre: number, mini: number, outil: OutilBas) {
-  const hOutil = outil === 'compteur' ? miseEnPage.compteurFixe : outil === 'pilule' ? miseEnPage.piluleOutils : 0;
+function empiler(barre: number, mini: number, outil: OutilBas, outilMesure = 0) {
+  const cibleOutil = outil === 'compteur' ? miseEnPage.compteurFixe : outil === 'pilule' ? miseEnPage.piluleOutils : 0;
+  const hOutil = cibleOutil > 0 ? Math.max(cibleOutil, outilMesure) : 0;
   // Écart de 8 entre couches ; la pilule se pose à 16 au-dessus de la couche du dessous.
   const ecartOutil = outil === 'pilule' ? miseEnPage.margeContenuBas : miseEnPage.ecartCouches;
   let total = barre;
@@ -43,12 +46,12 @@ function empiler(barre: number, mini: number, outil: OutilBas) {
 export function calculerPile(e: EntreePile): PileBas {
   const miniPlein = e.outil === 'compteur' ? miseEnPage.miniLecteurMince : miseEnPage.miniLecteur;
   let mini = e.miniActif ? Math.max(miniPlein, e.miniMesure ?? 0) : 0;
-  let { outil, total } = empiler(e.hauteurBarre, mini, e.outil);
+  let { outil, total } = empiler(e.hauteurBarre, mini, e.outil, e.outilMesure);
   let miniRange = false;
   if (mini > 0 && total > miseEnPage.plafondPile * e.hauteurFenetre) {
     miniRange = true;
     mini = 0;
-    ({ outil, total } = empiler(e.hauteurBarre, 0, e.outil));
+    ({ outil, total } = empiler(e.hauteurBarre, 0, e.outil, e.outilMesure));
   }
   return {
     barre: e.hauteurBarre,

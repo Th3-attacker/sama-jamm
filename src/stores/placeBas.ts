@@ -5,8 +5,9 @@ import { create } from 'zustand';
 
 import type { OutilBas } from '@/theme/pileBas';
 
-export const usePlaceBas = create<{ hauteurBarre: number; hauteurMini: number; outil: OutilBas }>()(() => ({
+export const usePlaceBas = create<{ hauteurBarre: number; hauteurMini: number; hauteurOutil: number; outil: OutilBas }>()(() => ({
   hauteurBarre: 0,
   hauteurMini: 0,
+  hauteurOutil: 0,
   outil: 'aucun',
 }));

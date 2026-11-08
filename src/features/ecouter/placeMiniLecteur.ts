@@ -36,7 +36,8 @@ export function useBottomStack(): PileBas {
   const miniActif = useEcouteActive();
   const miniMesure = usePlaceBas((s) => s.hauteurMini);
   const outil = usePlaceBas((s) => s.outil);
-  return calculerPile({ hauteurFenetre: height, hauteurBarre: barre, miniActif, outil, miniMesure });
+  const outilMesure = usePlaceBas((s) => s.hauteurOutil);
+  return calculerPile({ hauteurFenetre: height, hauteurBarre: barre, miniActif, outil, miniMesure, outilMesure });
 }
 
 /**
