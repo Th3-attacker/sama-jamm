@@ -182,7 +182,22 @@
     "fil": "Fil de régularité",
     "filResume_one": "{{count}} jour de lecture en {{mois}}",
     "filResume_other": "{{count}} jours de lecture en {{mois}}",
-    "khatmEnCours": "Khatm en cours · votre juz : {{juz}}"
+    "khatmEnCours": "Khatm en cours · votre juz : {{juz}}",
+    "reprendreLibelle": "Reprendre",
+    "budgetTitre": "Budget du mois",
+    "budgetPrive": "Sur ce téléphone",
+    "budgetVerrouille": "Ouvrir le budget",
+    "budgetCreer": "Créer votre budget",
+    "budgetJours_one": "Il reste {{count}} jour de cycle",
+    "budgetJours_other": "Il reste {{count}} jours de cycle",
+    "khatmTitre": "Khatm",
+    "khatmAucun": "Rejoindre ou créer un khatm",
+    "khatmConnexion": "Se connecter pour rejoindre un khatm",
+    "khatmAvancee": "{{lus}} sur 30",
+    "khatmAvanceeJuz": "{{lus}} sur 30 · votre juz : {{juz}}",
+    "dhikrTitre": "Dhikr",
+    "dhikrSur": "sur {{objectif}}",
+    "ecoute": "Continuer l’écoute"
   },
   "lire": {
     "titre": "Lire",
