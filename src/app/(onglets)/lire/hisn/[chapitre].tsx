@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { BarreCompteur } from '@/features/invocations/BarreCompteur';
+import { CarteHisn } from '@/features/invocations/CarteHisn';
 import { chapitreHisn, debutDe, titreDe, type ItemHisn } from '@/features/invocations/hisn';
-import { useTaillesLecture } from '@/features/lire/BarreTaille';
 import { useParametre } from '@/hooks/useParametre';
 import { cleJour } from '@/lib/dates';
 import { vibrerLeger } from '@/lib/haptique';
@@ -12,7 +12,6 @@ import { useLecture } from '@/stores/lecture';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { Banner } from '@/ui/Banner';
-import { Icon } from '@/ui/Icon';
 import { ProgressBar } from '@/ui/ProgressBar';
 import { TopBar } from '@/ui/TopBar';
 
@@ -23,7 +22,6 @@ const SECONDES_POUR_UN_JOUR = 30;
 export default function EcranChapitreHisn() {
   const { t, i18n } = useTranslation();
   const { couleurs, espace, typographie } = useTheme();
-  const { tailleArabe } = useTaillesLecture();
   const brut = useParametre('chapitre');
   const chapitre = chapitreHisn(Number(brut));
   const marquerJour = useLecture((s) => s.marquerJour);
@@ -90,31 +88,13 @@ export default function EcranChapitreHisn() {
           />
         ) : null}
         {items.map((it) => (
-          <Pressable
+          <CarteHisn
             key={it.id}
-            accessibilityRole="button"
-            onPress={() => setChoisi(it.id)}
-            style={{
-              backgroundColor: couleurs.surface,
-              borderColor: it.id === actif?.id ? couleurs.emeraude : couleurs.ligne,
-              borderWidth: it.id === actif?.id ? 2 : 1,
-              borderRadius: 12,
-              padding: espace.espace4,
-              gap: espace.espace3,
-            }}>
-            <View style={styles.sourceLigne}>
-              <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre3, flex: 1 }]}>
-                {t('invocations.sourceHisn', { fois: t('invocations.fois', { count: it.repetitions }) })}
-              </Text>
-              {fait(it) ? <Icon name="check-circle" size={20} color={couleurs.emeraude} /> : null}
-            </View>
-            <Text
-              accessibilityLanguage="ar"
-              maxFontSizeMultiplier={echelleMax.grand}
-              style={[typographie.arabe, tailleArabe, styles.arabe, { color: couleurs.encre }]}>
-              {it.texte}
-            </Text>
-          </Pressable>
+            item={it}
+            actif={it.id === actif?.id}
+            termine={fait(it)}
+            onChoisir={() => setChoisi(it.id)}
+          />
         ))}
         <Banner ton="info">{t('invocations.noteHisn')}</Banner>
       </ScrollView>
@@ -133,6 +113,4 @@ export default function EcranChapitreHisn() {
 
 const styles = StyleSheet.create({
   ecran: { flex: 1 },
-  sourceLigne: { flexDirection: 'row', alignItems: 'center' },
-  arabe: { textAlign: 'right', writingDirection: 'rtl' },
 });
