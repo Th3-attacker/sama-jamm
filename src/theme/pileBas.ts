@@ -15,6 +15,8 @@ export type EntreePile = {
   miniMesure?: number;
   /** Hauteur réelle du compteur ou de la pilule (marges comprises) : prime sur la cible si elle est plus grande. */
   outilMesure?: number;
+  /** iOS 26 : le mini-lecteur est un accessoire natif collé à la barre, sans écart entre les deux. */
+  accessoireNatif?: boolean;
 };
 
 export type PileBas = {
@@ -31,13 +33,13 @@ export type PileBas = {
   margeContenu: number;
 };
 
-function empiler(barre: number, mini: number, outil: OutilBas, outilMesure = 0) {
+function empiler(barre: number, mini: number, outil: OutilBas, outilMesure = 0, ecartMini: number = miseEnPage.ecartCouches) {
   const cibleOutil = outil === 'compteur' ? miseEnPage.compteurFixe : outil === 'pilule' ? miseEnPage.piluleOutils : 0;
   const hOutil = cibleOutil > 0 ? Math.max(cibleOutil, outilMesure) : 0;
   // Écart de 8 entre couches ; la pilule se pose à 16 au-dessus de la couche du dessous.
   const ecartOutil = outil === 'pilule' ? miseEnPage.margeContenuBas : miseEnPage.ecartCouches;
   let total = barre;
-  if (mini > 0) total += miseEnPage.ecartCouches + mini;
+  if (mini > 0) total += ecartMini + mini;
   if (hOutil > 0) total += ecartOutil + hOutil;
   return { outil: hOutil, total };
 }
@@ -45,13 +47,14 @@ function empiler(barre: number, mini: number, outil: OutilBas, outilMesure = 0) 
 /** Calcule la pile du bas (design 18 « Le bas de l'écran »). Fonction pure, testée sans React Native. */
 export function calculerPile(e: EntreePile): PileBas {
   const miniPlein = e.outil === 'compteur' ? miseEnPage.miniLecteurMince : miseEnPage.miniLecteur;
+  const ecartMini = e.accessoireNatif ? 0 : miseEnPage.ecartCouches;
   let mini = e.miniActif ? Math.max(miniPlein, e.miniMesure ?? 0) : 0;
-  let { outil, total } = empiler(e.hauteurBarre, mini, e.outil, e.outilMesure);
+  let { outil, total } = empiler(e.hauteurBarre, mini, e.outil, e.outilMesure, ecartMini);
   let miniRange = false;
   if (mini > 0 && total > miseEnPage.plafondPile * e.hauteurFenetre) {
     miniRange = true;
     mini = 0;
-    ({ outil, total } = empiler(e.hauteurBarre, 0, e.outil, e.outilMesure));
+    ({ outil, total } = empiler(e.hauteurBarre, 0, e.outil, e.outilMesure, ecartMini));
   }
   return {
     barre: e.hauteurBarre,

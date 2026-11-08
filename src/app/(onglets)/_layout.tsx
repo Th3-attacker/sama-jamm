@@ -42,7 +42,8 @@ export default function OngletsLayout() {
       <NativeTabs
         tintColor={couleurs.emeraude}
         hidden={pleinEcran}
-        minimizeBehavior="onScrollDown"
+        // Jamais réduite : la marge basse des écrans suit toujours la hauteur réelle de la barre (écart au design 18).
+        minimizeBehavior="never"
         sidebarAdaptable={barreLaterale}
         indicatorColor={couleurs.emeraudeDoux}
         iconColor={{ default: couleurs.encre3, selected: couleurs.emeraude }}

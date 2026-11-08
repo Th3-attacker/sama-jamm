@@ -78,3 +78,11 @@ test('sans outil, la mesure d\'un outil absent est ignorée', () => {
   const p = calculerPile({ hauteurFenetre: 852, hauteurBarre: 83, miniActif: false, outil: 'aucun', outilMesure: 64 });
   assert.equal(p.total, 83);
 });
+
+test('accessoire natif iOS 26 : pas d\'écart entre la barre et le mini-lecteur', () => {
+  const p = calculerPile({ hauteurFenetre: 852, hauteurBarre: 83, miniActif: true, outil: 'aucun', accessoireNatif: true });
+  assert.equal(p.total, 83 + 56);
+  const avecCompteur = calculerPile({ hauteurFenetre: 852, hauteurBarre: 83, miniActif: true, outil: 'compteur', accessoireNatif: true });
+  assert.equal(avecCompteur.total, 83 + 40 + 8 + 72);
+  assert.equal(avecCompteur.dessousOutil, 83 + 40);
+});
