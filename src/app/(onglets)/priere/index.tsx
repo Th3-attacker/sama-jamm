@@ -11,6 +11,7 @@ import { useMaintenant } from '@/hooks/useMaintenant';
 import { formatDuree, formatHeure, formatJour, minutesDuJour } from '@/lib/dates';
 import { prieres, useReglages } from '@/stores/reglages';
 import { echelleMax } from '@/theme/typographie';
+import { useLayout } from '@/theme/useLayout';
 import { useTheme } from '@/theme/useTheme';
 import { Banner } from '@/ui/Banner';
 import { DayArc } from '@/ui/DayArc';
@@ -29,6 +30,7 @@ export default function Priere() {
   const { t, i18n } = useTranslation();
   const { couleurs, espace, typographie } = useTheme();
   const marge = useMargeBasse();
+  const { styleColonne: colonne } = useLayout();
   const maintenant = useMaintenant();
   const options = useOptionsCalcul();
   const lieu = useReglages((s) => s.lieu);
@@ -61,7 +63,7 @@ export default function Priere() {
         sousTitre={t('priere.sousTitre')}
         actions={[{ icone: 'bell', label: t('priere.rappelsTitre'), onPress: () => router.push('/priere/rappels') }]}
       />
-      <ScrollView ref={defilement} contentContainerStyle={{ paddingHorizontal: espace.espace5, paddingBottom: espace.espace8 + marge, gap: espace.espace4 }}>
+      <ScrollView ref={defilement} contentContainerStyle={{ ...colonne, paddingBottom: espace.espace8 + marge, gap: espace.espace4 }}>
         <BandeauVeille />
 
         {!lieu || !donnees ? (

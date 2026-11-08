@@ -13,6 +13,7 @@ import { cleJour, formatDuree, formatHegirien, formatHeure, formatJour, formatMo
 import { useLecture } from '@/stores/lecture';
 import { prieres, useReglages } from '@/stores/reglages';
 import { echelleMax } from '@/theme/typographie';
+import { useLayout } from '@/theme/useLayout';
 import { useTheme } from '@/theme/useTheme';
 import { Banner } from '@/ui/Banner';
 import { BeadThread, type JourFil } from '@/ui/BeadThread';
@@ -39,6 +40,7 @@ export default function Accueil() {
   const { t, i18n } = useTranslation();
   const { couleurs, espace, rayon, typographie, latin } = useTheme();
   const marge = useMargeBasse();
+  const { styleColonne: colonne } = useLayout();
   const maintenant = useMaintenant();
   const lieu = useReglages((s) => s.lieu);
   const options = useOptionsCalcul();
@@ -82,7 +84,7 @@ export default function Accueil() {
       />
       <ScrollView ref={defilement}
         contentContainerStyle={{
-          paddingHorizontal: espace.espace6,
+          ...colonne,
           paddingBottom: espace.espace8 + marge,
           gap: espace.espace5,
         }}>

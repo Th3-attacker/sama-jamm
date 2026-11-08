@@ -5,6 +5,7 @@ import { Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-n
 
 import { useSession } from '@/features/compte/compte';
 import { echelleMax } from '@/theme/typographie';
+import { useLayout } from '@/theme/useLayout';
 import { useTheme } from '@/theme/useTheme';
 import { Icon } from '@/ui/Icon';
 import { ListGroup } from '@/ui/ListGroup';
@@ -32,6 +33,7 @@ export default function Plus() {
   const { t } = useTranslation();
   const { couleurs, espace, rayon, typographie } = useTheme();
   const marge = useMargeBasse();
+  const { styleColonne: colonne } = useLayout();
   const connecte = useSession((s) => s.session !== null);
 
   return (
@@ -44,7 +46,7 @@ export default function Plus() {
       />
       <ScrollView
         ref={defilement}
-        contentContainerStyle={{ paddingHorizontal: espace.espace5, paddingBottom: espace.espace8 + marge, gap: espace.espace5 }}>
+        contentContainerStyle={{ ...colonne, paddingBottom: espace.espace8 + marge, gap: espace.espace5 }}>
         <View style={[styles.grille, { gap: espace.espace3 }]}>
           {TUILES.map((tuile) => (
             <Pressable

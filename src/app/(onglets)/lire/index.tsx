@@ -12,6 +12,7 @@ import { InterrupteurLireEcouter, type ModeLire } from '@/features/lire/Interrup
 import { useParametre } from '@/hooks/useParametre';
 import { useLecture } from '@/stores/lecture';
 import { echelleMax } from '@/theme/typographie';
+import { useLayout } from '@/theme/useLayout';
 import { useTheme } from '@/theme/useTheme';
 import { EmptyState } from '@/ui/EmptyState';
 import { SegmentedControl } from '@/ui/SegmentedControl';
@@ -36,6 +37,7 @@ export default function Lire() {
   const { t } = useTranslation();
   const { couleurs, espace, rayon, typographie } = useTheme();
   const marge = useMargeBasse();
+  const { styleColonne: colonne } = useLayout();
   const rubrique = useParametre('rubrique');
   const [mode, setMode] = useState<ModeLire>('lire');
   const [onglet, setOnglet] = useState<'coran' | 'xassaides' | 'invocations'>(
@@ -139,7 +141,7 @@ export default function Lire() {
           />
           )
         }
-        contentContainerStyle={{ paddingHorizontal: espace.espace5, paddingBottom: espace.espace8 + marge }}
+        contentContainerStyle={{ ...colonne, paddingBottom: espace.espace8 + marge }}
         initialNumToRender={10}
         maxToRenderPerBatch={10}
         windowSize={7}

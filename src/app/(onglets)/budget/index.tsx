@@ -13,6 +13,7 @@ import { budgetModifie, useBudget } from '@/features/budget/useBudget';
 import { cleJour, formatJourCle } from '@/lib/dates';
 import { lireMontantFacultatif } from '@/lib/montant';
 import { echelleMax } from '@/theme/typographie';
+import { useLayout } from '@/theme/useLayout';
 import { useTheme } from '@/theme/useTheme';
 import { AmountDisplay } from '@/ui/AmountDisplay';
 import { Banner } from '@/ui/Banner';
@@ -41,6 +42,7 @@ export default function Budget() {
   };
   const { couleurs, espace, rayon, typographie } = useTheme();
   const marge = useMargeBasse();
+  const { styleColonne: colonne } = useLayout();
   const etat = useBudget(async (depot, carnet) => ({
     mois: await depot.mois(carnet),
     archivees: await depot.enveloppesArchivees(carnet),
@@ -108,7 +110,7 @@ export default function Budget() {
       <TopBar grand titre={t('budget.titre')} sousTitre={sousTitre} actions={[oeil]} />
       <ScrollView ref={defilement}
         contentContainerStyle={{
-          paddingHorizontal: espace.espace5,
+          ...colonne,
           paddingBottom: espace.espace8 + marge,
           gap: espace.espace5,
         }}>
