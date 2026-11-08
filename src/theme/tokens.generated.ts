@@ -14,6 +14,8 @@ export const themes = {
       "surEmeraude": "#f7f7f5",
       "emeraudeDoux": "#e4efeb",
       "surEmeraudeDoux": "#1f5f4a",
+      "orSurEmeraude": "#e3cc97",
+      "surEmeraude2": "#cfe8de",
       "or": "#b89a5e",
       "orTexte": "#7a5f2e",
       "orDoux": "#f1ece1",
@@ -52,6 +54,8 @@ export const themes = {
       "surEmeraude": "#12161b",
       "emeraudeDoux": "#1f3a32",
       "surEmeraudeDoux": "#cfe8de",
+      "orSurEmeraude": "#3f3010",
+      "surEmeraude2": "#1f3a32",
       "or": "#b89a5e",
       "orTexte": "#c9a96a",
       "orDoux": "#25211a",
@@ -90,6 +94,8 @@ export const themes = {
       "surEmeraude": "#0e1115",
       "emeraudeDoux": "#1a312a",
       "surEmeraudeDoux": "#b5d2c6",
+      "orSurEmeraude": "#3f3010",
+      "surEmeraude2": "#16261f",
       "or": "#a28955",
       "orTexte": "#bfa670",
       "orDoux": "#1f1c16",
@@ -136,6 +142,35 @@ export const cible = {
   "cibleIos": 44,
   "cibleAndroid": 48
 } as const;
+export const miseEnPage = {
+  "largeurMoyenne": 600,
+  "largeurEtendue": 840,
+  "colonneLecture": 760,
+  "panneauListe": 360,
+  "panneauFiche": 540,
+  "margeCompacte": 24,
+  "margeMoyenne": 32,
+  "margeEtendue": 48,
+  "barreHaut": 56,
+  "ligneListe": 56,
+  "miniLecteur": 56,
+  "miniLecteurMince": 40,
+  "compteurFixe": 72,
+  "piluleOutils": 48,
+  "ecartCouches": 8,
+  "margeContenuBas": 16,
+  "plafondPile": 0.35,
+  "iconeOnglet": 24,
+  "libelleOngletIos": 10,
+  "libelleOngletAndroid": 12,
+  "largeurGrande": 1200,
+  "largeurTresGrande": 1600,
+  "hauteurCompacte": 480,
+  "hauteurEtendue": 900
+} as const;
+export const tailleTexte = [12,14,16,18,24,30,40,44,56] as const;
+export const tailleArabe = [22,28,34] as const;
+export const echelleEspace = [0,4,8,12,16,20,24,32,40,48,56,64,80,96,128] as const;
 export type NomTheme = keyof typeof themes;
 export type Couleurs = (typeof themes)[NomTheme]['couleurs'];
 export type Ombres = (typeof themes)[NomTheme]['ombres'];
