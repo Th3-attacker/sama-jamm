@@ -23,6 +23,7 @@ import { ListGroup } from '@/ui/ListGroup';
 import { ListItem } from '@/ui/ListItem';
 import { TextField } from '@/ui/TextField';
 import { TopBar } from '@/ui/TopBar';
+import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
 export default function Budget() {
   // Toucher l'onglet actif ramène la liste en haut.
@@ -39,6 +40,7 @@ export default function Budget() {
     onPress: basculerMontants,
   };
   const { couleurs, espace, rayon, typographie } = useTheme();
+  const marge = useMargeBasse();
   const etat = useBudget(async (depot, carnet) => ({
     mois: await depot.mois(carnet),
     archivees: await depot.enveloppesArchivees(carnet),
@@ -107,7 +109,7 @@ export default function Budget() {
       <ScrollView ref={defilement}
         contentContainerStyle={{
           paddingHorizontal: espace.espace5,
-          paddingBottom: espace.espace8,
+          paddingBottom: espace.espace8 + marge,
           gap: espace.espace5,
         }}>
         {/* Cycle précédent terminé mais pas clos : une invitation douce, jamais un blocage. */}

@@ -17,6 +17,7 @@ import { RadioGroup } from '@/ui/RadioGroup';
 import { TasbihCounter } from '@/ui/TasbihCounter';
 import { useToast } from '@/ui/Toast';
 import { TopBar } from '@/ui/TopBar';
+import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
 // Au-delà, remettre à zéro demande une confirmation.
 const SEUIL_CONFIRMATION = 100;
@@ -26,6 +27,7 @@ export default function Dhikr() {
   useKeepAwake();
   const { t } = useTranslation();
   const { couleurs, espace, typographie, latin } = useTheme();
+  const marge = useMargeBasse();
   const { afficher } = useToast();
   const formuleId = useDhikr((s) => s.formule);
   const comptes = useDhikr((s) => s.comptes);
@@ -61,7 +63,7 @@ export default function Dhikr() {
   return (
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
       <TopBar retour titre={t('dhikr.titre')} />
-      <ScrollView contentContainerStyle={{ paddingBottom: espace.espace8, gap: espace.espace4, alignItems: 'center' }}>
+      <ScrollView contentContainerStyle={{ paddingBottom: espace.espace8 + marge, gap: espace.espace4, alignItems: 'center' }}>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: espace.espace5, gap: espace.espace2 }}>
           {formules.map((f) => (
             <Chip key={f.id} selectionne={f.id === formuleId} onPress={() => choisirFormule(f.id)}>

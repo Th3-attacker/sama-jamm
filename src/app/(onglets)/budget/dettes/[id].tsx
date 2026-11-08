@@ -22,12 +22,14 @@ import { ListItem } from '@/ui/ListItem';
 import { ProgressBar } from '@/ui/ProgressBar';
 import { useToast } from '@/ui/Toast';
 import { TopBar } from '@/ui/TopBar';
+import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
 /** Détail d'une dette : reste, remboursements, rappel, correction et annulation. */
 export default function EcranDette() {
   const { t, i18n } = useTranslation();
   const formatMontant = useFormatMontant();
   const { couleurs, espace, typographie } = useTheme();
+  const marge = useMargeBasse();
   const { afficher } = useToast();
   const id = useParametre('id');
   const etat = useBudget((depot, carnet) => depot.dette(carnet, id), id);
@@ -83,7 +85,7 @@ export default function EcranDette() {
       <ScrollView
         contentContainerStyle={{
           paddingHorizontal: espace.espace5,
-          paddingBottom: espace.espace8,
+          paddingBottom: espace.espace8 + marge,
           gap: espace.espace4,
         }}>
         <AmountDisplay

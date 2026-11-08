@@ -19,12 +19,14 @@ import { Dialog } from '@/ui/Dialog';
 import { TextField } from '@/ui/TextField';
 import { useToast } from '@/ui/Toast';
 import { TopBar } from '@/ui/TopBar';
+import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
 /** Corriger ou supprimer une opération (dépense ou revenu). Le jour et le cycle ne changent pas. */
 export default function EcranOperation() {
   const { t, i18n } = useTranslation();
   const formatMontant = useFormatMontant();
   const { couleurs, espace, typographie } = useTheme();
+  const marge = useMargeBasse();
   const { afficher } = useToast();
   const id = useParametre('id');
   const etat = useBudget(
@@ -122,7 +124,7 @@ export default function EcranOperation() {
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={{
             paddingHorizontal: espace.espace5,
-            paddingBottom: espace.espace8,
+            paddingBottom: espace.espace8 + marge,
             gap: espace.espace5,
           }}>
           <TextField

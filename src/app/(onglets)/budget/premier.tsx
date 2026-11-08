@@ -19,6 +19,7 @@ import { ListItem } from '@/ui/ListItem';
 import { Switch } from '@/ui/Switch';
 import { TextField } from '@/ui/TextField';
 import { TopBar } from '@/ui/TopBar';
+import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
 type Poste = { garde: boolean; plafond: string };
 
@@ -26,6 +27,7 @@ type Poste = { garde: boolean; plafond: string };
 export default function PremierBudget() {
   const { t } = useTranslation();
   const { couleurs, espace, typographie } = useTheme();
+  const marge = useMargeBasse();
   const [codeDevise, setCodeDevise] = useState('XOF');
   const [jourPaie, setJourPaie] = useState('');
   const [revenu, setRevenu] = useState('');
@@ -103,7 +105,7 @@ export default function PremierBudget() {
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={{
             paddingHorizontal: espace.espace5,
-            paddingBottom: espace.espace8,
+            paddingBottom: espace.espace8 + marge,
             gap: espace.espace5,
           }}>
           <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, { color: couleurs.encre2 }]}>

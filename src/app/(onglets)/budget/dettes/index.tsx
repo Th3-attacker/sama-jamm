@@ -17,6 +17,7 @@ import { ListGroup } from '@/ui/ListGroup';
 import { ListItem } from '@/ui/ListItem';
 import { SegmentedControl } from '@/ui/SegmentedControl';
 import { TopBar } from '@/ui/TopBar';
+import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
 type Filtre = 'tous' | SensDette;
 
@@ -25,6 +26,7 @@ export default function Dettes() {
   const { t } = useTranslation();
   const formatMontant = useFormatMontant();
   const { couleurs, espace, rayon, typographie } = useTheme();
+  const marge = useMargeBasse();
   const etat = useBudget(async (depot, carnet) => ({
     ouvertes: await depot.dettes(carnet, 'ouvertes'),
     closes: (await depot.dettes(carnet, 'closes')).length,
@@ -81,7 +83,7 @@ export default function Dettes() {
       <ScrollView
         contentContainerStyle={{
           paddingHorizontal: espace.espace5,
-          paddingBottom: espace.espace8,
+          paddingBottom: espace.espace8 + marge,
           gap: espace.espace4,
         }}>
         <View style={[styles.ligne, { gap: espace.espace3 }]}>

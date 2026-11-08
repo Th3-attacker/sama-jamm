@@ -69,6 +69,8 @@ export default function RootLayout() {
             name="budget-ajout"
             options={{ presentation: 'transparentModal', animation: 'none', contentStyle: { backgroundColor: 'transparent' } }}
           />
+          {/* Lecteur audio : modale plein écran ouverte depuis le mini-lecteur ou une lecture. */}
+          <Stack.Screen name="lecteur" options={{ presentation: 'modal' }} />
         </Stack>
       </ToastProvider>
       {demarrage ? <DemarrageAnime onFin={finDemarrage} /> : null}

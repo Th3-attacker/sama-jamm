@@ -18,6 +18,7 @@ import { ListItem } from '@/ui/ListItem';
 import { TextField } from '@/ui/TextField';
 import { useToast } from '@/ui/Toast';
 import { TopBar } from '@/ui/TopBar';
+import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
 type Feuille = { mode: 'ajout' } | { mode: 'taux'; cible: Devise } | null;
 
@@ -25,6 +26,7 @@ type Feuille = { mode: 'ajout' } | { mode: 'taux'; cible: Devise } | null;
 export default function EcranDevise() {
   const { t } = useTranslation();
   const { couleurs, espace, typographie } = useTheme();
+  const marge = useMargeBasse();
   const { afficher } = useToast();
   const libelle = useLibelleDevise();
   const etat = useBudget((depot) => depot.devises());
@@ -70,7 +72,7 @@ export default function EcranDevise() {
       <ScrollView
         contentContainerStyle={{
           paddingHorizontal: espace.espace5,
-          paddingBottom: espace.espace8,
+          paddingBottom: espace.espace8 + marge,
           gap: espace.espace5,
         }}>
         <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, { color: couleurs.encre2 }]}>

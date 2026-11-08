@@ -149,7 +149,7 @@ function Moments({ initiale }: { initiale: CategorieId }) {
               onChoisir={() => setChoisi(inv.id)}
               onEcouter={() => {
                 ecouter({ sourate: inv.sourate, verset: inv.de });
-                router.push('/ecouter/lecteur');
+                router.push('/lecteur');
               }}
               onFavori={() => {
                 if (basculerFavori(inv.sourate, inv.de)) afficher({ texte: t('lire.favoriAjoute'), icone: 'check' });

@@ -60,7 +60,8 @@
     "lire": "Lire",
     "ecouter": "Écouter",
     "priere": "Prière",
-    "budget": "Budget"
+    "budget": "Budget",
+    "plus": "Plus"
   },
   "menuPlus": {
     "titre": "Plus",
@@ -70,7 +71,22 @@
     "reglages": "Réglages",
     "compte": "Compte et synchronisation",
     "soutenir": "Soutenir Sama Jàmm",
-    "khatm": "Khatm collectif"
+    "khatm": "Khatm collectif",
+    "sousTitre": "Tout Sama Jàmm, au même endroit.",
+    "aPropos": "À propos",
+    "tuiles": {
+      "khatm": "Un juz chacun",
+      "dhikr": "Compteur et objectifs",
+      "qibla": "Direction de la Kaaba",
+      "xassaides": "Textes et chants",
+      "invocations": "Matin, soir, voyage",
+      "zakat": "Estimation à 2,5 %"
+    },
+    "dhikr": "Dhikr",
+    "qibla": "Qibla",
+    "xassaides": "Xassaïdes",
+    "invocations": "Invocations",
+    "zakat": "Zakat"
   },
   "bienvenue": {
     "etape": "Étape {{n}} sur {{total}}",
@@ -170,6 +186,7 @@
   },
   "lire": {
     "titre": "Lire",
+    "lireOuEcouter": "Lire ou écouter",
     "sousTitre": "Coran, xassaïdes, invocations",
     "coran": "Coran",
     "xassaides": "Xassaïdes",

@@ -7,13 +7,16 @@ import { ListeCategories } from '@/features/invocations/ListeCategories';
 import { CarteSourate } from '@/features/lire/CarteSourate';
 import { sourate, sourates, type Sourate } from '@/features/lire/coran';
 import { pourcentageKhatm, progressionKhatm } from '@/features/lire/progression';
-import { useMenuPlus } from '@/features/plus/MenuPlus';
+import { ContenuEcouter } from '@/features/ecouter/ContenuEcouter';
+import { InterrupteurLireEcouter, type ModeLire } from '@/features/lire/InterrupteurLireEcouter';
+import { useParametre } from '@/hooks/useParametre';
 import { useLecture } from '@/stores/lecture';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { EmptyState } from '@/ui/EmptyState';
 import { SegmentedControl } from '@/ui/SegmentedControl';
 import { TopBar } from '@/ui/TopBar';
+import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
 function Separateur() {
   const { espace } = useTheme();
@@ -32,8 +35,12 @@ export default function Lire() {
   useScrollToTop(defilement);
   const { t } = useTranslation();
   const { couleurs, espace, rayon, typographie } = useTheme();
-  const menu = useMenuPlus();
-  const [onglet, setOnglet] = useState<'coran' | 'xassaides' | 'invocations'>('coran');
+  const marge = useMargeBasse();
+  const rubrique = useParametre('rubrique');
+  const [mode, setMode] = useState<ModeLire>('lire');
+  const [onglet, setOnglet] = useState<'coran' | 'xassaides' | 'invocations'>(
+    rubrique === 'xassaides' || rubrique === 'invocations' ? rubrique : 'coran',
+  );
   // Khatm : progression d'après le dernier verset lu, déjà enregistré par la lecture.
   const position = useLecture((s) => s.position);
   const repris = position ? sourate(position.sourate) : undefined;
@@ -45,20 +52,19 @@ export default function Lire() {
         grand
         titre={t('lire.titre')}
         sousTitre={t('lire.sousTitre')}
-        actions={[
-          { icone: 'search', label: t('menuPlus.rechercher'), onPress: () => router.push('/plus/recherche') },
-          menu.action,
-        ]}
+        actions={[{ icone: 'search', label: t('menuPlus.rechercher'), onPress: () => router.push('/plus/recherche') }]}
       />
 
       {/* Un seul défilement jusqu'à la barre des onglets : onglets, khatm, puis les 114 sourates. */}
       <FlatList ref={defilement}
-        data={onglet === 'coran' ? sourates : []}
+        data={mode === 'lire' && onglet === 'coran' ? sourates : []}
         keyExtractor={(s: Sourate) => String(s.n)}
         renderItem={({ item }) => <CarteSourate sourate={item} onPress={() => ouvrirSourate(item.n)} />}
         ItemSeparatorComponent={Separateur}
         ListHeaderComponent={
           <View style={{ gap: espace.espace4, paddingBottom: espace.espace4 }}>
+            <InterrupteurLireEcouter mode={mode} onChange={setMode} />
+            {mode === 'lire' ? (
             <SegmentedControl
               label={t('lire.bibliotheque')}
               options={[
@@ -69,7 +75,8 @@ export default function Lire() {
               valeur={onglet}
               onChange={(id) => setOnglet(id === 'xassaides' || id === 'invocations' ? id : 'coran')}
             />
-            {onglet === 'coran' && position && repris ? (
+            ) : null}
+            {mode === 'lire' && onglet === 'coran' && position && repris ? (
               <Pressable
                 accessibilityRole="button"
                 accessibilityLabel={`${t('lire.votreKhatm')}, ${t('lire.khatmRepris', { sourate: repris.nom, verset: position.verset })}, ${pourcentage} %`}
@@ -119,7 +126,9 @@ export default function Lire() {
           </View>
         }
         ListEmptyComponent={
-          onglet === 'invocations' ? (
+          mode === 'ecouter' ? (
+            <ContenuEcouter />
+          ) : onglet === 'invocations' ? (
             <ListeCategories />
           ) : (
           <EmptyState
@@ -130,13 +139,12 @@ export default function Lire() {
           />
           )
         }
-        contentContainerStyle={{ paddingHorizontal: espace.espace5, paddingBottom: espace.espace8 }}
+        contentContainerStyle={{ paddingHorizontal: espace.espace5, paddingBottom: espace.espace8 + marge }}
         initialNumToRender={10}
         maxToRenderPerBatch={10}
         windowSize={7}
         removeClippedSubviews
       />
-      {menu.feuille}
     </View>
   );
 }

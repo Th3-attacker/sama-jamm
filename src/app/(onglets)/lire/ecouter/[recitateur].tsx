@@ -21,11 +21,13 @@ import { Button } from '@/ui/Button';
 import { IconButton } from '@/ui/IconButton';
 import { SearchField } from '@/ui/SearchField';
 import { TopBar } from '@/ui/TopBar';
+import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
 /** Les 114 sourates d'un récitateur : toucher une sourate lance son écoute depuis le premier verset. */
 export default function EcranRecitateur() {
   const { t } = useTranslation();
   const { couleurs, espace, typographie } = useTheme();
+  const marge = useMargeBasse();
   const [echec, setEchec] = useState(false);
   const r = recitateur(useParametre('recitateur'));
   const enCours = useTelechargements((s) => s.enCours);
@@ -101,7 +103,7 @@ export default function EcranRecitateur() {
           keyExtractor={(s) => String(s.n)}
           contentContainerStyle={{
             paddingHorizontal: espace.espace5,
-            paddingBottom: espace.espace8,
+            paddingBottom: espace.espace8 + marge,
             gap: espace.espace3,
           }}
           initialNumToRender={12}
@@ -116,7 +118,7 @@ export default function EcranRecitateur() {
                     sourate={item}
                     onPress={() => {
                       ecouter({ sourate: item.n, verset: 1 }, r.id);
-                      router.push('/ecouter/lecteur');
+                      router.push('/lecteur');
                     }}
                   />
                 </View>

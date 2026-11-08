@@ -24,12 +24,14 @@ import { ListItem } from '@/ui/ListItem';
 import { TextField } from '@/ui/TextField';
 import { useToast } from '@/ui/Toast';
 import { TopBar } from '@/ui/TopBar';
+import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
 /** Zakat indicative : montant estimé, échéance de l'année lunaire, détail du calcul, rappel et versement. */
 export default function Zakat() {
   const { t, i18n } = useTranslation();
   const formatMontant = useFormatMontant();
   const { couleurs, espace, rayon, typographie } = useTheme();
+  const marge = useMargeBasse();
   const { afficher } = useToast();
   const autorisation = useAvantAutorisation('notifications');
   const etat = useBudget((depot, carnet) => depot.zakat(carnet));
@@ -111,7 +113,7 @@ export default function Zakat() {
       <ScrollView
         contentContainerStyle={{
           paddingHorizontal: espace.espace5,
-          paddingBottom: espace.espace8,
+          paddingBottom: espace.espace8 + marge,
           gap: espace.espace4,
         }}>
         <View style={{ padding: espace.espace5, borderRadius: rayon.rayonCarte, backgroundColor: couleurs.emeraude }}>

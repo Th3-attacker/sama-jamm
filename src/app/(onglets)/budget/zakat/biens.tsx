@@ -20,12 +20,14 @@ import { SegmentedControl } from '@/ui/SegmentedControl';
 import { TextField } from '@/ui/TextField';
 import { useToast } from '@/ui/Toast';
 import { TopBar } from '@/ui/TopBar';
+import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
 /** Mes biens : base du nisab, prix du gramme, ce que je possède et ce qui est à déduire. */
 export default function BiensZakat() {
   const { t, i18n } = useTranslation();
   const formatMontant = useFormatMontant();
   const { couleurs, espace, rayon, typographie } = useTheme();
+  const marge = useMargeBasse();
   const { afficher } = useToast();
   const etat = useBudget((depot, carnet) => depot.zakat(carnet));
   // null tant que l'utilisateur n'a rien touché : les champs montrent les prix enregistrés.
@@ -113,7 +115,7 @@ export default function BiensZakat() {
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={{
             paddingHorizontal: espace.espace5,
-            paddingBottom: espace.espace8,
+            paddingBottom: espace.espace8 + marge,
             gap: espace.espace4,
           }}>
           <SegmentedControl

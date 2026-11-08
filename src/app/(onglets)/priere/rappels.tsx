@@ -19,12 +19,14 @@ import { ListItem } from '@/ui/ListItem';
 import { RadioGroup } from '@/ui/RadioGroup';
 import { Switch } from '@/ui/Switch';
 import { TopBar } from '@/ui/TopBar';
+import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
 const AVANCES = [5, 10, 15, 30] as const;
 
 export default function AppelEtRappels() {
   const { t } = useTranslation();
   const { couleurs, espace, typographie } = useTheme();
+  const marge = useMargeBasse();
   const rappels = useReglages((s) => s.rappels);
   const sonsChoisis = useReglages((s) => s.sons);
   const rappelAvant = useReglages((s) => s.rappelAvant);
@@ -63,7 +65,7 @@ export default function AppelEtRappels() {
   return (
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
       <TopBar retour titre={t('priere.rappelsTitre')} />
-      <ScrollView contentContainerStyle={{ paddingHorizontal: espace.espace5, paddingBottom: espace.espace8, gap: espace.espace5 }}>
+      <ScrollView contentContainerStyle={{ paddingHorizontal: espace.espace5, paddingBottom: espace.espace8 + marge, gap: espace.espace5 }}>
         <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, { color: couleurs.encre2 }]}>
           {t('priere.rappelsSousTitre')}
         </Text>

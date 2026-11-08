@@ -68,7 +68,8 @@
     "lire": "اقرأ",
     "ecouter": "استمع",
     "priere": "الصلاة",
-    "budget": "الميزانية"
+    "budget": "الميزانية",
+    "plus": "المزيد"
   },
   "menuPlus": {
     "titre": "المزيد",
@@ -78,7 +79,22 @@
     "reglages": "الإعدادات",
     "compte": "الحساب والمزامنة",
     "soutenir": "ادعم Sama Jàmm",
-    "khatm": "الختمة الجماعية"
+    "khatm": "الختمة الجماعية",
+    "sousTitre": "كل Sama Jàmm في مكان واحد.",
+    "aPropos": "حول التطبيق",
+    "tuiles": {
+      "khatm": "جزء لكل واحد",
+      "dhikr": "عدّاد وأهداف",
+      "qibla": "اتجاه الكعبة",
+      "xassaides": "نصوص وأناشيد",
+      "invocations": "الصباح والمساء والسفر",
+      "zakat": "تقدير بنسبة 2٫5٪"
+    },
+    "dhikr": "الذكر",
+    "qibla": "القبلة",
+    "xassaides": "القصائد",
+    "invocations": "الأدعية",
+    "zakat": "الزكاة"
   },
   "bienvenue": {
     "etape": "الخطوة {{n}} من {{total}}",
@@ -182,6 +198,7 @@
   },
   "lire": {
     "titre": "اقرأ",
+    "lireOuEcouter": "للقراءة أو الاستماع",
     "sousTitre": "القرآن، القصائد، الأذكار",
     "coran": "القرآن",
     "xassaides": "القصائد",

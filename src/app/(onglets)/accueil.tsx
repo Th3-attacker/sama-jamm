@@ -9,7 +9,6 @@ import { useOptionsCalcul } from '@/features/priere/useOptionsCalcul';
 import { BandeauVeille } from '@/features/priere/veille';
 import { useMaintenant } from '@/hooks/useMaintenant';
 import { sourate } from '@/features/lire/coran';
-import { useMenuPlus } from '@/features/plus/MenuPlus';
 import { cleJour, formatDuree, formatHegirien, formatHeure, formatJour, formatMois, minutesDuJour } from '@/lib/dates';
 import { useLecture } from '@/stores/lecture';
 import { prieres, useReglages } from '@/stores/reglages';
@@ -21,6 +20,8 @@ import { DayArc, type PriereArc } from '@/ui/DayArc';
 import { Icon } from '@/ui/Icon';
 import { Logo } from '@/ui/Logo';
 import { TopBar } from '@/ui/TopBar';
+import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
+import { SondeBarre } from '@/features/ecouter/SondeBarre';
 
 /** Un grain par jour du mois ; `lus` : clés de jour « 2026-10-29 » où une lecture a eu lieu. */
 function joursDuMois(maintenant: Date, lus: readonly string[]): JourFil[] {
@@ -37,10 +38,10 @@ export default function Accueil() {
   useScrollToTop(defilement);
   const { t, i18n } = useTranslation();
   const { couleurs, espace, rayon, typographie, latin } = useTheme();
+  const marge = useMargeBasse();
   const maintenant = useMaintenant();
   const lieu = useReglages((s) => s.lieu);
   const options = useOptionsCalcul();
-  const menu = useMenuPlus();
   const position = useLecture((s) => s.position);
   const joursLus = useLecture((s) => s.jours);
 
@@ -77,15 +78,12 @@ export default function Accueil() {
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
       <TopBar
         gauche={<Logo taille={28} />}
-        actions={[
-          { icone: 'search', label: t('menuPlus.rechercher'), onPress: () => router.push('/plus/recherche') },
-          menu.action,
-        ]}
+        actions={[{ icone: 'search', label: t('menuPlus.rechercher'), onPress: () => router.push('/plus/recherche') }]}
       />
       <ScrollView ref={defilement}
         contentContainerStyle={{
           paddingHorizontal: espace.espace6,
-          paddingBottom: espace.espace8,
+          paddingBottom: espace.espace8 + marge,
           gap: espace.espace5,
         }}>
         <BandeauVeille />
@@ -216,7 +214,7 @@ export default function Accueil() {
           }
         />
       </ScrollView>
-      {menu.feuille}
+      <SondeBarre />
     </View>
   );
 }

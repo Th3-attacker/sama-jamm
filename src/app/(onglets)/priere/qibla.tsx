@@ -14,6 +14,7 @@ import { useTheme } from '@/theme/useTheme';
 import { Banner } from '@/ui/Banner';
 import { ecartQibla, QiblaCompass } from '@/ui/QiblaCompass';
 import { TopBar } from '@/ui/TopBar';
+import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
 const TOLERANCE = 3;
 // Seize points cardinaux, tous les 22,5°.
@@ -24,6 +25,7 @@ const REARMEMENT = 10;
 export default function Qibla() {
   const { t } = useTranslation();
   const { couleurs, espace, typographie } = useTheme();
+  const marge = useMargeBasse();
   const lieu = useReglages((s) => s.lieu);
   const definirLieu = useReglages((s) => s.definirLieu);
   const [essai, setEssai] = useState(0);
@@ -65,7 +67,7 @@ export default function Qibla() {
   return (
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
       <TopBar retour titre={t('qibla.titre')} />
-      <ScrollView contentContainerStyle={{ paddingHorizontal: espace.espace5, paddingBottom: espace.espace8, gap: espace.espace5 }}>
+      <ScrollView contentContainerStyle={{ paddingHorizontal: espace.espace5, paddingBottom: espace.espace8 + marge, gap: espace.espace5 }}>
         {!lieu || qibla === null ? (
           <>
             <Banner ton="erreur" titre={t('priere.positionRefusee')}>

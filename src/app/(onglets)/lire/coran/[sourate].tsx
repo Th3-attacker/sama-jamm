@@ -41,6 +41,7 @@ import { useToast } from '@/ui/Toast';
 import { Button } from '@/ui/Button';
 import { SegmentedControl } from '@/ui/SegmentedControl';
 import { TopBar } from '@/ui/TopBar';
+import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
 /** Une sourate est « lue » après ce délai à l'écran (section Lecture et audio du design). */
 const SECONDES_POUR_UN_JOUR = 30;
@@ -99,6 +100,7 @@ function LectureSourate({
 }) {
   const { t } = useTranslation();
   const { couleurs, ombres, espace, rayon, cible, typographie } = useTheme();
+  const marge = useMargeBasse();
   const { tailleArabe, tailleTrad } = useTaillesLecture();
   const mode = useReglages((st) => st.affichage);
   const translitActive = useReglages((st) => st.translitLecture);
@@ -408,7 +410,8 @@ function LectureSourate({
           {
             gap: espace.espace2,
             marginHorizontal: espace.espace4,
-            marginBottom: espace.espace3,
+            // La pilule flotte au-dessus de la barre d'onglets et du mini-lecteur.
+            marginBottom: espace.espace3 + marge,
             paddingHorizontal: espace.espace3,
             paddingVertical: espace.espace2,
             borderColor: couleurs.ligne,
@@ -435,7 +438,7 @@ function LectureSourate({
           accessibilityLabel={t('ecouter.ecouterVerset')}
           onPress={() => {
             ecouter({ sourate: s.n, verset: versetHaut });
-            router.push('/ecouter/lecteur');
+            router.push('/lecteur');
           }}
           style={[
             styles.ecouter,

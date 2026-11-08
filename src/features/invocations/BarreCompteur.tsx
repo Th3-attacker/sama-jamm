@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 
@@ -18,6 +19,7 @@ type Props = {
 export function BarreCompteur({ titre, arabe = false, n, total, onCompter }: Props) {
   const { t } = useTranslation();
   const { couleurs, espace, rayon, typographie } = useTheme();
+  const marge = useMargeBasse();
   const valeur = t('invocations.compteur', { n, total });
   return (
     <View
@@ -28,6 +30,8 @@ export function BarreCompteur({ titre, arabe = false, n, total, onCompter }: Pro
           borderTopColor: couleurs.ligne,
           paddingHorizontal: espace.espace5,
           paddingVertical: espace.espace3,
+          // Au-dessus de la barre d'onglets : le fond de la barre passe derrière elle.
+          paddingBottom: espace.espace3 + marge,
           gap: espace.espace3,
         },
       ]}>

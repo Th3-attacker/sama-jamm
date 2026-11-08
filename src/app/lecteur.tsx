@@ -188,7 +188,7 @@ export default function LecteurPleinEcran() {
                 titre={t('etats.horsLigne')}
                 action={{
                   label: t('etats.voirTelechargements'),
-                  onPress: () => router.push('/ecouter/telechargements'),
+                  onPress: () => router.push('/plus/telechargements'),
                 }}>
                 {t('etats.horsLigneEcouter')}
               </Banner>

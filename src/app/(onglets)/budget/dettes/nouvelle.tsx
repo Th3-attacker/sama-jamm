@@ -24,12 +24,14 @@ import { SegmentedControl } from '@/ui/SegmentedControl';
 import { TextField } from '@/ui/TextField';
 import { useToast } from '@/ui/Toast';
 import { TopBar } from '@/ui/TopBar';
+import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
 /** Ajouter une dette, ou la corriger (`?id=`) : sens, personne, montant, échéance et note. */
 export default function NouvelleDette() {
   const { t } = useTranslation();
   const formatMontant = useFormatMontant();
   const { couleurs, espace } = useTheme();
+  const marge = useMargeBasse();
   const { afficher } = useToast();
   const id = useParametre('id');
   const etat = useBudget((depot, carnet) => (id ? depot.dette(carnet, id) : Promise.resolve(null)), id);
@@ -92,7 +94,7 @@ export default function NouvelleDette() {
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={{
             paddingHorizontal: espace.espace5,
-            paddingBottom: espace.espace8,
+            paddingBottom: espace.espace8 + marge,
             gap: espace.espace4,
           }}>
           <SegmentedControl

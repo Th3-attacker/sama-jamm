@@ -1,8 +1,10 @@
 import { router } from 'expo-router';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { sourate } from '@/features/lire/coran';
+import { usePlaceBas } from '@/stores/placeBas';
 import { usePleinEcran } from '@/stores/pleinEcran';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
@@ -21,10 +23,19 @@ export function MiniLecteur() {
   const idRecitateur = useLecteur((s) => s.recitateur);
   const page = useLecteur((s) => s.page);
   const pleinEcran = usePleinEcran((s) => s.actif);
+  const visible = Boolean(position) && !pleinEcran;
+  // Hauteur réelle (texte agrandi compris) pour que le contenu lui laisse exactement sa place.
+  useEffect(() => {
+    if (!visible) usePlaceBas.setState({ hauteurMini: 0 });
+  }, [visible]);
   if (!position || pleinEcran) return null;
 
   return (
     <View
+      onLayout={(e) => {
+        const h = Math.round(e.nativeEvent.layout.height);
+        if (h > usePlaceBas.getState().hauteurMini) usePlaceBas.setState({ hauteurMini: h });
+      }}
       style={[
         styles.barre,
         { backgroundColor: couleurs.surface, borderTopColor: couleurs.ligne, paddingHorizontal: espace.espace4 },
@@ -33,7 +44,7 @@ export function MiniLecteur() {
       <Pressable
         accessibilityRole="button"
         accessibilityLabel={t('ecouter.ouvrirLecteur')}
-        onPress={() => router.push('/ecouter/lecteur')}
+        onPress={() => router.push('/lecteur')}
         style={styles.texte}>
         <Text
           numberOfLines={1}

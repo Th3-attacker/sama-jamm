@@ -18,6 +18,7 @@ import { SegmentedControl } from '@/ui/SegmentedControl';
 import { TextField } from '@/ui/TextField';
 import { useToast } from '@/ui/Toast';
 import { TopBar } from '@/ui/TopBar';
+import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
 type Mode = 'fixe' | 'libre';
 
@@ -26,6 +27,7 @@ export default function EcranObjectif() {
   const { t, i18n } = useTranslation();
   const formatMontant = useFormatMontant();
   const { couleurs, espace, rayon, typographie } = useTheme();
+  const marge = useMargeBasse();
   const { afficher } = useToast();
   const id = useParametre('id');
   const etat = useBudget((depot, carnet) => (id ? depot.objectif(carnet, id) : Promise.resolve(null)), id);
@@ -111,7 +113,7 @@ export default function EcranObjectif() {
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={{
             paddingHorizontal: espace.espace5,
-            paddingBottom: espace.espace8,
+            paddingBottom: espace.espace8 + marge,
             gap: espace.espace4,
           }}>
           <TextField

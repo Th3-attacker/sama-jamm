@@ -18,6 +18,7 @@ import { ListGroup } from '@/ui/ListGroup';
 import { ListItem } from '@/ui/ListItem';
 import { PrayerTimes, type LignePriere } from '@/ui/PrayerTimes';
 import { TopBar } from '@/ui/TopBar';
+import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
 const JOURS_SEMAINE = 7;
 
@@ -27,6 +28,7 @@ export default function Priere() {
   useScrollToTop(defilement);
   const { t, i18n } = useTranslation();
   const { couleurs, espace, typographie } = useTheme();
+  const marge = useMargeBasse();
   const maintenant = useMaintenant();
   const options = useOptionsCalcul();
   const lieu = useReglages((s) => s.lieu);
@@ -59,7 +61,7 @@ export default function Priere() {
         sousTitre={t('priere.sousTitre')}
         actions={[{ icone: 'bell', label: t('priere.rappelsTitre'), onPress: () => router.push('/priere/rappels') }]}
       />
-      <ScrollView ref={defilement} contentContainerStyle={{ paddingHorizontal: espace.espace5, paddingBottom: espace.espace8, gap: espace.espace4 }}>
+      <ScrollView ref={defilement} contentContainerStyle={{ paddingHorizontal: espace.espace5, paddingBottom: espace.espace8 + marge, gap: espace.espace4 }}>
         <BandeauVeille />
 
         {!lieu || !donnees ? (

@@ -10,12 +10,14 @@ import { ListItem } from '@/ui/ListItem';
 import { RadioGroup } from '@/ui/RadioGroup';
 import { SegmentedControl } from '@/ui/SegmentedControl';
 import { TopBar } from '@/ui/TopBar';
+import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
 const signe = (n: number) => (n > 0 ? `+${n} min` : `${n} min`);
 
 export default function MethodeDeCalcul() {
   const { t } = useTranslation();
   const { couleurs, espace, typographie } = useTheme();
+  const marge = useMargeBasse();
   const methode = useReglages((s) => s.methode);
   const ecoleAsr = useReglages((s) => s.ecoleAsr);
   const ajustements = useReglages((s) => s.ajustements);
@@ -26,7 +28,7 @@ export default function MethodeDeCalcul() {
   return (
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
       <TopBar retour titre={t('priere.methodeTitre')} />
-      <ScrollView contentContainerStyle={{ paddingHorizontal: espace.espace5, paddingBottom: espace.espace8, gap: espace.espace6 }}>
+      <ScrollView contentContainerStyle={{ paddingHorizontal: espace.espace5, paddingBottom: espace.espace8 + marge, gap: espace.espace6 }}>
         <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, { color: couleurs.encre2 }]}>
           {t('priere.methodeSousTitre')}
         </Text>

@@ -15,6 +15,7 @@ import { Button } from '@/ui/Button';
 import { SegmentedControl } from '@/ui/SegmentedControl';
 import { useToast } from '@/ui/Toast';
 import { TopBar } from '@/ui/TopBar';
+import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
 const CHOIX: readonly ChoixBilan[] = ['reporter', 'epargner', 'sadaqa'];
 
@@ -23,6 +24,7 @@ export default function Bilan() {
   const { t, i18n } = useTranslation();
   const formatMontant = useFormatMontant();
   const { couleurs, espace, typographie } = useTheme();
+  const marge = useMargeBasse();
   const { afficher } = useToast();
   const etat = useBudget((depot, carnet) => depot.bilanAFaire(carnet));
   const [choix, setChoix] = useState<Record<string, ChoixBilan>>({});
@@ -84,7 +86,7 @@ export default function Bilan() {
       <ScrollView
         contentContainerStyle={{
           paddingHorizontal: espace.espace5,
-          paddingBottom: espace.espace8,
+          paddingBottom: espace.espace8 + marge,
           gap: espace.espace5,
         }}>
         <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, { color: couleurs.encre2 }]}>

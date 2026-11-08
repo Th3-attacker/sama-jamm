@@ -13,12 +13,14 @@ import { EmptyState } from '@/ui/EmptyState';
 import { ListGroup } from '@/ui/ListGroup';
 import { ListItem } from '@/ui/ListItem';
 import { TopBar } from '@/ui/TopBar';
+import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
 /** Épargne avec intention : le total mis de côté, les objectifs et l'épargne libre. */
 export default function EcranEpargne() {
   const { t } = useTranslation();
   const formatMontant = useFormatMontant();
   const { couleurs, espace, rayon, typographie } = useTheme();
+  const marge = useMargeBasse();
   const etat = useBudget((depot, carnet) => depot.epargne(carnet));
 
   if (etat.etat !== 'pret') {
@@ -42,7 +44,7 @@ export default function EcranEpargne() {
       <ScrollView
         contentContainerStyle={{
           paddingHorizontal: espace.espace5,
-          paddingBottom: espace.espace8,
+          paddingBottom: espace.espace8 + marge,
           gap: espace.espace4,
         }}>
         <View

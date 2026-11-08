@@ -8,11 +8,13 @@ import { useTheme } from '@/theme/useTheme';
 import { EmptyState } from '@/ui/EmptyState';
 import { ListGroup } from '@/ui/ListGroup';
 import { TopBar } from '@/ui/TopBar';
+import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
 /** Dettes soldées et annulées, les plus récentes d'abord ; chacune garde son historique. */
 export default function DettesSoldees() {
   const { t } = useTranslation();
   const { couleurs, espace } = useTheme();
+  const marge = useMargeBasse();
   const etat = useBudget((depot, carnet) => depot.dettes(carnet, 'closes'));
 
   return (
@@ -21,7 +23,7 @@ export default function DettesSoldees() {
       {etat.etat !== 'pret' ? (
         <EtatsBudget etat={etat} />
       ) : (
-        <ScrollView contentContainerStyle={{ paddingHorizontal: espace.espace5, paddingBottom: espace.espace8 }}>
+        <ScrollView contentContainerStyle={{ paddingHorizontal: espace.espace5, paddingBottom: espace.espace8 + marge }}>
           {etat.donnees.length > 0 ? (
             <ListGroup>
               {etat.donnees.map((d) => (

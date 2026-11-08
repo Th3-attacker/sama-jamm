@@ -24,12 +24,14 @@ import { ProgressBar } from '@/ui/ProgressBar';
 import { TextField } from '@/ui/TextField';
 import { useToast } from '@/ui/Toast';
 import { TopBar } from '@/ui/TopBar';
+import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
 /** Une enveloppe du cycle en cours : plafond, dépensé, reste, dépenses ; modifier le plafond, renommer, supprimer. */
 export default function EcranEnveloppe() {
   const { t, i18n } = useTranslation();
   const formatMontant = useFormatMontant();
   const { couleurs, espace, typographie } = useTheme();
+  const marge = useMargeBasse();
   const id = useParametre('id');
   const etat = useBudget((depot, carnet) => depot.detailEnveloppe(carnet, id), id);
   // Une seule feuille, pour le plafond ou le nom.
@@ -119,7 +121,7 @@ export default function EcranEnveloppe() {
       <ScrollView
         contentContainerStyle={{
           paddingHorizontal: espace.espace5,
-          paddingBottom: espace.espace8,
+          paddingBottom: espace.espace8 + marge,
           gap: espace.espace5,
         }}>
         {e.archivee ? <Banner ton="info">{t('budget.enveloppeArchiveeBandeau')}</Banner> : null}

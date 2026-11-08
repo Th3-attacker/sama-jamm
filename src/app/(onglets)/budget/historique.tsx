@@ -15,6 +15,7 @@ import { Chip } from '@/ui/Chip';
 import { EmptyState } from '@/ui/EmptyState';
 import { ListItem } from '@/ui/ListItem';
 import { TopBar } from '@/ui/TopBar';
+import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
 const FILTRES: readonly FiltreHistorique[] = ['tout', 'depenses', 'revenus'];
 
@@ -23,6 +24,7 @@ export default function Historique() {
   const { t, i18n } = useTranslation();
   const formatMontant = useFormatMontant();
   const { couleurs, espace, typographie } = useTheme();
+  const marge = useMargeBasse();
   const [filtre, setFiltre] = useState<FiltreHistorique>('tout');
   const etat = useBudget((depot, carnet) => depot.historique(carnet, filtre), filtre);
 
@@ -108,7 +110,7 @@ export default function Historique() {
             />
           );
         }}
-        contentContainerStyle={{ paddingHorizontal: espace.espace5, paddingBottom: espace.espace8 }}
+        contentContainerStyle={{ paddingHorizontal: espace.espace5, paddingBottom: espace.espace8 + marge }}
       />
     </View>
   );

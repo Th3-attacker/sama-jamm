@@ -14,12 +14,14 @@ import { Button } from '@/ui/Button';
 import { ListGroup } from '@/ui/ListGroup';
 import { ListItem } from '@/ui/ListItem';
 import { TopBar } from '@/ui/TopBar';
+import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
 /** Revenus du cycle en cours ; toucher un revenu ouvre sa correction. */
 export default function Revenus() {
   const { t, i18n } = useTranslation();
   const formatMontant = useFormatMontant();
   const { couleurs, espace, typographie } = useTheme();
+  const marge = useMargeBasse();
   const etat = useBudget(async (depot, carnet) => ({
     ...(await depot.revenusDuCycle(carnet)),
     comptes: await depot.comptes(carnet.id),
@@ -35,7 +37,7 @@ export default function Revenus() {
         <ScrollView
           contentContainerStyle={{
             paddingHorizontal: espace.espace5,
-            paddingBottom: espace.espace8,
+            paddingBottom: espace.espace8 + marge,
             gap: espace.espace4,
           }}>
           {etat.donnees.revenus.length === 0 ? (

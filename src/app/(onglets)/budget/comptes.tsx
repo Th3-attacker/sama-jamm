@@ -22,6 +22,7 @@ import { TextField } from '@/ui/TextField';
 import { useToast } from '@/ui/Toast';
 import { TopBar } from '@/ui/TopBar';
 import type { IconName } from '@/ui/types';
+import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
 const ICONES: Record<TypeCompte, IconName> = { especes: 'wallet', mobile: 'bolt', banque: 'lock' };
 
@@ -30,6 +31,7 @@ export default function Comptes() {
   const { t, i18n } = useTranslation();
   const formatMontant = useFormatMontant();
   const { couleurs, espace, typographie } = useTheme();
+  const marge = useMargeBasse();
   const { afficher } = useToast();
   const etat = useBudget((depot, carnet) => depot.comptesAvecSolde(carnet));
   const [feuille, setFeuille] = useState(false);
@@ -116,7 +118,7 @@ export default function Comptes() {
       <ScrollView
         contentContainerStyle={{
           paddingHorizontal: espace.espace5,
-          paddingBottom: espace.espace8,
+          paddingBottom: espace.espace8 + marge,
           gap: espace.espace5,
         }}>
         <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, { color: couleurs.encre2 }]}>

@@ -2,7 +2,6 @@ import { router } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ajouterJours } from '@/features/budget/cycle';
 import { lireSaisieDate, masqueDate } from '@/features/budget/dettes';
@@ -10,6 +9,7 @@ import { EcranBudgetIncomplet } from '@/features/budget/EcranBudgetIncomplet';
 import { budgetModifie, useBudget } from '@/features/budget/useBudget';
 import { useFormatMontant } from '@/features/budget/verrou';
 import { cleJour } from '@/lib/dates';
+import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 import { echelleMax } from '@/theme/typographie';
 import { useParametre } from '@/hooks/useParametre';
 import { useTheme } from '@/theme/useTheme';
@@ -30,7 +30,7 @@ export default function Remboursement() {
   const { t } = useTranslation();
   const formatMontant = useFormatMontant();
   const { couleurs, espace, typographie } = useTheme();
-  const insets = useSafeAreaInsets();
+  const marge = useMargeBasse();
   const { afficher } = useToast();
   const id = useParametre('id');
   const etat = useBudget((depot, carnet) => depot.dette(carnet, id), id);
@@ -84,7 +84,7 @@ export default function Remboursement() {
         keyboardShouldPersistTaps="handled"
         contentContainerStyle={{
           paddingHorizontal: espace.espace5,
-          paddingBottom: insets.bottom + espace.espace5,
+          paddingBottom: marge + espace.espace5,
           gap: espace.espace4,
         }}>
         <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, { color: couleurs.encre2 }]}>

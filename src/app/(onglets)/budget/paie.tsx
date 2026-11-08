@@ -15,12 +15,14 @@ import { Chip } from '@/ui/Chip';
 import { TextField } from '@/ui/TextField';
 import { useToast } from '@/ui/Toast';
 import { TopBar } from '@/ui/TopBar';
+import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
 /** Jour de paie : le revenu reçu, mettre de côté d'abord, puis répartir entre les enveloppes. */
 export default function JourDePaie() {
   const { t } = useTranslation();
   const formatMontant = useFormatMontant();
   const { couleurs, espace, typographie } = useTheme();
+  const marge = useMargeBasse();
   const { afficher } = useToast();
   const etat = useBudget(async (depot, carnet) => ({
     mois: await depot.mois(carnet),
@@ -114,7 +116,7 @@ export default function JourDePaie() {
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={{
             paddingHorizontal: espace.espace5,
-            paddingBottom: espace.espace8,
+            paddingBottom: espace.espace8 + marge,
             gap: espace.espace4,
           }}>
           <TextField

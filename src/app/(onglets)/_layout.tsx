@@ -1,62 +1,94 @@
-import { Tabs } from 'expo-router';
+import { NativeTabs } from 'expo-router/native-tabs';
 import { useTranslation } from 'react-i18next';
-import { View } from 'react-native';
+import { Platform, View } from 'react-native';
 
-import { MiniLecteur } from '@/features/ecouter/MiniLecteur';
-import { usePleinEcran } from '@/stores/pleinEcran';
 import { ErreurDeRoute } from '@/features/erreur/ErreurDeRoute';
-import { TabBar, type Onglet } from '@/ui/TabBar';
+import { MiniLecteur } from '@/features/ecouter/MiniLecteur';
+import {
+  ACCESSOIRE_NATIF,
+  useDecalageBandeau,
+  useMiniLecteurVisible,
+} from '@/features/ecouter/placeMiniLecteur';
+import { usePleinEcran } from '@/stores/pleinEcran';
+import { useTheme } from '@/theme/useTheme';
 
 /** Un onglet qui plante affiche l'écran d'erreur à sa place, sans fermer l'app. */
 export const ErrorBoundary = ErreurDeRoute;
 
+/**
+ * Cinq onglets natifs (barre en verre sur iOS 26, barre Material sur Android) : le système dessine la barre,
+ * l'onglet actif prend la teinte émeraude. Écouter est un mode de Lire. Le mini-lecteur est l'accessoire du bas.
+ */
 export default function OngletsLayout() {
   const { t } = useTranslation();
+  const { couleurs } = useTheme();
   const pleinEcran = usePleinEcran((s) => s.actif);
-
-  const onglets: Onglet[] = [
-    { id: 'accueil', label: t('onglets.accueil'), icone: 'home' },
-    { id: 'lire', label: t('onglets.lire'), icone: 'book' },
-    { id: 'ecouter', label: t('onglets.ecouter'), icone: 'headphones' },
-    { id: 'priere', label: t('onglets.priere'), icone: 'clock' },
-    { id: 'budget', label: t('onglets.budget'), icone: 'wallet' },
-  ];
+  const miniVisible = useMiniLecteurVisible();
+  const decalageBandeau = useDecalageBandeau();
+  // Plein écran : le contenu défile derrière la barre ; chaque écran garde sa marge basse (`useMargeBasse`).
+  const contentStyle = { backgroundColor: couleurs.fond };
+  const manuel = Platform.OS === 'ios';
 
   return (
-    <Tabs
-      screenOptions={{ headerShown: false }}
-      tabBar={({ state, emitter, navigateToTab }) => {
-        // Page mushaf ouverte : toute la hauteur pour la page.
-        if (pleinEcran) return null;
-        const routeActive = state.routes[state.index];
-        const cle = (id: string) => state.routes.find((r) => r.name === id)?.key;
-        return (
-          <View>
-            {/* Pendant une écoute, le mini-lecteur se place juste au-dessus des onglets. */}
+    <View style={{ flex: 1 }}>
+      <NativeTabs tintColor={couleurs.emeraude} hidden={pleinEcran} labelStyle={{ fontSize: 10 }}>
+        <NativeTabs.Trigger name='accueil' contentStyle={contentStyle} disableAutomaticContentInsets={manuel}>
+          <NativeTabs.Trigger.Icon
+            sf={{ default: 'house', selected: 'house.fill' }}
+            md='home'
+          />
+          <NativeTabs.Trigger.Label>
+            {t('onglets.accueil')}
+          </NativeTabs.Trigger.Label>
+        </NativeTabs.Trigger>
+        <NativeTabs.Trigger name='lire' contentStyle={contentStyle} disableAutomaticContentInsets={manuel}>
+          <NativeTabs.Trigger.Icon
+            sf={{ default: 'book', selected: 'book.fill' }}
+            md='menu_book'
+          />
+          <NativeTabs.Trigger.Label>
+            {t('onglets.lire')}
+          </NativeTabs.Trigger.Label>
+        </NativeTabs.Trigger>
+        <NativeTabs.Trigger name='priere' contentStyle={contentStyle} disableAutomaticContentInsets={manuel}>
+          <NativeTabs.Trigger.Icon sf='clock' md='schedule' />
+          <NativeTabs.Trigger.Label>
+            {t('onglets.priere')}
+          </NativeTabs.Trigger.Label>
+        </NativeTabs.Trigger>
+        <NativeTabs.Trigger name='budget' contentStyle={contentStyle} disableAutomaticContentInsets={manuel}>
+          <NativeTabs.Trigger.Icon
+            sf={{ default: 'wallet.pass', selected: 'wallet.pass.fill' }}
+            md='account_balance_wallet'
+          />
+          <NativeTabs.Trigger.Label>
+            {t('onglets.budget')}
+          </NativeTabs.Trigger.Label>
+        </NativeTabs.Trigger>
+        <NativeTabs.Trigger name='plus' contentStyle={contentStyle} disableAutomaticContentInsets={manuel}>
+          <NativeTabs.Trigger.Icon sf='square.grid.2x2' md='apps' />
+          <NativeTabs.Trigger.Label>
+            {t('onglets.plus')}
+          </NativeTabs.Trigger.Label>
+        </NativeTabs.Trigger>
+        {ACCESSOIRE_NATIF && miniVisible ? (
+          <NativeTabs.BottomAccessory>
             <MiniLecteur />
-            <TabBar
-              onglets={onglets}
-              actif={routeActive?.name ?? 'accueil'}
-              // Même logique que la barre par défaut : l'événement tabPress permet aux écrans de remonter en haut.
-              onChange={(id) => {
-                const target = cle(id);
-                if (!target) return;
-                const event = emitter.emit({ type: 'tabPress', target, canPreventDefault: true });
-                if (target !== routeActive?.key && !event.defaultPrevented) navigateToTab(target);
-              }}
-              onAppuiLong={(id) => {
-                const target = cle(id);
-                if (target) emitter.emit({ type: 'tabLongPress', target });
-              }}
-            />
-          </View>
-        );
-      }}>
-      <Tabs.Screen name="accueil" options={{ title: t('onglets.accueil') }} />
-      <Tabs.Screen name="lire" options={{ title: t('onglets.lire') }} />
-      <Tabs.Screen name="ecouter" options={{ title: t('onglets.ecouter') }} />
-      <Tabs.Screen name="priere" options={{ title: t('onglets.priere') }} />
-      <Tabs.Screen name="budget" options={{ title: t('onglets.budget') }} />
-    </Tabs>
+          </NativeTabs.BottomAccessory>
+        ) : null}
+      </NativeTabs>
+      {!ACCESSOIRE_NATIF && miniVisible ? (
+        <View
+          style={{
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            bottom: decalageBandeau,
+          }}
+        >
+          <MiniLecteur />
+        </View>
+      ) : null}
+    </View>
   );
 }

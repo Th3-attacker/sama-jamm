@@ -21,12 +21,14 @@ import { ListItem } from '@/ui/ListItem';
 import { ProgressBar } from '@/ui/ProgressBar';
 import { useToast } from '@/ui/Toast';
 import { TopBar } from '@/ui/TopBar';
+import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
 /** Détail d'un objectif : ce qui est mis de côté, le rythme, les versements, et « utilisé ». */
 export default function DetailObjectif() {
   const { t, i18n } = useTranslation();
   const formatMontant = useFormatMontant();
   const { couleurs, espace, typographie } = useTheme();
+  const marge = useMargeBasse();
   const { afficher } = useToast();
   const id = useParametre('id');
   const etat = useBudget((depot, carnet) => depot.objectif(carnet, id), id);
@@ -65,7 +67,7 @@ export default function DetailObjectif() {
       <ScrollView
         contentContainerStyle={{
           paddingHorizontal: espace.espace5,
-          paddingBottom: espace.espace8,
+          paddingBottom: espace.espace8 + marge,
           gap: espace.espace4,
         }}>
         {o.intention ? (

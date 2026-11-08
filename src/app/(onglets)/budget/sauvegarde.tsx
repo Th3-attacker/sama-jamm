@@ -26,6 +26,7 @@ import { ListItem } from '@/ui/ListItem';
 import { TextField } from '@/ui/TextField';
 import { useToast } from '@/ui/Toast';
 import { TopBar } from '@/ui/TopBar';
+import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
 type Feuille = { mode: 'sauvegarde' } | { mode: 'restauration'; uri: string; nom: string } | null;
 type Erreur = 'motDePasse' | 'incompatible' | 'generale' | null;
@@ -37,6 +38,7 @@ type Erreur = 'motDePasse' | 'incompatible' | 'generale' | null;
 export default function EcranSauvegarde() {
   const { t } = useTranslation();
   const { couleurs, espace, typographie } = useTheme();
+  const marge = useMargeBasse();
   const { afficher } = useToast();
   const verrouActif = useReglages((s) => s.verrouBudget);
   const [feuille, setFeuille] = useState<Feuille>(null);
@@ -149,7 +151,7 @@ export default function EcranSauvegarde() {
       <ScrollView
         contentContainerStyle={{
           paddingHorizontal: espace.espace5,
-          paddingBottom: espace.espace8,
+          paddingBottom: espace.espace8 + marge,
           gap: espace.espace5,
         }}>
         <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, { color: couleurs.encre2 }]}>
