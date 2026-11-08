@@ -4,14 +4,12 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { ecouter } from '@/features/ecouter/lecteur';
-import {
-  CATEGORIES,
-  estCategorie,
-  invocationsDe,
-  type CategorieId,
-  type Invocation,
-} from '@/features/invocations/donnees';
+import { invocationsDe, type Invocation } from '@/features/invocations/donnees';
 import { BarreCompteur } from '@/features/invocations/BarreCompteur';
+import { CarteHisn } from '@/features/invocations/CarteHisn';
+import { chapitresDeCategorie } from '@/features/invocations/categoriesHisn';
+import { chapitresHisn, debutDe, titreDe } from '@/features/invocations/hisn';
+import { estMoment, estMomentHisn, MOMENTS, MOMENTS_HISN, type MomentId } from '@/features/invocations/moments';
 import { useTaillesLecture } from '@/features/lire/BarreTaille';
 import { sourate, traductionDe, translitDe, versetsDe } from '@/features/lire/coran';
 import { marqueur } from '@/features/lire/PageMushaf';
@@ -35,7 +33,14 @@ import { useToast } from '@/ui/Toast';
 /** Un jour de lecture est compté après ce délai à l'écran, comme pour le Coran. */
 const SECONDES_POUR_UN_JOUR = 30;
 
-const TITRES = { matin: 'invocations.titreMatin', soir: 'invocations.titreSoir', sommeil: 'invocations.titreSommeil' } as const;
+const TITRES = {
+  matin: 'invocations.titreMatin',
+  soir: 'invocations.titreSoir',
+  sommeil: 'invocations.titreSommeil',
+  voyage: 'invocations.titreVoyage',
+  repas: 'invocations.titreRepas',
+  apresPriere: 'invocations.titreApresPriere',
+} as const;
 
 type Contenu = { n: number; arabe: string; trad: string; translit: string };
 
@@ -61,7 +66,7 @@ export default function EcranInvocations() {
     return () => clearTimeout(minuteur);
   }, [marquerJour]);
 
-  if (!estCategorie(brut)) {
+  if (!estMoment(brut)) {
     return (
       <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
         <TopBar retour titre={t('lire.invocations')} />
@@ -76,23 +81,39 @@ export default function EcranInvocations() {
   return <Moments initiale={brut} />;
 }
 
-function Moments({ initiale }: { initiale: CategorieId }) {
-  const { t } = useTranslation();
-  const { couleurs, espace } = useTheme();
+function Moments({ initiale }: { initiale: MomentId }) {
+  const { t, i18n } = useTranslation();
+  const { couleurs, espace, typographie } = useTheme();
   const { afficher } = useToast();
-  const [categorie, setCategorie] = useState<CategorieId>(initiale);
+  const [categorie, setCategorie] = useState<MomentId>(initiale);
   const [comptes, setComptes] = useState<Record<string, number>>({});
   const [choisi, setChoisi] = useState<string | null>(null);
   const [aPartager, setAPartager] = useState<VersetAPartager | null>(null);
   const favoris = useFavoris((s) => s.versets);
   const basculerFavori = useFavoris((s) => s.basculer);
 
-  const liste = useMemo(() => invocationsDe(categorie), [categorie]);
-  const fait = (i: Invocation, c: Record<string, number> = comptes) => (c[i.id] ?? 0) >= i.repetitions;
-  const actif = liste.find((i) => i.id === choisi) ?? liste.find((i) => !fait(i)) ?? liste[0];
-  const nbFaites = liste.filter((i) => fait(i)).length;
+  // Deux sources : des versets du Coran, ou les chapitres d'une catégorie de la citadelle. Dans les deux cas,
+  // le compteur suit une suite d'« entrées » repérées par une clé.
+  const liste = useMemo<Invocation[]>(() => (estMomentHisn(categorie) ? [] : invocationsDe(categorie)), [categorie]);
+  const groupesHisn = useMemo(
+    () => (estMomentHisn(categorie) ? chapitresDeCategorie(MOMENTS_HISN[categorie], chapitresHisn()) : []),
+    [categorie],
+  );
+  const entrees = useMemo(
+    () =>
+      estMomentHisn(categorie)
+        ? groupesHisn.flatMap((c) =>
+            c.items.map((it) => ({ cle: `${c.id}:${it.id}`, repetitions: it.repetitions, texte: it.texte })),
+          )
+        : liste.map((i) => ({ cle: i.id, repetitions: i.repetitions, texte: '' })),
+    [categorie, groupesHisn, liste],
+  );
+  const fait = (cle: string, c: Record<string, number> = comptes) =>
+    (c[cle] ?? 0) >= (entrees.find((e) => e.cle === cle)?.repetitions ?? 1);
+  const actif = entrees.find((e) => e.cle === choisi) ?? entrees.find((e) => !fait(e.cle)) ?? entrees[0];
+  const nbFaites = entrees.filter((e) => fait(e.cle)).length;
 
-  const changerMoment = (c: CategorieId) => {
+  const changerMoment = (c: MomentId) => {
     setCategorie(c);
     setChoisi(null);
   };
@@ -101,17 +122,22 @@ function Moments({ initiale }: { initiale: CategorieId }) {
   const compter = () => {
     if (!actif) return;
     vibrerLeger();
-    const avant = comptes[actif.id] ?? 0;
+    const avant = comptes[actif.cle] ?? 0;
     const apres = avant >= actif.repetitions ? 0 : avant + 1;
-    const suite = { ...comptes, [actif.id]: apres };
+    const suite = { ...comptes, [actif.cle]: apres };
     setComptes(suite);
     if (apres >= actif.repetitions) {
-      const prochaine = liste.find((i) => i.id !== actif.id && !fait(i, suite));
-      if (prochaine) setChoisi(prochaine.id);
+      const prochaine = entrees.find((e) => e.cle !== actif.cle && !fait(e.cle, suite));
+      if (prochaine) setChoisi(prochaine.cle);
     }
   };
 
-  const libelleActif = actif ? (contenuDe(actif)[0]?.translit ?? '').replace(/<[^>]*>/g, '').split(' ').slice(0, 2).join(' ') : '';
+  const invActive = liste.find((i) => i.id === actif?.cle);
+  const libelleActif = actif
+    ? invActive
+      ? (contenuDe(invActive)[0]?.translit ?? '').replace(/<[^>]*>/g, '').split(' ').slice(0, 2).join(' ')
+      : debutDe(actif.texte)
+    : '';
 
   return (
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
@@ -119,16 +145,16 @@ function Moments({ initiale }: { initiale: CategorieId }) {
       <ScrollView
         contentContainerStyle={{ paddingHorizontal: espace.espace5, paddingBottom: espace.espace6, gap: espace.espace4 }}>
         <View accessibilityRole="radiogroup" accessibilityLabel={t('invocations.moments')} style={[styles.puces, { gap: espace.espace2 }]}>
-          {CATEGORIES.map((c) => (
+          {MOMENTS.map((c) => (
             <Chip key={c} selectionne={c === categorie} onPress={() => changerMoment(c)}>
               {t(`invocations.${c}`)}
             </Chip>
           ))}
         </View>
         <ProgressBar
-          valeur={liste.length ? nbFaites / liste.length : 0}
+          valeur={entrees.length ? nbFaites / entrees.length : 0}
           label={t(TITRES[categorie])}
-          detail={t('invocations.progression', { n: nbFaites, total: liste.length })}
+          detail={t('invocations.progression', { n: nbFaites, total: entrees.length })}
           ton="or"
         />
         {liste.map((inv) => {
@@ -143,8 +169,8 @@ function Moments({ initiale }: { initiale: CategorieId }) {
               key={inv.id}
               source={t('invocations.sourceCoran', { ref, fois: t('invocations.fois', { count: inv.repetitions }) })}
               contenu={contenu}
-              actif={inv.id === actif?.id}
-              termine={fait(inv)}
+              actif={inv.id === actif?.cle}
+              termine={fait(inv.id)}
               favori={favori}
               onChoisir={() => setChoisi(inv.id)}
               onEcouter={() => {
@@ -167,11 +193,40 @@ function Moments({ initiale }: { initiale: CategorieId }) {
             />
           );
         })}
-        <Banner ton="info">{t('invocations.note')}</Banner>
+        {groupesHisn.map((c) => (
+          <View key={c.id} style={{ gap: espace.espace3 }}>
+            <Text
+              accessibilityRole="header"
+              accessibilityLanguage={i18n.language === 'ar' ? 'ar' : undefined}
+              maxFontSizeMultiplier={echelleMax.grand}
+              style={[typographie.titre3, { color: couleurs.emeraude }]}>
+              {titreDe(c, i18n.language)}
+            </Text>
+            {c.items.map((it) => {
+              const cle = `${c.id}:${it.id}`;
+              return (
+                <CarteHisn
+                  key={cle}
+                  item={it}
+                  actif={cle === actif?.cle}
+                  termine={fait(cle)}
+                  onChoisir={() => setChoisi(cle)}
+                />
+              );
+            })}
+          </View>
+        ))}
+        <Banner ton="info">{t(estMomentHisn(categorie) ? 'invocations.noteHisn' : 'invocations.note')}</Banner>
       </ScrollView>
 
       {actif ? (
-        <BarreCompteur titre={libelleActif} n={comptes[actif.id] ?? 0} total={actif.repetitions} onCompter={compter} />
+        <BarreCompteur
+          titre={libelleActif}
+          arabe={!invActive}
+          n={comptes[actif.cle] ?? 0}
+          total={actif.repetitions}
+          onCompter={compter}
+        />
       ) : null}
       <PartageVerset verset={aPartager} onFermer={() => setAPartager(null)} />
     </View>
