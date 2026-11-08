@@ -53,7 +53,7 @@ export function TopBar({
   const chemin = usePathname();
   const enEcoute = useLecteur((s) => s.position !== null);
   const { miniRange } = useBottomStack();
-  const casque = montrerCasque({ enEcoute, miniRange, chemin });
+  const casque = montrerCasque({ enEcoute, miniRange, chemin, casqueDejaPresent: actions?.some((a) => a.icone === 'headphones') ?? false });
   const avecRetour = retour !== undefined && retour !== false;
 
   return (
