@@ -56,8 +56,12 @@ export default function AppelEtRappels() {
       .catch((erreur: unknown) => console.warn('Réglage des alarmes exactes inaccessible', erreur));
   };
 
+  // Android : feuille réduite (elle se décollait) : trois sons, sans essai ni rappel avant. iOS inchangé.
+  const android = Platform.OS === 'android';
+  const sonsFeuille = android ? sons.filter((s) => s === 'court' || s === 'vibration' || s === 'silencieux') : sons;
+
   const resume = (p: NomPriere) => {
-    const avant = rappelAvant[p];
+    const avant = android ? null : rappelAvant[p];
     const son = t(`priere.sons.${sonsChoisis[p]}`);
     return avant ? `${son} · ${t('priere.rappelAvant', { minutes: avant })}` : son;
   };
@@ -111,7 +115,7 @@ export default function AppelEtRappels() {
           <>
             <RadioGroup
               label={t('priere.son')}
-              options={sons.map((s) => ({ id: s, label: t(`priere.sons.${s}`) }))}
+              options={sonsFeuille.map((s) => ({ id: s, label: t(`priere.sons.${s}`) }))}
               encadre={false}
               valeur={sonsChoisis[ouverte]}
               onChange={(id) => {
@@ -119,6 +123,7 @@ export default function AppelEtRappels() {
                 if (s) definirSon(ouverte, s);
               }}
             />
+            {android ? null : (
             <Button
               variant="secondaire"
               icone="bell"
@@ -130,7 +135,9 @@ export default function AppelEtRappels() {
               }}>
               {t('priere.essayerSon')}
             </Button>
-            {essaiRefuse ? <Banner ton="attention">{t('priere.essaiRefuse')}</Banner> : null}
+            )}
+            {!android && essaiRefuse ? <Banner ton="attention">{t('priere.essaiRefuse')}</Banner> : null}
+            {android ? null : (
             <RadioGroup
               label={t('priere.rappelAvantTitre')}
               options={[
@@ -141,6 +148,7 @@ export default function AppelEtRappels() {
               valeur={rappelAvant[ouverte] ? String(rappelAvant[ouverte]) : 'aucun'}
               onChange={(id) => definirRappelAvant(ouverte, id === 'aucun' ? null : Number(id))}
             />
+            )}
           </>
         ) : null}
       </BottomSheet>
