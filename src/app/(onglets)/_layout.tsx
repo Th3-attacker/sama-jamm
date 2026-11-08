@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Platform, View } from 'react-native';
 
 import { ErreurDeRoute } from '@/features/erreur/ErreurDeRoute';
+import { SondeDev } from '@/features/ecouter/SondeDev';
 import { MiniLecteur } from '@/features/ecouter/MiniLecteur';
 import {
   ACCESSOIRE_NATIF,
@@ -37,6 +38,7 @@ export default function OngletsLayout() {
 
   return (
     <View style={{ flex: 1 }}>
+      {__DEV__ ? <SondeDev /> : null}
       <NativeTabs
         tintColor={couleurs.emeraude}
         hidden={pleinEcran}
