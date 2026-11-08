@@ -7,11 +7,11 @@ import { ListGroup } from '@/ui/ListGroup';
 import { ListItem } from '@/ui/ListItem';
 
 import { CATEGORIES } from './donnees';
-import { chapitresHisn, titreDe } from './hisn';
+import { CATEGORIES_HISN, idsDeCategorie } from './categoriesHisn';
 
-/** Bibliothèque des invocations : les moments du Coran, puis les chapitres de la Citadelle du musulman. */
+/** Bibliothèque des invocations : les moments du Coran, puis les catégories de la Citadelle du musulman. */
 export function ListeCategories() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const { espace } = useTheme();
   return (
     <View style={{ paddingTop: espace.espace3, gap: espace.espace5 }}>
@@ -26,13 +26,13 @@ export function ListeCategories() {
         ))}
       </ListGroup>
       <ListGroup titre={t('invocations.hisn')} note={t('invocations.noteHisn')}>
-        {chapitresHisn().map((c) => (
+        {CATEGORIES_HISN.map((c) => (
           <ListItem
-            key={c.id}
-            numero={c.id}
-            prefixe={t('invocations.chapitre')}
-            titre={titreDe(c, i18n.language)}
-            onPress={() => router.push({ pathname: '/lire/hisn/[chapitre]', params: { chapitre: c.id } })}
+            key={c}
+            icone="book"
+            titre={t(`invocations.categories.${c}`)}
+            sousTitre={t('invocations.nbChapitres', { count: idsDeCategorie(c).length })}
+            onPress={() => router.push({ pathname: '/lire/hisn/categorie/[groupe]', params: { groupe: c } })}
           />
         ))}
       </ListGroup>
