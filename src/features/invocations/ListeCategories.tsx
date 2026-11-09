@@ -10,6 +10,7 @@ import { ListGroup } from '@/ui/ListGroup';
 import { ListItem } from '@/ui/ListItem';
 
 import { CATEGORIES, invocationsDe, type CategorieId } from './donnees';
+import { chapitresHisn } from './hisn';
 
 // Pas d'icône « lit » dans le jeu d'icônes : le sommeil prend la lune, comme le soir.
 const ICONES: Record<CategorieId, IconName> = {
@@ -20,7 +21,7 @@ const ICONES: Record<CategorieId, IconName> = {
 
 type Moment = { id: CategorieId; nombre: number; ouvrir: () => void };
 
-/** Bibliothèque des invocations : les moments du Coran, puis les catégories de la Citadelle du musulman. */
+/** Bibliothèque des invocations : les moments du Coran, puis une carte qui ouvre la Citadelle du musulman. */
 export function ListeCategories() {
   const { t } = useTranslation();
   const { couleurs, espace, rayon, typographie } = useTheme();
@@ -93,6 +94,48 @@ export function ListeCategories() {
           </View>
         ))}
       </View>
+      {/* Hisn al-Muslim : tout son contenu est dans son propre espace, à part des moments. */}
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={`${t('invocations.hisn')}, ${t('invocations.nbChapitres', { count: chapitresHisn().length })}`}
+        onPress={() => router.push('/lire/hisn')}
+        style={({ pressed }) => ({
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: espace.espace3,
+          padding: espace.espace4,
+          borderWidth: 1,
+          borderColor: couleurs.ligne,
+          borderRadius: rayon.rayonCarte,
+          backgroundColor: pressed ? couleurs.emeraudeDoux : couleurs.surface,
+        })}>
+        <View
+          style={{
+            width: 48,
+            height: 48,
+            borderRadius: rayon.rayonPastille,
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: couleurs.orDoux,
+          }}>
+          <Icon name="book" size={24} color={couleurs.orTexte} />
+        </View>
+        <View style={{ flex: 1, minWidth: 0 }}>
+          <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.titre3, { color: couleurs.encre }]}>
+            {t('invocations.hisn')}
+          </Text>
+          <Text
+            accessibilityLanguage="ar"
+            maxFontSizeMultiplier={echelleMax.courant}
+            style={[typographie.arabe, { color: couleurs.emeraude }]}>
+            حصن المسلم
+          </Text>
+          <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, { fontSize: 14, lineHeight: 20, color: couleurs.encre3 }]}>
+            {t('invocations.nbChapitres', { count: chapitresHisn().length })}
+          </Text>
+        </View>
+        <Icon name="chevron-right" size={18} color={couleurs.encre3} />
+      </Pressable>
     </View>
   );
 }
