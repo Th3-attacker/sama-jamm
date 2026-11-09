@@ -23,13 +23,13 @@ export function ListeCategories() {
   const { espace } = useTheme();
   return (
     <View style={{ paddingTop: espace.espace3 }}>
-      <ListGroup titre={t('invocations.moments')}>
+      <ListGroup titre={t('lire.invocations')}>
         {CATEGORIES.map((c) => (
           <ListItem
             key={c}
             icone={ICONES[c]}
             titre={t(`invocations.${c}`)}
-            sousTitre={String(invocationsDe(c).length)}
+            sousTitre={t('invocations.nbInvocations', { count: invocationsDe(c).length })}
             fin="chevron"
             onPress={() => router.push({ pathname: '/lire/invocations/[categorie]', params: { categorie: c } })}
           />
