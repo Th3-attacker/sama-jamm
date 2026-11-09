@@ -24,7 +24,7 @@ const X_FIN = 302;
 
 /** « 42 min » → chiffre et unité séparés, comme sur la planche ; « 1 h 05 » reste d'un bloc. */
 function separerDelai(dans: string): { valeur: string; unite: string | null } {
-  const m = /^(\d+)\s+(min)$/.exec(dans);
+  const m = /^([\d٠-٩]+)\s+(min)$/.exec(dans);
   return m ? { valeur: m[1], unite: m[2] } : { valeur: dans, unite: null };
 }
 
