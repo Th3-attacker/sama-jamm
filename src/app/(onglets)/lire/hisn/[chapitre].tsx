@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { BarreCompteur } from '@/features/invocations/BarreCompteur';
-import { chapitreHisn, debutDe, estMomentHisn, itemsDuMoment, titreDe, type ItemHisn } from '@/features/invocations/hisn';
-import { useTaillesLecture } from '@/features/lire/BarreTaille';
+import { CarteHisn } from '@/features/invocations/CarteHisn';
+import { chapitreHisn, debutDe, titreDe, type ItemHisn } from '@/features/invocations/hisn';
 import { useParametre } from '@/hooks/useParametre';
 import { cleJour } from '@/lib/dates';
 import { vibrerLeger } from '@/lib/haptique';
@@ -12,7 +12,6 @@ import { useLecture } from '@/stores/lecture';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { Banner } from '@/ui/Banner';
-import { Icon } from '@/ui/Icon';
 import { ProgressBar } from '@/ui/ProgressBar';
 import { useFavoris } from '@/stores/favoris';
 import { useToast } from '@/ui/Toast';
@@ -25,11 +24,8 @@ const SECONDES_POUR_UN_JOUR = 30;
 export default function EcranChapitreHisn() {
   const { t, i18n } = useTranslation();
   const { couleurs, espace, typographie } = useTheme();
-  const { tailleArabe } = useTaillesLecture();
   const brut = useParametre('chapitre');
-  // Le paramètre est un numéro de chapitre, ou un moment (voyage, repas, après la prière) qui en regroupe plusieurs.
-  const moment = estMomentHisn(brut) ? brut : null;
-  const chapitre = moment ? undefined : chapitreHisn(Number(brut));
+  const chapitre = chapitreHisn(Number(brut));
   const { afficher } = useToast();
   const favoris = useFavoris((s) => s.invocations);
   const basculerFavori = useFavoris((s) => s.basculerInvocation);
@@ -43,12 +39,12 @@ export default function EcranChapitreHisn() {
     return () => clearTimeout(minuteur);
   }, [marquerJour]);
 
-  const items = useMemo(() => (moment ? itemsDuMoment(moment) : (chapitre?.items ?? [])), [moment, chapitre]);
+  const items = useMemo(() => chapitre?.items ?? [], [chapitre]);
   const fait = (i: ItemHisn, c: Record<number, number> = comptes) => (c[i.id] ?? 0) >= i.repetitions;
   const actif = items.find((i) => i.id === choisi) ?? items.find((i) => !fait(i)) ?? items[0];
   const nbFaites = items.filter((i) => fait(i)).length;
 
-  if (!chapitre && !moment) {
+  if (!chapitre) {
     return (
       <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
         <TopBar retour titre={t('invocations.hisn')} />
@@ -75,7 +71,7 @@ export default function EcranChapitreHisn() {
     }
   };
 
-  const titre = moment ? t(`invocations.${moment}`) : chapitre ? titreDe(chapitre, i18n.language) : '';
+  const titre = titreDe(chapitre, i18n.language);
 
   return (
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
@@ -83,7 +79,6 @@ export default function EcranChapitreHisn() {
         retour
         titre={t('invocations.hisn')}
         sousTitre={t('invocations.hisnAide')}
-        // Seul un chapitre se met en favori, pas un moment qui en regroupe plusieurs.
         actions={
           chapitre
             ? [
@@ -118,31 +113,13 @@ export default function EcranChapitreHisn() {
           />
         ) : null}
         {items.map((it) => (
-          <Pressable
+          <CarteHisn
             key={it.id}
-            accessibilityRole="button"
-            onPress={() => setChoisi(it.id)}
-            style={{
-              backgroundColor: couleurs.surface,
-              borderColor: it.id === actif?.id ? couleurs.emeraude : couleurs.ligne,
-              borderWidth: it.id === actif?.id ? 2 : 1,
-              borderRadius: 12,
-              padding: espace.espace4,
-              gap: espace.espace3,
-            }}>
-            <View style={styles.sourceLigne}>
-              <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre3, flex: 1 }]}>
-                {t('invocations.sourceHisn', { fois: t('invocations.fois', { count: it.repetitions }) })}
-              </Text>
-              {fait(it) ? <Icon name="check-circle" size={20} color={couleurs.emeraude} /> : null}
-            </View>
-            <Text
-              accessibilityLanguage="ar"
-              maxFontSizeMultiplier={echelleMax.grand}
-              style={[typographie.arabe, tailleArabe, styles.arabe, { color: couleurs.encre }]}>
-              {it.texte}
-            </Text>
-          </Pressable>
+            item={it}
+            actif={it.id === actif?.id}
+            termine={fait(it)}
+            onChoisir={() => setChoisi(it.id)}
+          />
         ))}
         <Banner ton="info">{t('invocations.noteHisn')}</Banner>
       </ScrollView>
@@ -161,6 +138,4 @@ export default function EcranChapitreHisn() {
 
 const styles = StyleSheet.create({
   ecran: { flex: 1 },
-  sourceLigne: { flexDirection: 'row', alignItems: 'center' },
-  arabe: { textAlign: 'right', writingDirection: 'rtl' },
 });

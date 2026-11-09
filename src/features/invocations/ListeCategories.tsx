@@ -9,11 +9,12 @@ import type { IconName } from '@/ui/types';
 import { ListGroup } from '@/ui/ListGroup';
 import { ListItem } from '@/ui/ListItem';
 
+import { CATEGORIES_HISN, idsDeCategorie } from './categoriesHisn';
 import { CATEGORIES, invocationsDe, type CategorieId } from './donnees';
-import { chapitresHisn, itemsDuMoment, titreDe, type MomentHisn } from './hisn';
+import { estMomentHisn, MOMENTS, MOMENTS_HISN, type MomentId } from './moments';
 
 // Pas d'icône « lit » dans le jeu d'icônes : le sommeil prend la lune, comme le soir.
-const ICONES: Record<CategorieId | MomentHisn, IconName> = {
+const ICONES: Record<MomentId, IconName> = {
   matin: 'sun',
   soir: 'moon',
   sommeil: 'moon',
@@ -22,25 +23,18 @@ const ICONES: Record<CategorieId | MomentHisn, IconName> = {
   apresPriere: 'kaaba',
 };
 
-type Moment = { id: CategorieId | MomentHisn; nombre: number; ouvrir: () => void };
+type Moment = { id: MomentId; nombre: number; ouvrir: () => void };
 
-/** Bibliothèque des invocations : les moments du Coran, puis les chapitres de la Citadelle du musulman. */
+/** Bibliothèque des invocations : les moments du Coran, puis les catégories de la Citadelle du musulman. */
 export function ListeCategories() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const { couleurs, espace, rayon, typographie } = useTheme();
-  // Les trois moments du Coran, puis ceux tirés de la Citadelle du musulman.
-  const moments: Moment[] = [
-    ...CATEGORIES.map((c) => ({
-      id: c,
-      nombre: invocationsDe(c).length,
-      ouvrir: () => router.push({ pathname: '/lire/invocations/[categorie]', params: { categorie: c } }),
-    })),
-    ...(['voyage', 'repas', 'apresPriere'] as const).map((m) => ({
-      id: m,
-      nombre: itemsDuMoment(m).length,
-      ouvrir: () => router.push({ pathname: '/lire/hisn/[chapitre]', params: { chapitre: m } }),
-    })),
-  ];
+  // Les trois moments du Coran, puis trois moments tirés de la Citadelle : tous ouvrent la liste du moment.
+  const moments: Moment[] = MOMENTS.map((m) => ({
+    id: m,
+    nombre: estMomentHisn(m) ? idsDeCategorie(MOMENTS_HISN[m]).length : invocationsDe(m).length,
+    ouvrir: () => router.push({ pathname: '/lire/invocations/[categorie]', params: { categorie: m } }),
+  }));
   const rangees = Array.from({ length: Math.ceil(moments.length / 2) }, (_, i) => moments.slice(i * 2, i * 2 + 2));
   return (
     <View style={{ paddingTop: espace.espace3, gap: espace.espace5 }}>
@@ -105,13 +99,13 @@ export function ListeCategories() {
         ))}
       </View>
       <ListGroup titre={t('invocations.hisn')} note={t('invocations.noteHisn')}>
-        {chapitresHisn().map((c) => (
+        {CATEGORIES_HISN.map((c) => (
           <ListItem
-            key={c.id}
-            numero={c.id}
-            prefixe={t('invocations.chapitre')}
-            titre={titreDe(c, i18n.language)}
-            onPress={() => router.push({ pathname: '/lire/hisn/[chapitre]', params: { chapitre: c.id } })}
+            key={c}
+            icone="book"
+            titre={t(`invocations.categories.${c}`)}
+            sousTitre={t('invocations.nbChapitres', { count: idsDeCategorie(c).length })}
+            onPress={() => router.push({ pathname: '/lire/hisn/categorie/[groupe]', params: { groupe: c } })}
           />
         ))}
       </ListGroup>

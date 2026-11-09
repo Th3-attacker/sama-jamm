@@ -3,8 +3,11 @@ import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import { CATEGORIES, estCategorie, invocationsDe, type CategorieId } from '@/features/invocations/donnees';
+import { chapitresDeCategorie } from '@/features/invocations/categoriesHisn';
 import { referenceDe } from '@/features/invocations/CarteInvocation';
+import { invocationsDe } from '@/features/invocations/donnees';
+import { chapitresHisn, titreDe } from '@/features/invocations/hisn';
+import { estMoment, estMomentHisn, MOMENTS, MOMENTS_HISN, type MomentId } from '@/features/invocations/moments';
 import { useParametre } from '@/hooks/useParametre';
 import { cleJour } from '@/lib/dates';
 import { useComptesDuJour } from '@/stores/invocationsJour';
@@ -32,7 +35,7 @@ export default function EcranMoment() {
     return () => clearTimeout(minuteur);
   }, [marquerJour]);
 
-  if (!estCategorie(brut)) {
+  if (!estMoment(brut)) {
     return (
       <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
         <TopBar retour titre={t('lire.invocations')} />
@@ -47,11 +50,14 @@ export default function EcranMoment() {
   return <Moment categorie={brut} />;
 }
 
-function Moment({ categorie }: { categorie: CategorieId }) {
-  const { t } = useTranslation();
+function Moment({ categorie }: { categorie: MomentId }) {
+  const { t, i18n } = useTranslation();
   const { couleurs, espace, typographie } = useTheme();
   const comptes = useComptesDuJour();
-  const liste = invocationsDe(categorie);
+  // Un moment de versets suit l'avancée du jour ; un moment de la Citadelle liste ses chapitres, qui ont leur lecteur.
+  const hisn = estMomentHisn(categorie);
+  const liste = hisn ? [] : invocationsDe(categorie);
+  const chapitres = hisn ? chapitresDeCategorie(MOMENTS_HISN[categorie], chapitresHisn()) : [];
   const fait = (id: string, repetitions: number) => (comptes[id] ?? 0) >= repetitions;
   const nbFaites = liste.filter((i) => fait(i.id, i.repetitions)).length;
   const detail = t('invocations.progressionJour', { n: nbFaites, total: liste.length });
@@ -72,7 +78,7 @@ function Moment({ categorie }: { categorie: CategorieId }) {
           {categorie === 'matin' ? t('invocations.sousTitreMatin') : t('invocations.sousTitre')}
         </Text>
         <View accessibilityRole="radiogroup" accessibilityLabel={t('invocations.moments')} style={[styles.puces, { gap: espace.espace2 }]}>
-          {CATEGORIES.map((c) => (
+          {MOMENTS.map((c) => (
             <Chip
               key={c}
               pilule
@@ -82,6 +88,7 @@ function Moment({ categorie }: { categorie: CategorieId }) {
             </Chip>
           ))}
         </View>
+        {hisn ? null : (
         <View
           accessible
           accessibilityRole="progressbar"
@@ -95,6 +102,7 @@ function Moment({ categorie }: { categorie: CategorieId }) {
             {detail}
           </Text>
         </View>
+        )}
         <View>
           {liste.map((inv, i) => {
             const termine = fait(inv.id, inv.repetitions);
@@ -127,7 +135,26 @@ function Moment({ categorie }: { categorie: CategorieId }) {
               </Pressable>
             );
           })}
+          {chapitres.map((c) => (
+            <Pressable
+              key={c.id}
+              accessibilityRole="button"
+              onPress={() => router.push({ pathname: '/lire/hisn/[chapitre]', params: { chapitre: String(c.id) } })}
+              style={[styles.ligne, { gap: espace.espace3, borderBottomColor: couleurs.ligne }]}>
+              <Medaillon numero={c.id} prefixe={t('invocations.chapitre')} taille={40} />
+              <View style={styles.textes}>
+                <Text numberOfLines={2} maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, styles.titreLigne, { color: couleurs.encre }]}>
+                  {titreDe(c, i18n.language)}
+                </Text>
+                <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.compte, { color: couleurs.encre3 }]}>
+                  {t('invocations.hisn')}
+                </Text>
+              </View>
+              <Icon name="chevron-right" size={18} color={couleurs.encre3} />
+            </Pressable>
+          ))}
         </View>
+        {hisn ? <Banner ton="info">{t('invocations.noteHisn')}</Banner> : null}
       </ScrollView>
     </View>
   );
