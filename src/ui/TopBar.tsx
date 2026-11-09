@@ -1,7 +1,7 @@
 import { usePathname, useRouter } from 'expo-router';
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useBottomStack } from '@/features/ecouter/placeMiniLecteur';
@@ -14,7 +14,19 @@ import { IconButton } from './IconButton';
 import { montrerCasque } from './casqueBarreHaut';
 import type { IconName } from './types';
 
-export type TopBarAction = { icone: IconName; label: string; onPress?: () => void; actif?: boolean };
+export type TopBarAction = {
+  icone: IconName;
+  label: string;
+  onPress?: () => void;
+  actif?: boolean;
+  /** Couleur de l'icône au repos (liste en émeraude du lecteur en mode page). */
+  couleur?: string;
+  /** Glyphe en texte (« Aa ») à la place de l'icône : réglages de lecture. */
+  texte?: string;
+  /** Le texte est un libellé (« Remettre à zéro ») : 16 gras émeraude, largeur automatique. */
+  libelle?: boolean;
+  desactive?: boolean;
+};
 
 export type TopBarProps = {
   /** true ou un libellé (« Retour aux horaires ») : affiche la flèche « ← ». */
@@ -33,6 +45,8 @@ export type TopBarProps = {
   transparent?: boolean;
   /** Élément à gauche à la place du titre (logo de l'Accueil). */
   gauche?: ReactNode;
+  /** Titre centré (lecteur de sourate). */
+  centre?: boolean;
 };
 
 export function TopBar({
@@ -45,11 +59,12 @@ export function TopBar({
   lang,
   transparent = false,
   gauche,
+  centre = false,
 }: TopBarProps) {
   const { t } = useTranslation();
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { couleurs, espace, typographie, latin } = useTheme();
+  const { couleurs, espace, typographie, latin, cible } = useTheme();
   const chemin = usePathname();
   const enEcoute = useLecteur((s) => s.position !== null);
   const { miniRange } = useBottomStack();
@@ -80,19 +95,44 @@ export function TopBar({
               accessibilityRole="header"
               numberOfLines={1}
               maxFontSizeMultiplier={echelleMax.courant}
-              style={[typographie.titre3, { color: couleurs.encre }]}>
+              style={[typographie.titre3, centre ? styles.centre : null, { color: couleurs.encre }]}>
               {titre}
             </Text>
           ) : null}
           {!grand && sousTitre ? (
-            <Text numberOfLines={1} maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre3 }]}>
+            <Text
+              numberOfLines={1}
+              maxFontSizeMultiplier={echelleMax.courant}
+              style={[typographie.legende, centre ? styles.centre : null, { color: couleurs.encre3 }]}>
               {sousTitre}
             </Text>
           ) : null}
         </View>
-        {actions?.map((a) => (
-          <IconButton key={a.label} icone={a.icone} label={a.label} actif={a.actif} onPress={a.onPress} />
-        ))}
+        {actions?.map((a) =>
+          a.texte ? (
+            <Pressable
+              key={a.label}
+              accessibilityRole="button"
+              accessibilityLabel={a.label}
+              hitSlop={4}
+              disabled={a.desactive}
+              accessibilityState={{ disabled: a.desactive }}
+              onPress={a.onPress}
+              style={({ pressed }) => [
+                styles.texte,
+                a.libelle ? { minWidth: cible.cibleIos, paddingHorizontal: espace.espace2 } : { width: cible.cibleIos },
+                { height: cible.cibleIos, opacity: a.desactive ? 0.4 : pressed ? 0.7 : 1 },
+              ]}>
+              <Text
+                maxFontSizeMultiplier={echelleMax.courant}
+                style={a.libelle ? [typographie.corps, styles.libelle, { color: couleurs.emeraude }] : [typographie.lecture, styles.glyphe, { color: couleurs.encre2 }]}>
+                {a.texte}
+              </Text>
+            </Pressable>
+          ) : (
+            <IconButton key={a.label} icone={a.icone} label={a.label} actif={a.actif} couleur={a.couleur} onPress={a.onPress} />
+          ),
+        )}
         {casque ? (
           <IconButton icone="headphones" label={t('ecouter.ouvrirLecteur')} onPress={() => router.push('/lecteur')} />
         ) : null}
@@ -120,4 +160,10 @@ export function TopBar({
 const styles = StyleSheet.create({
   rangee: { flexDirection: 'row', alignItems: 'center', minHeight: miseEnPage.barreHaut },
   titres: { flex: 1, justifyContent: 'center' },
+  centre: { textAlign: 'center' },
+  texte: { alignItems: 'center', justifyContent: 'center' },
+  // Planche : « Aa » en Source Serif 18.
+  glyphe: { fontSize: 18, lineHeight: 24 },
+  // Planche « Dhikr » : « Remettre à zéro » en 16/24 gras.
+  libelle: { fontFamily: 'SourceSans3_600SemiBold' },
 });

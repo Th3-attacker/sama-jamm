@@ -7,12 +7,8 @@ import { type Devise } from '@/lib/montant';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 
-import { Icon } from './Icon';
-import type { IconName } from './types';
-
 export type EnvelopeProps = {
   nom: string;
-  icone: IconName;
   depense: number;
   plafond: number;
   fixe: boolean;
@@ -24,7 +20,7 @@ export type EnvelopeProps = {
  * Une enveloppe du budget : ce qui est dépensé sur son plafond, et son état en mots.
  * Doux : « Bientôt atteint » en alerte à 85 %, « Dépassé de … » en erreur au-delà ; jamais de reproche.
  */
-export function Envelope({ nom, icone, depense, plafond, fixe, devise, onPress }: EnvelopeProps) {
+export function Envelope({ nom, depense, plafond, fixe, devise, onPress }: EnvelopeProps) {
   const { t } = useTranslation();
   const formatMontant = useFormatMontant();
   const { couleurs, espace, typographie } = useTheme();
@@ -38,10 +34,16 @@ export function Envelope({ nom, icone, depense, plafond, fixe, devise, onPress }
         : etat === 'presque-plein'
           ? `${t('budget.presquePlein')} · ${t('budget.reste', { montant: f(plafond - depense) })}`
           : t('budget.reste', { montant: f(plafond - depense) });
-  const couleurMot =
-    etat === 'depasse' ? couleurs.erreur : etat === 'presque-plein' ? couleurs.alerte : couleurs.encre2;
+  const couleurMot = etat === 'depasse' ? couleurs.erreur : couleurs.alerte;
+  // Planche : plein ou au-delà en encre2, à partir de 85 % en alerte, sinon émeraude.
   const couleurBarre =
-    etat === 'depasse' ? couleurs.erreur : etat === 'presque-plein' ? couleurs.alerte : couleurs.emeraude;
+    plafond > 0 && depense >= plafond
+      ? couleurs.encre2
+      : etat === 'presque-plein' || etat === 'depasse'
+        ? couleurs.alerte
+        : couleurs.emeraude;
+  // Le mot ne s'ajoute que si l'enveloppe demande attention ; il reste toujours dans le label d'accessibilité.
+  const montrerMot = etat === 'depasse' || etat === 'presque-plein';
   const ratio = plafond > 0 ? Math.min(depense / plafond, 1) : depense > 0 ? 1 : 0;
 
   return (
@@ -61,32 +63,34 @@ export function Envelope({ nom, icone, depense, plafond, fixe, devise, onPress }
         },
       ]}>
       <View style={[styles.tete, { gap: espace.espace3 }]}>
-        <Icon name={icone} size={20} color={couleurs.encre2} />
         <Text
           maxFontSizeMultiplier={echelleMax.courant}
-          style={[typographie.libelle, styles.nom, { color: couleurs.encre }]}>
+          style={[typographie.corps, styles.nom, { fontFamily: typographie.libelle.fontFamily, color: couleurs.encre }]}>
           {nom}
         </Text>
         <Text
           maxFontSizeMultiplier={echelleMax.courant}
-          style={[typographie.legende, { color: couleurs.encre2, fontVariant: ['tabular-nums'] }]}>
-          {`${f(depense)} ${t('budget.sur', { montant: f(plafond) })}`}
+          numberOfLines={1}
+          style={[typographie.corps, { color: couleurs.encre2, fontVariant: ['tabular-nums'] }]}>
+          {`${f(depense)} / ${f(plafond)}`}
         </Text>
       </View>
       {/* Barre décorative : le sens est porté par le libellé de la ligne et le mot ci-dessous. */}
       <View style={[styles.piste, { backgroundColor: couleurs.surfaceCreux }]}>
         <View style={[styles.piste, { width: `${ratio * 100}%`, backgroundColor: couleurBarre }]} />
       </View>
-      <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurMot }]}>
-        {mot}
-      </Text>
+      {montrerMot ? (
+        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurMot }]}>
+          {mot}
+        </Text>
+      ) : null}
     </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
   ligne: { borderBottomWidth: StyleSheet.hairlineWidth },
-  tete: { flexDirection: 'row', alignItems: 'center' },
+  tete: { flexDirection: 'row', alignItems: 'baseline' },
   nom: { flex: 1 },
   piste: { height: 4, borderRadius: 999, overflow: 'hidden' },
 });

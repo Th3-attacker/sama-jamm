@@ -16,6 +16,8 @@ export type ProgressBarProps = {
   ton?: TonProgression;
   /** Piste de 4 au lieu de 8. */
   fine?: boolean;
+  /** Résumé en 14/20 au lieu de 12/16 (planche « Khatm »). */
+  detailCorps?: boolean;
 };
 
 function couleur(ton: TonProgression, c: Couleurs): string {
@@ -26,7 +28,7 @@ function couleur(ton: TonProgression, c: Couleurs): string {
 }
 
 /** Barre de progression, sa valeur toujours écrite à côté. */
-export function ProgressBar({ valeur, label, detail, ton = 'emeraude', fine = false }: ProgressBarProps) {
+export function ProgressBar({ valeur, label, detail, ton = 'emeraude', fine = false, detailCorps = false }: ProgressBarProps) {
   const { couleurs, espace, typographie } = useTheme();
   const borne = Number.isFinite(valeur) ? Math.max(0, valeur) : 0;
   const tonEffectif = borne > 1 ? 'erreur' : ton;
@@ -48,7 +50,7 @@ export function ProgressBar({ valeur, label, detail, ton = 'emeraude', fine = fa
           }}
         />
       </View>
-      <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre2 }]}>
+      <Text maxFontSizeMultiplier={echelleMax.courant} style={[detailCorps ? typographie.libelle : typographie.legende, detailCorps ? styles.corps : null, { color: couleurs.encre2 }]}>
         {detail}
       </Text>
     </View>
@@ -56,5 +58,6 @@ export function ProgressBar({ valeur, label, detail, ton = 'emeraude', fine = fa
 }
 
 const styles = StyleSheet.create({
+  corps: { fontFamily: 'SourceSans3_400Regular' },
   piste: { borderRadius: 999, overflow: 'hidden' },
 });

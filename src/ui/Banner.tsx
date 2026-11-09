@@ -15,6 +15,8 @@ export type BannerProps = {
   /** info · attention (hors ligne) · erreur · veille · succes. */
   ton?: TonBanniere;
   titre?: string;
+  /** Langue du titre (« wo » : formule wolof de la Veille). */
+  langueTitre?: string;
   /** Ce qui marche encore et quoi faire. */
   children?: string;
   icone?: IconName;
@@ -29,7 +31,7 @@ function teintes(ton: TonBanniere, c: Couleurs) {
     case 'attention':
       return { fond: c.orDoux, contour: c.orDoux, icone: c.orTexte };
     case 'veille':
-      return { fond: c.surfaceCreux, contour: c.surfaceCreux, icone: c.orTexte };
+      return { fond: c.surface, contour: c.ligne, icone: c.orTexte };
     case 'info':
       return { fond: c.emeraudeDoux, contour: c.emeraudeDoux, icone: c.surEmeraudeDoux };
     case 'erreur':
@@ -40,10 +42,12 @@ function teintes(ton: TonBanniere, c: Couleurs) {
 }
 
 // Bandeau qui reste sous la barre du haut tant que la situation dure. Un seul à la fois.
-export function Banner({ ton = 'info', titre, children, icone, action, onFermer }: BannerProps) {
+export function Banner({ ton = 'info', titre, langueTitre, children, icone, action, onFermer }: BannerProps) {
   const { t } = useTranslation();
   const { couleurs, espace, rayon, typographie } = useTheme();
   const c = teintes(ton, couleurs);
+  // Planche « Lecteur en Veille » : carte 12 / 16, icône 22, titre 16/24, détail 14/20 en encre-3.
+  const veille = ton === 'veille';
 
   return (
     <View
@@ -55,19 +59,25 @@ export function Banner({ ton = 'info', titre, children, icone, action, onFermer 
           backgroundColor: c.fond,
           borderColor: c.contour,
           borderRadius: rayon.rayonCarte,
-          padding: espace.espace3,
+          paddingVertical: espace.espace3,
+          paddingHorizontal: veille ? espace.espace4 : espace.espace3,
           gap: espace.espace3,
         },
       ]}>
-      <Icon name={icone ?? ICONES[ton]} size={20} color={c.icone} />
+      <Icon name={icone ?? ICONES[ton]} size={veille ? 22 : 20} color={c.icone} />
       <View style={[styles.textes, { gap: espace.espace1 }]}>
         {titre ? (
-          <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, { color: couleurs.encre }]}>
+          <Text
+            accessibilityLanguage={langueTitre}
+            maxFontSizeMultiplier={echelleMax.courant}
+            style={[typographie.libelle, veille ? styles.titreVeille : null, { color: couleurs.encre }]}>
             {titre}
           </Text>
         ) : null}
         {children ? (
-          <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, { color: couleurs.encre2 }]}>
+          <Text
+            maxFontSizeMultiplier={echelleMax.courant}
+            style={[typographie.corps, veille ? styles.detailVeille : null, { color: veille ? couleurs.encre3 : couleurs.encre2 }]}>
             {children}
           </Text>
         ) : null}
@@ -87,5 +97,7 @@ export function Banner({ ton = 'info', titre, children, icone, action, onFermer 
 const styles = StyleSheet.create({
   bandeau: { flexDirection: 'row', alignItems: 'flex-start', borderWidth: 1 },
   textes: { flex: 1 },
+  titreVeille: { fontSize: 16, lineHeight: 24 },
+  detailVeille: { fontSize: 14, lineHeight: 20 },
   action: { alignSelf: 'flex-start', minHeight: 32, justifyContent: 'center' },
 });

@@ -19,6 +19,8 @@ export type ButtonProps = {
   icone?: IconName;
   /** Occupe toute la largeur du conteneur (bas d'écran). */
   pleineLargeur?: boolean;
+  /** Écrans de bienvenue : 52 de haut (48 pour le discret) et libellé de 16. */
+  grand?: boolean;
   disabled?: boolean;
   onPress?: (event: GestureResponderEvent) => void;
   accessibilityHint?: string;
@@ -46,6 +48,7 @@ export function Button({
   children,
   icone,
   pleineLargeur = false,
+  grand = false,
   disabled = false,
   onPress,
   accessibilityHint,
@@ -67,7 +70,7 @@ export function Button({
       style={({ pressed }) => [
         styles.bouton,
         {
-          minHeight: cible.cibleIos,
+          minHeight: grand ? (variant === 'discret' ? 48 : 52) : cible.cibleIos,
           gap: espace.espace2,
           paddingHorizontal: variant === 'discret' ? espace.espace3 : espace.espace5,
           borderRadius: rayon.rayonCarte,
@@ -78,7 +81,7 @@ export function Button({
         },
       ]}>
       {icone ? <Icon name={icone} size={18} color={t.texte} /> : null}
-      <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, { color: t.texte }]}>
+      <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, { color: t.texte }, grand && styles.libelleGrand]}>
         {children}
       </Text>
     </Pressable>
@@ -86,6 +89,7 @@ export function Button({
 }
 
 const styles = StyleSheet.create({
+  libelleGrand: { fontSize: 16, lineHeight: 24 },
   bouton: {
     flexDirection: 'row',
     alignItems: 'center',

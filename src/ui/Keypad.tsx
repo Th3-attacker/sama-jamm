@@ -68,5 +68,6 @@ export function appliquerTouche(saisie: string, touche: ToucheClavier): string {
 const styles = StyleSheet.create({
   grille: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' },
   touche: { width: '31%', height: 56, alignItems: 'center', justifyContent: 'center' },
-  chiffre: { fontSize: 24, lineHeight: 30 },
+  // Source Sans même en arabe : les touches de 31 % ne portent pas les chiffres plus larges de Noto Sans Arabic.
+  chiffre: { fontFamily: 'SourceSans3_600SemiBold', fontSize: 24, lineHeight: 32 },
 });

@@ -27,8 +27,8 @@ export function EmptyState({ titre, lang = 'wo', sousTitre, texte, icone = 'book
   const { couleurs, espace, typographie, latin } = useTheme();
 
   return (
-    <View style={[styles.vide, { gap: espace.espace3, padding: espace.espace6 }]}>
-      <View style={[styles.etoile, { width: TAILLE_ETOILE, height: TAILLE_ETOILE, marginBottom: espace.espace2 }]}>
+    <View style={[styles.vide, { gap: espace.espace2, paddingHorizontal: espace.espace6, paddingVertical: espace.espace8 }]}>
+      <View style={[styles.etoile, { width: TAILLE_ETOILE, height: TAILLE_ETOILE }]}>
         <View style={StyleSheet.absoluteFill}>
           <Etoile taille={TAILLE_ETOILE} remplissage={couleurs.orDoux} contour={couleurs.or} />
         </View>
@@ -38,7 +38,7 @@ export function EmptyState({ titre, lang = 'wo', sousTitre, texte, icone = 'book
         accessibilityRole="header"
         accessibilityLanguage={lang}
         maxFontSizeMultiplier={echelleMax.courant}
-        style={[lang === 'wo' ? latin.titre2 : typographie.titre2, styles.centre, { color: couleurs.emeraude }]}>
+        style={[lang === 'wo' ? latin.titre2 : typographie.titre2, styles.centre, { color: couleurs.emeraude, marginTop: espace.espace2 }]}>
         {titre}
       </Text>
       {sousTitre ? (
@@ -47,7 +47,7 @@ export function EmptyState({ titre, lang = 'wo', sousTitre, texte, icone = 'book
         </Text>
       ) : null}
       {texte ? (
-        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.centre, { color: couleurs.encre2 }]}>
+        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.centre, { color: couleurs.encre2, marginBottom: espace.espace3 }]}>
           {texte}
         </Text>
       ) : null}
@@ -65,5 +65,5 @@ export function EmptyState({ titre, lang = 'wo', sousTitre, texte, icone = 'book
 const styles = StyleSheet.create({
   vide: { alignItems: 'center', justifyContent: 'center' },
   etoile: { alignItems: 'center', justifyContent: 'center' },
-  centre: { textAlign: 'center', maxWidth: 320 },
+  centre: { textAlign: 'center', maxWidth: 300 },
 });

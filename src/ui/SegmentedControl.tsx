@@ -11,16 +11,22 @@ export type SegmentedControlProps = {
   options: OptionSegment[];
   valeur: string;
   onChange: (id: string) => void;
+  /** Pilule de la bibliothèque (planche) : rayon 999, cases de 36, texte 16. */
+  pilule?: boolean;
 };
 
-export function SegmentedControl({ label, options, valeur, onChange }: SegmentedControlProps) {
+export function SegmentedControl({ label, options, valeur, onChange, pilule = false }: SegmentedControlProps) {
   const { couleurs, ombres, espace, rayon, typographie } = useTheme();
 
   return (
     <View
       accessibilityRole="radiogroup"
       accessibilityLabel={label}
-      style={[styles.groupe, { backgroundColor: couleurs.surfaceCreux, borderRadius: rayon.rayonCarte, padding: espace.espace1 }]}>
+      style={[
+        styles.groupe,
+        { backgroundColor: couleurs.surfaceCreux, borderRadius: pilule ? rayon.rayonPastille : rayon.rayonCarte, padding: espace.espace1 },
+        pilule ? styles.groupePilule : null,
+      ]}>
       {options.slice(0, 4).map((o) => {
         const on = o.id === valeur;
         return (
@@ -31,7 +37,8 @@ export function SegmentedControl({ label, options, valeur, onChange }: Segmented
             onPress={() => onChange(o.id)}
             style={[
               styles.option,
-              { borderRadius: rayon.rayonCarte - espace.espace1, paddingHorizontal: espace.espace2 },
+              { borderRadius: pilule ? rayon.rayonPastille : rayon.rayonCarte - espace.espace1, paddingHorizontal: espace.espace2 },
+              pilule ? styles.optionPilule : null,
               on ? { backgroundColor: couleurs.surface } : null,
               on && ombres.ombre1 !== 'none' ? { boxShadow: ombres.ombre1 } : null,
             ]}>
@@ -40,7 +47,12 @@ export function SegmentedControl({ label, options, valeur, onChange }: Segmented
               maxFontSizeMultiplier={echelleMax.courant}
               style={[
                 typographie.libelle,
-                on ? { color: couleurs.encre } : { fontFamily: 'SourceSans3_400Regular', color: couleurs.encre2 },
+                pilule ? styles.textePilule : null,
+                pilule
+                  ? { color: on ? couleurs.emeraude : couleurs.encre2 }
+                  : on
+                    ? { color: couleurs.encre }
+                    : { fontFamily: 'SourceSans3_400Regular', color: couleurs.encre2 },
               ]}>
               {o.label}
             </Text>
@@ -53,5 +65,8 @@ export function SegmentedControl({ label, options, valeur, onChange }: Segmented
 
 const styles = StyleSheet.create({
   groupe: { flexDirection: 'row', minHeight: 48 },
+  groupePilule: { minHeight: 44 },
+  optionPilule: { minHeight: 36 },
+  textePilule: { fontSize: 16, lineHeight: 24 },
   option: { flex: 1, alignItems: 'center', justifyContent: 'center', minHeight: 40 },
 });
