@@ -3,7 +3,7 @@ import * as Location from 'expo-location';
 import * as Notifications from 'expo-notifications';
 import { useCallback, useRef, useState, type ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
@@ -84,7 +84,9 @@ export function AvantAutorisation({ type, onContinuer }: { type: TypeAutorisatio
         texte={t(`autorisations.avant.${type}.texte`)}
       />
       <RaisonsAutorisation type={type} />
-      <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre2 }]}>
+      <Text
+        maxFontSizeMultiplier={echelleMax.courant}
+        style={[typographie.corps, { color: couleurs.encre3, textAlign: 'center' }, styles.demande]}>
         {t(`autorisations.avant.${type}.demande`)}
       </Text>
       <Button pleineLargeur onPress={onContinuer}>
@@ -152,3 +154,8 @@ export function useAvantAutorisation(type: TypeAutorisation): {
     ),
   };
 }
+
+const styles = StyleSheet.create({
+  // Planche : 14/20, normal, centré.
+  demande: { fontSize: 14, lineHeight: 20 },
+});

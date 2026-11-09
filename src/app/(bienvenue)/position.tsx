@@ -2,8 +2,9 @@ import * as Location from 'expo-location';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Text } from 'react-native';
+import { Text, View } from 'react-native';
 
+import { ArcIllustration } from '@/features/bienvenue/ArcIllustration';
 import { MiseEnPage } from '@/features/bienvenue/MiseEnPage';
 import { ChoixVille } from '@/features/priere/ChoixVille';
 import type { Ville } from '@/features/priere/villes';
@@ -12,21 +13,12 @@ import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { Banner } from '@/ui/Banner';
 import { Button } from '@/ui/Button';
-import { DayArc, type PriereArc } from '@/ui/DayArc';
 
 type Etat = { mode: 'explication' } | { mode: 'ville'; raison: 'choix' | 'refus' | 'introuvable' };
 
-const EXEMPLE_ARC: PriereArc[] = [
-  { nom: 'Fajr', heure: '06:05', minutes: 6 * 60 + 5, etat: 'passee' },
-  { nom: 'Dhuhr', heure: '13:20', minutes: 13 * 60 + 20, etat: 'passee' },
-  { nom: 'Asr', heure: '16:35', minutes: 16 * 60 + 35, etat: 'prochaine' },
-  { nom: 'Maghrib', heure: '19:10', minutes: 19 * 60 + 10, etat: 'a-venir' },
-  { nom: 'Isha', heure: '20:25', minutes: 20 * 60 + 25, etat: 'a-venir' },
-];
-
 export default function Position() {
   const { t } = useTranslation();
-  const { couleurs, typographie } = useTheme();
+  const { couleurs, espace, typographie } = useTheme();
   const definirLieu = useReglages((s) => s.definirLieu);
   const [etat, setEtat] = useState<Etat>({ mode: 'explication' });
   const [enCours, setEnCours] = useState(false);
@@ -85,34 +77,34 @@ export default function Position() {
       etape={1}
       actions={
         <>
-          <Button pleineLargeur icone="pin" disabled={enCours} onPress={utiliserPosition}>
+          <Button grand pleineLargeur disabled={enCours} onPress={utiliserPosition}>
             {t('bienvenue.positionAutoriser')}
           </Button>
-          <Button variant="discret" pleineLargeur onPress={() => setEtat({ mode: 'ville', raison: 'choix' })}>
+          <Button grand variant="discret" pleineLargeur onPress={() => setEtat({ mode: 'ville', raison: 'choix' })}>
             {t('bienvenue.positionVille')}
           </Button>
         </>
       }>
-      <Text accessibilityRole="header" maxFontSizeMultiplier={echelleMax.courant} style={[typographie.titre1, { color: couleurs.emeraude }]}>
-        {t('bienvenue.positionTitre')}
-      </Text>
-      <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, { color: couleurs.encre, fontSize: 17, lineHeight: 26 }]}>
-        {t('bienvenue.positionTexte')}
-      </Text>
-      <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, { color: couleurs.encre2 }]}>
-        {t('bienvenue.positionTexte2')}
-      </Text>
-      {/* Illustration de la maquette : les prières posées sur la course du soleil (heures d'exemple). */}
-      <DayArc
-        lever={7 * 60 + 5}
-        coucher={19 * 60 + 5}
-        maintenant={15 * 60 + 53}
-        prieres={EXEMPLE_ARC}
-        dans="42 min"
-        avant={t('accueil.avant', { priere: 'Asr' })}
-        a={t('accueil.a', { heure: '16:35' })}
-        description={t('bienvenue.arcExemple')}
-      />
+      {/* Planche : illustration, 32, titre, 16, texte, 12, texte. */}
+      <View>
+        <ArcIllustration />
+        <Text
+          accessibilityRole="header"
+          maxFontSizeMultiplier={echelleMax.grand}
+          style={[typographie.display, { color: couleurs.emeraude, marginTop: espace.espace8 }]}>
+          {t('bienvenue.positionTitre')}
+        </Text>
+        <Text
+          maxFontSizeMultiplier={echelleMax.courant}
+          style={[typographie.corps, { color: couleurs.encre, fontSize: 18, lineHeight: 24, marginTop: espace.espace4 }]}>
+          {t('bienvenue.positionTexte')}
+        </Text>
+        <Text
+          maxFontSizeMultiplier={echelleMax.courant}
+          style={[typographie.corps, { color: couleurs.encre2, marginTop: espace.espace3 }]}>
+          {t('bienvenue.positionTexte2')}
+        </Text>
+      </View>
     </MiseEnPage>
   );
 }

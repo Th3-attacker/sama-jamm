@@ -1,9 +1,7 @@
 import type { ReactNode } from 'react';
-import { useTranslation } from 'react-i18next';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { ScrollView, StyleSheet, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { PageDots } from '@/ui/PageDots';
 import { TopBar } from '@/ui/TopBar';
@@ -18,26 +16,22 @@ type Props = {
 
 // Mise en page commune des étapes 2 et 3 : retour « ← », contenu défilant, actions et étape en bas.
 export function MiseEnPage({ etape, actions, children }: Props) {
-  const { t } = useTranslation();
-  const { couleurs, espace, typographie } = useTheme();
+  const { couleurs, espace } = useTheme();
+  const insets = useSafeAreaInsets();
   return (
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
       <TopBar retour />
       <ScrollView contentContainerStyle={{ paddingHorizontal: espace.espace6, paddingBottom: espace.espace6, gap: espace.espace4 }}>
         {children}
       </ScrollView>
-      <SafeAreaView edges={['bottom']} style={{ paddingHorizontal: espace.espace6, paddingBottom: espace.espace4, gap: espace.espace2 }}>
+      {/* Planche : 40 sous les points d'étape, la zone sûre du bas comprise. */}
+      <View style={{ paddingHorizontal: espace.espace6, paddingBottom: Math.max(espace.espace4, 40 - insets.bottom) + insets.bottom, gap: espace.espace2 }}>
         {actions}
-        <View style={[styles.etape, { marginTop: espace.espace3 }]}>
+        {/* Le texte « Étape n sur 3 » est porté par les points, lus par les lecteurs d'écran. */}
+        <View style={[styles.etape, { marginTop: espace.espace5 - espace.espace2 }]}>
           <PageDots total={3} actif={etape} />
-          <Text
-            importantForAccessibility="no"
-            maxFontSizeMultiplier={echelleMax.courant}
-            style={[typographie.legende, { color: couleurs.encre3, marginTop: espace.espace2 }]}>
-            {t('bienvenue.etape', { n: etape + 1, total: 3 })}
-          </Text>
         </View>
-      </SafeAreaView>
+      </View>
     </View>
   );
 }
