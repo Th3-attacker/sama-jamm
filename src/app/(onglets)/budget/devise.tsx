@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { SaisieInvalide } from '@/features/budget/depot';
 import { apercuDevise, lireTaux } from '@/features/budget/devises';
@@ -13,18 +13,18 @@ import { useTheme } from '@/theme/useTheme';
 import { Banner } from '@/ui/Banner';
 import { BottomSheet } from '@/ui/BottomSheet';
 import { Button } from '@/ui/Button';
-import { ListGroup } from '@/ui/ListGroup';
-import { ListItem } from '@/ui/ListItem';
 import { TextField } from '@/ui/TextField';
 import { useToast } from '@/ui/Toast';
-import { TopBar } from '@/ui/TopBar';
+import { EnteteRetour } from '@/ui/EnteteRetour';
+import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
 type Feuille = { mode: 'ajout' } | { mode: 'taux'; cible: Devise } | null;
 
 /** Devise du carnet : la liste, l'ajout d'une devise personnelle et le changement avec un taux de conversion. */
 export default function EcranDevise() {
   const { t } = useTranslation();
-  const { couleurs, espace, typographie } = useTheme();
+  const { couleurs, espace, rayon, typographie } = useTheme();
+  const marge = useMargeBasse();
   const { afficher } = useToast();
   const libelle = useLibelleDevise();
   const etat = useBudget((depot) => depot.devises());
@@ -66,39 +66,80 @@ export default function EcranDevise() {
 
   return (
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
-      <TopBar retour titre={t('devise.titre')} />
       <ScrollView
         contentContainerStyle={{
           paddingHorizontal: espace.espace5,
-          paddingBottom: espace.espace8,
-          gap: espace.espace5,
+          paddingBottom: espace.espace8 + marge,
+          gap: espace.espace3,
         }}>
+        <EnteteRetour titre={t('devise.titre')} />
         <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, { color: couleurs.encre2 }]}>
           {t('devise.intro')}
         </Text>
-        <ListGroup>
-          {devises.map((d) => (
-            <ListItem
-              key={d.code}
-              titre={libelle(d).nom}
-              sousTitre={libelle(d).detail}
-              valeur={apercuDevise(d)}
-              fin={d.code === actuelle.code ? 'coche' : undefined}
-              onPress={d.code === actuelle.code ? undefined : () => ouvrirTaux(d)}
-            />
-          ))}
-        </ListGroup>
-        <Button
-          variant="secondaire"
-          icone="plus"
-          pleineLargeur
+        <View accessibilityRole="radiogroup" accessibilityLabel={t('devise.titre')} style={{ gap: espace.espace2 }}>
+          {devises.map((d) => {
+            const choisie = d.code === actuelle.code;
+            return (
+              <Pressable
+                key={d.code}
+                accessibilityRole="radio"
+                accessibilityState={{ checked: choisie }}
+                onPress={choisie ? undefined : () => ouvrirTaux(d)}
+                android_ripple={{ color: couleurs.emeraudeDoux }}
+                style={[
+                  styles.carte,
+                  {
+                    gap: espace.espace3,
+                    paddingVertical: espace.espace3,
+                    paddingHorizontal: espace.espace4,
+                    borderRadius: rayon.rayonCarte,
+                    backgroundColor: choisie ? couleurs.emeraudeDoux : couleurs.surface,
+                    borderColor: choisie ? couleurs.emeraude : couleurs.ligne,
+                    borderWidth: choisie ? 2 : 1,
+                  },
+                ]}>
+                <View
+                  style={[
+                    styles.rond,
+                    choisie
+                      ? { borderWidth: 6, borderColor: couleurs.emeraude, backgroundColor: couleurs.surface }
+                      : { borderWidth: 2, borderColor: couleurs.ligneForte },
+                  ]}
+                />
+                <View style={styles.textes}>
+                  <Text
+                    maxFontSizeMultiplier={echelleMax.courant}
+                    style={[typographie.corps, styles.gras, { color: couleurs.encre }]}>
+                    {libelle(d).nom}
+                  </Text>
+                  <Text
+                    maxFontSizeMultiplier={echelleMax.courant}
+                    style={[typographie.corps, styles.detail, { color: couleurs.encre3 }]}>
+                    {libelle(d).detail}
+                  </Text>
+                </View>
+                <Text
+                  maxFontSizeMultiplier={echelleMax.courant}
+                  style={[typographie.corps, styles.gras, { color: couleurs.emeraude, fontVariant: ['tabular-nums'] }]}>
+                  {apercuDevise(d)}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </View>
+        <Pressable
+          accessibilityRole="button"
           onPress={() => {
             setEchec(false);
             setFeuille({ mode: 'ajout' });
-          }}>
-          {t('devise.ajouter')}
-        </Button>
-        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre2 }]}>
+          }}
+          android_ripple={{ color: couleurs.emeraudeDoux }}
+          style={[styles.ajout, { borderRadius: rayon.rayonCarte, borderColor: couleurs.ligneForte }]}>
+          <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.gras, { color: couleurs.emeraude }]}>
+            {`+ ${t('devise.ajouterMa')}`}
+          </Text>
+        </Pressable>
+        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.detail, { color: couleurs.encre2 }]}>
           {t('devise.note')}
         </Text>
       </ScrollView>
@@ -139,4 +180,10 @@ export default function EcranDevise() {
 
 const styles = StyleSheet.create({
   ecran: { flex: 1 },
+  carte: { flexDirection: 'row', alignItems: 'center', minHeight: 64 },
+  ajout: { height: 48, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderStyle: 'dashed' },
+  rond: { width: 20, height: 20, borderRadius: 999 },
+  textes: { flex: 1 },
+  gras: { fontFamily: 'SourceSans3_600SemiBold' },
+  detail: { fontSize: 14, lineHeight: 20 },
 });

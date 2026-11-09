@@ -6,6 +6,7 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useFormatMontant } from '@/features/budget/verrou';
 import { depenseDuJour, joursRestants, pasArrondi } from '@/features/budget/cycle';
 import { NOM_ENVELOPPE_MAX } from '@/features/budget/depot';
+import { iconeEnveloppe } from '@/features/budget/enveloppesDeDepart';
 import { EcranBudgetIncomplet } from '@/features/budget/EcranBudgetIncomplet';
 import { budgetModifie, useBudget } from '@/features/budget/useBudget';
 import { cleJour, formatJourCle } from '@/lib/dates';
@@ -23,13 +24,15 @@ import { ListItem } from '@/ui/ListItem';
 import { ProgressBar } from '@/ui/ProgressBar';
 import { TextField } from '@/ui/TextField';
 import { useToast } from '@/ui/Toast';
-import { TopBar } from '@/ui/TopBar';
+import { EnteteRetour } from '@/ui/EnteteRetour';
+import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
 /** Une enveloppe du cycle en cours : plafond, dépensé, reste, dépenses ; modifier le plafond, renommer, supprimer. */
 export default function EcranEnveloppe() {
   const { t, i18n } = useTranslation();
   const formatMontant = useFormatMontant();
-  const { couleurs, espace, typographie } = useTheme();
+  const { couleurs, espace, rayon, typographie } = useTheme();
+  const marge = useMargeBasse();
   const id = useParametre('id');
   const etat = useBudget((depot, carnet) => depot.detailEnveloppe(carnet, id), id);
   // Une seule feuille, pour le plafond ou le nom.
@@ -53,6 +56,8 @@ export default function EcranEnveloppe() {
   const reste = e.plafond - e.depense;
   const jours = joursRestants(cleJour(new Date()), cycle.fin);
   const parJour = depenseDuJour(reste, jours, pasArrondi(devise));
+  const montantParJour = f(parJour);
+  const phraseParJour = t('budget.parJour', { montant: montantParJour }).split(montantParJour);
   const nouveauPlafond = versMinimes(saisie, devise);
   const nouveauNom = saisie.trim();
   const nomValide = nouveauNom.length >= 1 && nouveauNom.length <= NOM_ENVELOPPE_MAX;
@@ -115,54 +120,56 @@ export default function EcranEnveloppe() {
 
   return (
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
-      <TopBar retour titre={e.nom} />
       <ScrollView
         contentContainerStyle={{
           paddingHorizontal: espace.espace5,
-          paddingBottom: espace.espace8,
-          gap: espace.espace5,
+          paddingBottom: espace.espace8 + marge,
+          gap: espace.espace4,
         }}>
+        <EnteteRetour
+          titre={e.nom}
+          italique
+          sousTitre={t('budget.enveloppeDuCycle', {
+            debut: formatJourCle(cycle.debut, i18n.language),
+            fin: formatJourCle(cycle.fin, i18n.language),
+          })}
+        />
         {e.archivee ? <Banner ton="info">{t('budget.enveloppeArchiveeBandeau')}</Banner> : null}
         {e.archivee ? null : (
-          <>
+          <View
+            style={[
+              styles.carte,
+              {
+                gap: espace.espace4,
+                padding: espace.espace4,
+                borderRadius: rayon.rayonCarte,
+                backgroundColor: couleurs.surface,
+                borderColor: couleurs.ligne,
+              },
+            ]}>
             <AmountDisplay
               montant={Math.max(reste, 0)}
               devise={devise}
-              libelle={reste >= 0 ? t('budget.resteTitre') : t('budget.depasse', { montant: f(-reste) })}
-              detail={t('budget.sur', { montant: f(e.plafond) })}
+              libelle={reste >= 0 ? t('budget.resteEnveloppe') : t('budget.depasse', { montant: f(-reste) })}
+              detail={t('budget.depenseSur', { depense: f(e.depense), plafond: f(e.plafond) })}
               tonDetail={reste < 0 ? 'erreur' : 'normal'}
             />
             <ProgressBar
               valeur={e.plafond > 0 ? e.depense / e.plafond : e.depense > 0 ? 2 : 0}
-              label={e.nom}
-              detail={`${t('budget.depense')} : ${f(e.depense)} ${t('budget.sur', { montant: f(e.plafond) })}`}
+              label={t('budget.utilise')}
+              detail={`${e.plafond > 0 ? Math.round((e.depense / e.plafond) * 100) : e.depense > 0 ? 100 : 0} %`}
             />
             {reste > 0 ? (
-              <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, { color: couleurs.encre2 }]}>
-                {t('budget.parJour', { montant: f(parJour) })}
+              <Text
+                maxFontSizeMultiplier={echelleMax.courant}
+                style={[typographie.corps, styles.petit, { color: couleurs.encre2 }]}>
+                {phraseParJour[0]}
+                <Text style={[styles.gras, { color: couleurs.encre }]}>{montantParJour}</Text>
+                {phraseParJour[1]}
               </Text>
             ) : null}
-          </>
+          </View>
         )}
-
-        <View style={{ gap: espace.espace2 }}>
-          {e.archivee ? (
-            <Button variant="secondaire" icone="reset" pleineLargeur onPress={restaurer}>
-              {t('budget.restaurerEnveloppe')}
-            </Button>
-          ) : (
-            <Button variant="secondaire" icone="edit" pleineLargeur onPress={() => ouvrir('plafond')}>
-              {t('budget.modifierPlafond')}
-            </Button>
-          )}
-          <Button variant="secondaire" icone="type" pleineLargeur onPress={() => ouvrir('nom')}>
-            {t('budget.renommer')}
-          </Button>
-          <Button variant="danger" icone="trash" pleineLargeur onPress={demanderSuppression}>
-            {t('budget.supprimerEnveloppe')}
-          </Button>
-          {echec && feuille === null ? <Banner ton="erreur">{t('etats.erreurTexte')}</Banner> : null}
-        </View>
 
         {operations.length === 0 ? (
           <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, { color: couleurs.encre3 }]}>
@@ -173,6 +180,7 @@ export default function EcranEnveloppe() {
             {operations.map((o) => (
               <ListItem
                 key={o.id}
+                icone={iconeEnveloppe(e.icone)}
                 titre={o.note ?? e.nom}
                 sousTitre={[formatJourCle(o.date, i18n.language), o.compte].filter(Boolean).join(' · ')}
                 valeur={f(o.montant)}
@@ -181,6 +189,29 @@ export default function EcranEnveloppe() {
             ))}
           </ListGroup>
         )}
+        <View style={{ gap: espace.espace2 }}>
+          <View style={[styles.rangee, { gap: espace.espace2 }]}>
+            <View style={styles.moitie}>
+              {e.archivee ? (
+                <Button variant="secondaire" icone="reset" pleineLargeur onPress={restaurer}>
+                  {t('budget.restaurerEnveloppe')}
+                </Button>
+              ) : (
+                <Button variant="secondaire" icone="edit" pleineLargeur onPress={() => ouvrir('plafond')}>
+                  {t('budget.modifierPlafond')}
+                </Button>
+              )}
+            </View>
+            <Button variant="discret" icone="type" onPress={() => ouvrir('nom')}>
+              {t('budget.renommer')}
+            </Button>
+          </View>
+          <Button variant="danger" icone="trash" pleineLargeur onPress={demanderSuppression}>
+            {t('budget.supprimerEnveloppe')}
+          </Button>
+          {echec && feuille === null ? <Banner ton="erreur">{t('etats.erreurTexte')}</Banner> : null}
+        </View>
+
       </ScrollView>
 
       <BottomSheet
@@ -230,4 +261,9 @@ export default function EcranEnveloppe() {
 
 const styles = StyleSheet.create({
   ecran: { flex: 1 },
+  carte: { borderWidth: 1 },
+  petit: { fontSize: 14, lineHeight: 20 },
+  gras: { fontFamily: 'SourceSans3_600SemiBold' },
+  rangee: { flexDirection: 'row', alignItems: 'center' },
+  moitie: { flex: 1 },
 });

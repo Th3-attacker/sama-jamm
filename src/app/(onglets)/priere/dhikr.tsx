@@ -13,20 +13,20 @@ import { BottomSheet } from '@/ui/BottomSheet';
 import { Button } from '@/ui/Button';
 import { Chip } from '@/ui/Chip';
 import { Dialog } from '@/ui/Dialog';
-import { RadioGroup } from '@/ui/RadioGroup';
+import { SegmentedControl } from '@/ui/SegmentedControl';
 import { TasbihCounter } from '@/ui/TasbihCounter';
-import { useToast } from '@/ui/Toast';
 import { TopBar } from '@/ui/TopBar';
+import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
 // Au-delà, remettre à zéro demande une confirmation.
 const SEUIL_CONFIRMATION = 100;
-const SANS = 'sans';
+const LIBRE = 'libre';
 
 export default function Dhikr() {
   useKeepAwake();
   const { t } = useTranslation();
   const { couleurs, espace, typographie, latin } = useTheme();
-  const { afficher } = useToast();
+  const marge = useMargeBasse();
   const formuleId = useDhikr((s) => s.formule);
   const comptes = useDhikr((s) => s.comptes);
   const objectifs = useDhikr((s) => s.objectifs);
@@ -42,6 +42,8 @@ export default function Dhikr() {
   const choisi = objectifs[formuleId];
   const objectif = choisi === undefined ? (formule?.objectif ?? null) : choisi;
 
+  const fini = objectif !== null && compte >= objectif;
+
   const unGrain = () => {
     vibrerLeger();
     const n = compter();
@@ -49,7 +51,6 @@ export default function Dhikr() {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch((erreur: unknown) => {
         console.warn('Retour haptique indisponible', erreur);
       });
-      afficher({ texte: `${t('formules.gratitude')} ${t('formules.gratitudeTrad')}`, icone: 'check' });
     }
   };
 
@@ -60,53 +61,76 @@ export default function Dhikr() {
 
   return (
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
-      <TopBar retour titre={t('dhikr.titre')} />
-      <ScrollView contentContainerStyle={{ paddingBottom: espace.espace8, gap: espace.espace4, alignItems: 'center' }}>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: espace.espace5, gap: espace.espace2 }}>
+      {/* Planche : titre centré, « Remettre à zéro » en texte émeraude à droite. */}
+      <TopBar
+        retour
+        centre
+        titre={t('dhikr.titre')}
+        actions={[{ icone: 'reset', texte: t('dhikr.remettreAZero'), libelle: true, label: t('dhikr.remettreAZero'), desactive: compte === 0, onPress: zero }]}
+      />
+      <ScrollView contentContainerStyle={{ paddingHorizontal: espace.espace6, paddingBottom: espace.espace8 + marge, gap: espace.espace4, alignItems: 'center' }}>
+        <View style={[styles.puces, { gap: espace.espace2 }]}>
           {formules.map((f) => (
-            <Chip key={f.id} selectionne={f.id === formuleId} onPress={() => choisirFormule(f.id)}>
+            <Chip key={f.id} compacte selectionne={f.id === formuleId} onPress={() => choisirFormule(f.id)}>
               {f.translitteration}
             </Chip>
           ))}
-          <Chip selectionne={formuleId === FORMULE_LIBRE} onPress={() => choisirFormule(FORMULE_LIBRE)}>
+          <Chip compacte selectionne={formuleId === FORMULE_LIBRE} onPress={() => choisirFormule(FORMULE_LIBRE)}>
             {t('dhikr.formuleLibre')}
           </Chip>
-        </ScrollView>
+        </View>
 
         {formule ? (
-          <View style={[styles.formule, { paddingHorizontal: espace.espace5 }]}>
+          <View style={[styles.formule, { gap: espace.espace2, marginTop: espace.espace3 }]}>
             <Text accessibilityLanguage="ar" maxFontSizeMultiplier={echelleMax.courant} style={[typographie.arabe, styles.arabe, { color: couleurs.encre }]}>
               {formule.arabe}
             </Text>
-            <Text maxFontSizeMultiplier={echelleMax.courant} style={[latin.translitteration, { color: couleurs.encre2 }]}>
+            <Text maxFontSizeMultiplier={echelleMax.courant} style={[latin.translitteration, styles.translitteration, { color: couleurs.encre2 }]}>
               {formule.translitteration}
             </Text>
           </View>
         ) : null}
 
-        <TasbihCounter compte={compte} objectif={objectif} onCompter={unGrain} />
+        <View style={{ marginTop: espace.espace3 }}>
+          <TasbihCounter compte={compte} objectif={objectif} onCompter={unGrain} />
+        </View>
 
-        <View style={[styles.actions, { gap: espace.espace2 }]}>
+        {fini ? (
+          <View style={[styles.fini, { marginTop: espace.espace2 }]}>
+            <Text accessibilityLanguage="wo" maxFontSizeMultiplier={echelleMax.grand} style={[latin.titre1, { color: couleurs.emeraude }]}>
+              {t('formules.gratitude')}
+            </Text>
+            <Text maxFontSizeMultiplier={echelleMax.courant} style={[latin.translitteration, styles.translitteration, { color: couleurs.encre2 }]}>
+              {t('formules.gratitudeTrad')}
+            </Text>
+          </View>
+        ) : (
+          <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.aide, { color: couleurs.encre2, marginTop: espace.espace2 }]}>
+            {t('dhikr.aide')}
+          </Text>
+        )}
+
+        <View style={styles.actions}>
           <Button variant="discret" icone="target" onPress={() => setFeuille(true)}>
             {objectif ? `${t('dhikr.objectif')} : ${objectif}` : t('dhikr.sansObjectif')}
-          </Button>
-          <Button variant="discret" icone="reset" disabled={compte === 0} onPress={zero}>
-            {t('dhikr.remettreAZero')}
           </Button>
         </View>
       </ScrollView>
 
+      {/* Feuille de l'objectif : les formules se choisissent déjà par les puces de la page. */}
       <BottomSheet ouvert={feuille} titre={t('dhikr.objectif')} onFermer={() => setFeuille(false)}>
-        <RadioGroup
+        <SegmentedControl
           label={t('dhikr.objectif')}
-          encadre={false}
-          options={[...objectifsProposes.map((n) => ({ id: String(n), label: String(n) })), { id: SANS, label: t('dhikr.sansObjectif') }]}
-          valeur={objectif === null ? SANS : String(objectif)}
-          onChange={(id) => {
-            definirObjectif(id === SANS ? null : Number(id));
-            setFeuille(false);
-          }}
+          options={[
+            ...objectifsProposes.map((n) => ({ id: String(n), label: String(n) })),
+            { id: LIBRE, label: t('dhikr.libre') },
+          ]}
+          valeur={objectif === null ? LIBRE : String(objectif)}
+          onChange={(id) => definirObjectif(id === LIBRE ? null : Number(id))}
         />
+        <Button variant="principal" pleineLargeur onPress={() => setFeuille(false)}>
+          {t('dhikr.commencer')}
+        </Button>
       </BottomSheet>
 
       <Dialog
@@ -129,5 +153,9 @@ const styles = StyleSheet.create({
   ecran: { flex: 1 },
   formule: { alignItems: 'center' },
   arabe: { fontSize: 34, lineHeight: 64, textAlign: 'center', writingDirection: 'rtl' },
-  actions: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center' },
+  puces: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center' },
+  translitteration: { fontSize: 16, lineHeight: 24, textAlign: 'center' },
+  fini: { alignItems: 'center' },
+  aide: { fontSize: 14, lineHeight: 20, textAlign: 'center' },
+  actions: { flexDirection: 'row', justifyContent: 'center' },
 });

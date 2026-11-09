@@ -90,5 +90,6 @@ export function TextField({
 
 const styles = StyleSheet.create({
   champ: { flexDirection: 'row', alignItems: 'center', borderWidth: 1 },
-  saisie: { flex: 1, paddingVertical: 10 },
+  // Sans lineHeight : sur iPhone, un champ d'une ligne qui en a une colle son texte en haut, surtout avec Noto Sans Arabic.
+  saisie: { flex: 1, paddingVertical: 10, lineHeight: undefined, textAlignVertical: 'center' },
 });

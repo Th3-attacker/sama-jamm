@@ -15,18 +15,20 @@ import { echelleMax } from "@/theme/typographie";
 import { useTheme } from "@/theme/useTheme";
 import { Banner } from "@/ui/Banner";
 import { Dialog } from "@/ui/Dialog";
+import { themes } from "@/theme/tokens.generated";
+import { Logo } from "@/ui/Logo";
 import { PageDots } from "@/ui/PageDots";
 
 // Noms des langues dans leur propre langue : ils ne se traduisent pas.
 const OPTIONS: { id: Langue; label: string; arabe?: boolean }[] = [
   { id: "wo", label: "Wolof" },
-  { id: "ar", label: "العربية", arabe: true },
   { id: "fr", label: "Français" },
+  { id: "ar", label: "العربية", arabe: true },
 ];
 
 export default function EcranLangue() {
   const { t, i18n } = useTranslation();
-  const { couleurs, espace, rayon, cible, typographie, latin } = useTheme();
+  const { couleurs, espace, rayon, typographie, latin } = useTheme();
   const langueEnregistree = useReglages((s) => s.langue);
   const definirLangue = useReglages((s) => s.definirLangue);
   const definirTraduction = useReglages((s) => s.definirTraduction);
@@ -36,6 +38,9 @@ export default function EcranLangue() {
   const choisie: Langue =
     langueEnregistree ?? (estLangue(i18n.language) ? i18n.language : "fr");
   const ivoire = couleurs.marqueIvoire;
+  // Le fond émeraude ne change pas avec le thème : textes secondaires et lignes du thème jour.
+  const surEmeraude2 = themes.jour.couleurs.surEmeraude2;
+  const ligneForte = themes.jour.couleurs.ligneForte;
 
   const choisir = (langue: Langue) => {
     definirLangue(langue);
@@ -67,16 +72,21 @@ export default function EcranLangue() {
     <SafeAreaView
       style={[
         styles.ecran,
-        { backgroundColor: couleurs.marqueEmeraude, padding: espace.espace6 },
+        {
+          backgroundColor: couleurs.marqueEmeraude,
+          paddingHorizontal: espace.espace6,
+          paddingBottom: espace.espace6,
+        },
       ]}
     >
       <StatusBar style="light" />
       <View
-        style={[
-          styles.haut,
-          { gap: espace.espace3, paddingTop: espace.espace12 },
-        ]}
+        style={[styles.haut, { paddingTop: espace.espace12 }]}
       >
+        {/* Décalage de −16 : l'étoile s'aligne optiquement sur le bord du texte. */}
+        <View style={{ marginStart: -espace.espace4 }}>
+          <Logo taille={96} variante="or" />
+        </View>
         <Text
           accessibilityRole="header"
           accessibilityLanguage="wo"
@@ -84,7 +94,7 @@ export default function EcranLangue() {
           style={[
             latin.display,
             styles.wolof,
-            { color: ivoire, fontSize: 52, lineHeight: 56 },
+            { color: ivoire, fontSize: 56, lineHeight: 60, marginTop: espace.espace6 },
           ]}
         >
           {t("bienvenue.langueTitre")}
@@ -93,7 +103,7 @@ export default function EcranLangue() {
           maxFontSizeMultiplier={echelleMax.courant}
           style={[
             typographie.translitteration,
-            { color: ivoire, fontSize: 18, lineHeight: 28, opacity: 0.85 },
+            { color: surEmeraude2, fontSize: 18, lineHeight: 24, marginTop: espace.espace3 },
           ]}
         >
           {t("bienvenue.langueSousTitre")}
@@ -107,7 +117,7 @@ export default function EcranLangue() {
       >
         <Text
           maxFontSizeMultiplier={echelleMax.courant}
-          style={[typographie.libelle, { color: ivoire, opacity: 0.85 }]}
+          style={[typographie.libelle, { color: surEmeraude2 }]}
         >
           {t("bienvenue.langueChoisir")}
         </Text>
@@ -124,11 +134,10 @@ export default function EcranLangue() {
                 styles.option,
                 {
                   minHeight: 56,
-                  paddingHorizontal: espace.espace5,
+                  paddingHorizontal: espace.espace4,
                   borderRadius: rayon.rayonCarte,
-                  borderColor: ivoire,
+                  borderColor: on ? ivoire : ligneForte,
                   backgroundColor: on ? ivoire : "transparent",
-                  opacity: on ? 1 : 0.9,
                 },
               ]}
             >
@@ -144,6 +153,17 @@ export default function EcranLangue() {
               >
                 {o.label}
               </Text>
+              {on ? (
+                <Text
+                  maxFontSizeMultiplier={echelleMax.courant}
+                  style={[
+                    latin.corps,
+                    { color: couleurs.marqueEmeraude, fontSize: 14, lineHeight: 20 },
+                  ]}
+                >
+                  {t("bienvenue.langueChoisie")}
+                </Text>
+              ) : null}
             </Pressable>
           );
         })}
@@ -156,15 +176,15 @@ export default function EcranLangue() {
       ) : null}
 
       <View style={[styles.bas, { marginTop: espace.espace8 }]}>
-        <PageDots total={3} actif={0} />
+        <PageDots total={3} actif={0} surEmeraude />
         <Pressable
           accessibilityRole="button"
           onPress={continuer}
           style={({ pressed }) => [
             styles.continuer,
             {
-              minHeight: cible.cibleAndroid,
-              paddingHorizontal: espace.espace6,
+              minHeight: 52,
+              paddingHorizontal: espace.espace8,
               borderRadius: rayon.rayonCarte,
               backgroundColor: ivoire,
               opacity: pressed ? 0.85 : 1,
@@ -204,7 +224,12 @@ const styles = StyleSheet.create({
   haut: { flex: 1 },
   // Formule wolof : bloc de gauche à droite, même en interface arabe.
   wolof: { writingDirection: "ltr" },
-  option: { justifyContent: "center", borderWidth: 1 },
+  option: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    borderWidth: 1,
+  },
   bas: {
     flexDirection: "row",
     alignItems: "center",

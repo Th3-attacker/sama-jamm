@@ -45,25 +45,23 @@ export default function APropos() {
           paddingBottom: espace.espace8,
           gap: espace.espace6,
         }}>
-        <View style={[styles.entete, { gap: espace.espace2 }]}>
-          <Logo taille={64} />
-          <Text
-            accessibilityLanguage="wo"
-            maxFontSizeMultiplier={echelleMax.courant}
-            style={[latin.titre2, styles.centre, { color: couleurs.emeraude }]}>
-            {t('demarrage.signature')}
-          </Text>
-          <Text
-            maxFontSizeMultiplier={echelleMax.courant}
-            style={[typographie.legende, styles.centre, { color: couleurs.encre3 }]}>
-            {t('aPropos.version', { version })}
-          </Text>
-          <Text
-            maxFontSizeMultiplier={echelleMax.courant}
-            style={[typographie.corps, styles.centre, { color: couleurs.encre }]}>
-            {t('aPropos.texte')}
-          </Text>
+        <View style={[styles.entete, { gap: espace.espace4 }]}>
+          <Logo taille={52} />
+          <View style={styles.enteteTexte}>
+            <Text
+              accessibilityLanguage="wo"
+              maxFontSizeMultiplier={echelleMax.courant}
+              style={[latin.titre2, { color: couleurs.encre }]}>
+              {t('demarrage.signature')}
+            </Text>
+            <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre3 }]}>
+              {t('aPropos.version', { version })}
+            </Text>
+          </View>
         </View>
+        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, { color: couleurs.encre2 }]}>
+          {t('aPropos.texte')}
+        </Text>
 
         <ListGroup titre={t('aPropos.sources')}>
           {SOURCES.map((s) => (
@@ -120,6 +118,6 @@ export default function APropos() {
 
 const styles = StyleSheet.create({
   ecran: { flex: 1 },
-  entete: { alignItems: 'center' },
-  centre: { textAlign: 'center' },
+  entete: { flexDirection: 'row', alignItems: 'center' },
+  enteteTexte: { flex: 1 },
 });

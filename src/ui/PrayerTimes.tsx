@@ -19,6 +19,8 @@ export type LignePriere = {
   appelActif: boolean;
   /** Libellé de la cloche : « Appel d'Asr activé ». */
   libelleAppel: string;
+  /** Mention après le nom local : « Veille ensuite » pour Isha. */
+  note?: string;
 };
 
 export type PrayerTimesProps = {
@@ -42,11 +44,11 @@ export function PrayerTimes({ prieres, onBasculerAppel }: PrayerTimesProps) {
   const { couleurs, espace, rayon, cible, typographie } = useTheme();
 
   return (
-    <View style={{ gap: 2 }}>
+    <View style={{ gap: espace.espace1 }}>
       {prieres.map((p) => {
         const prochaine = p.etat === 'prochaine';
         const passee = p.etat === 'passee';
-        const teinte = prochaine ? couleurs.surEmeraudeDoux : passee ? couleurs.encre3 : couleurs.encre;
+        const teinte = prochaine ? couleurs.emeraude : passee ? couleurs.encre3 : couleurs.encre;
         const gras = passee ? 'SourceSans3_400Regular' : 'SourceSans3_600SemiBold';
         return (
           <View
@@ -55,7 +57,7 @@ export function PrayerTimes({ prieres, onBasculerAppel }: PrayerTimesProps) {
             style={[
               styles.ligne,
               {
-                minHeight: prochaine ? 60 : 52,
+                minHeight: prochaine ? 60 : 56,
                 gap: espace.espace3,
                 paddingStart: espace.espace3,
                 borderRadius: rayon.rayonCarte,
@@ -67,7 +69,7 @@ export function PrayerTimes({ prieres, onBasculerAppel }: PrayerTimesProps) {
                 {prochaine && p.dans ? `${p.nom} · ${p.dans}` : p.nom}
               </Text>
               <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: prochaine ? couleurs.encre2 : couleurs.encre3 }]}>
-                {p.nomLocal}
+                {p.note ? `${p.nomLocal} · ${p.note}` : p.nomLocal}
               </Text>
             </View>
             <Text
@@ -85,7 +87,7 @@ export function PrayerTimes({ prieres, onBasculerAppel }: PrayerTimesProps) {
               accessibilityState={{ checked: p.appelActif }}
               onPress={() => onBasculerAppel(p.id)}
               style={[styles.cloche, { width: cible.cibleIos, height: cible.cibleIos }]}>
-              {p.appelActif ? <Icon name="bell" size={20} color={prochaine ? couleurs.surEmeraudeDoux : couleurs.encre2} /> : <ClocheBarree couleur={couleurs.encre3} />}
+              {p.appelActif ? <Icon name="bell" size={20} color={prochaine ? couleurs.emeraude : passee ? couleurs.encre3 : couleurs.encre2} /> : <ClocheBarree couleur={couleurs.encre3} />}
             </Pressable>
           </View>
         );
@@ -97,7 +99,7 @@ export function PrayerTimes({ prieres, onBasculerAppel }: PrayerTimesProps) {
 const styles = StyleSheet.create({
   ligne: { flexDirection: 'row', alignItems: 'center' },
   noms: { flex: 1 },
-  arabe: { fontFamily: 'Amiri_400Regular', fontSize: 18, lineHeight: 32, writingDirection: 'rtl' },
+  arabe: { fontFamily: 'Amiri_400Regular', fontSize: 22, lineHeight: 32, writingDirection: 'rtl' },
   heure: { fontVariant: ['tabular-nums'] },
   cloche: { alignItems: 'center', justifyContent: 'center' },
 });

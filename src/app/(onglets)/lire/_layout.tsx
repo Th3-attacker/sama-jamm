@@ -1,5 +1,13 @@
 import { Stack } from 'expo-router';
+import { View } from 'react-native';
+
+import { SondeBarre } from '@/features/ecouter/SondeBarre';
 
 export default function LireLayout() {
-  return <Stack screenOptions={{ headerShown: false }} />;
+  return (
+    <View style={{ flex: 1 }}>
+      <Stack screenOptions={{ headerShown: false }} />
+      <SondeBarre />
+    </View>
+  );
 }

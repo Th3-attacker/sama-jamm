@@ -2,11 +2,11 @@ import { router } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { EcranBudgetIncomplet } from '@/features/budget/EcranBudgetIncomplet';
 import { budgetModifie, useBudget } from '@/features/budget/useBudget';
 import { useFormatMontant } from '@/features/budget/verrou';
+import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 import { echelleMax } from '@/theme/typographie';
 import { useParametre } from '@/hooks/useParametre';
 import { useTheme } from '@/theme/useTheme';
@@ -24,7 +24,7 @@ export default function Versement() {
   const { t } = useTranslation();
   const formatMontant = useFormatMontant();
   const { couleurs, espace, typographie } = useTheme();
-  const insets = useSafeAreaInsets();
+  const marge = useMargeBasse();
   const { afficher } = useToast();
   const objectifDemande = useParametre('objectif') || null;
   const etat = useBudget(async (depot, carnet) => ({
@@ -88,7 +88,7 @@ export default function Versement() {
         keyboardShouldPersistTaps="handled"
         contentContainerStyle={{
           paddingHorizontal: espace.espace5,
-          paddingBottom: insets.bottom + espace.espace5,
+          paddingBottom: marge + espace.espace5,
           gap: espace.espace4,
         }}>
         <AmountDisplay centre montant={montant} devise={devise} libelle={t('epargne.misDeCote')} />

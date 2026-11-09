@@ -1,15 +1,15 @@
 // Feuille « Lecture » (bouton Aa du lecteur, maquette « Réglages de lecture ») : aperçu, taille, affichage,
 // translittération, chiffres arabes, récitateur par défaut.
 import { useTranslation } from 'react-i18next';
-import { Text, View } from 'react-native';
+import { useState } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 
 import { useLecteur } from '@/features/ecouter/lecteur';
-import { RECITATEURS } from '@/features/ecouter/recitateurs';
+import { RECITATEURS, recitateur } from '@/features/ecouter/recitateurs';
 import { affichagesLecture, useReglages } from '@/stores/reglages';
 import type { Langue } from '@/i18n/langues';
 import { useTheme } from '@/theme/useTheme';
 import { BottomSheet } from '@/ui/BottomSheet';
-import { Chip } from '@/ui/Chip';
 import { ListGroup } from '@/ui/ListGroup';
 import { ListItem } from '@/ui/ListItem';
 import { SegmentedControl } from '@/ui/SegmentedControl';
@@ -20,7 +20,7 @@ import { ReglageTaille, useTaillesLecture } from './BarreTaille';
 export function ReglagesLecture({ ouvert, onFermer }: { ouvert: boolean; onFermer: () => void }) {
   const { t } = useTranslation();
   const { couleurs, espace, rayon, typographie } = useTheme();
-  const { tailleArabe, tailleTrad } = useTaillesLecture();
+  const { tailleArabe } = useTaillesLecture();
   const affichage = useReglages((s) => s.affichage);
   const definirAffichage = useReglages((s) => s.definirAffichage);
   const translit = useReglages((s) => s.translitLecture);
@@ -28,6 +28,8 @@ export function ReglagesLecture({ ouvert, onFermer }: { ouvert: boolean; onFerme
   const chiffres = useReglages((s) => s.chiffresArabes);
   const definirChiffres = useReglages((s) => s.definirChiffresArabes);
   const idRecitateur = useLecteur((s) => s.recitateur);
+  const actuel = recitateur(idRecitateur);
+  const [recitateursOuverts, setRecitateursOuverts] = useState(false);
   const traduction = useReglages((s) => s.traduction);
   const definirTraduction = useReglages((s) => s.definirTraduction);
   // « Aucune » = arabe seul ; sinon la traduction choisie.
@@ -35,28 +37,29 @@ export function ReglagesLecture({ ouvert, onFermer }: { ouvert: boolean; onFerme
 
   return (
     <BottomSheet ouvert={ouvert} titre={t('lire.reglagesLecture')} onFermer={onFermer}>
-      {/* Aperçu : Ash-Sharh, verset 6. */}
+      {/* Aperçu : Ash-Sharh, verset 6 ; carte de 16 de rayon, texte arabe à droite. */}
       <View
         style={{
           gap: espace.espace1,
-          padding: espace.espace4,
+          paddingVertical: espace.espace3,
+          paddingHorizontal: espace.espace4,
           backgroundColor: couleurs.surface,
           borderColor: couleurs.ligne,
           borderWidth: 1,
-          borderRadius: rayon.rayonCarte,
+          borderRadius: rayon.rayonCarte + espace.espace1,
         }}>
         <Text
           accessibilityLanguage="ar"
-          style={[typographie.coran, tailleArabe, { color: couleurs.encre, textAlign: 'center' }]}>
-          {`إِنَّ مَعَ ٱلْعُسْرِ يُسْرًا ${chiffres ? '٦' : '6'}`}
+          style={[typographie.coran, tailleArabe, { color: couleurs.encre, textAlign: 'right', writingDirection: 'rtl' }]}>
+          {`إِنَّ مَعَ ٱلْعُسْرِ يُسْرًا ${chiffres ? '﴿٦﴾' : '﴿6﴾'}`}
         </Text>
-        {translit ? (
-          <Text style={[typographie.translitteration, tailleTrad, { color: couleurs.encre2, textAlign: 'center' }]}>
+        {translit && affichage !== 'tradSeule' ? (
+          <Text style={[typographie.translitteration, styles.translit, { color: couleurs.encre2 }]}>
             Inna maʿa l-ʿusri yusrā
           </Text>
         ) : null}
         {affichage !== 'arabeSeul' ? (
-          <Text style={[typographie.lecture, tailleTrad, { color: couleurs.encre2, textAlign: 'center' }]}>
+          <Text style={[typographie.lecture, styles.traduction, { color: couleurs.encre }]}>
             {`${t('lire.apercuTraduction')} (94:6)`}
           </Text>
         ) : null}
@@ -107,20 +110,31 @@ export function ReglagesLecture({ ouvert, onFermer }: { ouvert: boolean; onFerme
           sousTitre={t('lire.chiffresArabesAide')}
           droite={<Switch label={t('lire.chiffresArabes')} active={chiffres} onChange={definirChiffres} />}
         />
+        <ListItem
+          icone="headphones"
+          titre={t('lire.recitateurDefaut')}
+          valeur={actuel?.nom}
+          fin="chevron"
+          onPress={() => setRecitateursOuverts((o) => !o)}
+        />
       </ListGroup>
-      <View style={{ gap: espace.espace2 }}>
-        <Text style={[typographie.libelle, { color: couleurs.encre }]}>{t('lire.recitateurDefaut')}</Text>
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: espace.espace2 }}>
+      {recitateursOuverts ? (
+        <ListGroup>
           {RECITATEURS.map((r) => (
-            <Chip
+            <ListItem
               key={r.id}
-              selectionne={r.id === idRecitateur}
-              onPress={() => useLecteur.setState({ recitateur: r.id })}>
-              {r.nom}
-            </Chip>
+              titre={r.nom}
+              fin={r.id === idRecitateur ? 'coche' : undefined}
+              onPress={() => useLecteur.setState({ recitateur: r.id })}
+            />
           ))}
-        </View>
-      </View>
+        </ListGroup>
+      ) : null}
     </BottomSheet>
   );
 }
+
+const styles = StyleSheet.create({
+  translit: { fontSize: 14, lineHeight: 20 },
+  traduction: { fontSize: 16, lineHeight: 24 },
+});

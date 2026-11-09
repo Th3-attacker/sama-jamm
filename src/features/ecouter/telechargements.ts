@@ -1,9 +1,11 @@
 // Récitations téléchargées pour écouter sans réseau : un fichier par verset, dans le dossier de l'app
 // (documents/recitations/<récitateur>/<numéro global>.mp3). Rien ne part du téléphone.
 import { Directory, File, Paths } from 'expo-file-system';
+import { getNetworkStateAsync, NetworkStateType } from 'expo-network';
 import { create } from 'zustand';
 
 import { sourates } from '@/features/lire/coran';
+import { useReglages } from '@/stores/reglages';
 
 import { numeroGlobal, positionDeNumero, urlVerset, type Position } from './recitateurs';
 
@@ -36,10 +38,21 @@ export function sourateTelechargee(idRecitateur: string, sourate: number): boole
   return true;
 }
 
+/** Refus d'un téléchargement : « Seulement en Wi-Fi » est actif et le téléphone n'est pas sur un Wi-Fi. */
+export class WifiRequis extends Error {
+  constructor() {
+    super('Téléchargement refusé : Wi-Fi requis');
+    this.name = 'WifiRequis';
+  }
+}
+
 /** Télécharge les versets manquants de la sourate ; un échec laisse les versets déjà reçus. */
 export async function telechargerSourate(idRecitateur: string, sourate: number): Promise<void> {
   const k = cle(idRecitateur, sourate);
   if (useTelechargements.getState().enCours[k] !== undefined) return;
+  if (useReglages.getState().wifiSeulement && (await getNetworkStateAsync()).type !== NetworkStateType.WIFI) {
+    throw new WifiRequis();
+  }
   const total = VERSETS[sourate - 1] ?? 0;
   const d = dossier(idRecitateur);
   if (!d.exists) d.create({ intermediates: true });

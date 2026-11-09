@@ -12,8 +12,11 @@ import { useReglages } from '@/stores/reglages';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { Banner } from '@/ui/Banner';
+import { Icon } from '@/ui/Icon';
 import { ecartQibla, QiblaCompass } from '@/ui/QiblaCompass';
+import { SchemaQibla } from '@/ui/SchemaQibla';
 import { TopBar } from '@/ui/TopBar';
+import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
 const TOLERANCE = 3;
 // Seize points cardinaux, tous les 22,5°.
@@ -23,7 +26,8 @@ const REARMEMENT = 10;
 
 export default function Qibla() {
   const { t } = useTranslation();
-  const { couleurs, espace, typographie } = useTheme();
+  const { couleurs, espace, rayon, typographie } = useTheme();
+  const marge = useMargeBasse();
   const lieu = useReglages((s) => s.lieu);
   const definirLieu = useReglages((s) => s.definirLieu);
   const [essai, setEssai] = useState(0);
@@ -61,11 +65,14 @@ export default function Qibla() {
 
   const direction = qibla !== null ? t(`qibla.directions.${DIRECTIONS[Math.round(qibla / 22.5) % 16]}`) : '';
   const rotation = rotationDepuisNord(qibla ?? 0);
+  const sansBoussole = !!lieu && qibla !== null && (cap.etat === 'indisponible' || (cap.etat === 'autorisation' && essai > 0));
+  const trouvee = ecart !== null && ecart <= TOLERANCE;
 
   return (
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
-      <TopBar retour titre={t('qibla.titre')} />
-      <ScrollView contentContainerStyle={{ paddingHorizontal: espace.espace5, paddingBottom: espace.espace8, gap: espace.espace5 }}>
+      {/* Titre centré pendant la recherche ; à gauche quand la qibla est trouvée ou sans boussole. */}
+      <TopBar retour centre={!sansBoussole && !trouvee} titre={t('qibla.titre')} />
+      <ScrollView contentContainerStyle={{ paddingHorizontal: espace.espace5, paddingBottom: espace.espace8 + marge, gap: sansBoussole ? espace.espace4 : espace.espace5 }}>
         {!lieu || qibla === null ? (
           <>
             <Banner ton="erreur" titre={t('priere.positionRefusee')}>
@@ -78,13 +85,19 @@ export default function Qibla() {
             <Banner ton="info" titre={t('qibla.sansBoussole')}>
               {t('qibla.sansBoussoleExplication')}
             </Banner>
-            <View style={[styles.centreBloc, { gap: espace.espace1 }]}>
-              <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.chiffre, { color: couleurs.emeraude }]}>
+            <View style={[styles.centreBloc, { gap: espace.espace1, paddingTop: espace.espace2 }]}>
+              <Text maxFontSizeMultiplier={echelleMax.grand} style={[typographie.chiffre, styles.degres, { color: couleurs.encre }]}>
                 {`${Math.round(qibla)}°`}
               </Text>
-              <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre2 }]}>
+              <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.directionTexte, { color: couleurs.encre2 }]}>
                 {t('qibla.directionDepuis', { direction, lieu: nomLieu })}
               </Text>
+            </View>
+            <View style={styles.schema}>
+              <SchemaQibla
+                qibla={qibla}
+                description={t(rotation.sens === 'droite' ? 'qibla.schemaDroite' : 'qibla.schemaGauche', { degres: rotation.angle })}
+              />
             </View>
             <View style={{ gap: espace.espace2 }}>
               <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, { color: couleurs.encre }]}>
@@ -97,12 +110,26 @@ export default function Qibla() {
           </>
         ) : (
           <>
-            {cap.etat === 'actif' && cap.imprecis ? <Banner ton="info">{t('qibla.calibration')}</Banner> : null}
-            {ecart !== null && ecart <= TOLERANCE ? <Banner ton="succes">{t('qibla.trouvee')}</Banner> : null}
-            <QiblaCompass cap={cap.etat === 'actif' ? cap.cap : 0} qibla={qibla} tolerance={TOLERANCE} lieu={nomLieu} />
-            <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.centre, { color: couleurs.encre2 }]}>
-              {t('qibla.consigne')}
-            </Text>
+            <QiblaCompass cap={cap.etat === 'actif' ? cap.cap : 0} qibla={qibla} tolerance={TOLERANCE} lieu={nomLieu} texte={trouvee ? undefined : t('qibla.consigne')} />
+            {/* Planche « Qibla trouvée » : une seule phrase centrée, sans conseil. */}
+            {trouvee ? (
+              <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.trouvee, { color: couleurs.encre2 }]}>
+                {t('qibla.trouvee')}
+              </Text>
+            ) : (
+            <View
+              style={[
+                styles.conseil,
+                { gap: espace.espace3, paddingVertical: espace.espace3, paddingHorizontal: espace.espace4, borderRadius: rayon.rayonCarte, backgroundColor: couleurs.surfaceCreux },
+              ]}>
+              <View style={styles.iconeConseil}>
+                <Icon name="info" size={20} color={couleurs.info} />
+              </View>
+              <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.texteConseil, { color: couleurs.encre }]}>
+                {t('qibla.calibration')}
+              </Text>
+            </View>
+            )}
           </>
         )}
       </ScrollView>
@@ -113,6 +140,12 @@ export default function Qibla() {
 
 const styles = StyleSheet.create({
   centreBloc: { alignItems: 'center' },
+  degres: { fontSize: 56, lineHeight: 60 },
+  directionTexte: { fontSize: 18, lineHeight: 24, textAlign: 'center' },
+  schema: { alignSelf: 'center' },
+  trouvee: { textAlign: 'center' },
   ecran: { flex: 1 },
-  centre: { textAlign: 'center' },
+  conseil: { flexDirection: 'row', alignItems: 'flex-start' },
+  iconeConseil: { marginTop: 1 },
+  texteConseil: { flex: 1, fontSize: 14, lineHeight: 20 },
 });

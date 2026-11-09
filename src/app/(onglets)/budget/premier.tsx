@@ -4,39 +4,35 @@ import { useTranslation } from 'react-i18next';
 import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { SaisieInvalide } from '@/features/budget/depot';
-import { apercuDevise } from '@/features/budget/devises';
-import { postesDeDepart } from '@/features/budget/enveloppesDeDepart';
-import { FormulaireDevise, useLibelleDevise } from '@/features/budget/FormulaireDevise';
+import { postesCochesParDefaut, postesDeDepart } from '@/features/budget/enveloppesDeDepart';
+import { FormulaireDevise } from '@/features/budget/FormulaireDevise';
 import { budgetModifie, depotBudget } from '@/features/budget/useBudget';
-import { devisesIntegrees, lireMontantFacultatif, type Devise } from '@/lib/montant';
+import { devisesIntegrees, type Devise } from '@/lib/montant';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { Banner } from '@/ui/Banner';
 import { BottomSheet } from '@/ui/BottomSheet';
 import { Button } from '@/ui/Button';
-import { ListGroup } from '@/ui/ListGroup';
-import { ListItem } from '@/ui/ListItem';
-import { Switch } from '@/ui/Switch';
+import { Chip } from '@/ui/Chip';
+import { SegmentedControl } from '@/ui/SegmentedControl';
 import { TextField } from '@/ui/TextField';
-import { TopBar } from '@/ui/TopBar';
-
-type Poste = { garde: boolean; plafond: string };
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
 /** Premier budget : devise, jour de paie, revenu du cycle, enveloppes de départ et leurs plafonds. */
 export default function PremierBudget() {
   const { t } = useTranslation();
   const { couleurs, espace, typographie } = useTheme();
+  const marge = useMargeBasse();
+  const insets = useSafeAreaInsets();
   const [codeDevise, setCodeDevise] = useState('XOF');
   const [jourPaie, setJourPaie] = useState('');
-  const [revenu, setRevenu] = useState('');
-  const [postes, setPostes] = useState<Record<string, Poste>>(() =>
-    Object.fromEntries(postesDeDepart.map((p) => [p.cle, { garde: true, plafond: '' }])),
-  );
+  // Les plafonds se règlent ensuite, au jour de paie : ici on ne choisit que les enveloppes à garder.
+  const [gardees, setGardees] = useState<readonly string[]>(postesCochesParDefaut);
   const [envoi, setEnvoi] = useState(false);
   const [erreurGenerale, setErreurGenerale] = useState(false);
   const [devises, setDevises] = useState<readonly Devise[]>(devisesIntegrees);
   const [ajoutDevise, setAjoutDevise] = useState(false);
-  const libelle = useLibelleDevise();
 
   // Devises personnelles déjà enregistrées (ajoutées lors d'un essai précédent) : la liste intégrée en attendant.
   useEffect(() => {
@@ -55,18 +51,13 @@ export default function PremierBudget() {
   const devise = devises.find((d) => d.code === codeDevise) ?? devises[0];
   const jour = Number(jourPaie);
   const jourValide = /^\d{1,2}$/.test(jourPaie) && jour >= 1 && jour <= 31;
-  const minimes = (saisie: string) => (devise ? lireMontantFacultatif(saisie, devise) : null);
-  const revenuMinimes = minimes(revenu);
-  const plafondsValides = postesDeDepart.every(
-    (p) => !postes[p.cle]?.garde || minimes(postes[p.cle]?.plafond ?? '') !== null,
-  );
-  const valide = devise !== undefined && jourValide && revenuMinimes !== null && plafondsValides;
+  const valide = devise !== undefined && jourValide;
 
-  const changerPoste = (cle: string, modif: Partial<Poste>) =>
-    setPostes((actuels) => ({ ...actuels, [cle]: { ...(actuels[cle] ?? { garde: true, plafond: '' }), ...modif } }));
+  const basculer = (cle: string) =>
+    setGardees((actuelles) => (actuelles.includes(cle) ? actuelles.filter((c) => c !== cle) : [...actuelles, cle]));
 
   const creer = async () => {
-    if (!valide || !devise || revenuMinimes === null) return;
+    if (!valide || !devise) return;
     setEnvoi(true);
     setErreurGenerale(false);
     try {
@@ -75,15 +66,15 @@ export default function PremierBudget() {
         nom: t('budget.nomCarnet'),
         deviseCode: devise.code,
         jourPaie: jour,
-        revenu: revenuMinimes,
+        revenu: 0,
         nomCompte: t('budget.comptesTypes.especes'),
         enveloppes: postesDeDepart
-          .filter((p) => postes[p.cle]?.garde)
+          .filter((p) => gardees.includes(p.cle))
           .map((p) => ({
             nom: t(`budget.enveloppesDefaut.${p.cle}`),
             icone: p.icone,
             fixe: p.fixe,
-            plafond: minimes(postes[p.cle]?.plafond ?? '') ?? 0,
+            plafond: 0,
           })),
       });
       budgetModifie();
@@ -95,43 +86,44 @@ export default function PremierBudget() {
     }
   };
 
+  // Contrôle segmenté : les trois premières devises ; la devise choisie, même personnelle, remplace la troisième.
+  const visibles = devises.slice(0, 3);
+  if (devise && !visibles.some((d) => d.code === devise.code)) visibles[visibles.length - 1] = devise;
+  const optionsDevise = [
+    ...visibles.map((d) => ({ id: d.code, label: d.symbole })),
+    { id: 'autre', label: t('budget.premierAutreDevise') },
+  ];
+
   return (
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
-      <TopBar retour titre={t('budget.premierTitre')} />
       <KeyboardAvoidingView style={styles.ecran} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <ScrollView
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={{
+            flexGrow: 1,
+            paddingTop: insets.top + espace.espace4,
             paddingHorizontal: espace.espace5,
-            paddingBottom: espace.espace8,
-            gap: espace.espace5,
+            paddingBottom: marge + espace.espace4,
+            gap: espace.espace4,
           }}>
-          <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, { color: couleurs.encre2 }]}>
-            {t('budget.premierTexte')}
-          </Text>
-          <Button variant="discret" icone="reset" onPress={() => router.push('/budget/sauvegarde')}>
-            {t('sauvegarde.depuisPremier')}
-          </Button>
-
           <View style={{ gap: espace.espace2 }}>
-            <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, { color: couleurs.encre }]}>
-              {t('budget.premierDevise')}
+            <Text
+              accessibilityRole="header"
+              maxFontSizeMultiplier={echelleMax.courant}
+              style={[typographie.titre1, { color: couleurs.emeraude }]}>
+              {t('budget.premierTitre')}
             </Text>
-            <ListGroup>
-              {devises.map((d) => (
-                <ListItem
-                  key={d.code}
-                  titre={libelle(d).nom}
-                  valeur={apercuDevise(d)}
-                  fin={d.code === devise?.code ? 'coche' : undefined}
-                  onPress={() => setCodeDevise(d.code)}
-                />
-              ))}
-            </ListGroup>
-            <Button variant="discret" icone="plus" onPress={() => setAjoutDevise(true)}>
-              {t('devise.ajouter')}
-            </Button>
+            <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, { color: couleurs.encre2 }]}>
+              {t('budget.premierTexte')}
+            </Text>
           </View>
+
+          <SegmentedControl
+            label={t('budget.premierDevise')}
+            options={optionsDevise}
+            valeur={devise?.code ?? ''}
+            onChange={(id) => (id === 'autre' ? setAjoutDevise(true) : setCodeDevise(id))}
+          />
 
           <TextField
             label={t('budget.premierJourPaie')}
@@ -144,60 +136,24 @@ export default function PremierBudget() {
             erreur={jourPaie !== '' && !jourValide ? t('budget.jourPaieInvalide') : undefined}
           />
 
-          <TextField
-            label={t('budget.premierRevenu')}
-            valeur={revenu}
-            onChange={setRevenu}
-            clavier={devise && devise.decimales > 0 ? 'decimal-pad' : 'number-pad'}
-            suffixe={devise?.symbole}
-            aide={t('budget.premierRevenuAide')}
-            erreur={revenuMinimes === null ? t('budget.montantInvalide') : undefined}
-          />
-
-          <View style={{ gap: espace.espace2 }}>
+          <View accessibilityRole="radiogroup" style={{ gap: espace.espace2 }}>
             <Text
               accessibilityRole="header"
               maxFontSizeMultiplier={echelleMax.courant}
-              style={[typographie.titre3, { color: couleurs.encre }]}>
+              style={[typographie.libelle, { color: couleurs.encre }]}>
               {t('budget.premierEnveloppes')}
             </Text>
-            <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre3 }]}>
+            <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.petit, { color: couleurs.encre3 }]}>
               {t('budget.premierEnveloppesAide')}
             </Text>
+            <View style={[styles.puces, { gap: espace.espace2 }]}>
+              {postesDeDepart.map((p) => (
+                <Chip key={p.cle} selectionne={gardees.includes(p.cle)} onPress={() => basculer(p.cle)}>
+                  {t(`budget.enveloppesDefaut.${p.cle}`)}
+                </Chip>
+              ))}
+            </View>
           </View>
-
-          {postesDeDepart.map((p) => {
-            const poste = postes[p.cle];
-            const nom = t(`budget.enveloppesDefaut.${p.cle}`);
-            return (
-              <View key={p.cle} style={{ gap: espace.espace2 }}>
-                <ListGroup>
-                  <ListItem
-                    icone={p.icone}
-                    titre={nom}
-                    droite={
-                      <Switch
-                        label={nom}
-                        active={poste?.garde ?? false}
-                        onChange={(garde) => changerPoste(p.cle, { garde })}
-                      />
-                    }
-                  />
-                </ListGroup>
-                {poste?.garde ? (
-                  <TextField
-                    label={`${t('budget.plafond')} · ${nom}`}
-                    valeur={poste.plafond}
-                    onChange={(plafond) => changerPoste(p.cle, { plafond })}
-                    clavier={devise && devise.decimales > 0 ? 'decimal-pad' : 'number-pad'}
-                    suffixe={devise?.symbole}
-                    placeholder="0"
-                    erreur={minimes(poste.plafond) === null ? t('budget.montantInvalide') : undefined}
-                  />
-                ) : null}
-              </View>
-            );
-          })}
 
           {erreurGenerale ? (
             <Banner ton="erreur" titre={t('etats.erreurTitre')}>
@@ -205,9 +161,20 @@ export default function PremierBudget() {
             </Banner>
           ) : null}
 
-          <Button pleineLargeur disabled={!valide || envoi} onPress={creer}>
-            {t('budget.premierCommencer')}
-          </Button>
+          <View style={styles.espace} />
+          <View style={{ gap: espace.espace2 }}>
+            <Button grand pleineLargeur disabled={!valide || envoi} onPress={creer}>
+              {t('budget.premierCommencer')}
+            </Button>
+            <Text
+              maxFontSizeMultiplier={echelleMax.courant}
+              style={[typographie.corps, styles.petit, styles.centre, { color: couleurs.encre3 }]}>
+              {t('budget.premierResume', { count: gardees.length })}
+            </Text>
+            <Button variant="discret" icone="reset" pleineLargeur onPress={() => router.push('/budget/sauvegarde')}>
+              {t('sauvegarde.depuisPremier')}
+            </Button>
+          </View>
         </ScrollView>
       </KeyboardAvoidingView>
 
@@ -228,4 +195,8 @@ export default function PremierBudget() {
 
 const styles = StyleSheet.create({
   ecran: { flex: 1 },
+  puces: { flexDirection: 'row', flexWrap: 'wrap' },
+  petit: { fontSize: 14, lineHeight: 20 },
+  centre: { textAlign: 'center' },
+  espace: { flex: 1 },
 });

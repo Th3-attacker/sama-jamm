@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, Text } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
 
+import { chiffresAffiches } from '@/lib/chiffres';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 
@@ -56,7 +57,7 @@ export function TasbihCounter({ compte, objectif, onCompter }: TasbihCounterProp
         ) : null}
       </Svg>
       <Text accessibilityLiveRegion="polite" maxFontSizeMultiplier={echelleMax.grand} style={[typographie.chiffre, styles.compte, { color: couleurs.encre }]}>
-        {compte}
+        {chiffresAffiches(String(compte))}
       </Text>
       {objectif ? (
         <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, { fontFamily: 'SourceSans3_400Regular', color: couleurs.encre3 }]}>

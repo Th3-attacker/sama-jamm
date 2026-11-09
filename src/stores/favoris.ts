@@ -1,16 +1,14 @@
-// Versets gardés en favoris, lisibles sans réseau. Les chants et invocations viendront avec leurs écrans.
+// Versets gardés en favoris, lisibles sans réseau. Les chants viendront avec leurs écrans.
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
+import { migrerFavoris, type DonneesFavoris } from './favorisMigration';
 import { stockage } from './stockage';
 
 /** Clé d'un verset : « 18:46 ». */
 export const cleVerset = (sourate: number, verset: number) => `${sourate}:${verset}`;
 
-type Donnees = {
-  /** Clés de verset, le plus récent en premier. */
-  versets: string[];
-};
+type Donnees = DonneesFavoris;
 
 type Actions = {
   /** Ajoute ou retire un verset ; renvoie true s'il est désormais en favori. */
@@ -30,7 +28,8 @@ export const useFavoris = create<Donnees & Actions>()(
     }),
     {
       name: 'favoris',
-      version: 1,
+      version: 2,
+      migrate: (ancien) => migrerFavoris(ancien),
       storage: createJSONStorage(() => stockage),
       partialize: ({ versets }) => ({ versets }),
       onRehydrateStorage: () => (_etat, erreur) => {

@@ -18,18 +18,17 @@ import { useTheme } from '@/theme/useTheme';
 import { Logo } from '@/ui/Logo';
 
 /** Même image et même largeur que le démarrage natif (plugin expo-splash-screen, `imageWidth`). */
-const LARGEUR_IMAGE = 76;
+const LARGEUR_IMAGE = 120;
 const RELAIS_MS = 150;
 const SIGNATURE_MS = 500;
 const FONDU_MS = 200;
-/** Signature tenue avant le fondu, le temps de la lire (1,2 s au total). */
-const TENUE_MS = 400;
 const COURBE = Easing.bezier(0.2, 0.8, 0.2, 1);
 
 export function DemarrageAnime({ onFin }: { onFin: () => void }) {
-  const { t } = useTranslation();
-  const { espace, typographie, latin } = useTheme();
+  const { t, i18n } = useTranslation();
+  const { typographie, latin } = useTheme();
   const reduit = useReducedMotion();
+  const arabe = i18n.language === 'ar';
   // Même image que le démarrage natif, qui suit le mode du téléphone (pas le thème choisi dans l'app).
   const sombre = useColorScheme() === 'dark';
   // Mêmes couleurs que le démarrage natif (mode du téléphone), même si l'app a un autre thème : aucun saut.
@@ -40,11 +39,15 @@ export function DemarrageAnime({ onFin }: { onFin: () => void }) {
   const ecran = useSharedValue(1);
 
   useEffect(() => {
-    const anim = (duree: number) => ({ duration: reduit ? 0 : duree, easing: COURBE });
-    const signatureMs = reduit ? 0 : SIGNATURE_MS + TENUE_MS;
-    marque.value = withDelay(RELAIS_MS, withTiming(1, anim(SIGNATURE_MS)));
-    filet.value = withDelay(RELAIS_MS + 100, withTiming(1, anim(SIGNATURE_MS - 100)));
-    signature.value = withDelay(RELAIS_MS + 50, withTiming(1, anim(SIGNATURE_MS - 50)));
+    // 0 à 150 ms : relais ; 150 à 650 ms : signature ; 650 à 850 ms : fondu vers l'app.
+    // « Réduire les animations » : pas de mouvement, la marque reste en place et seul le fondu joue.
+    const anim = (duree: number) => ({ duration: duree, easing: COURBE });
+    const signatureMs = reduit ? 0 : SIGNATURE_MS;
+    if (!reduit) {
+      marque.value = withDelay(RELAIS_MS, withTiming(1, anim(SIGNATURE_MS)));
+      filet.value = withDelay(RELAIS_MS + 100, withTiming(1, anim(SIGNATURE_MS - 100)));
+      signature.value = withDelay(RELAIS_MS + 50, withTiming(1, anim(SIGNATURE_MS - 50)));
+    }
     ecran.value = withDelay(RELAIS_MS + signatureMs, withTiming(0, { duration: FONDU_MS }));
     const fin = setTimeout(onFin, RELAIS_MS + signatureMs + FONDU_MS);
     return () => clearTimeout(fin);
@@ -64,22 +67,26 @@ export function DemarrageAnime({ onFin }: { onFin: () => void }) {
     <Animated.View
       pointerEvents="none"
       accessible
-      accessibilityLabel={t('demarrage.traduction')}
+      accessibilityLabel={`Sama Jàmm. ${t('demarrage.traduction')}`}
       style={[StyleSheet.absoluteFill, styles.centre, { backgroundColor: couleurs.fond }, styleEcran]}>
       <Animated.View style={styleMarque}>
         <Logo taille={LARGEUR_IMAGE} selon="telephone" />
       </Animated.View>
-      <Animated.View style={[styles.bas, { gap: espace.espace2 }, styleSignature]}>
+      <Animated.View style={[styles.bas, { gap: 10 }, styleSignature]}>
         <Animated.View style={[styles.filet, { backgroundColor: couleurs.or }, styleFilet]} />
         <Text
           accessibilityLanguage="wo"
           maxFontSizeMultiplier={echelleMax.courant}
-          style={[latin.titre3, { color: couleurs.emeraude, writingDirection: 'ltr' }]}>
+          style={[
+            latin.titre1,
+            styles.signature,
+            { color: sombre ? couleurs.encre : couleurs.emeraude, writingDirection: 'ltr' },
+          ]}>
           {t('demarrage.signature')}
         </Text>
         <Text
           maxFontSizeMultiplier={echelleMax.courant}
-          style={[typographie.translitteration, { color: couleurs.encre2 }]}>
+          style={[arabe ? styles.sousTitreAr : typographie.translitteration, { color: couleurs.encre2 }]}>
           {t('demarrage.traduction')}
         </Text>
       </Animated.View>
@@ -90,6 +97,10 @@ export function DemarrageAnime({ onFin }: { onFin: () => void }) {
 const styles = StyleSheet.create({
   centre: { alignItems: 'center', justifyContent: 'center' },
   // La signature prend la place laissée par la marque qui monte.
-  bas: { position: 'absolute', top: '50%', marginTop: 8, alignItems: 'center' },
+  bas: { position: 'absolute', top: '50%', marginTop: 10, alignItems: 'center' },
   filet: { height: 1.5, borderRadius: 1 },
+  // Planche : Cormorant 600, 28 sur 32, centré.
+  signature: { fontSize: 28, lineHeight: 32, textAlign: 'center' },
+  // Interface en arabe : sous-titre en Amiri 17.
+  sousTitreAr: { fontFamily: 'Amiri_400Regular', fontSize: 17, lineHeight: 26, textAlign: 'center' },
 });

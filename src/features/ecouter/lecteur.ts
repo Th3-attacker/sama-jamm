@@ -12,7 +12,7 @@ import { positionValide, recitateur, RECITATEURS, pistesDePages, type Position }
 import { sourceVerset } from './telechargements';
 
 const VERSETS = sourates.map((s) => s.versets);
-export const VITESSES = [0.75, 1, 1.25, 1.5] as const;
+export const VITESSES = [0.5, 0.75, 1, 1.25, 1.5] as const;
 
 type EtatLecteur = {
   /** Verset en cours d'écoute, ou null si rien n'est chargé. */

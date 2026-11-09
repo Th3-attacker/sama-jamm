@@ -14,13 +14,16 @@ import { Button } from '@/ui/Button';
 import { Chip } from '@/ui/Chip';
 import { TextField } from '@/ui/TextField';
 import { useToast } from '@/ui/Toast';
-import { TopBar } from '@/ui/TopBar';
+import { AmountDisplay } from '@/ui/AmountDisplay';
+import { EnteteRetour } from '@/ui/EnteteRetour';
+import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
 /** Jour de paie : le revenu reçu, mettre de côté d'abord, puis répartir entre les enveloppes. */
 export default function JourDePaie() {
   const { t } = useTranslation();
   const formatMontant = useFormatMontant();
   const { couleurs, espace, typographie } = useTheme();
+  const marge = useMargeBasse();
   const { afficher } = useToast();
   const etat = useBudget(async (depot, carnet) => ({
     mois: await depot.mois(carnet),
@@ -101,22 +104,28 @@ export default function JourDePaie() {
     <Text
       accessibilityRole="header"
       maxFontSizeMultiplier={echelleMax.courant}
-      style={[typographie.titre3, { color: couleurs.encre }]}>
+      style={[typographie.libelle, { color: couleurs.encre2 }]}>
       {texte}
     </Text>
   );
 
   return (
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
-      <TopBar retour titre={t('budget.paieTitre')} sousTitre={t('budget.paieSousTitre')} />
       <KeyboardAvoidingView style={styles.ecran} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <ScrollView
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={{
             paddingHorizontal: espace.espace5,
-            paddingBottom: espace.espace8,
+            paddingBottom: espace.espace5,
             gap: espace.espace4,
           }}>
+          <EnteteRetour titre={t('budget.paieTitre')} sousTitre={t('budget.paieSousTitre')} italique />
+          <AmountDisplay
+            tonMontant="revenu"
+            libelle={t('budget.recu')}
+            montant={mois.recu + (revenuM ?? 0)}
+            devise={devise}
+          />
           <TextField
             label={t('budget.revenuRecu')}
             valeur={revenu}
@@ -186,21 +195,36 @@ export default function JourDePaie() {
             />
           ))}
 
-          {/* Le reste non réparti s'affiche tant qu'il n'est pas nul ; il n'empêche pas de valider. */}
-          {restant !== 0 ? (
-            <Banner
-              ton={restant < 0 ? 'attention' : 'info'}
-              icone={restant < 0 ? 'alert' : 'info'}
-              titre={t('budget.nonReparti')}>
-              {f(restant)}
-            </Banner>
-          ) : null}
           {echec ? <Banner ton="erreur">{t('etats.erreurTexte')}</Banner> : null}
 
-          <Button pleineLargeur disabled={!valide || envoi} onPress={valider}>
+        </ScrollView>
+        <View
+          style={[
+            styles.pied,
+            {
+              gap: espace.espace3,
+              paddingTop: espace.espace3,
+              paddingHorizontal: espace.espace5,
+              paddingBottom: marge,
+              backgroundColor: couleurs.surface,
+              borderTopColor: couleurs.ligne,
+            },
+          ]}>
+          <View style={styles.reste}>
+            <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.petit, { color: couleurs.encre2 }]}>
+              {t('budget.nonReparti')}
+            </Text>
+            <Text
+              accessibilityLiveRegion="polite"
+              maxFontSizeMultiplier={echelleMax.courant}
+              style={[typographie.titre3, { color: restant < 0 ? couleurs.erreur : couleurs.alerte, fontVariant: ['tabular-nums'] }]}>
+              {f(restant)}
+            </Text>
+          </View>
+          <Button grand pleineLargeur disabled={!valide || envoi} onPress={valider}>
             {t('budget.validerRepartition')}
           </Button>
-        </ScrollView>
+        </View>
       </KeyboardAvoidingView>
     </View>
   );
@@ -208,4 +232,7 @@ export default function JourDePaie() {
 
 const styles = StyleSheet.create({
   ecran: { flex: 1 },
+  pied: { borderTopWidth: StyleSheet.hairlineWidth },
+  reste: { flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between' },
+  petit: { fontSize: 14, lineHeight: 20 },
 });

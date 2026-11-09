@@ -17,9 +17,10 @@ export function ErreurDeRoute({ error, retry }: ErrorBoundaryProps) {
   return (
     <EcranErreur
       titre={t('etats.erreurTitreWo')}
-      texte={`${t('etats.erreurBloque')} ${t('etats.erreurTexte')}`}
+      sousTitre={t('etats.erreurBloque')}
+      texte={t('etats.erreurTexte')}
       detail={t('etats.erreurCode', { code })}
-      action={{ libelle: t('commun.reessayer'), onPress: () => void retry() }}
+      action={{ libelle: t('commun.reessayer'), icone: 'reset', onPress: () => void retry() }}
     />
   );
 }

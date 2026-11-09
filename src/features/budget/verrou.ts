@@ -5,6 +5,7 @@ import { useCallback, useEffect } from 'react';
 import { AppState, Platform } from 'react-native';
 import { create } from 'zustand';
 
+import { chiffresAffiches } from '@/lib/chiffres';
 import { formatMontant, type Devise } from '@/lib/montant';
 import { useReglages } from '@/stores/reglages';
 
@@ -59,7 +60,7 @@ export function useVerrouBudget(message: string): { verrouille: boolean; deverro
 export function useFormatMontant(): (minimes: number, devise: Devise) => string {
   const masques = useEtatVerrou((s) => s.montantsMasques);
   return useCallback(
-    (minimes: number, devise: Devise) => montantAffiche(formatMontant(minimes, devise), masques),
+    (minimes: number, devise: Devise) => chiffresAffiches(montantAffiche(formatMontant(minimes, devise), masques)),
     [masques],
   );
 }

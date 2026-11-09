@@ -11,13 +11,14 @@ export function EcranMiseAJour({ consigne }: { consigne: ConsigneVersion }) {
   const { t } = useTranslation();
   return (
     <EcranErreur
-      icone="download"
+      logo
       titre={t('etats.miseAJourTitre')}
       texte={t('etats.miseAJourTexte')}
       note={t('etats.miseAJourNote')}
       detail={t('etats.miseAJourVersions', { installee: versionInstallee ?? '?', minimum: consigne.minimum })}
       action={{
         libelle: t('etats.miseAJour'),
+        icone: 'download',
         onPress: () => {
           Linking.openURL(consigne.magasin).catch((erreur: unknown) =>
             console.error('Store impossible à ouvrir', erreur),

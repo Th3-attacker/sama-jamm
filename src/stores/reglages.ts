@@ -43,6 +43,8 @@ type Donnees = {
   veilleAuto: boolean;
   /** Vibrations légères (grains du dhikr, boutons principaux). */
   haptique: boolean;
+  /** Télécharger les récitations seulement en Wi-Fi, pour ne pas consommer les données mobiles. */
+  wifiSeulement: boolean;
   /** Nuit pour laquelle le bandeau « Veille activée » a été fermé (« 2026-10-29 »). */
   veilleVue: string | null;
   theme: ChoixTheme;
@@ -80,6 +82,7 @@ type Actions = {
   definirAffichage: (affichage: AffichageLecture) => void;
   definirTranslitLecture: (actif: boolean) => void;
   definirChiffresArabes: (actif: boolean) => void;
+  definirWifiSeulement: (actif: boolean) => void;
   definirVerrouBudget: (actif: boolean) => void;
   definirMasquerMontants: (actif: boolean) => void;
 };
@@ -100,6 +103,7 @@ const parDefaut: Donnees = {
   ajustements: tout(0),
   veilleAuto: true,
   haptique: true,
+  wifiSeulement: false,
   veilleVue: null,
   theme: 'auto',
   bienvenueTerminee: false,
@@ -132,6 +136,7 @@ export const useReglages = create<Donnees & Actions>()(
         })),
       definirVeilleAuto: (veilleAuto) => set({ veilleAuto }),
       definirHaptique: (haptique) => set({ haptique }),
+      definirWifiSeulement: (wifiSeulement) => set({ wifiSeulement }),
       marquerVeilleVue: (veilleVue) => set({ veilleVue }),
       definirTheme: (theme) => set({ theme }),
       terminerBienvenue: () => set({ bienvenueTerminee: true }),
@@ -167,6 +172,7 @@ export const useReglages = create<Donnees & Actions>()(
         ajustements: s.ajustements,
         veilleAuto: s.veilleAuto,
         haptique: s.haptique,
+        wifiSeulement: s.wifiSeulement,
         veilleVue: s.veilleVue,
         verrouBudget: s.verrouBudget,
         masquerMontants: s.masquerMontants,

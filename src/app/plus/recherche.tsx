@@ -62,20 +62,20 @@ export default function Recherche() {
       <View
         style={[
           styles.entete,
-          { paddingTop: insets.top + espace.espace3, paddingHorizontal: espace.espace5, gap: espace.espace3 },
+          { paddingTop: insets.top + espace.espace3, paddingHorizontal: espace.espace5, gap: espace.espace2 },
         ]}>
         <View style={styles.champ}>
           <SearchField autoFocus placeholder={t('recherche.placeholder')} valeur={requete} onChange={setRequete} />
         </View>
         <Pressable accessibilityRole="button" accessibilityLabel={t('commun.fermer')} hitSlop={8} onPress={() => router.back()}>
-          <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, { color: couleurs.emeraude }]}>
+          <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, styles.fermer, { color: couleurs.encre }]}>
             {t('commun.fermer')}
           </Text>
         </Pressable>
       </View>
-      <View style={[styles.filtres, { paddingHorizontal: espace.espace5, paddingVertical: espace.espace3, gap: espace.espace2 }]}>
+      <View style={[styles.filtres, { paddingHorizontal: espace.espace5, paddingTop: espace.espace4, paddingBottom: espace.espace3, gap: espace.espace2 }]}>
         {FILTRES.map((f) => (
-          <Chip key={f} selectionne={filtre === f} onPress={() => setFiltre(f)}>
+          <Chip key={f} compacte selectionne={filtre === f} onPress={() => setFiltre(f)}>
             {f === 'tout' ? t('recherche.tout') : t(`lire.${f}`)}
           </Chip>
         ))}
@@ -111,7 +111,7 @@ export default function Recherche() {
             recherche && sections.length > 0 ? (
               <View
                 style={{
-                  marginTop: espace.espace5,
+                  marginTop: espace.espace2,
                   padding: espace.espace4,
                   gap: espace.espace1,
                   backgroundColor: couleurs.surfaceCreux,
@@ -120,7 +120,7 @@ export default function Recherche() {
                 <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, { color: couleurs.encre }]}>
                   {t('recherche.videTitre')}
                 </Text>
-                <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, { color: couleurs.encre2 }]}>
+                <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.aide, { color: couleurs.encre2 }]}>
                   {t('recherche.aide')}
                 </Text>
               </View>
@@ -135,18 +135,21 @@ export default function Recherche() {
             <Text
               accessibilityRole="header"
               maxFontSizeMultiplier={echelleMax.courant}
-              style={[typographie.libelle, { color: couleurs.encre3, paddingVertical: espace.espace2, textTransform: 'uppercase', letterSpacing: 0.6 }]}>
+              style={[typographie.libelle, styles.titreSection, { color: couleurs.encre3, paddingTop: espace.espace2, paddingBottom: espace.espace4 }]}>
               {section.titre}
             </Text>
           )}
           renderItem={({ item }) =>
             'versets' in item ? (
               <CarteSourate
+                plat
                 sourate={item}
                 onPress={() => router.push({ pathname: '/lire/coran/[sourate]', params: { sourate: item.n } })}
               />
             ) : (
               <CarteVerset
+                plat
+                surligner={requeteDiffree}
                 sourate={item.sourate}
                 verset={item.verset}
                 texte={item.texte}
@@ -160,7 +163,6 @@ export default function Recherche() {
               />
             )
           }
-          ItemSeparatorComponent={() => <View style={{ height: espace.espace2 }} />}
           contentContainerStyle={{ paddingHorizontal: espace.espace5, paddingBottom: espace.espace8 }}
         />
       )}
@@ -173,4 +175,7 @@ const styles = StyleSheet.create({
   entete: { flexDirection: 'row', alignItems: 'center' },
   champ: { flex: 1 },
   filtres: { flexDirection: 'row', flexWrap: 'wrap' },
+  fermer: { fontSize: 16, lineHeight: 24, paddingHorizontal: 8 },
+  aide: { fontSize: 14, lineHeight: 20 },
+  titreSection: { textTransform: 'uppercase', letterSpacing: 0.84 },
 });

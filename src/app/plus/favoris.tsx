@@ -1,16 +1,21 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { FlatList, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { CarteVerset } from '@/features/lire/CarteVerset';
 import { traductionDe, versetsDe } from '@/features/lire/coran';
 import { useFavoris } from '@/stores/favoris';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
+import { Chip } from '@/ui/Chip';
 import { EmptyState } from '@/ui/EmptyState';
-import { SegmentedControl } from '@/ui/SegmentedControl';
 import { TopBar } from '@/ui/TopBar';
+
+type Filtre = 'tous' | 'versets' | 'chants' | 'invocations';
+const FILTRES: Filtre[] = ['tous', 'versets', 'chants', 'invocations'];
+/** Seuls les versets se mettent en favori pour l'instant : chants et invocations restent à zéro. */
+const compter = (id: Filtre, versets: number) => (id === 'tous' || id === 'versets' ? versets : 0);
 
 type Favori = { sourate: number; verset: number };
 
@@ -23,7 +28,7 @@ function lire(cle: string): Favori | null {
 export default function Favoris() {
   const { t } = useTranslation();
   const { couleurs, espace, typographie } = useTheme();
-  const [filtre, setFiltre] = useState<'tous' | 'versets' | 'chants' | 'invocations'>('tous');
+  const [filtre, setFiltre] = useState<Filtre>('tous');
   const cles = useFavoris((s) => s.versets);
   const favoris = cles.map(lire).filter((f): f is Favori => f !== null);
 
@@ -43,17 +48,13 @@ export default function Favoris() {
           keyExtractor={(f) => `${f.sourate}:${f.verset}`}
           ListHeaderComponent={
             <View style={{ gap: espace.espace3, paddingBottom: espace.espace3 }}>
-              <SegmentedControl
-                label={t('favoris.filtrer')}
-                options={[
-                  { id: 'tous', label: t('favoris.tous') },
-                  { id: 'versets', label: t('favoris.versets') },
-                  { id: 'chants', label: t('favoris.chants') },
-                  { id: 'invocations', label: t('favoris.invocations') },
-                ]}
-                valeur={filtre}
-                onChange={(id) => setFiltre(id === 'versets' || id === 'chants' || id === 'invocations' ? id : 'tous')}
-              />
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} accessibilityLabel={t('favoris.filtrer')} contentContainerStyle={{ gap: espace.espace2 }}>
+                {FILTRES.map((id) => (
+                  <Chip key={id} selectionne={filtre === id} compte={compter(id, favoris.length)} onPress={() => setFiltre(id)}>
+                    {t(`favoris.${id}`)}
+                  </Chip>
+                ))}
+              </ScrollView>
               {filtre === 'tous' || filtre === 'versets' ? (
                 <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre3 }]}>
                   {t('favoris.versets')} · {favoris.length}

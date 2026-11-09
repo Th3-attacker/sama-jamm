@@ -26,6 +26,8 @@ export type DayArcProps = {
   a: string;
   /** Pour les lecteurs d'écran. */
   description: string;
+  /** L'arc seul, sans l'en-tête « dans 42 min » ni la rangée des noms (écran Prière). */
+  simple?: boolean;
 };
 
 // Géométrie du design system (bundle.js).
@@ -47,7 +49,7 @@ function etoile(cx: number, cy: number, R: number): string {
   }).join(' ');
 }
 
-export function DayArc({ lever, coucher, maintenant, prieres, dans, avant, a, description }: DayArcProps) {
+export function DayArc({ lever, coucher, maintenant, prieres, dans, avant, a, description, simple = false }: DayArcProps) {
   const { couleurs, espace, typographie } = useTheme();
 
   const pos = (m: number): [number, number] => {
@@ -65,6 +67,7 @@ export function DayArc({ lever, coucher, maintenant, prieres, dans, avant, a, de
 
   return (
     <View style={{ gap: espace.espace1 }}>
+      {simple ? null : (
       <View style={styles.tete}>
         <Text maxFontSizeMultiplier={echelleMax.grand} style={[typographie.chiffre, { color: couleurs.encre }]}>
           {dans}
@@ -78,6 +81,7 @@ export function DayArc({ lever, coucher, maintenant, prieres, dans, avant, a, de
           </Text>
         </View>
       </View>
+      )}
 
       {/* En interface arabe, l'arc se retourne : Fajr à droite. */}
       <View accessible accessibilityRole="image" accessibilityLabel={description} style={I18nManager.isRTL ? styles.miroir : undefined}>
@@ -106,6 +110,7 @@ export function DayArc({ lever, coucher, maintenant, prieres, dans, avant, a, de
         </Svg>
       </View>
 
+      {simple ? null : (
       <View style={styles.noms}>
         {prieres.map((p) => {
           const on = p.etat === 'prochaine';
@@ -122,6 +127,7 @@ export function DayArc({ lever, coucher, maintenant, prieres, dans, avant, a, de
           );
         })}
       </View>
+      )}
     </View>
   );
 }

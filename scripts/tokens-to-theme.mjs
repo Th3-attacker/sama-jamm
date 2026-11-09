@@ -16,11 +16,20 @@ const themes = Object.fromEntries(
   ])
 );
 const px = (fam) => Object.fromEntries(t[fam].tokens.map((k) => [camel(k.name), parseFloat(k.value)]));
+const miseEnPage = Object.fromEntries(
+  t['mise-en-page'].tokens.map((k) => [camel(k.name), parseFloat(k.value) / (k.value.endsWith('%') ? 100 : 1)])
+);
+const echelleTexte = t['echelle-texte'];
+const echelleEspace = t['echelle-espace'];
 const out = `// Généré depuis design/tokens.json par scripts/tokens-to-theme.mjs — ne pas modifier à la main.
 export const themes = ${JSON.stringify(themes, null, 2)} as const;
 export const espace = ${JSON.stringify(px('spacing'), null, 2)} as const;
 export const rayon = ${JSON.stringify(px('radius'), null, 2)} as const;
 export const cible = ${JSON.stringify(px('zone-tactile'), null, 2)} as const;
+export const miseEnPage = ${JSON.stringify(miseEnPage, null, 2)} as const;
+export const tailleTexte = ${JSON.stringify(echelleTexte.tailles)} as const;
+export const tailleArabe = ${JSON.stringify(echelleTexte.arabe)} as const;
+export const echelleEspace = ${JSON.stringify(echelleEspace.valeurs)} as const;
 export type NomTheme = keyof typeof themes;
 export type Couleurs = (typeof themes)[NomTheme]['couleurs'];
 export type Ombres = (typeof themes)[NomTheme]['ombres'];

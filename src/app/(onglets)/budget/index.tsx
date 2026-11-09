@@ -6,6 +6,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { basculerMontants, useEtatVerrou, useFormatMontant } from '@/features/budget/verrou';
 import { depassement, depenseDuJour, joursRestants, pasArrondi, resteAVivre } from '@/features/budget/cycle';
 import { iconeEnveloppe } from '@/features/budget/enveloppesDeDepart';
+import { resumeDettes } from '@/features/budget/dettes';
 import { NOM_ENVELOPPE_MAX, nonReparti } from '@/features/budget/depot';
 import { EtatsBudget } from '@/features/budget/EtatsBudget';
 import { FeuilleRevenu } from '@/features/budget/FeuilleRevenu';
@@ -13,16 +14,19 @@ import { budgetModifie, useBudget } from '@/features/budget/useBudget';
 import { cleJour, formatJourCle } from '@/lib/dates';
 import { lireMontantFacultatif } from '@/lib/montant';
 import { echelleMax } from '@/theme/typographie';
+import { useLayout } from '@/theme/useLayout';
 import { useTheme } from '@/theme/useTheme';
 import { AmountDisplay } from '@/ui/AmountDisplay';
 import { Banner } from '@/ui/Banner';
 import { BottomSheet } from '@/ui/BottomSheet';
 import { Button } from '@/ui/Button';
 import { Envelope } from '@/ui/Envelope';
+import { Icon } from '@/ui/Icon';
 import { ListGroup } from '@/ui/ListGroup';
 import { ListItem } from '@/ui/ListItem';
 import { TextField } from '@/ui/TextField';
 import { TopBar } from '@/ui/TopBar';
+import { useDessousOutil, useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
 export default function Budget() {
   // Toucher l'onglet actif ramène la liste en haut.
@@ -39,11 +43,15 @@ export default function Budget() {
     onPress: basculerMontants,
   };
   const { couleurs, espace, rayon, typographie } = useTheme();
+  const marge = useMargeBasse();
+  const dessous = useDessousOutil();
+  const { styleColonne: colonne } = useLayout();
   const etat = useBudget(async (depot, carnet) => ({
     mois: await depot.mois(carnet),
     archivees: await depot.enveloppesArchivees(carnet),
     comptes: await depot.comptes(carnet.id),
     bilan: await depot.bilanAFaire(carnet),
+    dettes: await depot.dettes(carnet, 'ouvertes'),
   }));
   // Feuille « Ajouter une enveloppe » : nom et plafond.
   const [feuille, setFeuille] = useState(false);
@@ -62,7 +70,7 @@ export default function Budget() {
   }
 
   const { carnet } = etat;
-  const { mois, archivees, comptes, bilan } = etat.donnees;
+  const { mois, archivees, comptes, bilan, dettes } = etat.donnees;
   const devise = carnet.devise;
   const f = (m: number) => formatMontant(m, devise);
   const aujourdhui = cleJour(new Date());
@@ -101,15 +109,47 @@ export default function Budget() {
     fin: formatJourCle(mois.cycle.fin, i18n.language),
   });
 
+  const recuMois = Math.max(mois.recu, 1);
+  const largeur = (m: number) => `${Math.min(100, Math.max(0, (m / recuMois) * 100))}%` as const;
+  const resume = resumeDettes(dettes);
+  const surTexte = { maxFontSizeMultiplier: echelleMax.courant } as const;
+  const corps14 = { ...typographie.corps, fontSize: 14, lineHeight: 20 };
+
   return (
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
-      <TopBar grand titre={t('budget.titre')} sousTitre={sousTitre} actions={[oeil]} />
+      <TopBar actions={[oeil]} />
       <ScrollView ref={defilement}
         contentContainerStyle={{
-          paddingHorizontal: espace.espace5,
-          paddingBottom: espace.espace8,
-          gap: espace.espace5,
+          ...colonne,
+          paddingBottom: espace.espace8 + marge + 52 + espace.espace4,
+          gap: espace.espace4,
         }}>
+        <View style={[styles.entete, { gap: espace.espace3 }]}>
+          <View style={styles.enteteTexte}>
+            <Text accessibilityRole="header" {...surTexte} style={[typographie.display, { color: couleurs.emeraude }]}>
+              {t('budget.titre')}
+            </Text>
+            <Text {...surTexte} style={[corps14, { color: couleurs.encre3 }]}>
+              {`${sousTitre} · `}
+              <Text
+                accessibilityRole="link"
+                onPress={() => router.push('/budget/devise')}
+                style={{ fontFamily: typographie.libelle.fontFamily, color: couleurs.emeraude }}>
+                {devise.symbole}
+              </Text>
+            </Text>
+          </View>
+          <View
+            style={[
+              styles.pastille,
+              { backgroundColor: couleurs.surfaceCreux, gap: espace.espace2, paddingHorizontal: espace.espace3 },
+            ]}>
+            <Icon name="lock" size={14} color={couleurs.encre2} />
+            <Text {...surTexte} style={[typographie.legende, styles.gras, { color: couleurs.encre2 }]}>
+              {t('budget.surTelephone')}
+            </Text>
+          </View>
+        </View>
         {/* Cycle précédent terminé mais pas clos : une invitation douce, jamais un blocage. */}
         {bilan ? (
           <Banner ton="info" action={{ label: t('budget.faireBilan'), onPress: () => router.push('/budget/bilan') }}>
@@ -145,38 +185,93 @@ export default function Budget() {
           />
         </Pressable>
 
-        <Text
-          accessibilityRole="header"
-          maxFontSizeMultiplier={echelleMax.courant}
-          style={[typographie.libelle, { color: couleurs.encre2 }]}>
-          {t('budget.repartitionMois')}
-        </Text>
-        <View style={[styles.totaux, { gap: espace.espace3 }]}>
-          {[
-            [t('budget.recu'), mois.recu],
-            [t('budget.depense'), mois.depense],
-            [t('budget.epargne'), mois.misDeCote],
-          ].map(([libelle, montant]) => (
-            <View key={String(libelle)} accessible style={styles.total}>
-              <Text
-                maxFontSizeMultiplier={echelleMax.courant}
-                style={[typographie.legende, { color: couleurs.encre3 }]}>
-                {libelle}
+        <View style={{ gap: espace.espace2 }}>
+          <View
+            accessible
+            accessibilityLabel={`${t('budget.repartitionMois')} : ${t('budget.depense')} ${f(mois.depense)}, ${t('budget.epargne')} ${f(mois.misDeCote)}, ${t('budget.resteLegende')} ${f(reste)}`}
+            style={[styles.barre, { backgroundColor: couleurs.surfaceCreux }]}>
+            <View style={{ width: largeur(mois.depense), backgroundColor: couleurs.emeraude }} />
+            <View style={{ width: largeur(mois.misDeCote), backgroundColor: couleurs.or }} />
+          </View>
+          <View style={styles.legende}>
+            {[
+              [t('budget.depense'), mois.depense, couleurs.emeraude, null],
+              [t('budget.epargne'), mois.misDeCote, couleurs.or, null],
+              [t('budget.resteLegende'), reste, couleurs.surfaceCreux, couleurs.ligneForte],
+            ].map(([libelle, montant, fond, bord]) => (
+              <View key={String(libelle)} style={[styles.legendeItem, { gap: espace.espace1 }]}>
+                <View
+                  style={[
+                    styles.carre,
+                    { backgroundColor: String(fond) },
+                    bord ? { borderWidth: 1, borderColor: String(bord) } : null,
+                  ]}
+                />
+                <Text
+                  {...surTexte}
+                  style={[typographie.legende, { color: couleurs.encre2, fontVariant: ['tabular-nums'] }]}>
+                  {`${libelle} ${f(Number(montant))}`}
+                </Text>
+              </View>
+            ))}
+          </View>
+          <Text {...surTexte} style={[typographie.legende, { color: couleurs.encre3 }]}>
+            {t('budget.recuCeMois', { montant: f(mois.recu) })}
+          </Text>
+        </View>
+
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={`${t('dettes.titre')} : ${t('dettes.onMeDoit')} ${f(resume.onMeDoit)}, ${t('dettes.jeDois')} ${f(resume.jeDois)}`}
+          android_ripple={{ color: couleurs.emeraudeDoux }}
+          onPress={() => router.push('/budget/dettes')}
+          style={({ pressed }) => [
+            styles.carteDettes,
+            {
+              gap: espace.espace3,
+              paddingVertical: espace.espace3,
+              paddingHorizontal: espace.espace4,
+              borderRadius: rayon.rayonCarte,
+              backgroundColor: couleurs.surface,
+              borderColor: couleurs.ligne,
+              opacity: pressed ? 0.85 : 1,
+            },
+          ]}>
+          <View style={{ flex: 1, gap: espace.espace1 }}>
+            <Text {...surTexte} style={[typographie.corps, styles.gras, { color: couleurs.encre }]}>
+              {t('dettes.titre')}
+            </Text>
+            <Text {...surTexte} style={[corps14, { color: couleurs.encre3, fontVariant: ['tabular-nums'] }]}>
+              {`${t('dettes.onMeDoit')} ${f(resume.onMeDoit)} · ${t('dettes.jeDois')} ${f(resume.jeDois)}`}
+            </Text>
+          </View>
+          <Icon name="chevron-right" size={18} color={couleurs.encre3} />
+        </Pressable>
+
+        <View>
+          <View style={styles.titreEnveloppes}>
+            <Text accessibilityRole="header" {...surTexte} style={[typographie.titre3, { color: couleurs.encre }]}>
+              {t('budget.enveloppes')}
+            </Text>
+            {nonReparti(mois) > 0 ? (
+              <Text {...surTexte} style={[corps14, { color: couleurs.encre3 }]}>
+                {t('budget.nonRepartiMontant', { montant: f(nonReparti(mois)) })}
               </Text>
-              <Text
-                maxFontSizeMultiplier={echelleMax.courant}
-                adjustsFontSizeToFit
-                numberOfLines={1}
-                style={[typographie.libelle, { color: couleurs.encre, fontVariant: ['tabular-nums'] }]}>
-                {f(Number(montant))}
-              </Text>
-            </View>
+            ) : null}
+          </View>
+          {mois.enveloppes.map((e) => (
+            <Envelope
+              key={e.id}
+              nom={e.nom}
+              depense={e.depense}
+              plafond={e.plafond}
+              fixe={e.fixe}
+              devise={devise}
+              onPress={() => router.push({ pathname: '/budget/enveloppe/[id]', params: { id: e.id } })}
+            />
           ))}
         </View>
 
-        <Button icone="plus" pleineLargeur onPress={() => router.push('/budget-ajout')}>
-          {t('budget.ajouterDepense')}
-        </Button>
         <Button variant="secondaire" icone="plus" pleineLargeur onPress={() => setFeuilleRevenu(true)}>
           {t('budget.ajouterRevenu')}
         </Button>
@@ -212,39 +307,7 @@ export default function Budget() {
             sousTitre={t('zakat.voir')}
             onPress={() => router.push('/budget/zakat')}
           />
-          <ListItem
-            icone="users"
-            titre={t('dettes.titre')}
-            sousTitre={t('dettes.voir')}
-            onPress={() => router.push('/budget/dettes')}
-          />
         </ListGroup>
-
-        <View>
-          <Text
-            accessibilityRole="header"
-            maxFontSizeMultiplier={echelleMax.courant}
-            style={[typographie.titre3, { color: couleurs.encre }]}>
-            {t('budget.enveloppes')}
-          </Text>
-          {nonReparti(mois) > 0 ? (
-            <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre2 }]}>
-              {t('budget.nonRepartiMontant', { montant: f(nonReparti(mois)) })}
-            </Text>
-          ) : null}
-          {mois.enveloppes.map((e) => (
-            <Envelope
-              key={e.id}
-              nom={e.nom}
-              icone={iconeEnveloppe(e.icone)}
-              depense={e.depense}
-              plafond={e.plafond}
-              fixe={e.fixe}
-              devise={devise}
-              onPress={() => router.push({ pathname: '/budget/enveloppe/[id]', params: { id: e.id } })}
-            />
-          ))}
-        </View>
 
         <Button
           variant="secondaire"
@@ -274,6 +337,29 @@ export default function Budget() {
           </ListGroup>
         ) : null}
       </ScrollView>
+
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={t('budget.ajouterDepense')}
+        android_ripple={{ color: couleurs.emeraudeDoux, foreground: true }}
+        onPress={() => router.push('/budget-ajout')}
+        style={({ pressed }) => [
+          styles.flottant,
+          {
+            end: espace.espace5,
+            bottom: dessous + espace.espace4,
+            gap: espace.espace2,
+            paddingHorizontal: espace.espace5,
+            shadowColor: couleurs.encre,
+            backgroundColor: couleurs.emeraude,
+            opacity: pressed ? 0.9 : 1,
+          },
+        ]}>
+        <Icon name="plus" size={20} color={couleurs.surEmeraude} />
+        <Text {...surTexte} style={[typographie.corps, styles.gras, { color: couleurs.surEmeraude }]}>
+          {t('budget.depenseCourt')}
+        </Text>
+      </Pressable>
 
       <BottomSheet ouvert={feuille} titre={t('budget.nouvelleEnveloppe')} onFermer={() => setFeuille(false)}>
         <TextField
@@ -311,6 +397,26 @@ export default function Budget() {
 
 const styles = StyleSheet.create({
   ecran: { flex: 1 },
-  totaux: { flexDirection: 'row' },
-  total: { flex: 1 },
+  entete: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  enteteTexte: { flex: 1 },
+  pastille: { flexDirection: 'row', alignItems: 'center', height: 32, borderRadius: 999 },
+  gras: { fontFamily: 'SourceSans3_600SemiBold' },
+  barre: { flexDirection: 'row', height: 12, borderRadius: 999, overflow: 'hidden' },
+  legende: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', rowGap: 4 },
+  legendeItem: { flexDirection: 'row', alignItems: 'center' },
+  carre: { width: 8, height: 8, borderRadius: 2 },
+  carteDettes: { flexDirection: 'row', alignItems: 'center', borderWidth: 1 },
+  titreEnveloppes: { flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 4 },
+  flottant: {
+    position: 'absolute',
+    height: 52,
+    borderRadius: 999,
+    flexDirection: 'row',
+    alignItems: 'center',
+    overflow: 'hidden',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 3,
+  },
 });

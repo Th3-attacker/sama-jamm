@@ -1,7 +1,7 @@
 import { router, useScrollToTop } from 'expo-router';
 import { ComponentRef, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { ChoixVille } from '@/features/priere/ChoixVille';
 import { calculerHoraires, prochainePriere } from '@/features/priere/horaires';
@@ -11,13 +11,16 @@ import { useMaintenant } from '@/hooks/useMaintenant';
 import { formatDuree, formatHeure, formatJour, minutesDuJour } from '@/lib/dates';
 import { prieres, useReglages } from '@/stores/reglages';
 import { echelleMax } from '@/theme/typographie';
+import { useLayout } from '@/theme/useLayout';
 import { useTheme } from '@/theme/useTheme';
 import { Banner } from '@/ui/Banner';
 import { DayArc } from '@/ui/DayArc';
+import { Icon } from '@/ui/Icon';
 import { ListGroup } from '@/ui/ListGroup';
 import { ListItem } from '@/ui/ListItem';
 import { PrayerTimes, type LignePriere } from '@/ui/PrayerTimes';
 import { TopBar } from '@/ui/TopBar';
+import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
 const JOURS_SEMAINE = 7;
 
@@ -26,7 +29,9 @@ export default function Priere() {
   const defilement = useRef<ComponentRef<typeof ScrollView>>(null);
   useScrollToTop(defilement);
   const { t, i18n } = useTranslation();
-  const { couleurs, espace, typographie } = useTheme();
+  const { couleurs, espace, rayon, typographie } = useTheme();
+  const marge = useMargeBasse();
+  const { styleColonne: colonne } = useLayout();
   const maintenant = useMaintenant();
   const options = useOptionsCalcul();
   const lieu = useReglages((s) => s.lieu);
@@ -34,6 +39,7 @@ export default function Priere() {
   const definirRappel = useReglages((s) => s.definirRappel);
   const definirLieu = useReglages((s) => s.definirLieu);
   const methode = useReglages((s) => s.methode);
+  const veilleAuto = useReglages((s) => s.veilleAuto);
   const tAr = i18n.getFixedT('ar');
 
   const donnees = useMemo(() => {
@@ -53,13 +59,16 @@ export default function Priere() {
 
   return (
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
+      {/* Planche : « Prière » en 40/44 à gauche, cloche à droite. */}
       <TopBar
-        grand
-        titre={t('priere.titre')}
-        sousTitre={t('priere.sousTitre')}
+        gauche={
+          <Text accessibilityRole="header" maxFontSizeMultiplier={echelleMax.grand} style={[typographie.display, { color: couleurs.emeraude }]}>
+            {t('priere.titre')}
+          </Text>
+        }
         actions={[{ icone: 'bell', label: t('priere.rappelsTitre'), onPress: () => router.push('/priere/rappels') }]}
       />
-      <ScrollView ref={defilement} contentContainerStyle={{ paddingHorizontal: espace.espace5, paddingBottom: espace.espace8, gap: espace.espace4 }}>
+      <ScrollView ref={defilement} contentContainerStyle={{ ...colonne, paddingBottom: espace.espace8 + marge, gap: espace.espace4 }}>
         <BandeauVeille />
 
         {!lieu || !donnees ? (
@@ -67,12 +76,12 @@ export default function Priere() {
             <Banner ton="erreur" titre={t('priere.positionRefusee')}>
               {t('priere.positionRefuseeTexte')}
             </Banner>
-            <ChoixVille onChoisir={(v) => definirLieu({ type: 'ville', id: v.id, nom: v.nom, latitude: v.lat, longitude: v.lon })} />
+            <ChoixVille apresRefus onChoisir={(v) => definirLieu({ type: 'ville', id: v.id, nom: v.nom, latitude: v.lat, longitude: v.lon })} />
           </>
         ) : (
           <>
             {/* Jamais d'heures sans le lieu de calcul. */}
-            <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, { color: couleurs.encre2 }]}>
+            <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.lieu, { color: couleurs.encre2 }]}>
               {`${nomLieu} · ${formatJour(maintenant, i18n.language)}`}
             </Text>
             <DayArc
@@ -89,6 +98,7 @@ export default function Priere() {
               avant={t('accueil.avant', { priere: t(`priere.noms.${donnees.suivante.nom}`) })}
               a={t('accueil.a', { heure: formatHeure(donnees.suivante.heure) })}
               description={t('accessibilite.arcDuJour')}
+              simple
             />
             <PrayerTimes
               prieres={prieres.map<LignePriere>((p) => {
@@ -103,6 +113,7 @@ export default function Priere() {
                   dans: prochaine ? t('commun.dans', { duree: donnees.dans }) : undefined,
                   appelActif: rappels[p],
                   libelleAppel: t('priere.notificationDe', { priere: t(`priere.noms.${p}`) }),
+                  note: p === 'isha' && veilleAuto ? t('priere.veilleEnsuite') : undefined,
                 };
               })}
               onBasculerAppel={(id) => {
@@ -110,9 +121,40 @@ export default function Priere() {
                 if (p) definirRappel(p, !rappels[p]);
               }}
             />
+            {/* Planche : deux tuiles, Qibla et Dhikr. */}
+            <View style={[styles.tuiles, { gap: espace.espace3 }]}>
+              {([
+                { cle: 'qibla', icone: 'compass', titre: t('qibla.titre'), sous: t('qibla.boussole'), ouvrir: () => router.push('/priere/qibla') },
+                { cle: 'dhikr', icone: 'target', titre: t('dhikr.titre'), sous: t('dhikr.sousTitre'), ouvrir: () => router.push('/priere/dhikr') },
+              ] as const).map((x) => (
+                <Pressable
+                  key={x.cle}
+                  accessibilityRole="button"
+                  accessibilityLabel={`${x.titre}, ${x.sous}`}
+                  onPress={x.ouvrir}
+                  style={({ pressed }) => [
+                    styles.tuile,
+                    {
+                      gap: espace.espace3,
+                      padding: espace.espace4,
+                      borderRadius: rayon.rayonCarte,
+                      borderColor: couleurs.ligne,
+                      backgroundColor: pressed ? couleurs.surfaceCreux : couleurs.surface,
+                    },
+                  ]}>
+                  <Icon name={x.icone} size={24} color={couleurs.emeraude} />
+                  <View style={styles.tuileTextes}>
+                    <Text numberOfLines={1} maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, styles.tuileTitre, { color: couleurs.encre }]}>
+                      {x.titre}
+                    </Text>
+                    <Text numberOfLines={2} maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre3 }]}>
+                      {x.sous}
+                    </Text>
+                  </View>
+                </Pressable>
+              ))}
+            </View>
             <ListGroup>
-              <ListItem icone="compass" ton="emeraude" titre={t('qibla.titre')} sousTitre={t('qibla.boussole')} onPress={() => router.push('/priere/qibla')} />
-              <ListItem icone="target" ton="emeraude" titre={t('dhikr.titre')} sousTitre={t('dhikr.sousTitre')} onPress={() => router.push('/priere/dhikr')} />
               <ListItem
                 icone="settings"
                 titre={t('priere.methodeTitre')}
@@ -138,4 +180,9 @@ export default function Priere() {
 
 const styles = StyleSheet.create({
   ecran: { flex: 1 },
+  lieu: { fontSize: 14, lineHeight: 20 },
+  tuiles: { flexDirection: 'row' },
+  tuile: { flex: 1, flexDirection: 'row', alignItems: 'center', borderWidth: 1 },
+  tuileTextes: { flex: 1, minWidth: 0 },
+  tuileTitre: { fontSize: 16, lineHeight: 24 },
 });

@@ -10,13 +10,15 @@ import { useBudget } from '@/features/budget/useBudget';
 import { useFormatMontant } from '@/features/budget/verrou';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
+import { isoleLtr } from '@/ui/AmountDisplay';
 import { Button } from '@/ui/Button';
 import { EmptyState } from '@/ui/EmptyState';
 import { Icon } from '@/ui/Icon';
 import { ListGroup } from '@/ui/ListGroup';
 import { ListItem } from '@/ui/ListItem';
 import { SegmentedControl } from '@/ui/SegmentedControl';
-import { TopBar } from '@/ui/TopBar';
+import { EnteteRetour } from '@/ui/EnteteRetour';
+import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
 type Filtre = 'tous' | SensDette;
 
@@ -25,6 +27,7 @@ export default function Dettes() {
   const { t } = useTranslation();
   const formatMontant = useFormatMontant();
   const { couleurs, espace, rayon, typographie } = useTheme();
+  const marge = useMargeBasse();
   const etat = useBudget(async (depot, carnet) => ({
     ouvertes: await depot.dettes(carnet, 'ouvertes'),
     closes: (await depot.dettes(carnet, 'closes')).length,
@@ -39,12 +42,15 @@ export default function Dettes() {
   const f = (m: number) => formatMontant(m, carnet.devise);
   const resume = resumeDettes(donnees.ouvertes);
   const visibles = donnees.ouvertes.filter((d) => filtre === 'tous' || d.sens === filtre);
+  const montantSolde = f(Math.abs(resume.solde));
   const solde =
     resume.solde > 0
-      ? t('dettes.soldePour', { montant: f(resume.solde) })
+      ? t('dettes.soldePour', { montant: montantSolde })
       : resume.solde < 0
-        ? t('dettes.soldeContre', { montant: f(-resume.solde) })
+        ? t('dettes.soldeContre', { montant: montantSolde })
         : t('dettes.soldeNul');
+  // Le montant du solde est en gras dans la phrase (planche).
+  const [avantSolde, apresSolde] = resume.solde !== 0 ? solde.split(montantSolde) : [solde, undefined];
 
   const carte = (sens: SensDette, montant: number) => (
     <View
@@ -59,7 +65,7 @@ export default function Dettes() {
           borderColor: couleurs.ligne,
         },
       ]}>
-      <View style={[styles.ligne, { gap: espace.espace1 }]}>
+      <View style={[styles.ligne, { gap: espace.espace2 }]}>
         <Icon name={sens === 'prete' ? 'arrow-up' : 'arrow-down'} size={16} color={couleurs.encre2} />
         <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, { color: couleurs.encre2 }]}>
           {sens === 'prete' ? t('dettes.onMeDoit') : t('dettes.jeDois')}
@@ -68,28 +74,35 @@ export default function Dettes() {
       <Text
         maxFontSizeMultiplier={echelleMax.courant}
         adjustsFontSizeToFit
+        minimumFontScale={0.5}
         numberOfLines={1}
-        style={[typographie.titre2, { color: couleurs.encre, fontVariant: ['tabular-nums'] }]}>
-        {f(montant)}
+        style={[typographie.corps, styles.montant, { color: couleurs.encre, fontVariant: ['tabular-nums'] }]}>
+        {isoleLtr(f(montant))}
       </Text>
     </View>
   );
 
   return (
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
-      <TopBar retour titre={t('dettes.titre')} sousTitre={t('dettes.sousTitre')} />
       <ScrollView
         contentContainerStyle={{
           paddingHorizontal: espace.espace5,
-          paddingBottom: espace.espace8,
+          paddingBottom: espace.espace8 + marge,
           gap: espace.espace4,
         }}>
+        <EnteteRetour titre={t('dettes.titre')} sousTitre={t('dettes.sousTitre')} italique />
         <View style={[styles.ligne, { gap: espace.espace3 }]}>
           {carte('prete', resume.onMeDoit)}
           {carte('emprunte', resume.jeDois)}
         </View>
-        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, { color: couleurs.encre2 }]}>
-          {solde}
+        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.solde, { color: couleurs.encre2 }]}>
+          {avantSolde}
+          {apresSolde !== undefined ? (
+            <>
+              <Text style={[styles.gras, { color: couleurs.encre }]}>{montantSolde}</Text>
+              {apresSolde}
+            </>
+          ) : null}
         </Text>
 
         {donnees.ouvertes.length > 0 ? (
@@ -141,5 +154,8 @@ export default function Dettes() {
 const styles = StyleSheet.create({
   ecran: { flex: 1 },
   ligne: { flexDirection: 'row', alignItems: 'center' },
-  carte: { flex: 1, borderWidth: 1, gap: 2 },
+  carte: { flex: 1, borderWidth: 1, gap: 4 },
+  solde: { fontSize: 14, lineHeight: 20 },
+  gras: { fontFamily: 'SourceSans3_600SemiBold' },
+  montant: { fontFamily: 'SourceSans3_600SemiBold', fontSize: 24, lineHeight: 30, alignSelf: 'stretch' },
 });

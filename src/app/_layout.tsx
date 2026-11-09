@@ -2,6 +2,7 @@ import i18n from '@/i18n';
 
 import { useFonts } from 'expo-font';
 import { Stack, type ErrorBoundaryProps } from 'expo-router';
+import * as Notifications from 'expo-notifications';
 import * as SplashScreen from 'expo-splash-screen';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -46,7 +47,8 @@ export default function RootLayout() {
   useSurveillanceVerrou();
   const miseAJour = useMiseAJour();
   // Une seule fois par ouverture à froid : l'état vit avec la racine, pas sur le disque.
-  const [demarrage, setDemarrage] = useState(true);
+  // Ouverte depuis une notification : pas d'animation, on va droit à l'écran visé.
+  const [demarrage, setDemarrage] = useState(() => Notifications.getLastNotificationResponse() === null);
   const finDemarrage = useCallback(() => setDemarrage(false), []);
   const pret = policesChargees || erreurPolices !== null;
 
@@ -64,11 +66,10 @@ export default function RootLayout() {
     <ThemeProvider choix={theme} veilleAuto={veilleAuto} nuitDePriere={nuit?.active ?? false} interfaceArabe={i18n.language === 'ar'}>
       <ToastProvider>
         <Stack screenOptions={{ headerShown: false }}>
-          {/* Ajout de dépense : route transparente portant la feuille native `BottomSheet`, fermée par « × » ou le geste vers le bas. */}
-          <Stack.Screen
-            name="budget-ajout"
-            options={{ presentation: 'transparentModal', animation: 'none', contentStyle: { backgroundColor: 'transparent' } }}
-          />
+          {/* Ajout de dépense : page ouverte en modale, fermée par la flèche de retour. */}
+          <Stack.Screen name="budget-ajout" options={{ presentation: 'modal' }} />
+          {/* Lecteur audio : modale plein écran ouverte depuis le mini-lecteur ou une lecture. */}
+          <Stack.Screen name="lecteur" options={{ presentation: 'modal' }} />
         </Stack>
       </ToastProvider>
       {demarrage ? <DemarrageAnime onFin={finDemarrage} /> : null}

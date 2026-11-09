@@ -1,16 +1,18 @@
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { enregistrerPrenom, lirePrenom, seDeconnecter, useSession } from '@/features/compte/compte';
 import { PRENOM_MAX, prenomPropre } from '@/features/compte/validation';
+import { useFavoris } from '@/stores/favoris';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { Banner } from '@/ui/Banner';
 import { Button } from '@/ui/Button';
 import { ListGroup } from '@/ui/ListGroup';
 import { ListItem } from '@/ui/ListItem';
+import { Switch } from '@/ui/Switch';
 import { TextField } from '@/ui/TextField';
 import { useToast } from '@/ui/Toast';
 import { TopBar } from '@/ui/TopBar';
@@ -24,6 +26,7 @@ export default function Compte() {
   const pret = useSession((s) => s.pret);
   const [prenom, setPrenom] = useState('');
   const [erreur, setErreur] = useState(false);
+  const nbFavoris = useFavoris((s) => s.versets.length);
 
   // Sans session : la connexion à la place.
   useEffect(() => {
@@ -92,17 +95,39 @@ export default function Compte() {
           {t('commun.enregistrer')}
         </Button>
         <ListGroup titre={t('compte.synchroTitre')} note={t('compte.synchroBientot')}>
-          <ListItem icone="bookmark" titre={t('menuPlus.favoris')} valeur={t('lire.aVenir')} />
-          <ListItem icone="settings" titre={t('menuPlus.reglages')} valeur={t('lire.aVenir')} />
-          <ListItem icone="users" titre={t('compte.khatms')} valeur={t('lire.aVenir')} />
+          <ListItem
+            icone="bookmark"
+            titre={t('menuPlus.favoris')}
+            sousTitre={t('compte.synchroFavorisAide', { n: nbFavoris })}
+            droite={<Switch active={false} disabled onChange={() => undefined} label={t('menuPlus.favoris')} />}
+          />
+          <ListItem
+            icone="settings"
+            titre={t('menuPlus.reglages')}
+            sousTitre={t('compte.synchroReglagesAide')}
+            droite={<Switch active={false} disabled onChange={() => undefined} label={t('menuPlus.reglages')} />}
+          />
+          <ListItem
+            icone="users"
+            titre={t('compte.khatms')}
+            sousTitre={t('compte.synchroKhatmAide')}
+            droite={<Switch active={false} disabled onChange={() => undefined} label={t('compte.khatms')} />}
+          />
         </ListGroup>
         {erreur ? <Banner ton="erreur">{t('etats.erreurTexte')}</Banner> : null}
-        <Button variant="discret" pleineLargeur onPress={deconnecter}>
-          {t('compte.deconnexion')}
-        </Button>
-        <Button variant="danger" pleineLargeur onPress={() => router.push('/plus/compte-supprimer')}>
-          {t('compte.supprimer')}
-        </Button>
+        <View style={{ gap: espace.espace1 }}>
+          <Button variant="secondaire" pleineLargeur onPress={deconnecter}>
+            {t('compte.deconnexion')}
+          </Button>
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => router.push('/plus/compte-supprimer')}
+            style={styles.supprimer}>
+            <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, { color: couleurs.erreur }]}>
+              {t('compte.supprimer')}
+            </Text>
+          </Pressable>
+        </View>
         <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre3 }]}>
           {t('connexion.budgetReste')}
         </Text>
@@ -113,4 +138,5 @@ export default function Compte() {
 
 const styles = StyleSheet.create({
   ecran: { flex: 1 },
+  supprimer: { minHeight: 48, alignItems: 'center', justifyContent: 'center' },
 });

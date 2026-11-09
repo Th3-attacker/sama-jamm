@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { useSession } from '@/features/compte/compte';
@@ -49,15 +49,15 @@ export default function Invitation() {
       <TopBar
         retour
         onRetour={() => (router.canGoBack() ? router.back() : router.replace('/accueil'))}
-        titre={t('khatm.invitationTitre')}
       />
       <ScrollView
         contentContainerStyle={{
+          flexGrow: 1,
           paddingHorizontal: espace.espace5,
-          paddingBottom: espace.espace8,
-          gap: espace.espace5,
+          paddingBottom: espace.espace5,
+          gap: espace.espace4,
         }}>
-        <View>
+        <View style={{ gap: espace.espace1 }}>
           <Text
             accessibilityLanguage="wo"
             maxFontSizeMultiplier={echelleMax.courant}
@@ -66,7 +66,7 @@ export default function Invitation() {
           </Text>
           <Text
             maxFontSizeMultiplier={echelleMax.courant}
-            style={[typographie.translitteration, { color: couleurs.encre2 }]}>
+            style={[typographie.translitteration, styles.trad, { color: couleurs.encre2 }]}>
             {t('formules.entraideTrad')}
           </Text>
         </View>
@@ -89,23 +89,25 @@ export default function Invitation() {
                 gap: espace.espace1,
               }}>
               <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, { color: couleurs.encre }]}>
-                {t('khatm.invitation', { prenom: apercu.invite_par ?? t('khatm.quelquun'), nom: apercu.nom })}
+                <Trans
+                  i18nKey="khatm.invitation"
+                  values={{ prenom: apercu.invite_par ?? t('khatm.quelquun'), nom: apercu.nom }}
+                  components={{ nom: <Text style={styles.gras} /> }}
+                />
               </Text>
               {apercu.intention ? (
                 <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, { color: couleurs.encre2 }]}>
                   {apercu.intention}
                 </Text>
               ) : null}
-              <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre2 }]}>
+              <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, styles.regulier, { color: couleurs.encre2 }]}>
                 {[
                   t('khatm.libresRestants', { count: apercu.libres }),
                   apercu.echeance
-                    ? t('khatm.objectif', {
-                        date: new Date(`${apercu.echeance}T12:00:00`).toLocaleDateString(i18n.language, {
-                          day: 'numeric',
-                          month: 'long',
-                        }),
-                      })
+                    ? `${t('khatm.echeance').toLowerCase()} ${new Date(`${apercu.echeance}T12:00:00`).toLocaleDateString(i18n.language, {
+                        day: 'numeric',
+                        month: 'long',
+                      })}`
                     : null,
                 ]
                   .filter(Boolean)
@@ -113,12 +115,15 @@ export default function Invitation() {
               </Text>
             </View>
             {erreur ? <Banner ton="erreur">{t('etats.erreurTexte')}</Banner> : null}
-            <Button icone="users" pleineLargeur onPress={rejoindre}>
-              {t('khatm.rejoindre')}
-            </Button>
-            <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre3 }]}>
-              {t('khatm.rendreAide')}
-            </Text>
+            {/* Pied de page collé en bas, comme la planche. */}
+            <View style={[styles.pied, { gap: espace.espace2 }]}>
+              <Button grand pleineLargeur onPress={rejoindre}>
+                {t('khatm.rejoindre')}
+              </Button>
+              <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, styles.regulier, styles.centre, { color: couleurs.encre3 }]}>
+                {t('khatm.rendreAide')}
+              </Text>
+            </View>
           </>
         ) : (
           <Banner ton="attention" titre={t('khatm.lienExpire')}>
@@ -132,4 +137,9 @@ export default function Invitation() {
 
 const styles = StyleSheet.create({
   ecran: { flex: 1 },
+  trad: { fontSize: 16, lineHeight: 24 },
+  gras: { fontFamily: 'SourceSans3_600SemiBold' },
+  regulier: { fontFamily: 'SourceSans3_400Regular' },
+  centre: { textAlign: 'center' },
+  pied: { marginTop: 'auto' },
 });

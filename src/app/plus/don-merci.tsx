@@ -48,7 +48,6 @@ export default function MerciDon() {
             <ListItem
               icone="wallet"
               titre={WALLETS.find((w) => w.id === d.wallet)?.nom ?? d.wallet}
-              sousTitre={t('dons.referenceCourte', { reference: d.reference })}
               valeur={`${d.montant} UM`}
             />
             <ListItem icone="clock" titre={t('dons.statut')} droite={<Badge ton="alerte">{t('dons.statuts.en_attente')}</Badge>} />
