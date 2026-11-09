@@ -55,6 +55,7 @@ export function BandeauVeille() {
     <Banner
       ton="veille"
       titre={t('formules.repos')}
+      langueTitre="wo"
       onFermer={() => marquerVeilleVue(nuit.cle)}>
       {t('reglages.veilleJusqua', { heure: formatHeure(nuit.fin) })}
     </Banner>

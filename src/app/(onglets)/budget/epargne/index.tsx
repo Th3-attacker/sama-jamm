@@ -8,18 +8,19 @@ import { useBudget } from '@/features/budget/useBudget';
 import { useFormatMontant } from '@/features/budget/verrou';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
+import { isoleLtr } from '@/ui/AmountDisplay';
 import { Button } from '@/ui/Button';
 import { EmptyState } from '@/ui/EmptyState';
 import { ListGroup } from '@/ui/ListGroup';
 import { ListItem } from '@/ui/ListItem';
-import { TopBar } from '@/ui/TopBar';
+import { EnteteRetour } from '@/ui/EnteteRetour';
 import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
 /** Épargne avec intention : le total mis de côté, les objectifs et l'épargne libre. */
 export default function EcranEpargne() {
   const { t } = useTranslation();
   const formatMontant = useFormatMontant();
-  const { couleurs, espace, rayon, typographie } = useTheme();
+  const { couleurs, espace, typographie, latin } = useTheme();
   const marge = useMargeBasse();
   const etat = useBudget((depot, carnet) => depot.epargne(carnet));
 
@@ -40,40 +41,41 @@ export default function EcranEpargne() {
 
   return (
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
-      <TopBar retour titre={t('epargne.titre')} />
       <ScrollView
         contentContainerStyle={{
           paddingHorizontal: espace.espace5,
           paddingBottom: espace.espace8 + marge,
           gap: espace.espace4,
         }}>
+        <EnteteRetour titre={t('epargne.titre')} />
         <View
           accessible
           style={{
             padding: espace.espace4,
             gap: espace.espace1,
-            borderRadius: rayon.rayonCarte,
+            borderRadius: 16,
             backgroundColor: couleurs.orDoux,
           }}>
-          <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, { color: couleurs.orTexte }]}>
-            {t('epargne.misDeCote')}
+          <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, styles.capitales, { color: couleurs.orTexte }]}>
+            {t('epargne.misDeCote').toLocaleUpperCase()}
           </Text>
           <Text
             maxFontSizeMultiplier={echelleMax.courant}
             adjustsFontSizeToFit
+            minimumFontScale={0.5}
             numberOfLines={1}
-            style={[typographie.chiffre, { color: couleurs.encre }]}>
-            {formatMontant(e.total, devise)}
+            style={[typographie.chiffre, styles.total, { color: couleurs.encre }]}>
+            {isoleLtr(formatMontant(e.total, devise))}
           </Text>
           <Text
             accessibilityLanguage="wo"
             maxFontSizeMultiplier={echelleMax.courant}
-            style={[typographie.titre3, { color: couleurs.emeraude, marginTop: espace.espace2 }]}>
+            style={[latin.titre2, styles.proverbe, { color: couleurs.emeraude, marginTop: espace.espace2 }]}>
             {t('epargne.proverbe')}
           </Text>
           <Text
             maxFontSizeMultiplier={echelleMax.courant}
-            style={[typographie.translitteration, { color: couleurs.encre2 }]}>
+            style={[typographie.translitteration, styles.petit, { color: couleurs.encre2 }]}>
             {t('epargne.sousTitre')}
           </Text>
         </View>
@@ -115,7 +117,7 @@ export default function EcranEpargne() {
           </>
         ) : null}
 
-        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre2 }]}>
+        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.petit, { color: couleurs.encre2 }]}>
           {t('epargne.sansInteret')}
         </Text>
         <ListGroup>
@@ -133,4 +135,8 @@ export default function EcranEpargne() {
 
 const styles = StyleSheet.create({
   ecran: { flex: 1 },
+  capitales: { fontFamily: 'SourceSans3_600SemiBold', letterSpacing: 0.72 },
+  total: { fontSize: 40, lineHeight: 44, alignSelf: 'stretch' },
+  proverbe: { fontSize: 18, lineHeight: 24 },
+  petit: { fontSize: 14, lineHeight: 20 },
 });

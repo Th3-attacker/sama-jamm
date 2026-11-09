@@ -1,16 +1,16 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 
 import { useFormatMontant } from '@/features/budget/verrou';
 import { EtatsBudget } from '@/features/budget/EtatsBudget';
 import { FeuilleRevenu } from '@/features/budget/FeuilleRevenu';
 import { useBudget } from '@/features/budget/useBudget';
 import { formatJourCle } from '@/lib/dates';
-import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { Button } from '@/ui/Button';
+import { EmptyState } from '@/ui/EmptyState';
 import { ListGroup } from '@/ui/ListGroup';
 import { ListItem } from '@/ui/ListItem';
 import { TopBar } from '@/ui/TopBar';
@@ -20,7 +20,7 @@ import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 export default function Revenus() {
   const { t, i18n } = useTranslation();
   const formatMontant = useFormatMontant();
-  const { couleurs, espace, typographie } = useTheme();
+  const { couleurs, espace } = useTheme();
   const marge = useMargeBasse();
   const etat = useBudget(async (depot, carnet) => ({
     ...(await depot.revenusDuCycle(carnet)),
@@ -41,9 +41,7 @@ export default function Revenus() {
             gap: espace.espace4,
           }}>
           {etat.donnees.revenus.length === 0 ? (
-            <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, { color: couleurs.encre3 }]}>
-              {t('budget.aucunRevenu')}
-            </Text>
+            <EmptyState icone="wallet" lang="fr" titre={t('budget.aucunRevenu')} />
           ) : (
             <ListGroup>
               {etat.donnees.revenus.map((r) => (

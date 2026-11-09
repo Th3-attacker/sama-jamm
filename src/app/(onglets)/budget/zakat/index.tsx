@@ -1,7 +1,7 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { useAvantAutorisation } from '@/features/autorisation/AvantAutorisation';
 import { lireSaisieDate, masqueDate, versSaisieDate } from '@/features/budget/dettes';
@@ -19,18 +19,16 @@ import { Banner } from '@/ui/Banner';
 import { BottomSheet } from '@/ui/BottomSheet';
 import { Button } from '@/ui/Button';
 import { Dialog } from '@/ui/Dialog';
-import { ListGroup } from '@/ui/ListGroup';
-import { ListItem } from '@/ui/ListItem';
+import { EnteteRetour } from '@/ui/EnteteRetour';
 import { TextField } from '@/ui/TextField';
 import { useToast } from '@/ui/Toast';
-import { TopBar } from '@/ui/TopBar';
 import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
 /** Zakat indicative : montant estimé, échéance de l'année lunaire, détail du calcul, rappel et versement. */
 export default function Zakat() {
   const { t, i18n } = useTranslation();
   const formatMontant = useFormatMontant();
-  const { couleurs, espace, rayon, typographie } = useTheme();
+  const { couleurs, espace, typographie } = useTheme();
   const marge = useMargeBasse();
   const { afficher } = useToast();
   const autorisation = useAvantAutorisation('notifications');
@@ -109,14 +107,14 @@ export default function Zakat() {
 
   return (
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
-      <TopBar retour titre={t('zakat.titre')} sousTitre={t('zakat.voir')} />
       <ScrollView
         contentContainerStyle={{
           paddingHorizontal: espace.espace5,
           paddingBottom: espace.espace8 + marge,
           gap: espace.espace4,
         }}>
-        <View style={{ padding: espace.espace5, borderRadius: rayon.rayonCarte, backgroundColor: couleurs.emeraude }}>
+        <EnteteRetour titre={t('zakat.titre')} droite={t('zakat.titreAr')} />
+        <View style={{ padding: espace.espace4, borderRadius: 16, backgroundColor: couleurs.emeraude }}>
           <AmountDisplay
             surEmeraude
             montant={e.type === 'due' ? e.montant : 0}
@@ -138,41 +136,45 @@ export default function Zakat() {
           </Button>
         ) : null}
 
-        <ListGroup>
-          <ListItem titre={t('zakat.ligneEpargne')} valeur={f(c.epargne)} />
-          <ListItem titre={t('zakat.ligneComptes')} valeur={f(c.comptes)} />
-          <ListItem
+        <View>
+          <LigneCalcul titre={t('zakat.ligneEpargne')} valeur={f(c.epargne)} />
+          <LigneCalcul titre={t('zakat.ligneComptes')} valeur={f(c.comptes)} />
+          <LigneCalcul
             titre={t('zakat.ligneMetaux')}
             valeur={metauxSansPrix ? t('zakat.aSaisir') : f(c.metaux)}
+            discret={metauxSansPrix}
             onPress={() => router.push('/budget/zakat/biens')}
           />
-          {c.autres > 0 ? <ListItem titre={t('zakat.ligneAutres')} valeur={f(c.autres)} /> : null}
-          <ListItem titre={t('zakat.ligneCreances')} valeur={f(c.creances)} />
-          <ListItem titre={t('zakat.ligneDettes')} valeur={`− ${f(c.dettes)}`} />
-          <ListItem titre={t('zakat.base')} valeur={f(baseDeCalcul(c))} />
-          <ListItem
+          {c.autres > 0 ? <LigneCalcul titre={t('zakat.ligneAutres')} valeur={f(c.autres)} /> : null}
+          <LigneCalcul titre={t('zakat.ligneCreances')} valeur={f(c.creances)} />
+          <LigneCalcul titre={t('zakat.ligneDettes')} valeur={`− ${f(c.dettes)}`} />
+          <LigneCalcul titre={t('zakat.base')} valeur={f(baseDeCalcul(c))} total />
+          <LigneCalcul
             titre={t('zakat.ligneNisab', {
               poids: r.base === 'or' ? t('zakat.nisabOr') : t('zakat.nisabArgent'),
             })}
             valeur={z.nisab !== null ? f(z.nisab) : t('zakat.aSaisir')}
+            discret={z.nisab === null}
             onPress={() => router.push('/budget/zakat/biens')}
           />
-          <ListItem
+          <LigneCalcul
             titre={t('zakat.ligneDepuis')}
             valeur={r.debutHawl ? avecHegire(r.debutHawl) : '—'}
+            discret={!r.debutHawl}
+            derniere
             onPress={() => {
               setSaisieDate(r.debutHawl ? versSaisieDate(r.debutHawl) : '');
               setFeuilleDate(true);
             }}
           />
-        </ListGroup>
+        </View>
 
         {echec ? <Banner ton="erreur">{t('etats.erreurTexte')}</Banner> : null}
 
         {e.type === 'due' ? (
           <View style={[styles.ligne, { gap: espace.espace3 }]}>
             <View style={styles.moitie}>
-              <Button variant="secondaire" icone="bell" pleineLargeur disabled={envoi} onPress={rappeler}>
+              <Button variant="secondaire" pleineLargeur disabled={envoi} onPress={rappeler}>
                 {t('zakat.rappeler')}
               </Button>
             </View>
@@ -188,7 +190,7 @@ export default function Zakat() {
           {t('zakat.mesBiens')}
         </Button>
 
-        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre2 }]}>
+        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, styles.note, { color: couleurs.encre2 }]}>
           {t('zakat.indicatif')}
         </Text>
       </ScrollView>
@@ -235,7 +237,58 @@ export default function Zakat() {
   );
 }
 
+type LigneCalculProps = {
+  titre: string;
+  valeur: string;
+  /** Valeur manquante (« à saisir », « — ») : en `encre3`. */
+  discret?: boolean;
+  /** Ligne de total : gras, trait de 2 px à l'encre. */
+  total?: boolean;
+  derniere?: boolean;
+  onPress?: () => void;
+};
+
+/** Ligne du détail du calcul (planche) : libellé à gauche, montant à droite, trait fin dessous. */
+function LigneCalcul({ titre, valeur, discret = false, total = false, derniere = false, onPress }: LigneCalculProps) {
+  const { couleurs, espace, typographie } = useTheme();
+  const police = total ? 'SourceSans3_600SemiBold' : typographie.corps.fontFamily;
+  const contenu = (
+    <>
+      <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.titreLigne, { fontFamily: police, color: couleurs.encre }]}>
+        {titre}
+      </Text>
+      <Text
+        maxFontSizeMultiplier={echelleMax.courant}
+        style={[typographie.corps, styles.valeurLigne, { fontFamily: police, color: discret ? couleurs.encre3 : couleurs.encre }]}>
+        {valeur}
+      </Text>
+    </>
+  );
+  const style = [
+    styles.ligneCalcul,
+    {
+      paddingVertical: espace.espace3,
+      gap: espace.espace3,
+      borderBottomWidth: derniere ? 0 : total ? 2 : StyleSheet.hairlineWidth,
+      borderBottomColor: total ? couleurs.encre : couleurs.ligne,
+    },
+  ];
+  return onPress ? (
+    <Pressable accessibilityRole="button" accessibilityLabel={`${titre}, ${valeur}`} onPress={onPress} style={style}>
+      {contenu}
+    </Pressable>
+  ) : (
+    <View accessible accessibilityLabel={`${titre}, ${valeur}`} style={style}>
+      {contenu}
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
+  ligneCalcul: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline' },
+  titreLigne: { flex: 1 },
+  valeurLigne: { fontVariant: ['tabular-nums'], textAlign: 'right' },
+  note: { fontFamily: 'SourceSans3_400Regular' },
   ecran: { flex: 1 },
   ligne: { flexDirection: 'row' },
   moitie: { flex: 1 },

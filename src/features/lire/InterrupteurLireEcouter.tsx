@@ -10,6 +10,7 @@ export function InterrupteurLireEcouter({ mode, onChange }: { mode: ModeLire; on
   return (
     <SegmentedControl
       label={t('lire.lireOuEcouter')}
+      pilule
       options={[
         { id: 'lire', label: t('lire.titre') },
         { id: 'ecouter', label: t('ecouter.titre') },

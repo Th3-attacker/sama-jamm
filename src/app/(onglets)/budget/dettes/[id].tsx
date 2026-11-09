@@ -21,7 +21,7 @@ import { ListGroup } from '@/ui/ListGroup';
 import { ListItem } from '@/ui/ListItem';
 import { ProgressBar } from '@/ui/ProgressBar';
 import { useToast } from '@/ui/Toast';
-import { TopBar } from '@/ui/TopBar';
+import { EnteteRetour } from '@/ui/EnteteRetour';
 import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
 /** Détail d'une dette : reste, remboursements, rappel, correction et annulation. */
@@ -73,21 +73,20 @@ export default function EcranDette() {
 
   return (
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
-      <TopBar
-        retour
-        titre={d.personne}
-        sousTitre={
-          d.sens === 'prete'
-            ? t('dettes.onMeDoitDepuis', { date: date(d.date) })
-            : t('dettes.jeDoisDepuis', { date: date(d.date) })
-        }
-      />
       <ScrollView
         contentContainerStyle={{
           paddingHorizontal: espace.espace5,
           paddingBottom: espace.espace8 + marge,
           gap: espace.espace4,
         }}>
+        <EnteteRetour
+          titre={d.personne}
+          sousTitre={
+            d.sens === 'prete'
+              ? t('dettes.onMeDoitDepuis', { date: date(d.date) })
+              : t('dettes.jeDoisDepuis', { date: date(d.date) })
+          }
+        />
         <AmountDisplay
           montant={d.reste}
           devise={devise}

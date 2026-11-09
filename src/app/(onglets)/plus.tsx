@@ -1,19 +1,23 @@
 import { router, useScrollToTop, type Href } from 'expo-router';
-import { ComponentRef, useRef } from 'react';
+import { ComponentRef, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { useSession } from '@/features/compte/compte';
+import { listeTelechargements, useTelechargements } from '@/features/ecouter/telechargements';
+import { useKhatmsEnCours } from '@/features/khatm/enCours';
+import { LigneHub } from '@/features/plus/LigneHub';
+import { useFavoris } from '@/stores/favoris';
 import { echelleMax } from '@/theme/typographie';
 import { useLayout } from '@/theme/useLayout';
 import { useTheme } from '@/theme/useTheme';
 import { Icon } from '@/ui/Icon';
-import { ListGroup } from '@/ui/ListGroup';
-import { ListItem } from '@/ui/ListItem';
 import { TopBar } from '@/ui/TopBar';
 import type { IconName } from '@/ui/types';
 import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 import { SondeBarre } from '@/features/ecouter/SondeBarre';
+
+const enMo = (octets: number) => `${(octets / 1_000_000).toFixed(1).replace('.', ',')} Mo`;
 
 type Tuile = { id: string; icone: IconName; href: Href; titre: string; sous: string };
 
@@ -31,70 +35,97 @@ export default function Plus() {
   const defilement = useRef<ComponentRef<typeof ScrollView>>(null);
   useScrollToTop(defilement);
   const { t } = useTranslation();
-  const { couleurs, espace, rayon, typographie } = useTheme();
+  const { couleurs, espace, typographie } = useTheme();
   const marge = useMargeBasse();
   const { styleColonne: colonne } = useLayout();
   const connecte = useSession((s) => s.session !== null);
+  const enCours = useKhatmsEnCours();
+  const nbFavoris = useFavoris((s) => s.versets.length);
+  // Relue après chaque téléchargement ou suppression (`version` change alors).
+  const version = useTelechargements((s) => s.version);
+  const octets = useMemo(() => (version >= 0 ? listeTelechargements().reduce((n, x) => n + x.octets, 0) : 0), [version]);
 
   return (
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
+      {/* Planche : « Plus » en 40/44 et sous-titre à gauche, loupe à droite. */}
       <TopBar
-        grand
-        titre={t('onglets.plus')}
-        sousTitre={t('menuPlus.sousTitre')}
+        gauche={
+          <View>
+            <Text
+              accessibilityRole="header"
+              maxFontSizeMultiplier={echelleMax.grand}
+              style={[typographie.display, { color: couleurs.emeraude }]}>
+              {t('onglets.plus')}
+            </Text>
+            <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.translitteration, styles.sousTitre, { color: couleurs.encre2 }]}>
+              {t('menuPlus.sousTitre')}
+            </Text>
+          </View>
+        }
         actions={[{ icone: 'search', label: t('menuPlus.rechercher'), onPress: () => router.push('/plus/recherche') }]}
       />
       <ScrollView
         ref={defilement}
-        contentContainerStyle={{ ...colonne, paddingBottom: espace.espace8 + marge, gap: espace.espace5 }}>
+        contentContainerStyle={{ ...colonne, paddingBottom: espace.espace8 + marge, gap: espace.espace4 }}>
         <View style={[styles.grille, { gap: espace.espace3 }]}>
-          {TUILES.map((tuile) => (
-            <Pressable
-              key={tuile.id}
-              accessibilityRole="button"
-              accessibilityLabel={`${t(tuile.titre)}, ${t(tuile.sous)}`}
-              onPress={() => router.push(tuile.href)}
-              style={({ pressed }) => [
-                styles.tuile,
-                {
-                  gap: espace.espace1,
-                  padding: espace.espace4,
-                  borderRadius: rayon.rayonCarte,
-                  backgroundColor: pressed ? couleurs.surfaceCreux : couleurs.surface,
-                  borderColor: couleurs.ligne,
-                },
-              ]}>
-              <View style={[styles.pastille, { backgroundColor: couleurs.emeraudeDoux, marginBottom: espace.espace2 }]}>
-                <Icon name={tuile.icone} size={18} color={couleurs.surEmeraudeDoux} />
-              </View>
-              <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, { color: couleurs.encre }]}>
-                {t(tuile.titre)}
-              </Text>
-              <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre2 }]}>
-                {t(tuile.sous)}
-              </Text>
-            </Pressable>
-          ))}
+          {TUILES.map((tuile) => {
+            const khatm = tuile.id === 'khatm';
+            const badge = khatm && enCours !== null && enCours > 0 ? t('menuPlus.enCours', { count: enCours }) : null;
+            return (
+              <Pressable
+                key={tuile.id}
+                accessibilityRole="button"
+                accessibilityLabel={`${t(tuile.titre)}, ${t(tuile.sous)}${badge ? `, ${badge}` : ''}`}
+                onPress={() => router.push(tuile.href)}
+                style={({ pressed }) => [
+                  styles.tuile,
+                  {
+                    gap: espace.espace1,
+                    padding: espace.espace4,
+                    backgroundColor: pressed ? couleurs.surfaceCreux : couleurs.surface,
+                    borderColor: couleurs.ligne,
+                  },
+                ]}>
+                <View style={[styles.pastille, { backgroundColor: khatm ? couleurs.orDoux : couleurs.emeraudeDoux, marginBottom: espace.espace2 }]}>
+                  <Icon name={tuile.icone} size={22} color={khatm ? couleurs.orTexte : couleurs.surEmeraudeDoux} />
+                </View>
+                <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, styles.titre, { color: couleurs.encre }]}>
+                  {t(tuile.titre)}
+                </Text>
+                <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.sous, { color: couleurs.encre2 }]}>
+                  {t(tuile.sous)}
+                </Text>
+                {badge ? (
+                  <View style={[styles.badge, { backgroundColor: couleurs.orDoux }]}>
+                    <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, styles.badgeTexte, { color: couleurs.orTexte }]}>
+                      {badge}
+                    </Text>
+                  </View>
+                ) : null}
+              </Pressable>
+            );
+          })}
         </View>
-        <ListGroup>
-          <ListItem icone="bookmark" titre={t('menuPlus.favoris')} onPress={() => router.push('/plus/favoris')} />
-          <ListItem
+        <View style={[styles.carte, { backgroundColor: couleurs.surface, borderColor: couleurs.ligne }]}>
+          <LigneHub icone="bookmark" premiere titre={t('menuPlus.favoris')} valeur={nbFavoris > 0 ? String(nbFavoris) : undefined} onPress={() => router.push('/plus/favoris')} />
+          <LigneHub
             icone="download"
             titre={t('menuPlus.telechargements')}
+            valeur={octets > 0 ? enMo(octets) : undefined}
             onPress={() => router.push('/plus/telechargements')}
           />
-          <ListItem
+          <LigneHub
             icone="user"
             titre={t('menuPlus.compte')}
             onPress={() => router.push(connecte ? '/plus/compte' : '/plus/connexion')}
           />
-          <ListItem icone="settings" titre={t('menuPlus.reglages')} onPress={() => router.push('/plus/reglages')} />
+          <LigneHub icone="settings" titre={t('menuPlus.reglages')} onPress={() => router.push('/plus/reglages')} />
           {/* Les dons par wallet ne figurent pas dans la version iOS (règles de l'App Store). */}
           {Platform.OS === 'ios' ? null : (
-            <ListItem icone="heart" titre={t('menuPlus.soutenir')} onPress={() => router.push('/plus/soutenir')} />
+            <LigneHub icone="heart" titre={t('menuPlus.soutenir')} onPress={() => router.push('/plus/soutenir')} />
           )}
-          <ListItem icone="info" titre={t('menuPlus.aPropos')} onPress={() => router.push('/plus/a-propos')} />
-        </ListGroup>
+          <LigneHub icone="info" titre={t('menuPlus.aPropos')} onPress={() => router.push('/plus/a-propos')} />
+        </View>
       </ScrollView>
       <SondeBarre />
     </View>
@@ -103,7 +134,15 @@ export default function Plus() {
 
 const styles = StyleSheet.create({
   ecran: { flex: 1 },
+  // Planche : sous-titre en italique 16/24.
+  sousTitre: { fontSize: 16, lineHeight: 24 },
   grille: { flexDirection: 'row', flexWrap: 'wrap' },
-  tuile: { flexBasis: '47%', flexGrow: 1, borderWidth: 1, minHeight: 108 },
-  pastille: { width: 34, height: 34, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
+  // Planche : rayon 16, hauteur minimale 108, pastille 40 de rayon 14, titre 16/24, sous-titre 14/20.
+  tuile: { flexBasis: '47%', flexGrow: 1, borderWidth: 1, borderRadius: 16, minHeight: 108 },
+  pastille: { width: 40, height: 40, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },
+  titre: { fontSize: 16, lineHeight: 24 },
+  sous: { fontSize: 14, lineHeight: 20 },
+  badge: { position: 'absolute', top: 12, end: 12, paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6 },
+  badgeTexte: { fontSize: 12, lineHeight: 16 },
+  carte: { borderWidth: 1, borderRadius: 16, overflow: 'hidden' },
 });

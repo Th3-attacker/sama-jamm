@@ -13,10 +13,14 @@ function coordonnees(v: Ville): string {
   return `${v.paysNom} · ${lat}, ${lon}`;
 }
 
-type Props = { onChoisir: (ville: Ville) => void };
+type Props = {
+  onChoisir: (ville: Ville) => void;
+  /** Après une position refusée (planche « Position refusée ») : titre « Villes » et note sur les réglages. */
+  apresRefus?: boolean;
+};
 
 // Recherche et liste des villes embarquées : bienvenue et position refusée (EtatPosition).
-export function ChoixVille({ onChoisir }: Props) {
+export function ChoixVille({ onChoisir, apresRefus = false }: Props) {
   const { t, i18n } = useTranslation();
   const [recherche, setRecherche] = useState('');
   const resultats = chercherVilles(recherche);
@@ -24,7 +28,7 @@ export function ChoixVille({ onChoisir }: Props) {
   return (
     <>
       <SearchField label={t('priere.chercherVille')} placeholder={t('priere.chercherVille')} valeur={recherche} onChange={setRecherche} />
-      <ListGroup>
+      <ListGroup titre={apresRefus ? t('priere.villes') : undefined} note={apresRefus ? t('priere.villesNote') : undefined}>
         {resultats.map((v) => (
           <ListItem
             key={v.id}

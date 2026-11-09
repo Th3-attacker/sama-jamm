@@ -66,17 +66,17 @@ export function CarteObjectif({ objectif: o, devise }: { objectif: Objectif; dev
         <Text
           maxFontSizeMultiplier={echelleMax.courant}
           numberOfLines={1}
-          style={[typographie.titre3, styles.nom, { color: couleurs.encre }]}>
+          style={[typographie.corps, styles.nom, { fontFamily: typographie.libelle.fontFamily, color: couleurs.encre }]}>
           {o.nom}
         </Text>
-        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre3 }]}>
+        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.petit, { color: couleurs.encre3 }]}>
           {montants}
         </Text>
       </View>
       {o.intention ? (
         <Text
           maxFontSizeMultiplier={echelleMax.courant}
-          style={[typographie.translitteration, { color: couleurs.encre2 }]}>
+          style={[typographie.translitteration, styles.petit, { color: couleurs.encre2 }]}>
           {t('epargne.intentionLigne', { texte: o.intention })}
         </Text>
       ) : null}
@@ -84,7 +84,7 @@ export function CarteObjectif({ objectif: o, devise }: { objectif: Objectif; dev
       {part !== null && !o.utilise ? (
         <ProgressBar valeur={part} label={o.nom} detail={rythme} ton="or" fine />
       ) : (
-        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre2 }]}>
+        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.petit, { color: couleurs.encre2 }]}>
           {rythme}
         </Text>
       )}
@@ -96,4 +96,5 @@ const styles = StyleSheet.create({
   carte: { borderWidth: 1 },
   ligne: { flexDirection: 'row', alignItems: 'baseline' },
   nom: { flex: 1 },
+  petit: { fontSize: 14, lineHeight: 20 },
 });

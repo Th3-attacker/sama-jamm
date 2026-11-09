@@ -18,7 +18,9 @@ import { Chip } from '@/ui/Chip';
 import { Dialog } from '@/ui/Dialog';
 import { TextField } from '@/ui/TextField';
 import { useToast } from '@/ui/Toast';
-import { TopBar } from '@/ui/TopBar';
+import { EnteteRetour } from '@/ui/EnteteRetour';
+import { SegmentedControl } from '@/ui/SegmentedControl';
+import { AmountDisplay } from '@/ui/AmountDisplay';
 import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
 /** Corriger ou supprimer une opération (dépense ou revenu). Le jour et le cycle ne changent pas. */
@@ -32,6 +34,7 @@ export default function EcranOperation() {
   const etat = useBudget(
     async (depot, carnet) => ({
       operation: await depot.operation(carnet, id),
+      comptes: await depot.comptes(carnet.id),
       enveloppes: await (async () => {
         // Enveloppes actives, plus celle de la dépense si elle est archivée : la dépense peut la garder.
         const actives = (await depot.mois(carnet)).enveloppes;
@@ -48,6 +51,7 @@ export default function EcranOperation() {
   const [note, setNote] = useState<string | null>(null);
   const [enveloppeId, setEnveloppeId] = useState<string | null>(null);
   const [jour, setJour] = useState<string | null>(null);
+  const [compteId, setCompteId] = useState<string | null>(null);
   const [confirmer, setConfirmer] = useState(false);
   const [envoi, setEnvoi] = useState(false);
   const [echec, setEchec] = useState(false);
@@ -65,6 +69,7 @@ export default function EcranOperation() {
   const texteMontant = saisie ?? versSaisie(op.montant, devise) ?? '';
   const montant = versMinimes(texteMontant, devise);
   const choixEnveloppe = enveloppeId ?? op.enveloppeId;
+  const choixCompte = compteId ?? op.compteId;
   const nomEnveloppe = donnees.enveloppes.find((e) => e.id === choixEnveloppe)?.nom ?? '';
   const valide =
     montant !== null && montant > 0 && (!estDepense || donnees.enveloppes.some((e) => e.id === choixEnveloppe));
@@ -87,7 +92,7 @@ export default function EcranOperation() {
       await depot.modifierOperation(carnet, op.id, {
         montant,
         enveloppeId: choixEnveloppe,
-        compteId: op.compteId,
+        compteId: choixCompte,
         note: note ?? op.note,
       });
       if (choixJour !== op.date) await depot.modifierDateOperation(carnet, op.id, choixJour);
@@ -118,15 +123,29 @@ export default function EcranOperation() {
 
   return (
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
-      <TopBar retour titre={titre} sousTitre={formatJourCle(op.date, i18n.language)} />
       <KeyboardAvoidingView style={styles.ecran} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <ScrollView
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={{
+            flexGrow: 1,
             paddingHorizontal: espace.espace5,
-            paddingBottom: espace.espace8 + marge,
-            gap: espace.espace5,
+            paddingBottom: espace.espace4 + marge,
+            gap: espace.espace4,
           }}>
+          <EnteteRetour titre={t('budget.operationTitre')} />
+          <AmountDisplay
+            centre
+            montant={op.montant}
+            devise={devise}
+            libelle={
+              op.type === 'depense'
+                ? t('budget.operationDepense')
+                : op.type === 'revenu'
+                  ? t('budget.operationRevenu')
+                  : t('budget.epargneOperation')
+            }
+            detail={formatJourCle(op.date, i18n.language)}
+          />
           <TextField
             label={t('budget.montant')}
             valeur={texteMontant}
@@ -141,16 +160,13 @@ export default function EcranOperation() {
               <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, { color: couleurs.encre }]}>
                 {t('budget.enveloppe')}
               </Text>
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={{ gap: espace.espace2 }}>
+              <View style={[styles.puces, { gap: espace.espace2 }]}>
                 {donnees.enveloppes.map((e) => (
                   <Chip key={e.id} selectionne={e.id === choixEnveloppe} onPress={() => setEnveloppeId(e.id)}>
                     {e.nom}
                   </Chip>
                 ))}
-              </ScrollView>
+              </View>
             </View>
           ) : null}
 
@@ -175,12 +191,23 @@ export default function EcranOperation() {
 
           <TextField label={t('budget.note')} valeur={note ?? op.note ?? ''} onChange={setNote} maxLength={120} />
 
+          {donnees.comptes.length > 1 && donnees.comptes.length <= 4 ? (
+            <SegmentedControl
+              label={t('budget.payeAvec')}
+              options={donnees.comptes.map((c) => ({ id: c.id, label: c.nom }))}
+              valeur={choixCompte ?? ''}
+              onChange={setCompteId}
+            />
+          ) : null}
+
+          <View style={styles.espace} />
+
           {echec ? <Banner ton="erreur">{t('etats.erreurTexte')}</Banner> : null}
 
-          <Button pleineLargeur disabled={!valide || envoi} onPress={enregistrer}>
+          <Button grand pleineLargeur disabled={!valide || envoi} onPress={enregistrer}>
             {t('commun.enregistrer')}
           </Button>
-          <Button variant="danger" icone="trash" pleineLargeur disabled={envoi} onPress={() => setConfirmer(true)}>
+          <Button grand variant="danger" icone="trash" pleineLargeur disabled={envoi} onPress={() => setConfirmer(true)}>
             {t('budget.supprimerOperation')}
           </Button>
         </ScrollView>
@@ -192,6 +219,7 @@ export default function EcranOperation() {
         icone="trash"
         titre={t(estDepense ? 'budget.supprimerDepenseTitre' : 'budget.supprimerOperationTitre')}
         confirmer={t('budget.supprimerOperation')}
+        annuler={t('budget.garder')}
         onAnnuler={() => setConfirmer(false)}
         onConfirmer={supprimer}>
         {estDepense
@@ -211,4 +239,6 @@ export default function EcranOperation() {
 
 const styles = StyleSheet.create({
   ecran: { flex: 1 },
+  puces: { flexDirection: 'row', flexWrap: 'wrap' },
+  espace: { flex: 1 },
 });

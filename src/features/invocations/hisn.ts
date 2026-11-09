@@ -30,3 +30,25 @@ export function debutDe(texte: string, mots = 3): string {
     .slice(0, mots)
     .join(' ');
 }
+
+/**
+ * Moments de la journée construits avec des chapitres de la Citadelle (numéros du fichier hisn.json).
+ * Regroupement à faire relire par le référent religieux.
+ */
+export const MOMENTS_HISN = {
+  voyage: [95, 96, 99, 100, 101, 102, 103, 104, 105],
+  repas: [69, 70, 72, 74],
+  apresPriere: [27],
+} as const;
+export type MomentHisn = keyof typeof MOMENTS_HISN;
+
+export function estMomentHisn(valeur: string | undefined): valeur is MomentHisn {
+  return valeur !== undefined && Object.keys(MOMENTS_HISN).includes(valeur);
+}
+
+/** Invocations d'un moment, dans l'ordre des chapitres ; les numéros sont refaits car ils repartent de 1 par chapitre. */
+export function itemsDuMoment(moment: MomentHisn): ItemHisn[] {
+  return MOMENTS_HISN[moment]
+    .flatMap((id) => chapitreHisn(id)?.items ?? [])
+    .map((item, i) => ({ ...item, id: i + 1 }));
+}

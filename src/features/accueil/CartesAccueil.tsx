@@ -9,7 +9,7 @@ import { useFormatMontant } from '@/features/budget/verrou';
 import { useSession } from '@/features/compte/compte';
 import { formules } from '@/features/dhikr/formules';
 import { mesKhatms, useKhatm } from '@/features/khatm/depot';
-import { resumeKhatm } from '@/features/khatm/logique';
+import { resumeKhatm, vuePart, type Part } from '@/features/khatm/logique';
 import { sourate } from '@/features/lire/coran';
 import { cleJour } from '@/lib/dates';
 import { useDhikr } from '@/stores/dhikr';
@@ -21,7 +21,8 @@ import { useTheme } from '@/theme/useTheme';
 import { CarteAccueil } from '@/ui/CarteAccueil';
 
 import { colonnesGrille } from './colonnes';
-import { ProgressBar } from '@/ui/ProgressBar';
+import { AnneauDhikr } from './AnneauDhikr';
+import { FiletProgres } from './FiletProgres';
 
 /** Carte « Reprendre » : la sourate et le verset où la lecture s'est arrêtée. Sans lecture : invitation à Al-Fâtiha. */
 function CarteReprendre() {
@@ -33,6 +34,16 @@ function CarteReprendre() {
     <CarteAccueil
       icone="book"
       titre={t('accueil.reprendreLibelle')}
+      pied={
+        reprise && position ? (
+          <FiletProgres
+            ton="or"
+            valeur={position.verset / reprise.versets}
+            label={t('accueil.reprendreLibelle')}
+            detail={t('accueil.versetSur', { n: position.verset, total: reprise.versets })}
+          />
+        ) : undefined
+      }
       onPress={() =>
         position && reprise
           ? router.push({
@@ -45,18 +56,9 @@ function CarteReprendre() {
         {reprise && position ? reprise.nom : t('accueil.premierJour')}
       </Text>
       {reprise && position ? (
-        <>
-          <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre2 }]}>
-            {t('accueil.versetSur', { n: position.verset, total: reprise.versets })}
-          </Text>
-          <ProgressBar
-            fine
-            ton="or"
-            valeur={Math.min(1, position.verset / reprise.versets)}
-            label={t('accueil.reprendreLibelle')}
-            detail={t('accueil.versetSur', { n: position.verset, total: reprise.versets })}
-          />
-        </>
+        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.detail, { color: couleurs.encre2 }]}>
+          {t('accueil.versetSur', { n: position.verset, total: reprise.versets })}
+        </Text>
       ) : null}
     </CarteAccueil>
   );
@@ -65,7 +67,7 @@ function CarteReprendre() {
 /** Budget ouvert : le reste à vivre et les jours du cycle. Les montants suivent le masquage de l'œil du budget. */
 function CarteBudgetOuverte() {
   const { t } = useTranslation();
-  const { couleurs, typographie } = useTheme();
+  const { couleurs, typographie, latin } = useTheme();
   const format = useFormatMontant();
   const etat = useBudget(async (depot, carnet) => ({ mois: await depot.mois(carnet) }));
   const ouvrir = () => router.push('/budget');
@@ -90,12 +92,22 @@ function CarteBudgetOuverte() {
     chargesFixesNonReglees: mois.chargesFixesNonReglees,
   });
   const jours = joursRestants(cleJour(new Date()), mois.cycle.fin);
+  // Barre de la planche : la part du revenu du cycle encore disponible.
+  const part = mois.recu > 0 ? reste / mois.recu : null;
   return (
-    <CarteAccueil icone="wallet" titre={titre} onPress={ouvrir}>
-      <Text maxFontSizeMultiplier={echelleMax.grand} style={[typographie.titre2, styles.chiffres, { color: couleurs.encre }]}>
+    <CarteAccueil
+      icone="wallet"
+      titre={titre}
+      onPress={ouvrir}
+      pied={
+        part !== null ? (
+          <FiletProgres ton="emeraude" valeur={part} label={titre} detail={t('accueil.budgetJours', { count: jours })} />
+        ) : undefined
+      }>
+      <Text maxFontSizeMultiplier={echelleMax.grand} style={[latin.titre3, styles.montant, { color: couleurs.encre }]}>
         {format(reste, etat.carnet.devise)}
       </Text>
-      <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre2 }]}>
+      <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.detail, { color: couleurs.encre2 }]}>
         {t('accueil.budgetJours', { count: jours })}
       </Text>
     </CarteAccueil>
@@ -123,7 +135,7 @@ function CarteBudget() {
 
 function CarteDhikr() {
   const { t } = useTranslation();
-  const { couleurs, typographie } = useTheme();
+  const { couleurs, espace, typographie } = useTheme();
   const formule = useDhikr((s) => s.formule);
   const compte = useDhikr((s) => s.comptes[s.formule] ?? 0);
   const objectifChoisi = useDhikr((s) => s.objectifs[s.formule]);
@@ -131,46 +143,91 @@ function CarteDhikr() {
   const objectif = objectifChoisi === undefined ? f?.objectif ?? null : objectifChoisi;
   return (
     <CarteAccueil icone="bolt" titre={t('accueil.dhikrTitre')} onPress={() => router.push('/priere/dhikr')}>
-      <Text maxFontSizeMultiplier={echelleMax.grand} style={[typographie.titre2, styles.chiffres, { color: couleurs.encre }]}>
-        {compte}
-      </Text>
-      {objectif ? (
-        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre2 }]}>
-          {t('accueil.dhikrSur', { objectif })}
-        </Text>
-      ) : null}
-      {f ? (
-        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre2 }]}>
-          {f.translitteration}
-        </Text>
-      ) : null}
+      <View style={[styles.dhikr, { gap: espace.espace3 }]}>
+        {objectif ? (
+          <AnneauDhikr compte={compte} objectif={objectif} />
+        ) : (
+          <Text maxFontSizeMultiplier={echelleMax.grand} style={[typographie.titre2, styles.chiffres, { color: couleurs.encre }]}>
+            {compte}
+          </Text>
+        )}
+        <View style={styles.dhikrTextes}>
+          {objectif ? (
+            <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.detail, { color: couleurs.encre2 }]}>
+              {t('accueil.dhikrSur', { objectif })}
+            </Text>
+          ) : null}
+          {f ? (
+            <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.detail, { color: couleurs.encre2 }]}>
+              {f.translitteration}
+            </Text>
+          ) : null}
+        </View>
+      </View>
     </CarteAccueil>
   );
 }
 
-/** Khatm lu : avancée du premier khatm de la liste. */
-function KhatmResume({ id }: { id: string }) {
+/** Grille des 30 juz de la planche : lus (doux), le vôtre (plein), en cours chez un autre (contour émeraude), libres (contour). */
+function GrilleJuz({ parts, moi }: { parts: readonly Part[]; moi: string | null }) {
+  const { couleurs } = useTheme();
+  return (
+    <View style={styles.grilleJuz}>
+      {parts.map((p) => {
+        const vue = vuePart(p, moi);
+        const style =
+          vue === 'lu'
+            ? { backgroundColor: couleurs.emeraudeDoux }
+            : vue === 'leVotre'
+              ? { backgroundColor: couleurs.emeraude }
+              : { borderWidth: 1, borderColor: vue === 'enCours' ? couleurs.emeraude : couleurs.ligneForte };
+        return <View key={p.juz} style={[styles.juz, style]} />;
+      })}
+    </View>
+  );
+}
+
+/** Sans khatm (hors connexion, aucun, ou pas encore chargé) : un texte qui invite. */
+function CarteKhatmVide({ ouvrir, message }: { ouvrir: () => void; message: string }) {
   const { t } = useTranslation();
   const { couleurs, typographie } = useTheme();
+  return (
+    <CarteAccueil icone="users" titre={t('accueil.khatmTitre')} onPress={ouvrir}>
+      <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, { color: couleurs.encre2 }]}>
+        {message}
+      </Text>
+    </CarteAccueil>
+  );
+}
+
+/** Khatm lu : carte au nom du khatm, la grille des 30 juz et l'avancée du premier khatm de la liste. */
+function CarteKhatmLu({ id, ouvrir }: { id: string; ouvrir: () => void }) {
+  const { t } = useTranslation();
+  const { couleurs, espace, typographie } = useTheme();
   const moi = useSession((s) => s.session?.user.id ?? null);
   const { etat } = useKhatm(id);
-  if (etat.etat !== 'pret') return null;
+  if (etat.etat !== 'pret') return <CarteKhatmVide ouvrir={ouvrir} message={t('accueil.khatmAucun')} />;
   const r = resumeKhatm(etat.parts, moi);
+  const bilan = r.monJuz !== null ? t('accueil.khatmAvanceeJuz', { lus: r.lus, juz: r.monJuz }) : t('accueil.khatmAvancee', { lus: r.lus });
   return (
-    <>
-      <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.titre3, { color: couleurs.encre }]}>
-        {etat.khatm.nom}
-      </Text>
-      <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre2 }]}>
-        {r.monJuz !== null ? t('accueil.khatmAvanceeJuz', { lus: r.lus, juz: r.monJuz }) : t('accueil.khatmAvancee', { lus: r.lus })}
-      </Text>
-    </>
+    <CarteAccueil
+      icone="users"
+      titre={etat.khatm.nom}
+      label={`${etat.khatm.nom}. ${bilan}`}
+      onPress={ouvrir}
+      ecart={espace.espace2}
+      pied={
+        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.detail, { color: couleurs.encre2 }]}>
+          {bilan}
+        </Text>
+      }>
+      <GrilleJuz parts={etat.parts} moi={moi} />
+    </CarteAccueil>
   );
 }
 
 function CarteKhatm() {
   const { t } = useTranslation();
-  const { couleurs, typographie } = useTheme();
   const connecte = useSession((s) => s.session !== null);
   const [premier, setPremier] = useState<string | null>(null);
   useEffect(() => {
@@ -184,17 +241,8 @@ function CarteKhatm() {
     };
   }, [connecte]);
   const ouvrir = () => router.push(premier ? { pathname: '/plus/khatm/[id]', params: { id: premier } } : '/plus/khatms');
-  return (
-    <CarteAccueil icone="users" titre={t('accueil.khatmTitre')} onPress={ouvrir}>
-      {connecte && premier ? (
-        <KhatmResume id={premier} />
-      ) : (
-        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, { color: couleurs.encre2 }]}>
-          {connecte ? t('accueil.khatmAucun') : t('accueil.khatmConnexion')}
-        </Text>
-      )}
-    </CarteAccueil>
-  );
+  if (connecte && premier) return <CarteKhatmLu id={premier} ouvrir={ouvrir} />;
+  return <CarteKhatmVide ouvrir={ouvrir} message={connecte ? t('accueil.khatmAucun') : t('accueil.khatmConnexion')} />;
 }
 
 /**
@@ -227,4 +275,12 @@ export function useColonnesGrille(largeur: ClasseLargeur) {
 const styles = StyleSheet.create({
   ligne: { flexDirection: 'row' },
   chiffres: { fontVariant: ['tabular-nums'] },
+  // Planche : textes secondaires des cartes en 14/20, montant en 24/30 (Source Sans, gras).
+  detail: { fontSize: 14, lineHeight: 20 },
+  montant: { fontSize: 24, lineHeight: 30, fontVariant: ['tabular-nums'] },
+  dhikr: { flexDirection: 'row', alignItems: 'center' },
+  dhikrTextes: { flex: 1 },
+  // 30 carrés de 10, dix par rangée, écart 4 (136 de large).
+  grilleJuz: { flexDirection: 'row', flexWrap: 'wrap', gap: 4, width: 136 },
+  juz: { width: 10, height: 10, borderRadius: 3 },
 });

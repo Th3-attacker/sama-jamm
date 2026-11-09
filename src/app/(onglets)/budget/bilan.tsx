@@ -10,10 +10,13 @@ import { budgetModifie, useBudget } from '@/features/budget/useBudget';
 import { formatJourCle } from '@/lib/dates';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
+import { AmountDisplay } from '@/ui/AmountDisplay';
 import { Banner } from '@/ui/Banner';
 import { Button } from '@/ui/Button';
+import { IconButton } from '@/ui/IconButton';
 import { SegmentedControl } from '@/ui/SegmentedControl';
 import { useToast } from '@/ui/Toast';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { TopBar } from '@/ui/TopBar';
 import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
@@ -23,8 +26,9 @@ const CHOIX: readonly ChoixBilan[] = ['reporter', 'epargner', 'sadaqa'];
 export default function Bilan() {
   const { t, i18n } = useTranslation();
   const formatMontant = useFormatMontant();
-  const { couleurs, espace, typographie } = useTheme();
+  const { couleurs, espace, rayon, typographie } = useTheme();
   const marge = useMargeBasse();
+  const insets = useSafeAreaInsets();
   const { afficher } = useToast();
   const etat = useBudget((depot, carnet) => depot.bilanAFaire(carnet));
   const [choix, setChoix] = useState<Record<string, ChoixBilan>>({});
@@ -73,42 +77,83 @@ export default function Bilan() {
     }
   };
 
+  const totalReste = bilan.enveloppes.reduce((somme, e) => somme + e.reste, 0);
+  const sousTitre = `${t('budget.cycle', {
+    debut: formatJourCle(bilan.cycle.debut, i18n.language),
+    fin: formatJourCle(bilan.cycle.fin, i18n.language),
+  })}. ${bilan.enveloppes.length > 0 ? t('budget.bilanSousTitre') : t('budget.bilanRien')}`;
+
   return (
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
-      <TopBar
-        retour
-        titre={t('budget.bilanTitre')}
-        sousTitre={t('budget.cycle', {
-          debut: formatJourCle(bilan.cycle.debut, i18n.language),
-          fin: formatJourCle(bilan.cycle.fin, i18n.language),
-        })}
-      />
       <ScrollView
-        contentContainerStyle={{
-          paddingHorizontal: espace.espace5,
-          paddingBottom: espace.espace8 + marge,
-          gap: espace.espace5,
-        }}>
-        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, { color: couleurs.encre2 }]}>
-          {bilan.enveloppes.length > 0 ? t('budget.bilanSousTitre') : t('budget.bilanRien')}
-        </Text>
+        contentContainerStyle={[
+          styles.contenu,
+          {
+            paddingTop: insets.top + espace.espace2,
+            paddingHorizontal: espace.espace5,
+            paddingBottom: espace.espace4 + marge,
+            gap: espace.espace4,
+          },
+        ]}>
+        <View style={{ gap: espace.espace1 }}>
+          <View style={[styles.titreLigne, { gap: espace.espace1 }]}>
+            <View style={styles.retour}>
+              <IconButton
+                icone="arrow-left"
+                taille={22}
+                couleur={couleurs.encre}
+                label={t('commun.retour')}
+                onPress={() => router.back()}
+              />
+            </View>
+            <Text
+              accessibilityRole="header"
+              maxFontSizeMultiplier={echelleMax.courant}
+              style={[typographie.titre1, styles.titre, { color: couleurs.emeraude }]}>
+              {t('budget.bilanTitre')}
+            </Text>
+          </View>
+          <Text
+            maxFontSizeMultiplier={echelleMax.courant}
+            style={[typographie.translitteration, styles.sousTitre, { color: couleurs.encre2 }]}>
+            {sousTitre}
+          </Text>
+        </View>
+
+        {bilan.enveloppes.length > 0 ? (
+          <AmountDisplay
+            tonMontant="revenu"
+            libelle={t('budget.resteEnveloppes')}
+            montant={totalReste}
+            devise={devise}
+          />
+        ) : null}
 
         {bilan.enveloppes.map((e) => (
-          <View key={e.id} style={{ gap: espace.espace2 }}>
-            <View style={styles.ligne}>
-              <Text
-                maxFontSizeMultiplier={echelleMax.courant}
-                style={[typographie.libelle, styles.nom, { color: couleurs.encre }]}>
+          <View
+            key={e.id}
+            style={[
+              styles.carte,
+              {
+                gap: espace.espace3,
+                padding: espace.espace4,
+                borderRadius: rayon.rayonCarte,
+                backgroundColor: couleurs.surface,
+                borderColor: couleurs.ligne,
+              },
+            ]}>
+            <View style={[styles.ligne, { gap: espace.espace3 }]}>
+              <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.nom, { color: couleurs.encre }]}>
                 {e.nom}
               </Text>
               <Text
                 maxFontSizeMultiplier={echelleMax.courant}
-                style={[typographie.libelle, { color: couleurs.encre2 }]}>
+                style={[typographie.corps, styles.gras, { color: couleurs.encre, fontVariant: ['tabular-nums'] }]}>
                 {f(e.reste)}
               </Text>
             </View>
             <SegmentedControl
-              label={e.nom}
+              label={t('budget.queFaireReste', { nom: e.nom })}
               options={CHOIX.map((id) => ({ id, label: libelles[id] }))}
               valeur={choix[e.id] ?? 'reporter'}
               onChange={(id) => {
@@ -120,7 +165,7 @@ export default function Bilan() {
         ))}
 
         {bilan.enveloppes.length > 0 ? (
-          <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, { color: couleurs.encre }]}>
+          <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, styles.resume, { color: couleurs.encre2 }]}>
             {t('budget.bilanResume', {
               reporte: f(totaux.reporter),
               epargne: f(totaux.epargner),
@@ -129,8 +174,9 @@ export default function Bilan() {
           </Text>
         ) : null}
 
+        <View style={styles.espace} />
         {echec ? <Banner ton="erreur">{t('etats.erreurTexte')}</Banner> : null}
-        <Button pleineLargeur disabled={envoi} onPress={clore}>
+        <Button grand pleineLargeur disabled={envoi} onPress={clore}>
           {t('budget.clore')}
         </Button>
       </ScrollView>
@@ -140,6 +186,15 @@ export default function Bilan() {
 
 const styles = StyleSheet.create({
   ecran: { flex: 1 },
+  contenu: { flexGrow: 1 },
+  titreLigne: { flexDirection: 'row', alignItems: 'center' },
+  retour: { marginStart: -12 },
+  titre: { flex: 1 },
+  sousTitre: { fontSize: 16 },
+  carte: { borderWidth: 1 },
   ligne: { flexDirection: 'row', alignItems: 'baseline' },
   nom: { flex: 1 },
+  gras: { fontFamily: 'SourceSans3_600SemiBold' },
+  resume: { fontFamily: 'SourceSans3_400Regular' },
+  espace: { flex: 1 },
 });

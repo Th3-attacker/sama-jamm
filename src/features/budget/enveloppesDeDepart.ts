@@ -21,6 +21,9 @@ export const postesDeDepart: readonly PosteDeDepart[] = [
   { cle: 'sadaqa', icone: 'balance', fixe: false },
 ];
 
+/** Postes cochés à l'ouverture d'un budget : 3 au plus, les autres restent proposés. */
+export const postesCochesParDefaut: readonly PosteDeDepart['cle'][] = ['quotidien', 'loyer', 'sadaqa'];
+
 const ICONES_ENVELOPPE = new Set<string>(postesDeDepart.map((p) => p.icone));
 
 /** Icône enregistrée en base vers une icône connue ; repli sur le portefeuille. */

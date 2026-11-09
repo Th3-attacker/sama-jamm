@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { BarreCompteur } from '@/features/invocations/BarreCompteur';
-import { chapitreHisn, debutDe, titreDe, type ItemHisn } from '@/features/invocations/hisn';
+import { chapitreHisn, debutDe, estMomentHisn, itemsDuMoment, titreDe, type ItemHisn } from '@/features/invocations/hisn';
 import { useTaillesLecture } from '@/features/lire/BarreTaille';
 import { useParametre } from '@/hooks/useParametre';
 import { cleJour } from '@/lib/dates';
@@ -25,7 +25,9 @@ export default function EcranChapitreHisn() {
   const { couleurs, espace, typographie } = useTheme();
   const { tailleArabe } = useTaillesLecture();
   const brut = useParametre('chapitre');
-  const chapitre = chapitreHisn(Number(brut));
+  // Le paramètre est un numéro de chapitre, ou un moment (voyage, repas, après la prière) qui en regroupe plusieurs.
+  const moment = estMomentHisn(brut) ? brut : null;
+  const chapitre = moment ? undefined : chapitreHisn(Number(brut));
   const marquerJour = useLecture((s) => s.marquerJour);
   const [comptes, setComptes] = useState<Record<number, number>>({});
   const [choisi, setChoisi] = useState<number | null>(null);
@@ -35,12 +37,12 @@ export default function EcranChapitreHisn() {
     return () => clearTimeout(minuteur);
   }, [marquerJour]);
 
-  const items = useMemo(() => chapitre?.items ?? [], [chapitre]);
+  const items = useMemo(() => (moment ? itemsDuMoment(moment) : (chapitre?.items ?? [])), [moment, chapitre]);
   const fait = (i: ItemHisn, c: Record<number, number> = comptes) => (c[i.id] ?? 0) >= i.repetitions;
   const actif = items.find((i) => i.id === choisi) ?? items.find((i) => !fait(i)) ?? items[0];
   const nbFaites = items.filter((i) => fait(i)).length;
 
-  if (!chapitre) {
+  if (!chapitre && !moment) {
     return (
       <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
         <TopBar retour titre={t('invocations.hisn')} />
@@ -67,7 +69,7 @@ export default function EcranChapitreHisn() {
     }
   };
 
-  const titre = titreDe(chapitre, i18n.language);
+  const titre = moment ? t(`invocations.${moment}`) : chapitre ? titreDe(chapitre, i18n.language) : '';
 
   return (
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>

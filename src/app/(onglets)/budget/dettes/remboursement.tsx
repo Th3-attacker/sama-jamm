@@ -21,7 +21,7 @@ import { Dialog } from '@/ui/Dialog';
 import { appliquerTouche, Keypad } from '@/ui/Keypad';
 import { TextField } from '@/ui/TextField';
 import { useToast } from '@/ui/Toast';
-import { TopBar } from '@/ui/TopBar';
+import { EnteteRetour } from '@/ui/EnteteRetour';
 
 type ChoixJour = 'aujourdhui' | 'hier' | 'autre';
 
@@ -79,15 +79,16 @@ export default function Remboursement() {
 
   return (
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
-      <TopBar retour titre={t('dettes.rembTitre')} />
       <ScrollView
         keyboardShouldPersistTaps="handled"
         contentContainerStyle={{
+          flexGrow: 1,
           paddingHorizontal: espace.espace5,
           paddingBottom: marge + espace.espace5,
           gap: espace.espace4,
         }}>
-        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, { color: couleurs.encre2 }]}>
+        <EnteteRetour titre={t('dettes.rembTitre')} fermer />
+        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.petit, { color: couleurs.encre2 }]}>
           {d.sens === 'prete'
             ? t('dettes.rembOnMeDoit', { personne: d.personne, montant: f(d.reste) })
             : t('dettes.rembJeDois', { personne: d.personne, montant: f(d.reste) })}
@@ -130,14 +131,15 @@ export default function Remboursement() {
           />
         ) : null}
 
+        <View style={styles.espace} />
         <Keypad onTouche={(touche) => setSaisie((s) => appliquerTouche(s, touche))} />
 
         {echec ? <Banner ton="erreur">{t('etats.erreurTexte')}</Banner> : null}
 
-        <Button pleineLargeur disabled={!valide || envoi} onPress={() => enregistrer('remboursement')}>
+        <Button grand pleineLargeur disabled={!valide || envoi} onPress={() => enregistrer('remboursement')}>
           {t('commun.enregistrer')}
         </Button>
-        <Button variant="discret" pleineLargeur disabled={envoi || jour === null} onPress={() => setRemise(true)}>
+        <Button grand variant="discret" pleineLargeur disabled={envoi || jour === null} onPress={() => setRemise(true)}>
           {t('dettes.faireRemise')}
         </Button>
       </ScrollView>
@@ -160,4 +162,6 @@ export default function Remboursement() {
 const styles = StyleSheet.create({
   ecran: { flex: 1 },
   ligne: { flexDirection: 'row', flexWrap: 'wrap' },
+  petit: { fontSize: 14, lineHeight: 20 },
+  espace: { flex: 1 },
 });

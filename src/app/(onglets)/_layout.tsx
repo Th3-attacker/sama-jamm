@@ -10,6 +10,7 @@ import {
   useDecalageBandeau,
   useMiniLecteurVisible,
 } from '@/features/ecouter/placeMiniLecteur';
+import { useKhatmsEnCours } from '@/features/khatm/enCours';
 import { usePleinEcran } from '@/stores/pleinEcran';
 import { miseEnPage } from '@/theme/tokens.generated';
 import { useTheme } from '@/theme/useTheme';
@@ -25,6 +26,8 @@ export const ErrorBoundary = ErreurDeRoute;
 export default function OngletsLayout() {
   const { t } = useTranslation();
   const { couleurs } = useTheme();
+  // Badge de Plus : khatms en cours (masqué hors connexion ou sans khatm).
+  const khatmsEnCours = useKhatmsEnCours();
   const pleinEcran = usePleinEcran((s) => s.actif);
   const miniVisible = useMiniLecteurVisible();
   const decalageBandeau = useDecalageBandeau();
@@ -41,14 +44,18 @@ export default function OngletsLayout() {
       {__DEV__ ? <SondeDev /> : null}
       <NativeTabs
         tintColor={couleurs.emeraude}
+        // Android : fond de la planche. Sur iOS 26 le verre du système n'est pas remplacé par un aplat.
+        backgroundColor={Platform.OS === 'android' ? couleurs.surface : undefined}
+        badgeBackgroundColor={couleurs.or}
+        badgeTextColor={couleurs.surOr}
         hidden={pleinEcran}
         // Jamais réduite : la marge basse des écrans suit toujours la hauteur réelle de la barre (écart au design 18).
         minimizeBehavior="never"
         sidebarAdaptable={barreLaterale}
         indicatorColor={couleurs.emeraudeDoux}
-        iconColor={{ default: couleurs.encre3, selected: couleurs.emeraude }}
+        iconColor={{ default: couleurs.encre2, selected: couleurs.emeraude }}
         labelStyle={{
-          default: { fontSize: tailleLibelle, fontWeight: '500', color: couleurs.encre3 },
+          default: { fontSize: tailleLibelle, fontWeight: '400', color: couleurs.encre2 },
           selected: { fontSize: tailleLibelle, fontWeight: '600', color: couleurs.emeraude },
         }}>
         <NativeTabs.Trigger name='accueil' contentStyle={contentStyle} disableAutomaticContentInsets={manuel}>
@@ -89,6 +96,7 @@ export default function OngletsLayout() {
           <NativeTabs.Trigger.Label>
             {t('onglets.plus')}
           </NativeTabs.Trigger.Label>
+          <NativeTabs.Trigger.Badge hidden={!khatmsEnCours}>{String(khatmsEnCours ?? 0)}</NativeTabs.Trigger.Badge>
         </NativeTabs.Trigger>
         {ACCESSOIRE_NATIF && miniVisible ? (
           <NativeTabs.BottomAccessory>

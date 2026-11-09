@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { FlatList, I18nManager, Pressable, StyleSheet, Text, View, type LayoutRectangle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { BasculeMode } from '@/features/lire/BasculeMode';
 import { useTaillesLecture } from '@/features/lire/BarreTaille';
 import {
   basmalaDe,
@@ -39,7 +40,6 @@ import { BandeauVeille } from '@/features/priere/veille';
 import { Icon } from '@/ui/Icon';
 import { useToast } from '@/ui/Toast';
 import { Button } from '@/ui/Button';
-import { SegmentedControl } from '@/ui/SegmentedControl';
 import { TopBar } from '@/ui/TopBar';
 import { useDessousOutil } from '@/features/ecouter/placeMiniLecteur';
 import { usePlaceBas } from '@/stores/placeBas';
@@ -217,6 +217,9 @@ function LectureSourate({
   const barre = (
     <TopBar
       retour
+      // Mode page : le fond surface vient de la barre flottante.
+      transparent={modePage}
+      centre={!modePage}
       titre={modePage ? nomPage : s.nom}
       sousTitre={
         modePage && premierSegment
@@ -228,10 +231,10 @@ function LectureSourate({
       actions={
         modePage
           ? [
-              { icone: 'list', label: t('lire.modeVerset'), onPress: basculerMode },
+              { icone: 'list', label: t('lire.modeVerset'), couleur: couleurs.emeraude, onPress: basculerMode },
               { icone: 'headphones', label: t('ecouter.ecouterPage'), onPress: () => ecouterPage(page) },
             ]
-          : [{ icone: 'type', label: t('lire.reglagesLecture'), onPress: () => setReglagesOuverts(true) }]
+          : [{ icone: 'type', texte: 'Aa', label: t('lire.reglagesLecture'), onPress: () => setReglagesOuverts(true) }]
       }
     />
   );
@@ -276,7 +279,12 @@ function LectureSourate({
           ) : null}
         </View>
         {/* Un toucher sur la page affiche la barre par-dessus la page, sans la déplacer. */}
-        {barres ? <View style={[styles.barreFlottante, { borderBottomColor: couleurs.ligne }]}>{barre}</View> : null}
+        {barres ? <View
+            style={[
+              styles.barreFlottante,
+              // Planche : fond surface, filet en bas, 8 sous la rangée.
+              { backgroundColor: couleurs.surface, borderBottomColor: couleurs.ligne, paddingBottom: espace.espace2 },
+            ]}>{barre}</View> : null}
       </View>
     );
   }
@@ -305,7 +313,6 @@ function LectureSourate({
         }}
         keyExtractor={(v) => String(v.n)}
         ListHeaderComponent={<Entete sourate={s.n} mode={mode} />}
-        ItemSeparatorComponent={() => <View style={[styles.ligneFine, { backgroundColor: couleurs.ligne }]} />}
         renderItem={({ item }) => {
           const repere = reperes().repereDe(s.n, item.n);
           const sajda = reperes().sajdaDe(s.n, item.n);
@@ -323,15 +330,14 @@ function LectureSourate({
           <View
             style={[
               styles.verset,
-              { gap: espace.espace3 },
-              versetEcoute === item.n
-                ? { backgroundColor: couleurs.emeraudeDoux, borderRadius: rayon.rayonCarte, padding: espace.espace3 }
-                : null,
+              // Planche : chaque verset est une carte de 12 de rayon, 12 / 8 de marge, sans filet.
+              { gap: espace.espace3, borderRadius: rayon.rayonCarte, paddingHorizontal: espace.espace3, paddingVertical: espace.espace2 },
+              versetEcoute === item.n ? { backgroundColor: couleurs.emeraudeDoux } : null,
             ]}>
             <Medaillon
               numero={item.n}
               prefixe={t('lire.verset')}
-              taille={34}
+              taille={30}
               actif={versetEcoute === item.n}
               affiche={chiffresArabes ? enChiffresArabes(item.n) : undefined}
             />
@@ -340,7 +346,12 @@ function LectureSourate({
                 <Text
                   accessibilityLanguage="ar"
                   maxFontSizeMultiplier={echelleMax.grand}
-                  style={[typographie.coran, tailleArabe, styles.arabe, { color: couleurs.encre }]}>
+                  style={[
+                    typographie.coran,
+                    tailleArabe,
+                    styles.arabe,
+                    { color: versetEcoute === item.n ? couleurs.emeraude : couleurs.encre },
+                  ]}>
                   {item.texte}
                 </Text>
               ) : null}
@@ -355,7 +366,7 @@ function LectureSourate({
                 </Text>
               ) : null}
               {versetEcoute === item.n ? (
-                <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.emeraude }]}>
+                <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, styles.etiquette, { color: couleurs.emeraude }]}>
                   {t('lire.recitationEnCours')}
                 </Text>
               ) : null}
@@ -373,7 +384,8 @@ function LectureSourate({
         contentContainerStyle={{
           paddingHorizontal: espace.espace5,
           paddingBottom: espace.espace8,
-          gap: espace.espace4,
+          // Planche : 4 entre deux versets.
+          gap: espace.espace1,
         }}
         initialNumToRender={8}
         ListFooterComponent={
@@ -417,7 +429,7 @@ function LectureSourate({
           styles.outils,
           {
             gap: espace.espace2,
-            marginHorizontal: espace.espace4,
+            marginHorizontal: espace.espace6,
             // La pilule flotte à 16 au-dessus de la couche du dessous (barre d'onglets, mini-lecteur).
             marginBottom: miseEnPage.margeContenuBas + dessous,
             paddingHorizontal: espace.espace3,
@@ -426,10 +438,10 @@ function LectureSourate({
             backgroundColor: couleurs.surface,
             borderRadius: rayon.rayonPastille,
           },
-          ombres.ombre2 !== 'none' ? { boxShadow: ombres.ombre2 } : null,
+          ombres.ombre1 !== 'none' ? { boxShadow: ombres.ombre1 } : null,
         ]}>
         <View style={styles.outilsMode}>
-          <SegmentedControl
+          <BasculeMode
             label={t('lire.mode')}
             options={[
               { id: 'verset', label: t('lire.modeVersetCourt') },
@@ -450,7 +462,7 @@ function LectureSourate({
           }}
           style={[
             styles.ecouter,
-            { width: cible.cibleAndroid, height: cible.cibleAndroid, backgroundColor: couleurs.emeraude },
+            { width: cible.cibleIos, height: cible.cibleIos, backgroundColor: couleurs.emeraude },
           ]}>
           <Icon name="play" size={22} color={couleurs.surEmeraude} />
         </Pressable>
@@ -502,13 +514,13 @@ function Entete({ sourate: n, mode }: { sourate: number; mode: string }) {
             {sensDe(n)}
           </Text>
         ) : null}
-        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, styles.centreLatin, { color: couleurs.encre3 }]}>
+        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.meta, styles.centreLatin, { color: couleurs.encre3 }]}>
           {`${t('lire.sourate')} ${n} · ${t('lire.versets', { count: meta.versets })} · ${t(meta.mecquoise ? 'lire.mecquoise' : 'lire.medinoise')}`}
         </Text>
       </View>
-      <View accessible={false} style={[styles.ornement, { gap: espace.espace2 }]}>
+      <View accessible={false} style={[styles.ornement, { gap: espace.espace2, marginTop: espace.espace4 }]}>
         <View style={[styles.trait, { backgroundColor: couleurs.or }]} />
-        <Etoile taille={14} remplissage={couleurs.orDoux} contour={couleurs.or} />
+        <Etoile taille={14} remplissage={couleurs.or} />
         <View style={[styles.trait, { backgroundColor: couleurs.or }]} />
       </View>
 
@@ -538,14 +550,16 @@ const styles = StyleSheet.create({
   centre: { textAlign: 'center', writingDirection: 'rtl' },
   centreLatin: { textAlign: 'center' },
   ornement: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center' },
-  trait: { width: 48, height: StyleSheet.hairlineWidth * 2 },
+  // Planche : filets pleine largeur, 1 d'épaisseur, or à 70 %.
+  trait: { flex: 1, height: 1, opacity: 0.7 },
+  meta: { fontSize: 14, lineHeight: 20 },
+  etiquette: { fontSize: 12, lineHeight: 16 },
   bandeau: {
     borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 4,
   },
-  ligneFine: { height: StyleSheet.hairlineWidth },
   outils: { flexDirection: 'row', alignItems: 'center', borderWidth: StyleSheet.hairlineWidth },
   ecouter: { borderRadius: 999, alignItems: 'center', justifyContent: 'center' },
   outilsMode: { flex: 1 },

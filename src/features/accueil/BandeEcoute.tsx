@@ -5,7 +5,6 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { sourate } from '@/features/lire/coran';
 import { recitateur } from '@/features/ecouter/recitateurs';
 import { useLecteur } from '@/features/ecouter/lecteur';
-import { cible } from '@/theme/tokens.generated';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { Icon } from '@/ui/Icon';
@@ -25,16 +24,16 @@ export function BandeEcoute() {
       onPress={() => router.push('/lecteur')}
       style={[
         styles.bande,
-        { gap: espace.espace3, paddingHorizontal: espace.espace4, paddingVertical: espace.espace3, borderRadius: rayon.rayonCarte, backgroundColor: couleurs.surfaceCreux },
+        { gap: espace.espace3, paddingHorizontal: espace.espace4, paddingVertical: espace.espace3, borderRadius: 16, backgroundColor: couleurs.surfaceCreux },
       ]}>
-      <View style={[styles.lecture, { width: cible.cibleIos, height: cible.cibleIos, backgroundColor: couleurs.emeraude, borderRadius: rayon.rayonPastille }]}>
+      <View style={[styles.lecture, { width: 40, height: 40, backgroundColor: couleurs.emeraude, borderRadius: rayon.rayonPastille }]}>
         <Icon name="play" size={18} color={couleurs.surEmeraude} />
       </View>
       <View style={styles.texte}>
-        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, { color: couleurs.encre }]}>
+        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, styles.titre, { color: couleurs.encre }]}>
           {t('accueil.ecoute')}
         </Text>
-        <Text numberOfLines={1} maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, { color: couleurs.encre2 }]}>
+        <Text numberOfLines={1} maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.detail, { color: couleurs.encre2 }]}>
           {detail}
         </Text>
       </View>
@@ -46,4 +45,7 @@ const styles = StyleSheet.create({
   bande: { flexDirection: 'row', alignItems: 'center' },
   lecture: { alignItems: 'center', justifyContent: 'center' },
   texte: { flex: 1 },
+  // Planche : titre 16/24 en gras, détail 14/20.
+  titre: { fontSize: 16, lineHeight: 24 },
+  detail: { fontSize: 14, lineHeight: 20 },
 });

@@ -1,7 +1,6 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
-import { basmalaDe } from '@/features/lire/coran';
 import { useReglages } from '@/stores/reglages';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
@@ -47,7 +46,7 @@ export function BarreTaille() {
         hitSlop={8}
         onPress={() => definir(echelon - 1)}
         style={[styles.bouton, { minWidth: cible.cibleIos, opacity: echelon <= 0 ? 0.4 : 1 }]}>
-        <Text style={{ color: couleurs.emeraude, fontSize: 14 }}>A</Text>
+        <Text accessibilityLanguage="ar" style={{ color: couleurs.emeraude, fontSize: 14 }}>أ</Text>
       </Pressable>
 
       <View style={styles.piste}>
@@ -72,40 +71,43 @@ export function BarreTaille() {
         hitSlop={8}
         onPress={() => definir(echelon + 1)}
         style={[styles.bouton, { minWidth: cible.cibleIos, opacity: echelon >= MAX ? 0.4 : 1 }]}>
-        <Text style={{ color: couleurs.emeraude, fontSize: 24 }}>A</Text>
+        <Text accessibilityLanguage="ar" style={{ color: couleurs.emeraude, fontSize: 24 }}>أ</Text>
       </Pressable>
     </View>
   );
 }
 
 /**
- * Réglage « Taille de l'écriture » (écran Réglages) : la barre et un aperçu de la basmala à la taille choisie.
+ * Réglage « Taille de l'écriture » : libellé et niveau, barre, puis l'aide (planche « Réglages de lecture »).
  * Il sert à la lecture verset par verset ; en mode page, l'écriture s'ajuste à l'écran.
  */
 export function ReglageTaille() {
   const { t } = useTranslation();
   const { couleurs, espace, typographie } = useTheme();
-  const { tailleArabe } = useTaillesLecture();
+  const echelon = useReglages((s) => s.tailleLecture);
 
   return (
     <View style={{ padding: espace.espace4, gap: espace.espace2 }}>
-      <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, { color: couleurs.encre }]}>
-        {t('reglages.tailleEcriture')}
-      </Text>
+      <View style={styles.entete}>
+        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, { color: couleurs.encre }]}>
+          {t('reglages.tailleEcriture')}
+        </Text>
+        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.niveau, { color: couleurs.encre2 }]}>
+          {t('reglages.niveau', { n: echelon + 1 })}
+        </Text>
+      </View>
       <BarreTaille />
-      <Text
-        accessibilityLanguage="ar"
-        accessibilityLabel={t('reglages.apercu')}
-        maxFontSizeMultiplier={echelleMax.grand}
-        style={[typographie.coran, tailleArabe, styles.apercu, { color: couleurs.encre }]}>
-        {basmalaDe(2)?.arabe ?? ''}
+      <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.aide, { color: couleurs.encre3 }]}>
+        {t('reglages.tailleAide')}
       </Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  apercu: { textAlign: 'center', writingDirection: 'rtl' },
+  entete: { flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between' },
+  niveau: { fontSize: 14, lineHeight: 20, fontVariant: ['tabular-nums'] },
+  aide: { fontSize: 14, lineHeight: 20 },
   barre: { flexDirection: 'row', alignItems: 'center' },
   bouton: { minHeight: 44, alignItems: 'center', justifyContent: 'center' },
   piste: { flex: 1, flexDirection: 'row', alignItems: 'center' },

@@ -1,17 +1,22 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
+import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { Banner } from '@/ui/Banner';
-import { EmptyState } from '@/ui/EmptyState';
+import { Button } from '@/ui/Button';
+import { Etoile } from '@/ui/Etoile';
+import { Icon } from '@/ui/Icon';
+
+const TAILLE_ETOILE = 88;
 
 type Props = { deverrouiller: () => Promise<boolean> };
 
 /** Budget verrouillé : il reste chiffré sur ce téléphone ; l'empreinte, le visage ou le code l'ouvrent. */
 export function EcranVerrou({ deverrouiller }: Props) {
   const { t } = useTranslation();
-  const { couleurs, espace } = useTheme();
+  const { couleurs, espace, typographie } = useTheme();
   const [echec, setEchec] = useState(false);
   const demande = useRef(false);
 
@@ -34,19 +39,60 @@ export function EcranVerrou({ deverrouiller }: Props) {
   }, []);
 
   return (
-    <View style={[styles.ecran, { backgroundColor: couleurs.fond, padding: espace.espace5, gap: espace.espace4 }]}>
-      <EmptyState
-        icone="lock"
-        titre={t('budget.verrouTitre')}
-        lang="fr"
-        texte={t('budget.verrouTexte')}
-        action={{ label: t('budget.deverrouiller'), icone: 'lock', onPress: essayer }}
-      />
-      {echec ? <Banner ton="info">{t('budget.verrouEchec')}</Banner> : null}
+    <View style={[styles.ecran, { backgroundColor: couleurs.fond, padding: espace.espace8 }]}>
+      <View style={[styles.centre, { gap: espace.espace3 }]}>
+        <View style={[styles.marque, { marginBottom: espace.espace2 }]}>
+          <Etoile taille={TAILLE_ETOILE} remplissage={couleurs.orDoux} contour={couleurs.or} />
+          <View
+            style={[
+              styles.cadenas,
+              { backgroundColor: couleurs.surface, borderColor: couleurs.ligne },
+            ]}>
+            <Icon name="lock" size={18} color={couleurs.emeraude} />
+          </View>
+        </View>
+        <Text
+          accessibilityRole="header"
+          maxFontSizeMultiplier={echelleMax.courant}
+          style={[typographie.titre1, styles.texte, { color: couleurs.emeraude }]}>
+          {t('budget.verrouTitre')}
+        </Text>
+        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.texte, { color: couleurs.encre2 }]}>
+          {t('budget.verrouTexte')}
+        </Text>
+        <View style={[styles.action, { gap: espace.espace2, marginTop: espace.espace5 }]}>
+          <Button variant="principal" icone="lock" pleineLargeur onPress={essayer}>
+            {t('budget.deverrouiller')}
+          </Button>
+          <Text
+            maxFontSizeMultiplier={echelleMax.courant}
+            style={[typographie.libelle, styles.texte, styles.aide, { color: couleurs.encre3 }]}>
+            {t('budget.deverrouillerAide')}
+          </Text>
+          {echec ? <Banner ton="info">{t('budget.verrouEchec')}</Banner> : null}
+        </View>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   ecran: { flex: 1, justifyContent: 'center' },
+  centre: { alignItems: 'center' },
+  marque: { width: TAILLE_ETOILE, height: TAILLE_ETOILE, alignItems: 'center', justifyContent: 'center' },
+  // Pastille cadenas posée sur le coin bas droit de l'étoile.
+  cadenas: {
+    position: 'absolute',
+    right: -6,
+    bottom: -6,
+    width: 36,
+    height: 36,
+    borderRadius: 999,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  texte: { textAlign: 'center', maxWidth: 300 },
+  action: { alignSelf: 'stretch', alignItems: 'stretch' },
+  aide: { fontFamily: 'SourceSans3_400Regular' },
 });

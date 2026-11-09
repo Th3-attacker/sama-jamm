@@ -14,19 +14,19 @@ import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { Banner } from '@/ui/Banner';
 import { Button } from '@/ui/Button';
+import { EnteteRetour } from '@/ui/EnteteRetour';
 import { ListGroup } from '@/ui/ListGroup';
 import { ListItem } from '@/ui/ListItem';
 import { SegmentedControl } from '@/ui/SegmentedControl';
 import { TextField } from '@/ui/TextField';
 import { useToast } from '@/ui/Toast';
-import { TopBar } from '@/ui/TopBar';
 import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
 /** Mes biens : base du nisab, prix du gramme, ce que je possède et ce qui est à déduire. */
 export default function BiensZakat() {
   const { t, i18n } = useTranslation();
   const formatMontant = useFormatMontant();
-  const { couleurs, espace, rayon, typographie } = useTheme();
+  const { couleurs, espace, typographie } = useTheme();
   const marge = useMargeBasse();
   const { afficher } = useToast();
   const etat = useBudget((depot, carnet) => depot.zakat(carnet));
@@ -109,15 +109,15 @@ export default function BiensZakat() {
 
   return (
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
-      <TopBar retour titre={t('zakat.mesBiens')} />
       <KeyboardAvoidingView style={styles.ecran} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <ScrollView
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={{
             paddingHorizontal: espace.espace5,
             paddingBottom: espace.espace8 + marge,
-            gap: espace.espace4,
+            gap: espace.espace3,
           }}>
+          <EnteteRetour titre={t('zakat.mesBiens')} />
           <SegmentedControl
             label={t('zakat.seuilSur')}
             options={BASES_NISAB.map((id) => ({ id, label: id === 'or' ? t('zakat.or') : t('zakat.argent') }))}
@@ -127,7 +127,7 @@ export default function BiensZakat() {
               if (choix && choix !== r.base) void agir(() => depot.reglerZakat(carnet, { base: choix }));
             }}
           />
-          <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre3 }]}>
+          <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, styles.explication, { color: couleurs.encre3 }]}>
             {`${r.base === 'or' ? t('zakat.explicOr') : t('zakat.explicArgent')} ${t('zakat.explicHawl')}`}
           </Text>
 
@@ -200,13 +200,13 @@ export default function BiensZakat() {
             accessible
             style={{
               padding: espace.espace4,
-              gap: 2,
-              borderRadius: rayon.rayonCarte,
+              gap: espace.espace1,
+              borderRadius: 16,
               backgroundColor: couleurs.emeraudeDoux,
             }}>
             <Text
               maxFontSizeMultiplier={echelleMax.courant}
-              style={[typographie.legende, { color: couleurs.surEmeraudeDoux }]}>
+              style={[typographie.libelle, styles.patrimoine, { color: couleurs.surEmeraudeDoux }]}>
               {t('zakat.patrimoine', {
                 montant: f(base),
                 position:
@@ -215,7 +215,7 @@ export default function BiensZakat() {
             </Text>
             <Text
               maxFontSizeMultiplier={echelleMax.courant}
-              style={[typographie.titre3, { color: couleurs.surEmeraudeDoux }]}>
+              style={[typographie.titre2, styles.zakat, { color: couleurs.surEmeraudeDoux }]}>
               {t('zakat.zakatLigne', { montant: f(z.etat.type === 'due' ? z.etat.montant : 0) })}
             </Text>
             <Text
@@ -232,4 +232,8 @@ export default function BiensZakat() {
 
 const styles = StyleSheet.create({
   ecran: { flex: 1 },
+  // Planche : explication 14/20 serrée contre le sélecteur ; zakat en 24/30 gras, chiffres alignés.
+  explication: { fontFamily: 'SourceSans3_400Regular', marginTop: -4 },
+  patrimoine: { fontFamily: 'SourceSans3_400Regular' },
+  zakat: { fontFamily: 'SourceSans3_600SemiBold', fontVariant: ['tabular-nums'] },
 });

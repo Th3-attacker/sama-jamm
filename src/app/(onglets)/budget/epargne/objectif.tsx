@@ -17,7 +17,7 @@ import { Button } from '@/ui/Button';
 import { SegmentedControl } from '@/ui/SegmentedControl';
 import { TextField } from '@/ui/TextField';
 import { useToast } from '@/ui/Toast';
-import { TopBar } from '@/ui/TopBar';
+import { EnteteRetour } from '@/ui/EnteteRetour';
 import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
 type Mode = 'fixe' | 'libre';
@@ -107,15 +107,16 @@ export default function EcranObjectif() {
 
   return (
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
-      <TopBar retour titre={titre} sousTitre={t('epargne.nouvelObjectifSousTitre')} />
       <KeyboardAvoidingView style={styles.ecran} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <ScrollView
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={{
+            flexGrow: 1,
             paddingHorizontal: espace.espace5,
-            paddingBottom: espace.espace8 + marge,
+            paddingBottom: espace.espace4 + marge,
             gap: espace.espace4,
           }}>
+          <EnteteRetour titre={titre} sousTitre={t('epargne.nouvelObjectifSousTitre')} italique />
           <TextField
             label={t('epargne.nom')}
             valeur={valNom}
@@ -140,35 +141,44 @@ export default function EcranObjectif() {
             valeur={valMode}
             onChange={(choix) => setMode(choix === 'libre' ? 'libre' : 'fixe')}
           />
-          {valMode === 'fixe' ? (
-            <TextField
-              label={t('epargne.montantVise')}
-              valeur={valCible}
-              onChange={setCible}
-              clavier={clavier}
-              suffixe={devise.symbole}
-              placeholder="0"
-              erreur={
-                cible !== null && (!lu.cible.ok || lu.cible.valeur === null) ? t('budget.montantInvalide') : undefined
-              }
-            />
-          ) : null}
-          <TextField
-            label={valMode === 'fixe' ? t('epargne.aChaquePaie') : t('epargne.aChaquePaieFacultatif')}
-            valeur={valVersement}
-            onChange={setVersement}
-            clavier={clavier}
-            suffixe={devise.symbole}
-            placeholder="0"
-            erreur={!lu.versement.ok ? t('budget.montantInvalide') : undefined}
-          />
+          <View style={[styles.rangee, { gap: espace.espace3 }]}>
+            {valMode === 'fixe' ? (
+              <View style={styles.moitie}>
+                <TextField
+                  label={t('epargne.montantVise')}
+                  valeur={valCible}
+                  onChange={setCible}
+                  clavier={clavier}
+                  suffixe={devise.symbole}
+                  placeholder="0"
+                  erreur={
+                    cible !== null && (!lu.cible.ok || lu.cible.valeur === null)
+                      ? t('budget.montantInvalide')
+                      : undefined
+                  }
+                />
+              </View>
+            ) : null}
+            <View style={styles.moitie}>
+              <TextField
+                label={valMode === 'fixe' ? t('epargne.aChaquePaie') : t('epargne.aChaquePaieFacultatif')}
+                valeur={valVersement}
+                onChange={setVersement}
+                clavier={clavier}
+                suffixe={devise.symbole}
+                placeholder="0"
+                erreur={!lu.versement.ok ? t('budget.montantInvalide') : undefined}
+              />
+            </View>
+          </View>
           <View style={{ padding: espace.espace4, borderRadius: rayon.rayonCarte, backgroundColor: couleurs.orDoux }}>
-            <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, { color: couleurs.encre }]}>
+            <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.petit, { color: couleurs.encre }]}>
               {texteProjection}
             </Text>
           </View>
           {echec ? <Banner ton="erreur">{t('etats.erreurTexte')}</Banner> : null}
-          <Button pleineLargeur disabled={!valide || envoi} onPress={enregistrer}>
+          <View style={styles.espace} />
+          <Button grand pleineLargeur disabled={!valide || envoi} onPress={enregistrer}>
             {o ? t('commun.enregistrer') : t('epargne.creer')}
           </Button>
         </ScrollView>
@@ -179,4 +189,8 @@ export default function EcranObjectif() {
 
 const styles = StyleSheet.create({
   ecran: { flex: 1 },
+  rangee: { flexDirection: 'row' },
+  moitie: { flex: 1 },
+  petit: { fontSize: 14, lineHeight: 20 },
+  espace: { flex: 1 },
 });

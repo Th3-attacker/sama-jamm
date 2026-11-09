@@ -1,3 +1,4 @@
+import { router } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -15,12 +16,13 @@ import { Banner } from '@/ui/Banner';
 import { BottomSheet } from '@/ui/BottomSheet';
 import { Button } from '@/ui/Button';
 import { Chip } from '@/ui/Chip';
+import { IconButton } from '@/ui/IconButton';
 import { ListGroup } from '@/ui/ListGroup';
 import { ListItem } from '@/ui/ListItem';
 import { SegmentedControl } from '@/ui/SegmentedControl';
 import { TextField } from '@/ui/TextField';
 import { useToast } from '@/ui/Toast';
-import { TopBar } from '@/ui/TopBar';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { IconName } from '@/ui/types';
 import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
@@ -31,6 +33,7 @@ export default function Comptes() {
   const { t, i18n } = useTranslation();
   const formatMontant = useFormatMontant();
   const { couleurs, espace, typographie } = useTheme();
+  const insets = useSafeAreaInsets();
   const marge = useMargeBasse();
   const { afficher } = useToast();
   const etat = useBudget((depot, carnet) => depot.comptesAvecSolde(carnet));
@@ -114,17 +117,43 @@ export default function Comptes() {
 
   return (
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
-      <TopBar retour titre={t('budget.comptes')} />
       <ScrollView
         contentContainerStyle={{
+          paddingTop: insets.top + espace.espace2,
           paddingHorizontal: espace.espace5,
           paddingBottom: espace.espace8 + marge,
-          gap: espace.espace5,
+          gap: espace.espace4,
         }}>
-        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, { color: couleurs.encre2 }]}>
-          {t('budget.comptesIntro')}
-        </Text>
-        <AmountDisplay montant={total} devise={devise} libelle={t('budget.totalComptes')} />
+        <View style={{ gap: espace.espace1 }}>
+          <View style={[styles.titreLigne, { gap: espace.espace1 }]}>
+            <View style={styles.retour}>
+              <IconButton
+                icone="arrow-left"
+                taille={22}
+                couleur={couleurs.encre}
+                label={t('commun.retour')}
+                onPress={() => router.back()}
+              />
+            </View>
+            <Text
+              accessibilityRole="header"
+              maxFontSizeMultiplier={echelleMax.courant}
+              style={[typographie.titre1, styles.titre, { color: couleurs.emeraude }]}>
+              {t('budget.comptes')}
+            </Text>
+          </View>
+          <Text
+            maxFontSizeMultiplier={echelleMax.courant}
+            style={[typographie.translitteration, styles.sousTitre, { color: couleurs.encre2 }]}>
+            {t('budget.comptesIntro')}
+          </Text>
+        </View>
+        <AmountDisplay
+          montant={total}
+          devise={devise}
+          libelle={t('budget.totalComptes')}
+          detail={t('budget.sommeComptes')}
+        />
         <ListGroup>
           {comptes.map((c) => (
             <ListItem
@@ -168,9 +197,9 @@ export default function Comptes() {
             {t('budget.virement')}
           </Button>
         ) : null}
-        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre3 }]}>
+        <Banner ton="info" icone="info">
           {t('budget.virementNote')}
-        </Text>
+        </Banner>
       </ScrollView>
 
       <BottomSheet ouvert={virement} titre={t('budget.virementTitre')} onFermer={() => setVirement(false)}>
@@ -237,4 +266,8 @@ export default function Comptes() {
 
 const styles = StyleSheet.create({
   ecran: { flex: 1 },
+  titreLigne: { flexDirection: 'row', alignItems: 'center' },
+  retour: { marginStart: -12 },
+  titre: { flex: 1 },
+  sousTitre: { fontSize: 16 },
 });

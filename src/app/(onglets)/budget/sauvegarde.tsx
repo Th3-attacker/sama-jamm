@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { reinitialiserBudget } from '@/features/budget/db';
 import { versCsv } from '@/features/budget/exportCsv';
 import {
   choisirSauvegarde,
@@ -13,6 +14,7 @@ import {
   sauvegarder,
   SauvegardeIncompatible,
 } from '@/features/budget/sauvegarde';
+import { annulerRappelZakat } from '@/features/budget/rappelZakat';
 import { budgetModifie, depotBudget, oublierDepot } from '@/features/budget/useBudget';
 import { authentifier } from '@/features/budget/verrou';
 import { useReglages } from '@/stores/reglages';
@@ -21,6 +23,7 @@ import { useTheme } from '@/theme/useTheme';
 import { Banner } from '@/ui/Banner';
 import { BottomSheet } from '@/ui/BottomSheet';
 import { Button } from '@/ui/Button';
+import { Dialog } from '@/ui/Dialog';
 import { ListGroup } from '@/ui/ListGroup';
 import { ListItem } from '@/ui/ListItem';
 import { TextField } from '@/ui/TextField';
@@ -46,6 +49,7 @@ export default function EcranSauvegarde() {
   const [confirmation, setConfirmation] = useState('');
   const [envoi, setEnvoi] = useState(false);
   const [erreur, setErreur] = useState<Erreur>(null);
+  const [effacer, setEffacer] = useState(false);
 
   /** Avec le verrou du budget actif, chaque action redemande l'empreinte ou le code du téléphone. */
   const autorise = async () => !verrouActif || (await authentifier(t('sauvegarde.authentification')));
@@ -134,6 +138,26 @@ export default function EcranSauvegarde() {
     }
   };
 
+  const recommencer = async () => {
+    setEffacer(false);
+    if (envoi || !(await autorise())) return;
+    setEnvoi(true);
+    try {
+      await reinitialiserBudget();
+      // Le rappel de zakat appartenait à l'ancien budget ; s'il ne s'annule pas, le budget est tout de même effacé.
+      await annulerRappelZakat().catch((e: unknown) => console.warn('Rappel de zakat non annulé', e));
+      oublierDepot();
+      budgetModifie();
+      afficher({ texte: t('sauvegarde.recommencee'), icone: 'check' });
+      router.replace('/budget');
+    } catch (e: unknown) {
+      console.error('Remise à zéro du budget impossible', e);
+      afficher({ texte: t('etats.erreurTexte'), icone: 'alert' });
+    } finally {
+      setEnvoi(false);
+    }
+  };
+
   const motDePasseValide = motDePasse.length >= MOT_DE_PASSE_MIN;
   const pret = feuille?.mode === 'sauvegarde' ? motDePasseValide && confirmation === motDePasse : motDePasse.length > 0;
   const messageErreur =
@@ -177,7 +201,27 @@ export default function EcranSauvegarde() {
             onPress={exporter}
           />
         </ListGroup>
+        <ListGroup>
+          <ListItem
+            icone="trash"
+            danger
+            titre={t('sauvegarde.recommencer')}
+            sousTitre={t('sauvegarde.recommencerAide')}
+            onPress={() => setEffacer(true)}
+          />
+        </ListGroup>
       </ScrollView>
+
+      <Dialog
+        ouvert={effacer}
+        danger
+        icone="trash"
+        titre={t('sauvegarde.recommencerTitre')}
+        confirmer={t('sauvegarde.recommencerConfirmer')}
+        onAnnuler={() => setEffacer(false)}
+        onConfirmer={() => void recommencer()}>
+        {t('sauvegarde.recommencerTexte')}
+      </Dialog>
 
       <BottomSheet
         ouvert={feuille !== null}

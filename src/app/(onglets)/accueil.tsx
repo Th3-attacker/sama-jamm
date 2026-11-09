@@ -17,7 +17,6 @@ import { useTheme } from '@/theme/useTheme';
 import { Banner } from '@/ui/Banner';
 import { BeadThread, type JourFil } from '@/ui/BeadThread';
 import type { PriereArc } from '@/ui/DayArc';
-import { Logo } from '@/ui/Logo';
 import { TopBar } from '@/ui/TopBar';
 import { useMargeBasse, useMiniLecteurVisible } from '@/features/ecouter/placeMiniLecteur';
 import { BandeEcoute } from '@/features/accueil/BandeEcoute';
@@ -81,35 +80,33 @@ export default function Accueil() {
 
   return (
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
+      {/* Planche : titre et date à gauche, loupe à droite sur la même rangée. */}
       <TopBar
-        gauche={<Logo taille={28} />}
+        gauche={
+          <View>
+            <Text
+              accessibilityRole="header"
+              accessibilityLanguage="wo"
+              maxFontSizeMultiplier={echelleMax.courant}
+              style={[latin.titre1, { color: couleurs.emeraude, writingDirection: 'ltr' }]}>
+              {t('formules.saluer')}
+            </Text>
+            <Text
+              maxFontSizeMultiplier={echelleMax.courant}
+              style={[typographie.translitteration, styles.date, { color: couleurs.encre2 }]}>
+              {hegirien ? t('accueil.date', { jour, hegirien }) : jour}
+            </Text>
+          </View>
+        }
         actions={[{ icone: 'search', label: t('menuPlus.rechercher'), onPress: () => router.push('/plus/recherche') }]}
       />
       <ScrollView ref={defilement}
         contentContainerStyle={{
           ...colonne,
           paddingBottom: espace.espace8 + marge,
-          gap: espace.espace5,
+          gap: espace.espace3,
         }}>
         <BandeauVeille />
-        <View>
-          <Text
-            accessibilityRole="header"
-            accessibilityLanguage="wo"
-            maxFontSizeMultiplier={echelleMax.courant}
-            style={[latin.titre1, { color: couleurs.emeraude, writingDirection: 'ltr' }]}>
-            {t('formules.saluer')}
-          </Text>
-          <Text
-            maxFontSizeMultiplier={echelleMax.courant}
-            style={[typographie.translitteration, { color: couleurs.encre2 }]}>
-            {t('formules.saluerTrad')}
-          </Text>
-          <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre3 }]}>
-            {hegirien ? t('accueil.date', { jour, hegirien }) : jour}
-          </Text>
-        </View>
-
         {arc ? (
           <CarteHeros nom={arc.nom} heure={arc.heure} dans={arc.dans} prieres={arc.liste} />
         ) : (
@@ -127,18 +124,18 @@ export default function Accueil() {
         <View
           accessible
           style={{
-            gap: espace.espace2,
+            gap: espace.espace1,
             padding: espace.espace4,
             borderRadius: rayon.rayonCarte,
             backgroundColor: couleurs.orDoux,
           }}>
-          <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, { color: couleurs.orTexte }]}>
+          <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, styles.etiquette, { color: couleurs.orTexte }]}>
             {t('accueil.sagesse')}
           </Text>
           <Text
             accessibilityLanguage="wo"
             maxFontSizeMultiplier={echelleMax.courant}
-            style={[latin.titre3, { color: couleurs.encre, writingDirection: 'ltr' }]}>
+            style={[latin.titre2, { color: couleurs.encre, writingDirection: 'ltr' }]}>
             {t(`formules.${sagesse}`)}
           </Text>
           <Text
@@ -166,4 +163,8 @@ export default function Accueil() {
 
 const styles = StyleSheet.create({
   ecran: { flex: 1 },
+  // Planche : date en italique 14/20.
+  date: { fontSize: 14, lineHeight: 20 },
+  // Planche : « WAX JU RAFET » en 12/16, majuscules, interlettrage 0,06 em.
+  etiquette: { fontSize: 12, lineHeight: 16, textTransform: 'uppercase', letterSpacing: 0.72 },
 });

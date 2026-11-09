@@ -23,7 +23,7 @@ import { Button } from '@/ui/Button';
 import { SegmentedControl } from '@/ui/SegmentedControl';
 import { TextField } from '@/ui/TextField';
 import { useToast } from '@/ui/Toast';
-import { TopBar } from '@/ui/TopBar';
+import { EnteteRetour } from '@/ui/EnteteRetour';
 import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
 /** Ajouter une dette, ou la corriger (`?id=`) : sens, personne, montant, échéance et note. */
@@ -88,15 +88,16 @@ export default function NouvelleDette() {
 
   return (
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
-      <TopBar retour titre={titre} />
       <KeyboardAvoidingView style={styles.ecran} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <ScrollView
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={{
+            flexGrow: 1,
             paddingHorizontal: espace.espace5,
-            paddingBottom: espace.espace8 + marge,
+            paddingBottom: espace.espace4 + marge,
             gap: espace.espace4,
           }}>
+          <EnteteRetour titre={titre} />
           <SegmentedControl
             label={t('dettes.sens')}
             options={[
@@ -146,7 +147,8 @@ export default function NouvelleDette() {
             {t('dettes.bandeauPrive')}
           </Banner>
           {echec ? <Banner ton="erreur">{echec}</Banner> : null}
-          <Button pleineLargeur disabled={!valide || envoi} onPress={enregistrer}>
+          <View style={styles.espace} />
+          <Button grand pleineLargeur disabled={!valide || envoi} onPress={enregistrer}>
             {t('commun.enregistrer')}
           </Button>
         </ScrollView>
@@ -157,4 +159,5 @@ export default function NouvelleDette() {
 
 const styles = StyleSheet.create({
   ecran: { flex: 1 },
+  espace: { flex: 1 },
 });
