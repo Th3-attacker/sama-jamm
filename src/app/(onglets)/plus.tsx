@@ -40,7 +40,7 @@ export default function Plus() {
   const { styleColonne: colonne } = useLayout();
   const connecte = useSession((s) => s.session !== null);
   const enCours = useKhatmsEnCours();
-  const nbFavoris = useFavoris((s) => s.versets.length + s.invocations.length);
+  const nbFavoris = useFavoris((s) => s.versets.length);
   // Relue après chaque téléchargement ou suppression (`version` change alors).
   const version = useTelechargements((s) => s.version);
   const octets = useMemo(() => (version >= 0 ? listeTelechargements().reduce((n, x) => n + x.octets, 0) : 0), [version]);

@@ -9,31 +9,26 @@ import type { IconName } from '@/ui/types';
 import { ListGroup } from '@/ui/ListGroup';
 import { ListItem } from '@/ui/ListItem';
 
-import { CATEGORIES_HISN, idsDeCategorie } from './categoriesHisn';
 import { CATEGORIES, invocationsDe, type CategorieId } from './donnees';
-import { estMomentHisn, MOMENTS, MOMENTS_HISN, type MomentId } from './moments';
 
 // Pas d'icône « lit » dans le jeu d'icônes : le sommeil prend la lune, comme le soir.
-const ICONES: Record<MomentId, IconName> = {
+const ICONES: Record<CategorieId, IconName> = {
   matin: 'sun',
   soir: 'moon',
   sommeil: 'moon',
-  voyage: 'car',
-  repas: 'heart',
-  apresPriere: 'kaaba',
 };
 
-type Moment = { id: MomentId; nombre: number; ouvrir: () => void };
+type Moment = { id: CategorieId; nombre: number; ouvrir: () => void };
 
 /** Bibliothèque des invocations : les moments du Coran, puis les catégories de la Citadelle du musulman. */
 export function ListeCategories() {
   const { t } = useTranslation();
   const { couleurs, espace, rayon, typographie } = useTheme();
-  // Les trois moments du Coran, puis trois moments tirés de la Citadelle : tous ouvrent la liste du moment.
-  const moments: Moment[] = MOMENTS.map((m) => ({
-    id: m,
-    nombre: estMomentHisn(m) ? idsDeCategorie(MOMENTS_HISN[m]).length : invocationsDe(m).length,
-    ouvrir: () => router.push({ pathname: '/lire/invocations/[categorie]', params: { categorie: m } }),
+  // Les trois moments, faits de versets du Coran avec la lecture complète.
+  const moments: Moment[] = CATEGORIES.map((c) => ({
+    id: c,
+    nombre: invocationsDe(c).length,
+    ouvrir: () => router.push({ pathname: '/lire/invocations/[categorie]', params: { categorie: c } }),
   }));
   const rangees = Array.from({ length: Math.ceil(moments.length / 2) }, (_, i) => moments.slice(i * 2, i * 2 + 2));
   return (
@@ -98,17 +93,6 @@ export function ListeCategories() {
           </View>
         ))}
       </View>
-      <ListGroup titre={t('invocations.hisn')} note={t('invocations.noteHisn')}>
-        {CATEGORIES_HISN.map((c) => (
-          <ListItem
-            key={c}
-            icone="book"
-            titre={t(`invocations.categories.${c}`)}
-            sousTitre={t('invocations.nbChapitres', { count: idsDeCategorie(c).length })}
-            onPress={() => router.push({ pathname: '/lire/hisn/categorie/[groupe]', params: { groupe: c } })}
-          />
-        ))}
-      </ListGroup>
     </View>
   );
 }

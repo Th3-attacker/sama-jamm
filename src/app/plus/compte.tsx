@@ -26,7 +26,7 @@ export default function Compte() {
   const pret = useSession((s) => s.pret);
   const [prenom, setPrenom] = useState('');
   const [erreur, setErreur] = useState(false);
-  const nbFavoris = useFavoris((s) => s.versets.length + s.invocations.length);
+  const nbFavoris = useFavoris((s) => s.versets.length);
 
   // Sans session : la connexion à la place.
   useEffect(() => {

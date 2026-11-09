@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FlatList, ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import { chapitreHisn, titreDe } from '@/features/invocations/hisn';
 import { CarteVerset } from '@/features/lire/CarteVerset';
 import { traductionDe, versetsDe } from '@/features/lire/coran';
 import { useFavoris } from '@/stores/favoris';
@@ -11,15 +10,12 @@ import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { Chip } from '@/ui/Chip';
 import { EmptyState } from '@/ui/EmptyState';
-import { ListGroup } from '@/ui/ListGroup';
-import { ListItem } from '@/ui/ListItem';
 import { TopBar } from '@/ui/TopBar';
 
 type Filtre = 'tous' | 'versets' | 'chants' | 'invocations';
 const FILTRES: Filtre[] = ['tous', 'versets', 'chants', 'invocations'];
-/** Versets et chapitres de la Citadelle se mettent en favori ; les chants restent à zéro. */
-const compter = (id: Filtre, versets: number, invocations: number) =>
-  id === 'tous' ? versets + invocations : id === 'versets' ? versets : id === 'invocations' ? invocations : 0;
+/** Seuls les versets se mettent en favori pour l'instant : chants et invocations restent à zéro. */
+const compter = (id: Filtre, versets: number) => (id === 'tous' || id === 'versets' ? versets : 0);
 
 type Favori = { sourate: number; verset: number };
 
@@ -30,22 +26,16 @@ function lire(cle: string): Favori | null {
 }
 
 export default function Favoris() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const { couleurs, espace, typographie } = useTheme();
   const [filtre, setFiltre] = useState<Filtre>('tous');
   const cles = useFavoris((s) => s.versets);
   const favoris = cles.map(lire).filter((f): f is Favori => f !== null);
-  const chapitres = useFavoris((s) => s.invocations).flatMap((id) => {
-    const c = chapitreHisn(Number(id));
-    return c ? [c] : [];
-  });
-  const versetsVisibles = filtre === 'tous' || filtre === 'versets';
-  const chapitresVisibles = filtre === 'tous' || filtre === 'invocations';
 
   return (
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
       <TopBar retour titre={t('favoris.titre')} sousTitre={t('favoris.sousTitre')} />
-      {favoris.length === 0 && chapitres.length === 0 ? (
+      {favoris.length === 0 ? (
         <EmptyState
           titre={t('formules.serenite')}
           sousTitre={t('formules.sereniteTrad')}
@@ -54,18 +44,18 @@ export default function Favoris() {
         />
       ) : (
         <FlatList
-          data={versetsVisibles ? favoris : []}
+          data={filtre === 'tous' || filtre === 'versets' ? favoris : []}
           keyExtractor={(f) => `${f.sourate}:${f.verset}`}
           ListHeaderComponent={
             <View style={{ gap: espace.espace3, paddingBottom: espace.espace3 }}>
               <ScrollView horizontal showsHorizontalScrollIndicator={false} accessibilityLabel={t('favoris.filtrer')} contentContainerStyle={{ gap: espace.espace2 }}>
                 {FILTRES.map((id) => (
-                  <Chip key={id} selectionne={filtre === id} compte={compter(id, favoris.length, chapitres.length)} onPress={() => setFiltre(id)}>
+                  <Chip key={id} selectionne={filtre === id} compte={compter(id, favoris.length)} onPress={() => setFiltre(id)}>
                     {t(`favoris.${id}`)}
                   </Chip>
                 ))}
               </ScrollView>
-              {versetsVisibles && favoris.length > 0 ? (
+              {filtre === 'tous' || filtre === 'versets' ? (
                 <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre3 }]}>
                   {t('favoris.versets')} · {favoris.length}
                 </Text>
@@ -73,29 +63,9 @@ export default function Favoris() {
             </View>
           }
           ListEmptyComponent={
-            filtre === 'chants' ? (
-              <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre3 }]}>
-                {t('favoris.chantsAVenir')}
-              </Text>
-            ) : undefined
-          }
-          ListFooterComponent={
-            chapitresVisibles && chapitres.length > 0 ? (
-              <View style={{ paddingTop: espace.espace4 }}>
-                <ListGroup titre={t('favoris.chantsInvocations')}>
-                  {chapitres.map((c) => (
-                    <ListItem
-                      key={c.id}
-                      icone="book"
-                      titre={titreDe(c, i18n.language)}
-                      sousTitre={t('favoris.invocationCitadelle')}
-                      fin="chevron"
-                      onPress={() => router.push({ pathname: '/lire/hisn/[chapitre]', params: { chapitre: String(c.id) } })}
-                    />
-                  ))}
-                </ListGroup>
-              </View>
-            ) : undefined
+            <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre3 }]}>
+              {t('favoris.chantsAVenir')}
+            </Text>
           }
           ItemSeparatorComponent={() => <View style={{ height: espace.espace2 }} />}
           renderItem={({ item }) => (
