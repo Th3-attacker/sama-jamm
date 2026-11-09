@@ -669,6 +669,12 @@
       "relations": "الأسرة والعلاقات والآداب",
       "louange": "التسبيح والاستغفار والصلاة على النبي"
     },
+    "nbInvocations_zero": "{{count}} ذكر",
+    "nbInvocations_one": "ذكر واحد",
+    "nbInvocations_two": "ذكران",
+    "nbInvocations_few": "{{count}} أذكار",
+    "nbInvocations_many": "{{count}} ذكرًا",
+    "nbInvocations_other": "{{count}} ذكر",
     "nbChapitres_zero": "{{count}} فصل",
     "nbChapitres_one": "فصل واحد",
     "nbChapitres_two": "فصلان",

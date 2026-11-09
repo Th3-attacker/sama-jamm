@@ -625,6 +625,8 @@
       "relations": "Famille, relations et bonnes manières",
       "louange": "Louange, pardon et prières sur le Prophète"
     },
+    "nbInvocations_one": "{{count}} invocation",
+    "nbInvocations_other": "{{count}} invocations",
     "nbChapitres_one": "{{count}} chapitre",
     "nbChapitres_other": "{{count}} chapitres",
     "sourceHisn": "La citadelle du musulman · {{fois}}",
