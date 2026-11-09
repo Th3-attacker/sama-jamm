@@ -14,6 +14,8 @@ import { useTheme } from '@/theme/useTheme';
 import { Banner } from '@/ui/Banner';
 import { Icon } from '@/ui/Icon';
 import { ProgressBar } from '@/ui/ProgressBar';
+import { useFavoris } from '@/stores/favoris';
+import { useToast } from '@/ui/Toast';
 import { TopBar } from '@/ui/TopBar';
 
 /** Un jour de lecture est compté après ce délai à l'écran, comme pour le Coran. */
@@ -28,6 +30,10 @@ export default function EcranChapitreHisn() {
   // Le paramètre est un numéro de chapitre, ou un moment (voyage, repas, après la prière) qui en regroupe plusieurs.
   const moment = estMomentHisn(brut) ? brut : null;
   const chapitre = moment ? undefined : chapitreHisn(Number(brut));
+  const { afficher } = useToast();
+  const favoris = useFavoris((s) => s.invocations);
+  const basculerFavori = useFavoris((s) => s.basculerInvocation);
+  const favori = chapitre ? favoris.includes(String(chapitre.id)) : false;
   const marquerJour = useLecture((s) => s.marquerJour);
   const [comptes, setComptes] = useState<Record<number, number>>({});
   const [choisi, setChoisi] = useState<number | null>(null);
@@ -73,7 +79,27 @@ export default function EcranChapitreHisn() {
 
   return (
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
-      <TopBar retour titre={t('invocations.hisn')} sousTitre={t('invocations.hisnAide')} />
+      <TopBar
+        retour
+        titre={t('invocations.hisn')}
+        sousTitre={t('invocations.hisnAide')}
+        // Seul un chapitre se met en favori, pas un moment qui en regroupe plusieurs.
+        actions={
+          chapitre
+            ? [
+                {
+                  icone: 'bookmark',
+                  label: t(favori ? 'lire.favoriRetirer' : 'lire.favoriAjouter'),
+                  actif: favori,
+                  couleur: couleurs.orTexte,
+                  onPress: () => {
+                    if (basculerFavori(chapitre.id)) afficher({ texte: t('lire.favoriAjoute'), icone: 'check' });
+                  },
+                },
+              ]
+            : undefined
+        }
+      />
       <ScrollView
         contentContainerStyle={{ paddingHorizontal: espace.espace5, paddingBottom: espace.espace6, gap: espace.espace4 }}>
         <Text
