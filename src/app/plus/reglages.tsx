@@ -43,6 +43,8 @@ export default function Reglages() {
   const theme = useReglages((s) => s.theme);
   const translitLecture = useReglages((s) => s.translitLecture);
   const definirTranslitLecture = useReglages((s) => s.definirTranslitLecture);
+  const chiffresArabes = useReglages((s) => s.chiffresArabes);
+  const definirChiffresArabes = useReglages((s) => s.definirChiffresArabes);
   const veilleAuto = useReglages((s) => s.veilleAuto);
   const haptique = useReglages((s) => s.haptique);
   const methode = useReglages((s) => s.methode);
@@ -247,6 +249,12 @@ export default function Reglages() {
             titre={t("reglages.translit")}
             sousTitre={t("reglages.translitAide")}
             droite={<Switch label={t("reglages.translit")} active={translitLecture} onChange={definirTranslitLecture} />}
+          />
+          <ListItem
+            icone="type"
+            titre={t("lire.chiffresArabes")}
+            sousTitre={t("lire.chiffresArabesAide")}
+            droite={<Switch label={t("lire.chiffresArabes")} active={chiffresArabes} onChange={definirChiffresArabes} />}
           />
         </ListGroup>
 

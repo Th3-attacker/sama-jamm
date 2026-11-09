@@ -21,9 +21,6 @@ export const useDons = create<{ declarations: DeclarationLocale[] }>()(
   }),
 );
 
-export const dejaDeclaree = (wallet: string, reference: string) =>
-  useDons.getState().declarations.some((d) => d.wallet === wallet && d.reference === reference);
-
 async function envoyer(d: Declaration): Promise<void> {
   const { error } = await supabase.from('declarations_dons').insert({
     wallet: d.wallet,

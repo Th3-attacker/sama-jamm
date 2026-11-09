@@ -1,12 +1,13 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Alert, ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 
 import { supprimerCompte } from '@/features/compte/compte';
 import { useTheme } from '@/theme/useTheme';
 import { Banner } from '@/ui/Banner';
 import { Button } from '@/ui/Button';
+import { Dialog } from '@/ui/Dialog';
 import { ListGroup } from '@/ui/ListGroup';
 import { ListItem } from '@/ui/ListItem';
 import { useToast } from '@/ui/Toast';
@@ -17,31 +18,24 @@ export default function SupprimerCompte() {
   const { t } = useTranslation();
   const { couleurs, espace } = useTheme();
   const { afficher } = useToast();
+  const [confirmation, setConfirmation] = useState(false);
   const [envoi, setEnvoi] = useState(false);
   const [erreur, setErreur] = useState(false);
 
-  const supprimer = () => {
-    Alert.alert(t('compte.supprimerTitre'), t('compte.supprimerTexte'), [
-      { text: t('compte.supprimerGarder'), style: 'cancel' },
-      {
-        text: t('compte.supprimerConfirmer'),
-        style: 'destructive',
-        onPress: async () => {
-          setEnvoi(true);
-          setErreur(false);
-          try {
-            await supprimerCompte();
-            afficher({ texte: t('compte.supprimeTexte'), icone: 'check' });
-            router.dismissTo('/plus/reglages');
-          } catch (e: unknown) {
-            console.warn('Compte non supprimé', e);
-            setErreur(true);
-          } finally {
-            setEnvoi(false);
-          }
-        },
-      },
-    ]);
+  const supprimer = async () => {
+    setConfirmation(false);
+    setEnvoi(true);
+    setErreur(false);
+    try {
+      await supprimerCompte();
+      afficher({ texte: t('compte.supprimeTexte'), icone: 'check' });
+      router.dismissTo('/plus/reglages');
+    } catch (e: unknown) {
+      console.warn('Compte non supprimé', e);
+      setErreur(true);
+    } finally {
+      setEnvoi(false);
+    }
   };
 
   return (
@@ -49,6 +43,7 @@ export default function SupprimerCompte() {
       <TopBar retour titre={t('compte.supprimer')} />
       <ScrollView
         contentContainerStyle={{
+          flexGrow: 1,
           paddingHorizontal: espace.espace5,
           paddingBottom: espace.espace8,
           gap: espace.espace5,
@@ -63,14 +58,28 @@ export default function SupprimerCompte() {
           <ListItem icone="download" titre={t('compte.gardeReste')} />
         </ListGroup>
         {erreur ? <Banner ton="erreur">{t('compte.supprimerHorsLigne')}</Banner> : null}
-        <Button variant="danger" pleineLargeur disabled={envoi} onPress={supprimer}>
-          {t('compte.supprimer')}
-        </Button>
+        <View style={styles.pied}>
+          <Button variant="danger" icone="trash" pleineLargeur disabled={envoi} onPress={() => setConfirmation(true)}>
+            {t('compte.supprimer')}
+          </Button>
+        </View>
       </ScrollView>
+      <Dialog
+        ouvert={confirmation}
+        danger
+        icone="trash"
+        titre={t('compte.supprimerTitre')}
+        confirmer={t('compte.supprimerConfirmer')}
+        annuler={t('compte.supprimerGarder')}
+        onConfirmer={() => void supprimer()}
+        onAnnuler={() => setConfirmation(false)}>
+        {t('compte.supprimerTexte')}
+      </Dialog>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   ecran: { flex: 1 },
+  pied: { marginTop: 'auto' },
 });

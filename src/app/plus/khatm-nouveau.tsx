@@ -19,7 +19,7 @@ import { TopBar } from '@/ui/TopBar';
 /** Nouveau khatm : nom, intention, date de fin ; puis l'invitation part par la feuille de partage. */
 export default function NouveauKhatm() {
   const { t } = useTranslation();
-  const { couleurs, espace, typographie } = useTheme();
+  const { couleurs, espace, typographie, latin } = useTheme();
   const [nom, setNom] = useState(t('khatm.nomDefaut'));
   const [intention, setIntention] = useState('');
   const [echeance, setEcheance] = useState('');
@@ -50,16 +50,25 @@ export default function NouveauKhatm() {
 
   return (
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
-      <TopBar retour titre={t('khatm.nouveau')} />
+      {/* Planche : flèche et titre en 30/36 émeraude sur la même ligne. */}
+      <TopBar
+        retour
+        gauche={
+          <Text accessibilityRole="header" maxFontSizeMultiplier={echelleMax.grand} style={[typographie.titre1, { color: couleurs.emeraude }]}>
+            {t('khatm.nouveau')}
+          </Text>
+        }
+      />
       <KeyboardAvoidingView style={styles.ecran} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <ScrollView
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={{
+            flexGrow: 1,
             paddingHorizontal: espace.espace5,
-            paddingBottom: espace.espace8,
-            gap: espace.espace5,
+            paddingBottom: espace.espace4,
+            gap: espace.espace4,
           }}>
-          <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, { color: couleurs.encre2 }]}>
+          <Text accessibilityLanguage="wo" maxFontSizeMultiplier={echelleMax.courant} style={[latin.translitteration, styles.phrase, { color: couleurs.encre2 }]}>
             {t('khatm.nouveauTexte')}
           </Text>
           <TextField label={t('khatm.nom')} valeur={nom} onChange={setNom} maxLength={60} />
@@ -81,16 +90,19 @@ export default function NouveauKhatm() {
             erreur={dateOk ? undefined : t('khatm.dateInvalide')}
           />
           <ListGroup titre={t('khatm.participants')}>
-            <ListItem icone="share" titre={t('khatm.rejoindreLien')} sousTitre={t('khatm.rejoindreLienAide')} />
+            <ListItem icone="users" titre={t('khatm.rejoindreLien')} sousTitre={t('khatm.rejoindreLienAide')} />
             <ListItem icone="bell" titre={t('khatm.rappelParticipants')} sousTitre={t('khatm.rappelParticipantsAide')} />
           </ListGroup>
           {erreur ? <Banner ton="erreur">{t('etats.erreurTexte')}</Banner> : null}
-          <Button icone="share" pleineLargeur disabled={!nomOk || !dateOk || envoi} onPress={creer}>
-            {t('khatm.creer')}
-          </Button>
-          <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre3 }]}>
-            {t('khatm.lienNote')}
-          </Text>
+          {/* Pied de page collé en bas quand le contenu est court. */}
+          <View style={[styles.pied, { gap: espace.espace2 }]}>
+            <Button icone="share" pleineLargeur disabled={!nomOk || !dateOk || envoi} onPress={creer}>
+              {t('khatm.creer')}
+            </Button>
+            <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, styles.note, { color: couleurs.encre3 }]}>
+              {t('khatm.lienNote')}
+            </Text>
+          </View>
         </ScrollView>
       </KeyboardAvoidingView>
     </View>
@@ -99,4 +111,7 @@ export default function NouveauKhatm() {
 
 const styles = StyleSheet.create({
   ecran: { flex: 1 },
+  phrase: { fontSize: 16, lineHeight: 24 },
+  pied: { marginTop: 'auto' },
+  note: { textAlign: 'center', fontFamily: 'SourceSans3_400Regular' },
 });

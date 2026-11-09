@@ -100,7 +100,7 @@ export default function Connexion() {
             paddingBottom: espace.espace8,
             gap: espace.espace5,
           }}>
-          <Logo taille={44} />
+          <Logo taille={56} />
           <Text
             accessibilityRole="header"
             maxFontSizeMultiplier={echelleMax.grand}

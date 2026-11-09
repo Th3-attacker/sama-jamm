@@ -3,21 +3,13 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import {
-  MESSAGE_MAX,
-  PRENOM_DON_MAX,
-  montantDon,
-  referenceDon,
-  validerDeclaration,
-  walletConnu,
-} from '@/features/dons/declaration';
-import { dejaDeclaree, declarer } from '@/features/dons/depot';
+import { MESSAGE_MAX, montantDon, validerDeclaration, walletConnu } from '@/features/dons/declaration';
+import { declarer } from '@/features/dons/depot';
 import { PiedDon } from '@/features/dons/PiedDon';
 import { WALLETS } from '@/features/dons/wallets';
 import { useParametre } from '@/hooks/useParametre';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
-import { Banner } from '@/ui/Banner';
 import { Button } from '@/ui/Button';
 import { SegmentedControl } from '@/ui/SegmentedControl';
 import { TextField } from '@/ui/TextField';
@@ -32,21 +24,13 @@ export default function DeclarerDon() {
   const montantRecu = montantDon(useParametre('montant'));
   const [wallet, setWallet] = useState<string>(walletRecu ?? WALLETS[0].id);
   const [montant, setMontant] = useState(montantRecu === null ? '' : String(montantRecu));
-  const [reference, setReference] = useState('');
-  const [prenom, setPrenom] = useState('');
   const [message, setMessage] = useState('');
   const [envoi, setEnvoi] = useState(false);
-  const [double, setDouble] = useState(false);
 
-  const nomWallet = WALLETS.find((w) => w.id === wallet)?.nom ?? '';
-  const declaration = validerDeclaration({ wallet, montant, reference, prenom, message });
+  const declaration = validerDeclaration({ wallet, montant, message });
 
   const envoyer = async () => {
     if (!declaration || envoi) return;
-    if (dejaDeclaree(declaration.wallet, declaration.reference)) {
-      setDouble(true);
-      return;
-    }
     setEnvoi(true);
     const { id } = await declarer(declaration);
     setEnvoi(false);
@@ -82,38 +66,12 @@ export default function DeclarerDon() {
             erreur={montant !== '' && montantDon(montant) === null ? t('budget.montantInvalide') : undefined}
           />
           <TextField
-            label={t('dons.reference')}
-            valeur={reference}
-            onChange={(v) => {
-              setReference(v);
-              setDouble(false);
-            }}
-            placeholder={t('dons.referencePlaceholder')}
-            aide={t('dons.referenceOu', { wallet: nomWallet })}
-            majuscules
-            erreur={
-              double
-                ? t('dons.referenceDouble')
-                : reference !== '' && referenceDon(reference) === null
-                  ? t('dons.referenceErreur', { wallet: nomWallet })
-                  : undefined
-            }
-          />
-          <TextField
-            label={t('dons.prenom')}
-            valeur={prenom}
-            onChange={setPrenom}
-            placeholder={t('dons.prenomPlaceholder')}
-            maxLength={PRENOM_DON_MAX}
-          />
-          <TextField
             label={t('dons.message')}
             valeur={message}
             onChange={setMessage}
             placeholder={t('dons.messagePlaceholder')}
             maxLength={MESSAGE_MAX}
           />
-          {double ? <Banner ton="attention">{t('dons.referenceDouble')}</Banner> : null}
         </ScrollView>
         <PiedDon note={t('dons.pasDeCode')}>
           <Button pleineLargeur disabled={!declaration || envoi} onPress={envoyer}>

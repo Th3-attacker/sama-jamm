@@ -31,6 +31,9 @@ export default function EcranKhatm() {
   const moi = useSession((s) => s.session?.user.id ?? null);
   const { etat, relire } = useKhatm(id);
   const [message, setMessage] = useState<string | null>(null);
+  const [largeur, setLargeur] = useState(0);
+  // Six colonnes : largeur de chaque case, écarts de 8 déduits.
+  const caseLargeur = largeur > 0 ? Math.floor((largeur - espace.espace2 * 5) / 6) : '15%';
 
   const resume = etat.etat === 'pret' ? resumeKhatm(etat.parts, moi) : null;
   const monJuz = resume?.monJuz ?? null;
@@ -92,16 +95,17 @@ export default function EcranKhatm() {
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
       <TopBar
         retour
+        centre
         titre={t('khatm.titre')}
-        actions={[{ icone: 'share', label: t('khatm.inviter'), onPress: () => void inviter(khatm.nom, khatm.code) }]}
+        actions={[{ icone: 'share', texte: t('khatm.inviter'), libelle: true, label: t('khatm.inviter'), onPress: () => void inviter(khatm.nom, khatm.code) }]}
       />
       <ScrollView
         contentContainerStyle={{
-          paddingHorizontal: espace.espace5,
+          paddingHorizontal: espace.espace6,
           paddingBottom: espace.espace8,
-          gap: espace.espace5,
+          gap: espace.espace4,
         }}>
-        <View>
+        <View style={{ gap: espace.espace1 }}>
           <Text
             accessibilityLanguage="wo"
             maxFontSizeMultiplier={echelleMax.grand}
@@ -110,7 +114,7 @@ export default function EcranKhatm() {
           </Text>
           <Text
             maxFontSizeMultiplier={echelleMax.courant}
-            style={[typographie.translitteration, { color: couleurs.encre2 }]}>
+            style={[typographie.translitteration, styles.trad, { color: couleurs.encre2 }]}>
             {t('formules.entraideTrad')}
           </Text>
         </View>
@@ -118,18 +122,18 @@ export default function EcranKhatm() {
         <View
           style={[
             styles.carte,
-            { backgroundColor: couleurs.surface, borderColor: couleurs.ligne, borderRadius: rayon.rayonCarte, padding: espace.espace4, gap: espace.espace3 },
+            { backgroundColor: couleurs.surface, borderColor: couleurs.ligne, borderRadius: rayon.rayonCarte, padding: espace.espace4, gap: espace.espace2 },
           ]}>
           <View style={[styles.ligneCarte, { gap: espace.espace3 }]}>
             <Text
               accessibilityRole="header"
               numberOfLines={2}
               maxFontSizeMultiplier={echelleMax.courant}
-              style={[typographie.titre3, { color: couleurs.encre, flexShrink: 1 }]}>
+              style={[typographie.corps, styles.nom, { color: couleurs.encre }]}>
               {khatm.nom}
             </Text>
             {echeance ? (
-              <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre3 }]}>
+              <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, styles.regulier, { color: couleurs.encre3 }]}>
                 {t('khatm.objectif', { date: echeance })}
               </Text>
             ) : null}
@@ -141,6 +145,8 @@ export default function EcranKhatm() {
           ) : null}
           <ProgressBar
             valeur={resume.lus / 30}
+            fine
+            detailCorps
             label={khatm.nom}
             detail={t('khatm.resumeComplet', {
               lus: resume.lus,
@@ -152,7 +158,7 @@ export default function EcranKhatm() {
         </View>
 
         {/* Grille des 30 juz : toucher un juz libre pour le prendre. */}
-        <View style={[styles.grille, { gap: espace.espace2 }]}>
+        <View style={[styles.grille, { gap: espace.espace2 }]} onLayout={(e) => setLargeur(e.nativeEvent.layout.width)}>
           {parts.map((p) => {
             const v = vuePart(p, moi);
             const c = couleurDe(v);
@@ -169,21 +175,23 @@ export default function EcranKhatm() {
                 style={({ pressed }) => [
                   styles.case,
                   {
-                    borderRadius: rayon.rayonCarte,
+                    width: caseLargeur,
+                    borderWidth: v === 'leVotre' ? 2 : 1,
+                    borderRadius: 10,
                     backgroundColor: c.fond,
                     borderColor: c.bord,
                     opacity: pressed ? 0.8 : 1,
                   },
                 ]}>
-                <Text style={[typographie.libelle, { color: c.texte }]}>{p.juz}</Text>
+                <Text style={[typographie.libelle, styles.chiffre, { color: c.texte }]}>{p.juz}</Text>
               </Pressable>
             );
           })}
         </View>
-        <View style={[styles.legende, { gap: espace.espace3 }]}>
+        <View style={[styles.legende, { gap: espace.espace4 }]}>
           {(['lu', 'enCours', 'leVotre', 'libre'] as const).map((v) => (
-            <View key={v} style={[styles.legendeLigne, { gap: espace.espace1 }]}>
-              <View style={[styles.pastille, { backgroundColor: couleurDe(v).fond, borderColor: couleurDe(v).bord }]} />
+            <View key={v} style={[styles.legendeLigne, { gap: espace.espace2 }]}>
+              <View style={[styles.pastille, { backgroundColor: couleurDe(v).fond, borderColor: couleurDe(v).bord, borderWidth: v === 'leVotre' ? 2 : 1 }]} />
               <Text style={[typographie.legende, { color: couleurs.encre2 }]}>
                 {t(`khatm.${v === 'leVotre' ? 'vous' : v}`)}
               </Text>
@@ -194,7 +202,7 @@ export default function EcranKhatm() {
         {message ? <Banner ton="attention">{message}</Banner> : null}
         {resume.monJuz !== null ? (
           <>
-            <Button icone="book" pleineLargeur onPress={ouvrirMonJuz}>
+            <Button grand pleineLargeur onPress={ouvrirMonJuz}>
               {t('khatm.continuer', { n: resume.monJuz })}
             </Button>
             <Button
@@ -249,8 +257,12 @@ const styles = StyleSheet.create({
   grille: { flexDirection: 'row', flexWrap: 'wrap' },
   carte: { borderWidth: 1 },
   ligneCarte: { flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between' },
-  case: { width: '15%', aspectRatio: 1, alignItems: 'center', justifyContent: 'center', borderWidth: 1 },
+  case: { height: 44, alignItems: 'center', justifyContent: 'center' },
+  chiffre: { fontVariant: ['tabular-nums'] },
+  nom: { flexShrink: 1, fontFamily: 'SourceSans3_600SemiBold' },
+  regulier: { fontFamily: 'SourceSans3_400Regular' },
+  trad: { fontSize: 16, lineHeight: 24 },
   legende: { flexDirection: 'row', flexWrap: 'wrap' },
   legendeLigne: { flexDirection: 'row', alignItems: 'center' },
-  pastille: { width: 12, height: 12, borderRadius: 3, borderWidth: 1 },
+  pastille: { width: 12, height: 12, borderRadius: 3 },
 });

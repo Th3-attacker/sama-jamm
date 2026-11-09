@@ -10,6 +10,7 @@ import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { Banner } from '@/ui/Banner';
 import { Button } from '@/ui/Button';
+import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 import { EmptyState } from '@/ui/EmptyState';
 import { ListGroup } from '@/ui/ListGroup';
 import { ListItem } from '@/ui/ListItem';
@@ -20,6 +21,7 @@ import { TopBar } from '@/ui/TopBar';
 export default function MesKhatms() {
   const { t } = useTranslation();
   const { couleurs, espace, typographie } = useTheme();
+  const marge = useMargeBasse();
   const connecte = useSession((s) => s.session !== null);
   const [liste, setListe] = useState<Khatm[] | null>(null);
   const [erreur, setErreur] = useState(false);
@@ -49,7 +51,7 @@ export default function MesKhatms() {
         keyboardShouldPersistTaps="handled"
         contentContainerStyle={{
           paddingHorizontal: espace.espace5,
-          paddingBottom: espace.espace8,
+          paddingBottom: espace.espace8 + marge,
           gap: espace.espace5,
         }}>
         <View>
