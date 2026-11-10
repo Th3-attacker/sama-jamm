@@ -165,7 +165,7 @@ function Lecture({ inv, categorie, liste }: { inv: Invocation; categorie: Catego
           onChoisir={compter}
           onEcouter={() => {
             ecouter({ sourate: inv.sourate, verset: inv.de });
-            router.push('/lecteur');
+            router.navigate('/lecteur');
           }}
           onPartager={() => {
             if (premier && meta)

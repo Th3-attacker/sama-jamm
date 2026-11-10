@@ -77,7 +77,10 @@ function Moment({ categorie }: { categorie: CategorieId }) {
               key={c}
               pilule
               selectionne={c === categorie}
-              onPress={() => router.replace({ pathname: '/lire/invocations/[categorie]', params: { categorie: c } })}>
+              onPress={() => {
+                // Catégorie déjà affichée : on ne recharge pas la même route.
+                if (c !== categorie) router.replace({ pathname: '/lire/invocations/[categorie]', params: { categorie: c } });
+              }}>
               {t(`invocations.${c}`)}
             </Chip>
           ))}

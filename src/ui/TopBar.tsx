@@ -134,7 +134,7 @@ export function TopBar({
           ),
         )}
         {casque ? (
-          <IconButton icone="headphones" label={t('ecouter.ouvrirLecteur')} onPress={() => router.push('/lecteur')} />
+          <IconButton icone="headphones" label={t('ecouter.ouvrirLecteur')} onPress={() => router.navigate('/lecteur')} />
         ) : null}
       </View>
       {grand && titre ? (

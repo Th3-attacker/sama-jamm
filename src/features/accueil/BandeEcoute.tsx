@@ -21,7 +21,7 @@ export function BandeEcoute() {
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={`${t('accueil.ecoute')}. ${detail}`}
-      onPress={() => router.push('/lecteur')}
+      onPress={() => router.navigate('/lecteur')}
       style={[
         styles.bande,
         { gap: espace.espace3, paddingHorizontal: espace.espace4, paddingVertical: espace.espace3, borderRadius: 16, backgroundColor: couleurs.surfaceCreux },

@@ -61,7 +61,7 @@ export function ContenuEcouter({ onToutVoir }: { onToutVoir: () => void }) {
           accessibilityLabel={`${t('ecouter.continuer')}, ${sourate(derniere.sourate)?.nom ?? ''}`}
           onPress={() => {
             ecouter(derniere);
-            router.push('/lecteur');
+            router.navigate('/lecteur');
           }}
           style={[styles.hero, { gap: espace.espace4, padding: espace.espace4, backgroundColor: couleurs.emeraude, borderRadius: rayon.rayonCarte + espace.espace1 }]}>
           <View style={styles.marque} pointerEvents="none">
@@ -106,7 +106,7 @@ export function ContenuEcouter({ onToutVoir }: { onToutVoir: () => void }) {
                 accessibilityLabel={`${meta.nom}, ${t('ecouter.ecouterVerset')}`}
                 onPress={() => {
                   ecouter({ sourate: n, verset: 1 });
-                  router.push('/lecteur');
+                  router.navigate('/lecteur');
                 }}
                 style={[styles.tuile, { gap: espace.espace2 }]}>
                 <View style={[styles.pochette, { backgroundColor: p.fond, borderRadius: rayon.rayonCarte, gap: espace.espace1 }]}>
@@ -140,7 +140,7 @@ export function ContenuEcouter({ onToutVoir }: { onToutVoir: () => void }) {
               droite={<Badge ton="succes">{t('ecouter.badgeHorsLigne')}</Badge>}
               onPress={() => {
                 ecouter({ sourate: x.sourate, verset: 1 }, x.recitateur);
-                router.push('/lecteur');
+                router.navigate('/lecteur');
               }}
             />
           ))}

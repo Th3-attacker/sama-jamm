@@ -38,6 +38,15 @@ export default function Lire() {
   const [onglet, setOnglet] = useState<'coran' | 'xassaides' | 'invocations'>(
     rubrique === 'xassaides' || rubrique === 'invocations' ? rubrique : 'coran',
   );
+  // Écran déjà monté (onglet gardé en mémoire) : une nouvelle rubrique demandée depuis Plus doit être appliquée.
+  const [rubriqueVue, setRubriqueVue] = useState(rubrique);
+  if (rubrique !== rubriqueVue) {
+    setRubriqueVue(rubrique);
+    if (rubrique === 'xassaides' || rubrique === 'invocations') {
+      setOnglet(rubrique);
+      setMode('lire');
+    }
+  }
   // Reprise : la sourate et le verset où la lecture s'est arrêtée.
   const position = useLecture((s) => s.position);
   const repris = position ? sourate(position.sourate) : undefined;

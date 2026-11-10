@@ -113,7 +113,7 @@ export default function EcranRecitateur() {
                     pleineLargeur
                     onPress={() => {
                       ecouter({ sourate: 1, verset: 1 }, r.id);
-                      router.push('/lecteur');
+                      router.navigate('/lecteur');
                     }}>
                     {t('commun.ecouter')}
                   </Button>
@@ -155,7 +155,7 @@ export default function EcranRecitateur() {
                   android_ripple={{ color: couleurs.emeraudeDoux }}
                   onPress={() => {
                     ecouter({ sourate: item.n, verset: 1 }, r.id);
-                    router.push('/lecteur');
+                    router.navigate('/lecteur');
                   }}>
                   <ListItem
                     numero={item.n}

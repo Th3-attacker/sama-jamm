@@ -458,7 +458,7 @@ function LectureSourate({
           accessibilityLabel={t('ecouter.ecouterVerset')}
           onPress={() => {
             ecouter({ sourate: s.n, verset: versetHaut });
-            router.push('/lecteur');
+            router.navigate('/lecteur');
           }}
           style={[
             styles.ecouter,

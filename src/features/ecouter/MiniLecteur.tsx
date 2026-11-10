@@ -46,7 +46,7 @@ export function MiniLecteur() {
       <Pressable
         accessibilityRole="button"
         accessibilityLabel={t('ecouter.ouvrirLecteur')}
-        onPress={() => router.push('/lecteur')}
+        onPress={() => router.navigate('/lecteur')}
         style={styles.texte}>
         <Text
           numberOfLines={1}
