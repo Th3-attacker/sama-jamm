@@ -279,6 +279,7 @@
   },
   "khatm": {
     "titre": "Khatm collectif",
+    "introuvable": "Ce khatm n'existe plus, ou vous n'en êtes plus membre.",
     "progression": "{{lus}} juz lus sur 30",
     "resume": "{{lus}} lus · {{enCours}} en cours · {{libres}} libres",
     "lu": "lu",

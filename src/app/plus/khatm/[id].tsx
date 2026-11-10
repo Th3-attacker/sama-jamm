@@ -50,7 +50,9 @@ export default function EcranKhatm() {
       <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
         <TopBar retour titre={t('khatm.titre')} />
         <View style={{ padding: espace.espace5 }}>
-          {etat.etat === 'erreur' ? <Banner ton="erreur">{t('etats.erreurTexte')}</Banner> : <ActivityIndicator />}
+          {etat.etat === 'erreur' ? <Banner ton="erreur">{t('etats.erreurTexte')}</Banner> : null}
+          {etat.etat === 'introuvable' ? <Banner ton="erreur">{t('khatm.introuvable')}</Banner> : null}
+          {etat.etat === 'chargement' ? <ActivityIndicator /> : null}
         </View>
       </View>
     );

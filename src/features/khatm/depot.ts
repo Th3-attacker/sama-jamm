@@ -31,7 +31,7 @@ export type Khatm = {
   nom: string;
   intention: string | null;
   echeance: string | null;
-  createur: string;
+  createur: string | null;
   code: string;
 };
 export type Membre = { user_id: string; prenom: string | null };
@@ -96,8 +96,12 @@ export async function quitterKhatm(khatm: string): Promise<void> {
   if (error) throw error;
 }
 
+/** `introuvable` : khatm supprimé, ou je n'en suis plus membre (RLS ne le renvoie plus). */
 export type EtatKhatm =
-  { etat: 'chargement' } | { etat: 'erreur' } | { etat: 'pret'; khatm: Khatm; parts: Part[]; membres: Membre[] };
+  | { etat: 'chargement' }
+  | { etat: 'erreur' }
+  | { etat: 'introuvable' }
+  | { etat: 'pret'; khatm: Khatm; parts: Part[]; membres: Membre[] };
 
 /** Khatm, ses 30 juz et ses membres ; les juz se relisent à chaque changement (temps réel). */
 export function useKhatm(id: string): { etat: EtatKhatm; relire: () => void } {
@@ -115,6 +119,11 @@ export function useKhatm(id: string): { etat: EtatKhatm; relire: () => void } {
     ])
       .then(([k, p, m]) => {
         if (!actif) return;
+        // `.single()` sans ligne (code PGRST116) : le khatm n'est plus visible pour moi.
+        if (k.error?.code === 'PGRST116') {
+          setEtat({ etat: 'introuvable' });
+          return;
+        }
         if (k.error || p.error || m.error || !k.data) throw k.error ?? p.error ?? m.error ?? new Error('Khatm absent');
         setEtat({
           etat: 'pret',
