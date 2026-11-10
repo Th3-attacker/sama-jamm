@@ -76,7 +76,7 @@ export default function Favoris() {
               trad={traductionDe(item.sourate)[item.verset - 1]}
               onPress={() =>
                 router.push({
-                  pathname: '/lire/coran/[sourate]',
+                  pathname: '/coran/[sourate]',
                   params: { sourate: item.sourate, verset: item.verset, mode: 'verset' },
                 })
               }

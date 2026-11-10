@@ -184,7 +184,7 @@ export default function Recherche() {
               <CarteSourate
                 plat
                 sourate={item}
-                onPress={() => router.push({ pathname: '/lire/coran/[sourate]', params: { sourate: item.n } })}
+                onPress={() => router.push({ pathname: '/coran/[sourate]', params: { sourate: item.n } })}
               />
             ) : (
               <CarteVerset
@@ -196,7 +196,7 @@ export default function Recherche() {
                 trad={item.trad}
                 onPress={() =>
                   router.push({
-                    pathname: '/lire/coran/[sourate]',
+                    pathname: '/coran/[sourate]',
                     params: { sourate: item.sourate, verset: item.verset, mode: 'verset' },
                   })
                 }

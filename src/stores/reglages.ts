@@ -1,6 +1,7 @@
 // Réglages de l'utilisateur, gardés sur le téléphone (SQLite, clé-valeur). Rien n'est envoyé.
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
+import { migrerSonsAnciens } from './sonsMigration';
 
 import type { Langue } from '@/i18n/langues';
 import type { ChoixTheme } from '@/theme/veille';
@@ -96,7 +97,7 @@ const parDefaut: Donnees = {
   traduction: 'fr',
   lieu: null,
   rappels: tout(true),
-  sons: tout<Son>('doux'),
+  sons: tout<Son>('court'),
   rappelAvant: tout<number | null>(null),
   methode: 'mwl',
   ecoleAsr: 'standard',
@@ -149,7 +150,7 @@ export const useReglages = create<Donnees & Actions>()(
     }),
     {
       name: 'reglages',
-      version: 6,
+      version: 7,
       storage: createJSONStorage(() => stockage),
       // v1 → v2 : réglages de prière ; v2 → v3 : vibrations. Valeurs par défaut pour les clés absentes.
       // v3 → v4 : la taille de lecture par défaut passe du 3e au 2e cran ; une autre taille choisie est gardée.
@@ -163,6 +164,7 @@ export const useReglages = create<Donnees & Actions>()(
           if (migre.langue === 'wo') migre.langue = 'fr';
           if (migre.traduction === 'wo') migre.traduction = 'fr';
         }
+        if (version < 7) migre.sons = migrerSonsAnciens(migre.sons);
         return migre;
       },
       partialize: (s) => ({

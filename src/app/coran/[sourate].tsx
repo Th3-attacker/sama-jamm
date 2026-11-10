@@ -22,6 +22,7 @@ import {
 import { PageMushaf } from '@/features/lire/PageMushaf';
 import { cleJour } from '@/lib/dates';
 import { ecouter, ecouterPage, useLecteur } from '@/features/ecouter/lecteur';
+import { SondeBarre } from '@/features/ecouter/SondeBarre';
 import { PartageVerset, type VersetAPartager } from '@/features/lire/PartageVerset';
 import { ReglagesLecture } from '@/features/lire/ReglagesLecture';
 import { enChiffresArabes } from '@/lib/chiffres';
@@ -64,7 +65,7 @@ export default function EcranSourate() {
   const premier = (v?: string | string[]) => (Array.isArray(v) ? v[0] : v);
   const s = sourate(Number(premier(params.sourate)));
   const verset = Number(premier(params.verset));
-  const mode: ModeLecture = premier(params.mode) === 'verset' ? 'verset' : 'page';
+  const mode: ModeLecture = premier(params.mode) === 'page' ? 'page' : 'verset';
 
   if (!s) {
     // Adresse invalide ou sourate inconnue : jamais de texte tronqué.
@@ -82,12 +83,15 @@ export default function EcranSourate() {
 
   // `key` : changer de sourate repart d'un état neuf (mode verset, première page).
   return (
-    <LectureSourate
-      key={s.n}
-      s={s}
-      versetInitial={Number.isInteger(verset) && verset >= 1 && verset <= s.versets ? verset : 1}
-      modeInitial={mode}
-    />
+    <View style={{ flex: 1 }}>
+      <LectureSourate
+        key={s.n}
+        s={s}
+        versetInitial={Number.isInteger(verset) && verset >= 1 && verset <= s.versets ? verset : 1}
+        modeInitial={mode}
+      />
+      <SondeBarre />
+    </View>
   );
 }
 
@@ -128,7 +132,7 @@ function LectureSourate({
   const basculerFavori = (verset: number) => {
     if (basculer(s.n, verset)) afficher({ texte: t('lire.favoriAjoute'), icone: 'check' });
   };
-  // Vue mushaf (page justifiée) par défaut ; la bascule ouvre la lecture verset par verset.
+  // Lecture verset par verset par défaut ; la bascule ouvre la vue mushaf (page justifiée).
   const [modePage, setModePage] = useState(modeInitial === 'page');
   const [page, setPage] = useState(() => pageDe(s.n, versetInitial) ?? 1);
   // Page sur laquelle s'ouvre la liste des pages ; `page` suit ensuite la page affichée.
@@ -399,7 +403,7 @@ function LectureSourate({
                 pleineLargeur
                 onPress={() =>
                   router.replace({
-                    pathname: '/lire/coran/[sourate]',
+                    pathname: '/coran/[sourate]',
                     params: { sourate: sourates[s.n].n },
                   })
                 }>
@@ -412,7 +416,7 @@ function LectureSourate({
                 pleineLargeur
                 onPress={() =>
                   router.replace({
-                    pathname: '/lire/coran/[sourate]',
+                    pathname: '/coran/[sourate]',
                     params: { sourate: s.n - 1 },
                   })
                 }>

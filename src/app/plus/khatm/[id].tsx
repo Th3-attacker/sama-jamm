@@ -120,7 +120,7 @@ export default function EcranKhatm() {
     const debut = resume.monJuz ? reperes().debutJuz(resume.monJuz) : null;
     if (debut)
       router.push({
-        pathname: '/lire/coran/[sourate]',
+        pathname: '/coran/[sourate]',
         params: { sourate: debut.sourate, verset: debut.verset, mode: 'verset' },
       });
   };

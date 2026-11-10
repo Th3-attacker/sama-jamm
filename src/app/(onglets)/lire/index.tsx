@@ -9,6 +9,8 @@ import { usePremierKhatm } from '@/features/khatm/premier';
 import { CarteSourate } from '@/features/lire/CarteSourate';
 import { sourate, sourates, type Sourate } from '@/features/lire/coran';
 import { ContenuEcouter } from '@/features/ecouter/ContenuEcouter';
+import { juzParSourate } from '@/features/lire/decoupageJuz';
+import { ListeJuz } from '@/features/lire/ListeJuz';
 import { InterrupteurLireEcouter, type ModeLire } from '@/features/lire/InterrupteurLireEcouter';
 import { ListeSources } from '@/features/xassaides/ListeSources';
 import { useParametre } from '@/hooks/useParametre';
@@ -22,7 +24,7 @@ import { TopBar } from '@/ui/TopBar';
 import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
 function ouvrirSourate(n: number) {
-  router.push({ pathname: '/lire/coran/[sourate]', params: { sourate: n } });
+  router.push({ pathname: '/coran/[sourate]', params: { sourate: n } });
 }
 
 export default function Lire() {
@@ -35,6 +37,7 @@ export default function Lire() {
   const { styleColonne: colonne } = useLayout();
   const rubrique = useParametre('rubrique');
   const [mode, setMode] = useState<ModeLire>('lire');
+  const [vueCoran, setVueCoran] = useState<'sourates' | 'juz'>('sourates');
   const [onglet, setOnglet] = useState<'coran' | 'xassaides' | 'invocations'>(
     rubrique === 'xassaides' || rubrique === 'invocations' ? rubrique : 'coran',
   );
@@ -79,14 +82,25 @@ export default function Lire() {
             onChange={(id) => setOnglet(id === 'xassaides' || id === 'invocations' ? id : 'coran')}
           />
         ) : null}
+        {mode === 'lire' && onglet === 'coran' ? (
+          <SegmentedControl
+            label={t('lire.vue')}
+            options={[
+              { id: 'sourates', label: t('lire.vueSourates') },
+              { id: 'juz', label: t('lire.vueJuz') },
+            ]}
+            valeur={vueCoran}
+            onChange={(id) => setVueCoran(id === 'juz' ? 'juz' : 'sourates')}
+          />
+        ) : null}
       </View>
 
       {/* Un seul défilement jusqu'à la barre des onglets : reprise, khatm, puis les 114 sourates. */}
       <FlatList ref={defilement}
-        data={mode === 'lire' && onglet === 'coran' ? sourates : []}
+        data={mode === 'lire' && onglet === 'coran' && vueCoran === 'sourates' ? sourates : []}
         keyExtractor={(s: Sourate) => String(s.n)}
         renderItem={({ item }) => (
-          <CarteSourate plat enCours={repris?.n === item.n} sourate={item} onPress={() => ouvrirSourate(item.n)} />
+          <CarteSourate plat enCours={repris?.n === item.n} sourate={item} juzDebut={juzParSourate.get(item.n)} onPress={() => ouvrirSourate(item.n)} />
         )}
         ListHeaderComponent={
           mode === 'lire' && onglet === 'coran' ? (
@@ -97,7 +111,7 @@ export default function Lire() {
                   accessibilityLabel={`${t('lire.reprendre', { nom: repris.nom })}, ${t('accueil.versetSur', { n: position.verset, total: repris.versets })}`}
                   onPress={() =>
                     router.push({
-                      pathname: '/lire/coran/[sourate]',
+                      pathname: '/coran/[sourate]',
                       params: { sourate: repris.n, verset: position.verset, mode: position.mode },
                     })
                   }
@@ -146,7 +160,9 @@ export default function Lire() {
           ) : undefined
         }
         ListEmptyComponent={
-          mode === 'ecouter' ? (
+          mode === 'lire' && onglet === 'coran' && vueCoran === 'juz' ? (
+            <ListeJuz />
+          ) : mode === 'ecouter' ? (
             <ContenuEcouter
               onToutVoir={() => {
                 setMode('lire');

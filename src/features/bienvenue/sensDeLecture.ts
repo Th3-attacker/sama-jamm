@@ -17,9 +17,7 @@ export async function appliquerSensEtRedemarrer(langue: Langue): Promise<boolean
   I18nManager.allowRTL(rtl);
   I18nManager.forceRTL(rtl);
 
-  // En développement (Expo Go, build de dev), recharger le code ne change pas le sens de lecture :
-  // il faut fermer et rouvrir l'app.
-  if (__DEV__) return false;
+  // Recharge l'app pour appliquer le sens de lecture, y compris en développement (à vérifier sur un build de dev).
   try {
     await Updates.reloadAsync();
     return true;

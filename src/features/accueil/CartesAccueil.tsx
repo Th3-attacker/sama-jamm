@@ -47,10 +47,10 @@ function CarteReprendre() {
       onPress={() =>
         position && reprise
           ? router.push({
-              pathname: '/lire/coran/[sourate]',
+              pathname: '/coran/[sourate]',
               params: { sourate: reprise.n, verset: position.verset, mode: position.mode },
             })
-          : router.push({ pathname: '/lire/coran/[sourate]', params: { sourate: 1 } })
+          : router.push({ pathname: '/coran/[sourate]', params: { sourate: 1 } })
       }>
       <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.titre2, { color: couleurs.encre }]}>
         {reprise && position ? reprise.nom : t('accueil.premierJour')}

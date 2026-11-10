@@ -14,10 +14,12 @@ type Props = {
   plat?: boolean;
   /** Sourate où la lecture a été reprise : « en cours » remplace le lieu de révélation. */
   enCours?: boolean;
+  /** Numéro du juz qui commence dans cette sourate (vue Sourates) : repère « Juz N ». */
+  juzDebut?: number;
 };
 
 /** Carte d'une sourate dans la liste : médaillon, nom arabe, page, lieu de révélation, nombre de versets. */
-export function CarteSourate({ sourate, onPress, plat = false, enCours = false }: Props) {
+export function CarteSourate({ sourate, onPress, plat = false, enCours = false, juzDebut }: Props) {
   const { t, i18n } = useTranslation();
   const { couleurs, espace, rayon, typographie } = useTheme();
   // Planche « Lire en arabe » : le nom arabe devient le titre de la ligne (Amiri gras), sans doublon à l'autre bout.
@@ -25,7 +27,7 @@ export function CarteSourate({ sourate, onPress, plat = false, enCours = false }
   const page = pageDe(sourate.n, 1);
   const lieu = t(enCours ? 'lire.enCours' : sourate.mecquoise ? 'lire.mecquoise' : 'lire.medinoise');
   const meta = plat
-    ? [t('lire.versets', { count: sourate.versets }), lieu].join(' · ')
+    ? [t('lire.versets', { count: sourate.versets }), lieu, juzDebut ? t('lire.juz', { n: juzDebut }) : null].filter(Boolean).join(' · ')
     : [page ? `${t('lire.modePage')} ${page}` : null, lieu, t('lire.versets', { count: sourate.versets })]
         .filter(Boolean)
         .join(' · ');
