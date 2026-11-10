@@ -5,8 +5,8 @@ import { AppState } from 'react-native';
 
 import { stockageSession } from './stockageSession';
 
-export const SUPABASE_URL = 'https://jpevulpndavbwclfjfvf.supabase.co';
-export const SUPABASE_CLE_PUBLIQUE = 'sb_publishable_SLeOYcR16PR2YhgggeQHxQ_b5Zt_3o5';
+export const SUPABASE_URL = 'https://nfyrsfgtyxlbwivjpbjh.supabase.co';
+export const SUPABASE_CLE_PUBLIQUE = 'sb_publishable_phH5Yr1-pic5H6ZwBgPbTQ_vuERtc4O';
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_CLE_PUBLIQUE, {
   auth: {
