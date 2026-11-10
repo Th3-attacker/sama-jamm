@@ -9,7 +9,22 @@ import { CANAL_RAPPELS, creerCanaux } from '@/features/priere/notifications';
 import i18n from '@/i18n';
 import { supabase } from '@/services/supabase/client';
 
+import { creerRegistreCanaux } from './canaux';
 import type { Part } from './logique';
+
+/**
+ * Un seul canal temps réel par khatm, partagé par tous les écrans qui le lisent : en rouvrir un sous le même nom
+ * fait planter le second écran (Supabase refuse d'ajouter un écouteur à un canal déjà abonné).
+ */
+const canaux = creerRegistreCanaux((id, surChangement) => {
+  const canal = supabase
+    .channel(`khatm-${id}`)
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'khatm_parts', filter: `khatm_id=eq.${id}` }, surChangement)
+    .subscribe();
+  return () => {
+    void supabase.removeChannel(canal);
+  };
+});
 
 export type Khatm = {
   id: string;
@@ -119,15 +134,7 @@ export function useKhatm(id: string): { etat: EtatKhatm; relire: () => void } {
 
   useEffect(() => {
     if (!connecte || !id) return;
-    const canal = supabase
-      .channel(`khatm-${id}`)
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'khatm_parts', filter: `khatm_id=eq.${id}` }, () =>
-        setVersion((v) => v + 1),
-      )
-      .subscribe();
-    return () => {
-      void supabase.removeChannel(canal);
-    };
+    return canaux.abonner(id, () => setVersion((v) => v + 1));
   }, [id, connecte]);
 
   return { etat, relire: () => setVersion((v) => v + 1) };
