@@ -10,7 +10,10 @@ import {
   programmerRappelKhatm,
   quitterKhatm,
   rendreJuz,
+  retirerMembre,
+  signalerMembre,
   useKhatm,
+  type Membre,
 } from '@/features/khatm/depot';
 import { resumeKhatm, vuePart, type VuePart } from '@/features/khatm/logique';
 import { inviter } from '@/features/khatm/partager';
@@ -57,7 +60,40 @@ export default function EcranKhatm() {
       </View>
     );
   }
-  const { khatm, parts } = etat;
+  const { khatm, parts, membres } = etat;
+  const suisCreateur = moi !== null && khatm.createur === moi;
+
+  const signaler = (cible: Membre) =>
+    Alert.alert(t('khatm.signalerTitre'), t('khatm.signalerTexte'), [
+      { text: t('commun.annuler'), style: 'cancel' },
+      {
+        text: t('khatm.signalerAction'),
+        style: 'destructive',
+        onPress: () =>
+          signalerMembre(khatm.id, cible.user_id)
+            .then(() => setMessage(t('khatm.signale')))
+            .catch((e: unknown) => {
+              console.warn('Signalement impossible', e);
+              setMessage(t('etats.erreurTexte'));
+            }),
+      },
+    ]);
+
+  const retirer = (cible: Membre) =>
+    Alert.alert(t('khatm.retirerTitre'), t('khatm.retirerTexte'), [
+      { text: t('commun.annuler'), style: 'cancel' },
+      {
+        text: t('khatm.retirerAction'),
+        style: 'destructive',
+        onPress: () =>
+          retirerMembre(khatm.id, cible.user_id)
+            .then(() => relire())
+            .catch((e: unknown) => {
+              console.warn('Retrait impossible', e);
+              setMessage(t('etats.erreurTexte'));
+            }),
+      },
+    ]);
 
   const agir = async (f: () => Promise<boolean>, refus: string) => {
     setMessage(null);
@@ -228,6 +264,33 @@ export default function EcranKhatm() {
         ) : (
           <Banner ton="info">{t('khatm.toucherLibre')}</Banner>
         )}
+        {/* Membres : chacun peut signaler un autre membre ; le créateur peut en retirer un. */}
+        <View style={{ gap: espace.espace2 }}>
+          <Text accessibilityRole="header" style={[typographie.libelle, { color: couleurs.encre2 }]}>
+            {t('khatm.membres')}
+          </Text>
+          {membres.map((m) => {
+            const estMoi = m.user_id === moi;
+            return (
+              <View key={m.user_id} style={[styles.ligneMembre, { gap: espace.espace2 }]}>
+                <Text style={[typographie.corps, styles.nomMembre, { color: couleurs.encre }]} numberOfLines={1}>
+                  {estMoi ? t('khatm.moi') : (m.prenom ?? t('khatm.membreAnonyme'))}
+                </Text>
+                {!estMoi ? (
+                  <Pressable accessibilityRole="button" accessibilityLabel={t('khatm.signaler')} onPress={() => signaler(m)} hitSlop={8}>
+                    <Text style={[typographie.legende, { color: couleurs.emeraude }]}>{t('khatm.signaler')}</Text>
+                  </Pressable>
+                ) : null}
+                {suisCreateur && !estMoi ? (
+                  <Pressable accessibilityRole="button" accessibilityLabel={t('khatm.retirer')} onPress={() => retirer(m)} hitSlop={8}>
+                    <Text style={[typographie.legende, { color: couleurs.encre2 }]}>{t('khatm.retirer')}</Text>
+                  </Pressable>
+                ) : null}
+              </View>
+            );
+          })}
+        </View>
+
         <Button
           variant="discret"
           pleineLargeur
@@ -266,5 +329,7 @@ const styles = StyleSheet.create({
   trad: { fontSize: 16, lineHeight: 24 },
   legende: { flexDirection: 'row', flexWrap: 'wrap' },
   legendeLigne: { flexDirection: 'row', alignItems: 'center' },
+  ligneMembre: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', minHeight: 44 },
+  nomMembre: { flexShrink: 1 },
   pastille: { width: 12, height: 12, borderRadius: 3 },
 });

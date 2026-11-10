@@ -81,6 +81,18 @@ export async function quitterKhatm(khatm: string): Promise<void> {
   if (error) throw error;
 }
 
+/** Signale un autre membre pour examen (enregistré côté serveur, sans retrait automatique). */
+export async function signalerMembre(khatm: string, cible: string): Promise<void> {
+  const { error } = await supabase.rpc('signaler_membre', { p_khatm: khatm, p_cible: cible });
+  if (error) throw error;
+}
+
+/** Retire un membre ; réservé au créateur du khatm (contrôlé côté serveur). */
+export async function retirerMembre(khatm: string, cible: string): Promise<void> {
+  const { error } = await supabase.rpc('retirer_membre', { p_khatm: khatm, p_cible: cible });
+  if (error) throw error;
+}
+
 /** `introuvable` : khatm supprimé, ou je n'en suis plus membre (RLS ne le renvoie plus). */
 export type EtatKhatm =
   | { etat: 'chargement' }
