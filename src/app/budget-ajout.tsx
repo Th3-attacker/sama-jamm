@@ -217,7 +217,7 @@ const styles = StyleSheet.create({
   pastille: { height: 32, borderRadius: 999, justifyContent: 'center' },
   contenu: { flexGrow: 1 },
   montant: { alignItems: 'center' },
-  grandMontant: { fontSize: 56, lineHeight: 60, alignSelf: 'stretch' },
+  grandMontant: { fontSize: 56, lineHeight: 60, alignSelf: 'stretch', textAlign: 'center' },
   info: { fontSize: 14, lineHeight: 20, textAlign: 'center' },
   puces: { flexDirection: 'row', flexWrap: 'wrap' },
   // Sans lineHeight (voir TextField) : le texte reste centré dans le champ, même en arabe.

@@ -4,6 +4,7 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { calculerHoraires } from '@/features/priere/horaires';
 import { useOptionsCalcul } from '@/features/priere/useOptionsCalcul';
+import { fuseauDuLieu } from '@/features/priere/villes';
 import { useMaintenant } from '@/hooks/useMaintenant';
 import { formatHeure } from '@/lib/dates';
 import { AJUSTEMENT_MAX, methodes, prieres, useReglages, type EcoleAsr, type Methode } from '@/stores/reglages';
@@ -28,6 +29,7 @@ export default function MethodeDeCalcul() {
   const definirEcoleAsr = useReglages((s) => s.definirEcoleAsr);
   const ajuster = useReglages((s) => s.ajuster);
   const lieu = useReglages((s) => s.lieu);
+  const fuseau = fuseauDuLieu(lieu);
   const options = useOptionsCalcul();
   const maintenant = useMaintenant();
   // Heure du jour de chaque prière, avec les ajustements en cours.
@@ -93,7 +95,7 @@ export default function MethodeDeCalcul() {
                   <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.nom, { color: couleurs.encre }]}>
                     {nom}
                     {horaires ? (
-                      <Text style={[styles.heure, { color: couleurs.encre3 }]}>{` · ${formatHeure(horaires[p])}`}</Text>
+                      <Text style={[styles.heure, { color: couleurs.encre3 }]}>{` · ${formatHeure(horaires[p], fuseau)}`}</Text>
                     ) : null}
                   </Text>
                   <IconButton

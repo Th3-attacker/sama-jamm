@@ -4,6 +4,8 @@ import { I18nManager, Pressable, StyleSheet, Text, View } from 'react-native';
 import Svg, { Circle, Line } from 'react-native-svg';
 
 import { echelleMax } from '@/theme/typographie';
+
+import { fractionFrise } from './positionsFrise';
 import { useTheme } from '@/theme/useTheme';
 import type { PriereArc } from '@/ui/DayArc';
 
@@ -37,7 +39,7 @@ export function CarteHeros({ nom, heure, dans, prieres }: Props) {
 
   const premiere = prieres[0]?.minutes ?? 0;
   const derniere = prieres[prieres.length - 1]?.minutes ?? 1;
-  const x = (m: number) => X_DEBUT + ((X_FIN - X_DEBUT) * (m - premiere)) / Math.max(1, derniere - premiere);
+  const x = (m: number) => X_DEBUT + (X_FIN - X_DEBUT) * fractionFrise(m, premiere, derniere);
   const suivante = prieres.find((p) => p.etat === 'prochaine');
   // Trait plein jusqu'à la prochaine prière ; toutes passées : jusqu'au bout.
   const finTrait = suivante ? x(suivante.minutes) : LARGEUR - 4;
@@ -70,10 +72,11 @@ export function CarteHeros({ nom, heure, dans, prieres }: Props) {
           <Line x1={4} y1={10} x2={finTrait} y2={10} stroke={surEmeraude} strokeWidth={2.5} strokeLinecap="round" />
           {prieres.map((p) => {
             const cx = x(p.minutes);
+            // Fond de la carte = émeraude : le remplissage doit être clair (surEmeraude) pour que les points restent visibles.
             if (p.etat === 'prochaine')
-              return <Circle key={p.nom} cx={cx} cy={10} r={7} fill={couleurs.emeraude} stroke={surEmeraude} strokeWidth={2.5} />;
+              return <Circle key={p.nom} cx={cx} cy={10} r={7} fill={surEmeraude} stroke={surEmeraude} strokeWidth={2.5} />;
             if (p.etat === 'passee') return <Circle key={p.nom} cx={cx} cy={10} r={4.5} fill={surEmeraude} />;
-            return <Circle key={p.nom} cx={cx} cy={10} r={4.5} fill={couleurs.emeraude} stroke={surEmeraude} strokeWidth={1.5} />;
+            return <Circle key={p.nom} cx={cx} cy={10} r={4.5} fill={couleurs.emeraudeAplat} stroke={surEmeraude} strokeWidth={1.5} />;
           })}
         </Svg>
       </View>

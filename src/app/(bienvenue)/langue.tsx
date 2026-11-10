@@ -6,15 +6,14 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import {
-  appliquerSensEtRedemarrer,
-  demandeRedemarrage,
+  appliquerSensLecture,
+  sensChange,
 } from "@/features/bienvenue/sensDeLecture";
 import { estLangueProposee, type Langue } from "@/i18n/langues";
 import { useReglages } from "@/stores/reglages";
 import { echelleMax } from "@/theme/typographie";
 import { useTheme } from "@/theme/useTheme";
 import { Banner } from "@/ui/Banner";
-import { Dialog } from "@/ui/Dialog";
 import { themes } from "@/theme/tokens.generated";
 import { Logo } from "@/ui/Logo";
 import { PageDots } from "@/ui/PageDots";
@@ -31,8 +30,8 @@ export default function EcranLangue() {
   const langueEnregistree = useReglages((s) => s.langue);
   const definirLangue = useReglages((s) => s.definirLangue);
   const definirTraduction = useReglages((s) => s.definirTraduction);
-  const [confirmation, setConfirmation] = useState(false);
-  const [redemarrageManuel, setRedemarrageManuel] = useState(false);
+  // Vrai après un changement de sens de lecture : la mise en page s'applique à la prochaine ouverture.
+  const [sensDiffere, setSensDiffere] = useState(false);
 
   const choisie: Langue =
     langueEnregistree ?? (estLangueProposee(i18n.language) ? i18n.language : "fr");
@@ -45,26 +44,14 @@ export default function EcranLangue() {
     definirLangue(langue);
     // La traduction du Coran suit la langue ; en interface arabe, le français par défaut.
     definirTraduction(langue === "ar" ? "fr" : langue);
+    // Le sens de lecture est enregistré pour la prochaine ouverture ; la langue, elle, change tout de suite.
+    appliquerSensLecture(langue);
+    setSensDiffere(sensChange(langue));
   };
 
   const continuer = () => {
     if (!langueEnregistree) choisir(choisie);
-    // Après l'annonce du redémarrage manuel, on peut poursuivre : le sens s'appliquera à la réouverture.
-    if (demandeRedemarrage(choisie) && !redemarrageManuel)
-      setConfirmation(true);
-    else router.push("/position");
-  };
-
-  const redemarrer = () => {
-    setConfirmation(false);
-    appliquerSensEtRedemarrer(choisie)
-      .then((ok) => {
-        if (!ok) setRedemarrageManuel(true);
-      })
-      .catch((erreur: unknown) => {
-        console.error("Changement de sens de lecture impossible", erreur);
-        setRedemarrageManuel(true);
-      });
+    router.push("/position");
   };
 
   return (
@@ -168,9 +155,9 @@ export default function EcranLangue() {
         })}
       </View>
 
-      {redemarrageManuel ? (
+      {sensDiffere ? (
         <View style={{ marginTop: espace.espace4 }}>
-          <Banner ton="info">{t("bienvenue.redemarrerManuel")}</Banner>
+          <Banner ton="info">{t("bienvenue.sensProchaineOuverture")}</Banner>
         </View>
       ) : null}
 
@@ -202,18 +189,6 @@ export default function EcranLangue() {
         </Pressable>
       </View>
 
-      <Dialog
-        ouvert={confirmation}
-        titre={t("bienvenue.redemarrer")}
-        confirmer={t("bienvenue.redemarrer")}
-        icone="globe"
-        onConfirmer={redemarrer}
-        onAnnuler={() => setConfirmation(false)}
-      >
-        {choisie === "ar"
-          ? t("bienvenue.langueRedemarrage")
-          : t("bienvenue.langueRedemarrageLtr")}
-      </Dialog>
     </SafeAreaView>
   );
 }

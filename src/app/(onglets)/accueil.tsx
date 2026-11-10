@@ -6,6 +6,7 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { proverbeDuJour } from '@/features/accueil/sagesse';
 import { calculerHoraires, prochainePriere } from '@/features/priere/horaires';
 import { useOptionsCalcul } from '@/features/priere/useOptionsCalcul';
+import { fuseauDuLieu } from '@/features/priere/villes';
 import { BandeauVeille } from '@/features/priere/veille';
 import { useMaintenant } from '@/hooks/useMaintenant';
 import { cleJour, formatDuree, formatHegirien, formatHeure, formatJour, formatMois, minutesDuJour } from '@/lib/dates';
@@ -53,21 +54,23 @@ export default function Accueil() {
 
   const arc = useMemo(() => {
     if (!lieu) return null;
+    // Heures affichées dans le fuseau de la ville choisie (sinon celui du téléphone).
+    const fuseau = fuseauDuLieu(lieu);
     const h = calculerHoraires(lieu, maintenant, options);
     const suivante = prochainePriere(lieu, maintenant, options);
     const liste: PriereArc[] = prieres.map((p) => ({
       nom: t(`priere.noms.${p}`),
-      heure: formatHeure(h[p]),
-      minutes: minutesDuJour(h[p]),
+      heure: formatHeure(h[p], fuseau),
+      minutes: minutesDuJour(h[p], fuseau),
       etat: h[p] <= maintenant ? 'passee' : p === suivante.nom ? 'prochaine' : 'a-venir',
     }));
     return {
       liste,
-      lever: minutesDuJour(h.lever),
-      coucher: minutesDuJour(h.coucher),
+      lever: minutesDuJour(h.lever, fuseau),
+      coucher: minutesDuJour(h.coucher, fuseau),
       dans: formatDuree((suivante.heure.getTime() - maintenant.getTime()) / 60_000),
       nom: t(`priere.noms.${suivante.nom}`),
-      heure: formatHeure(suivante.heure),
+      heure: formatHeure(suivante.heure, fuseau),
     };
   }, [lieu, maintenant, options, t]);
 

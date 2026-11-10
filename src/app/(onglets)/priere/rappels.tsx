@@ -6,6 +6,7 @@ import { Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-n
 
 import { calculerHoraires } from '@/features/priere/horaires';
 import { useOptionsCalcul } from '@/features/priere/useOptionsCalcul';
+import { fuseauDuLieu } from '@/features/priere/villes';
 import { formatHeure } from '@/lib/dates';
 import { prieres, sons, useReglages, type NomPriere } from '@/stores/reglages';
 import { echelleMax } from '@/theme/typographie';
@@ -29,6 +30,7 @@ export default function AppelEtRappels() {
   const [ouverte, setOuverte] = useState<NomPriere | null>(null);
   const [alarmesRefusees, setAlarmesRefusees] = useState(false);
   const lieu = useReglages((s) => s.lieu);
+  const fuseau = fuseauDuLieu(lieu);
   const methode = useReglages((s) => s.methode);
   const ecoleAsr = useReglages((s) => s.ecoleAsr);
   const options = useOptionsCalcul();
@@ -73,7 +75,7 @@ export default function AppelEtRappels() {
         <View style={[styles.carte, { backgroundColor: couleurs.surface, borderColor: couleurs.ligne, borderRadius: rayon.rayonCarte }]}>
           {prieres.map((p, i) => {
             const nom = t(`priere.noms.${p}`);
-            const heure = horaires ? ` · ${formatHeure(horaires[p])}` : '';
+            const heure = horaires ? ` · ${formatHeure(horaires[p], fuseau)}` : '';
             return (
               <View
                 key={p}

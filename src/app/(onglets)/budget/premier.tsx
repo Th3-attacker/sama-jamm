@@ -7,7 +7,7 @@ import { SaisieInvalide } from '@/features/budget/depot';
 import { postesCochesParDefaut, postesDeDepart } from '@/features/budget/enveloppesDeDepart';
 import { FormulaireDevise } from '@/features/budget/FormulaireDevise';
 import { budgetModifie, depotBudget } from '@/features/budget/useBudget';
-import { devisesIntegrees, type Devise } from '@/lib/montant';
+import { MRU, XOF, type Devise } from '@/lib/montant';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { Banner } from '@/ui/Banner';
@@ -26,13 +26,14 @@ export default function PremierBudget() {
   const { couleurs, espace, typographie } = useTheme();
   const marge = useMargeBasse();
   const insets = useSafeAreaInsets();
-  const [codeDevise, setCodeDevise] = useState('XOF');
+  // Devise par défaut : l'ouguiya (MRU). Le F CFA reste proposé en second, les devises personnelles s'ajoutent.
+  const [codeDevise, setCodeDevise] = useState(MRU.code);
   const [jourPaie, setJourPaie] = useState('');
   // Les plafonds se règlent ensuite, au jour de paie : ici on ne choisit que les enveloppes à garder.
   const [gardees, setGardees] = useState<readonly string[]>(postesCochesParDefaut);
   const [envoi, setEnvoi] = useState(false);
   const [erreurGenerale, setErreurGenerale] = useState(false);
-  const [devises, setDevises] = useState<readonly Devise[]>(devisesIntegrees);
+  const [devises, setDevises] = useState<readonly Devise[]>([MRU, XOF]);
   const [ajoutDevise, setAjoutDevise] = useState(false);
 
   // Devises personnelles déjà enregistrées (ajoutées lors d'un essai précédent) : la liste intégrée en attendant.

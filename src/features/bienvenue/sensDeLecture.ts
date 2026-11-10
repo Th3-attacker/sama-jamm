@@ -1,29 +1,18 @@
-import * as Updates from 'expo-updates';
 import { I18nManager } from 'react-native';
 
 import type { Langue } from '@/i18n/langues';
 
-/** Vrai si la langue demande un autre sens de lecture que celui de l'interface actuelle. */
-export function demandeRedemarrage(langue: Langue): boolean {
+/**
+ * Vrai si la langue demande un autre sens de lecture que celui de l'interface en cours.
+ * React Native n'inverse la mise en page qu'au lancement suivant : l'app affiche alors un message, sans redémarrer.
+ */
+export function sensChange(langue: Langue): boolean {
   return (langue === 'ar') !== I18nManager.isRTL;
 }
 
-/**
- * Applique le sens de lecture puis redémarre l'app.
- * Renvoie false si le redémarrage automatique est impossible : l'utilisateur doit rouvrir l'app.
- */
-export async function appliquerSensEtRedemarrer(langue: Langue): Promise<boolean> {
+/** Enregistre le sens de lecture voulu ; il prend effet à la prochaine ouverture de l'app. */
+export function appliquerSensLecture(langue: Langue): void {
   const rtl = langue === 'ar';
   I18nManager.allowRTL(rtl);
   I18nManager.forceRTL(rtl);
-
-  // Recharge l'app pour appliquer le sens de lecture, y compris en développement (à vérifier sur un build de dev).
-  try {
-    await Updates.reloadAsync();
-    return true;
-  } catch (erreur: unknown) {
-    // Rechargement indisponible (app installée sans canal de mise à jour) : redémarrage manuel.
-    console.warn('Redémarrage automatique impossible', erreur);
-    return false;
-  }
 }

@@ -1,3 +1,4 @@
+import { DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router';
 import { NativeTabs } from 'expo-router/native-tabs';
 import { useTranslation } from 'react-i18next';
 import { Platform, View } from 'react-native';
@@ -24,7 +25,7 @@ export const ErrorBoundary = ErreurDeRoute;
  */
 export default function OngletsLayout() {
   const { t } = useTranslation();
-  const { couleurs } = useTheme();
+  const { couleurs, nom } = useTheme();
   // Badge de Plus : khatms en cours (masqué hors connexion ou sans khatm).
   const khatmsEnCours = useKhatmsEnCours();
   const pleinEcran = usePleinEcran((s) => s.actif);
@@ -38,7 +39,10 @@ export default function OngletsLayout() {
   const barreLaterale = Platform.OS === 'ios' && largeur !== 'compacte';
   const tailleLibelle = Platform.OS === 'ios' ? miseEnPage.libelleOngletIos : miseEnPage.libelleOngletAndroid;
 
+  // iOS 26 : le verre de la barre prend son fond du thème de navigation (et non de backgroundColor). Sans
+  // ce thème sombre, la barre reste claire en mode Nuit puis devient transparente.
   return (
+    <ThemeProvider value={nom === 'jour' ? DefaultTheme : DarkTheme}>
     <View style={{ flex: 1 }}>
       <NativeTabs
         tintColor={couleurs.emeraude}
@@ -117,5 +121,6 @@ export default function OngletsLayout() {
         </View>
       ) : null}
     </View>
+    </ThemeProvider>
   );
 }

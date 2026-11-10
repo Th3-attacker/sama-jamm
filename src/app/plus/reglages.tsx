@@ -4,8 +4,8 @@ import { useTranslation } from "react-i18next";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
 import {
-  appliquerSensEtRedemarrer,
-  demandeRedemarrage,
+  appliquerSensLecture,
+  sensChange,
 } from "@/features/bienvenue/sensDeLecture";
 import { authentifier, verrouPossible } from "@/features/budget/verrou";
 import { depotBudget } from "@/features/budget/useBudget";
@@ -21,7 +21,6 @@ import { useTheme } from "@/theme/useTheme";
 import type { ChoixTheme } from "@/theme/veille";
 import { Banner } from "@/ui/Banner";
 import { BottomSheet } from "@/ui/BottomSheet";
-import { Button } from "@/ui/Button";
 import { ListGroup } from "@/ui/ListGroup";
 import { ListItem } from "@/ui/ListItem";
 import { RadioGroup } from "@/ui/RadioGroup";
@@ -96,8 +95,8 @@ export default function Reglages() {
     });
   };
   const [feuilleLangue, setFeuilleLangue] = useState(false);
-  const [aRedemarrer, setARedemarrer] = useState<Langue | null>(null);
-  const [redemarrageManuel, setRedemarrageManuel] = useState(false);
+  // Vrai après un changement de sens de lecture : la mise en page s'applique à la prochaine ouverture.
+  const [sensDiffere, setSensDiffere] = useState(false);
 
   const langue: Langue =
     langueEnregistree ?? (estLangueProposee(i18n.language) ? i18n.language : "fr");
@@ -113,32 +112,11 @@ export default function Reglages() {
       setFeuilleLangue(false);
       return;
     }
-    // Changement de sens de lecture : confirmation dans la même feuille.
-    // Une Modal ouverte pendant la fermeture de la feuille native bloquait l'écran.
-    if (demandeRedemarrage(id)) {
-      setARedemarrer(id);
-      return;
-    }
+    // La langue change tout de suite ; le sens de lecture s'applique à la prochaine ouverture.
     setFeuilleLangue(false);
     appliquerLangue(id);
-  };
-
-  const fermerFeuille = () => {
-    setFeuilleLangue(false);
-    setARedemarrer(null);
-  };
-
-  const redemarrer = (choix: Langue) => {
-    fermerFeuille();
-    appliquerLangue(choix);
-    appliquerSensEtRedemarrer(choix)
-      .then((ok) => {
-        if (!ok) setRedemarrageManuel(true);
-      })
-      .catch((erreur: unknown) => {
-        console.error("Changement de sens de lecture impossible", erreur);
-        setRedemarrageManuel(true);
-      });
+    appliquerSensLecture(id);
+    setSensDiffere(sensChange(id));
   };
 
   return (
@@ -151,8 +129,8 @@ export default function Reglages() {
           gap: espace.espace6,
         }}
       >
-        {redemarrageManuel ? (
-          <Banner ton="info">{t("bienvenue.redemarrerManuel")}</Banner>
+        {sensDiffere ? (
+          <Banner ton="info">{t("bienvenue.sensProchaineOuverture")}</Banner>
         ) : null}
 
         <View style={{ gap: espace.espace3 }}>
@@ -338,44 +316,15 @@ export default function Reglages() {
       <BottomSheet
         ouvert={feuilleLangue}
         titre={t("reglages.langueApp")}
-        onFermer={fermerFeuille}
+        onFermer={() => setFeuilleLangue(false)}
       >
-        {aRedemarrer ? (
-          <View style={{ gap: espace.espace4 }}>
-            <Text
-              maxFontSizeMultiplier={echelleMax.courant}
-              style={[typographie.corps, { color: couleurs.encre }]}
-            >
-              {aRedemarrer === "ar"
-                ? t("bienvenue.langueRedemarrage")
-                : t("bienvenue.langueRedemarrageLtr")}
-            </Text>
-            <View style={{ gap: espace.espace2 }}>
-              <Button
-                pleineLargeur
-                icone="globe"
-                onPress={() => redemarrer(aRedemarrer)}
-              >
-                {t("bienvenue.redemarrer")}
-              </Button>
-              <Button
-                variant="discret"
-                pleineLargeur
-                onPress={() => setARedemarrer(null)}
-              >
-                {t("commun.annuler")}
-              </Button>
-            </View>
-          </View>
-        ) : (
-          <RadioGroup
-            label={t("bienvenue.langueQuestion")}
-            encadre={false}
-            options={languesProposees.map((id) => ({ id, label: NOMS_LANGUES[id] }))}
-            valeur={langue}
-            onChange={choisirLangue}
-          />
-        )}
+        <RadioGroup
+          label={t("bienvenue.langueQuestion")}
+          encadre={false}
+          options={languesProposees.map((id) => ({ id, label: NOMS_LANGUES[id] }))}
+          valeur={langue}
+          onChange={choisirLangue}
+        />
       </BottomSheet>
     </View>
   );

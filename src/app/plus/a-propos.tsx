@@ -1,18 +1,16 @@
 import Constants from 'expo-constants';
+import { router } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Linking, Platform, ScrollView, Share, StyleSheet, Text, View } from 'react-native';
+import { Linking, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import {
-  EMAIL_CONTACT,
   URL_AIDE,
   URL_CONDITIONS,
   URL_CONFIDENTIALITE,
   URL_STORE_ANDROID,
   URL_STORE_IOS,
 } from '@/constants/liens';
-import { journalDesErreurs } from '@/features/erreur/journal';
-import { journalEnTexte } from '@/lib/journalErreurs';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { BottomSheet } from '@/ui/BottomSheet';
@@ -86,26 +84,11 @@ export default function APropos() {
         </ListGroup>
 
         <ListGroup>
-          {EMAIL_CONTACT ? (
-            <ListItem icone="user" titre={t('aPropos.contact')} onPress={() => ouvrir(`mailto:${EMAIL_CONTACT}`)} />
-          ) : null}
+          <ListItem icone="user" titre={t('aide.titre')} onPress={() => router.push('/plus/aide')} />
           <ListItem icone="lock" titre={t('aPropos.confidentialite')} onPress={() => ouvrir(URL_CONFIDENTIALITE)} />
           <ListItem icone="book" titre={t('aPropos.conditions')} onPress={() => ouvrir(URL_CONDITIONS)} />
           <ListItem icone="info" titre={t('aPropos.aide')} onPress={() => ouvrir(URL_AIDE)} />
           {urlStore ? <ListItem icone="heart" titre={t('aPropos.noter')} onPress={() => ouvrir(urlStore)} /> : null}
-          <ListItem
-            icone="share"
-            titre={t('aPropos.signaler')}
-            sousTitre={t('aPropos.signalerAide')}
-            onPress={() => {
-              const journal = journalDesErreurs();
-              const message =
-                journal.length > 0
-                  ? journalEnTexte(journal, t('aPropos.signalerEntete'))
-                  : `${t('aPropos.signalerEntete')}\n${t('aPropos.aucuneErreur')}`;
-              Share.share({ message }).catch((erreur: unknown) => console.warn('Partage impossible', erreur));
-            }}
-          />
         </ListGroup>
       </ScrollView>
 

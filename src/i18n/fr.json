@@ -2,6 +2,10 @@
   "commun": {
     "retour": "Retour",
     "fermer": "Fermer",
+    "effacer": "Effacer",
+    "choisirDate": "Choisir une date",
+    "moisPrecedent": "Mois précédent",
+    "moisSuivant": "Mois suivant",
     "annuler": "Annuler",
     "enregistrer": "Enregistrer",
     "continuer": "Continuer",
@@ -93,6 +97,7 @@
     "langueRedemarrageLtr": "L’interface va repasser de gauche à droite : l’app va redémarrer.",
     "redemarrer": "Redémarrer",
     "redemarrerManuel": "Fermez puis rouvrez Sama Jàmm pour terminer le changement de langue.",
+    "sensProchaineOuverture": "La langue change tout de suite. La mise en page arabe (de droite à gauche) s'appliquera à la prochaine ouverture de Sama Jàmm.",
     "positionTexte2": "Elle n’est envoyée à aucun serveur. Sans réseau, les horaires restent justes.",
     "arcExemple": "L’arc du jour : les prières posées sur la course du soleil.",
     "apercuNotification": "Aperçu de la notification",
@@ -702,6 +707,27 @@
     "deviseDetail": "Changer la devise du budget, ou ajouter la vôtre",
     "compteOption": "Compte, en option"
   },
+  "aide": {
+    "titre": "Aide et contact",
+    "ecrire": "Écrire à l'équipe",
+    "delaiReponse": "Nous répondons sous quelques jours.",
+    "copier": "Copier l'adresse",
+    "copie": "Adresse copiée",
+    "signaler": "Signaler un problème",
+    "typeProbleme": "Type de problème",
+    "types": {
+      "horaires": "Horaires faux",
+      "arabe": "Texte arabe ou wolof",
+      "bug": "Bug",
+      "autre": "Autre"
+    },
+    "descriptionLibelle": "Description du problème",
+    "descriptionAide": "Ce qui s'est passé, et sur quel écran.",
+    "envoyer": "Envoyer",
+    "envoiImpossible": "Envoi impossible. Réessayez ou copiez l'adresse.",
+    "sujet": "Sama Jàmm · {{type}}",
+    "pied": "Sans compte, sans publicité."
+  },
   "aPropos": {
     "titre": "À propos",
     "texte": "Sama Jàmm est une app gratuite, sans publicité, pour lire, écouter, prier et tenir le budget du foyer.",
@@ -724,7 +750,7 @@
     "version": "Sama Jàmm · version {{version}}",
     "confidentialite": "Politique de confidentialité",
     "conditions": "Conditions d’utilisation",
-    "aide": "Aide et contact",
+    "aide": "Centre d’aide",
     "groupes": {
       "coran": {
         "titre": "Texte du Coran",

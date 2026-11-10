@@ -6,7 +6,6 @@ import { ScrollView, StyleSheet, View } from 'react-native';
 import { SaisieInvalide } from '@/features/budget/depot';
 import {
   lireSaisieDate,
-  masqueDate,
   PERSONNE_MAX,
   SENS_DETTE,
   versSaisieDate,
@@ -20,6 +19,7 @@ import { useParametre } from '@/hooks/useParametre';
 import { useTheme } from '@/theme/useTheme';
 import { Banner } from '@/ui/Banner';
 import { Button } from '@/ui/Button';
+import { CalendrierDate } from '@/ui/CalendrierDate';
 import { SegmentedControl } from '@/ui/SegmentedControl';
 import { TextField } from '@/ui/TextField';
 import { useToast } from '@/ui/Toast';
@@ -128,13 +128,11 @@ export default function NouvelleDette() {
             placeholder="0"
             erreur={montant !== null && !montantOk ? t('budget.montantInvalide') : undefined}
           />
-          <TextField
+          <CalendrierDate
             label={t('dettes.echeance')}
             placeholder={t('dettes.datePlaceholder')}
             valeur={valEcheance}
-            onChange={(v) => setEcheance(masqueDate(v))}
-            clavier="number-pad"
-            maxLength={10}
+            onChange={setEcheance}
             erreur={!echeanceOk ? t('dettes.dateInvalide') : undefined}
           />
           <TextField

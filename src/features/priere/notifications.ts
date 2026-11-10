@@ -14,6 +14,7 @@ import { stockage } from '@/stores/stockage';
 
 import { comparerFenetre } from './comparaison';
 import { construireFenetre, type Planifiee } from './fenetre';
+import { fuseauDuLieu } from './villes';
 
 export const URL_PRIERE = 'samajamm://priere';
 /** Rappel de zakat (programmé par features/budget/rappelZakat). */
@@ -121,7 +122,8 @@ function contenu(n: Planifiee): Notifications.NotificationContentInput {
     };
   }
   return {
-    title: t('notifications.appelTitre', { priere, heure: formatHeure(n.date) }),
+    // Heure du texte dans le fuseau de la ville choisie ; l'instant programmé ne change pas.
+    title: t('notifications.appelTitre', { priere, heure: formatHeure(n.date, fuseauDuLieu(useReglages.getState().lieu)) }),
     body: n.priere === 'fajr' ? t('notifications.fajrTexte') : t('notifications.appelTexte'),
     sound: sonDeNotification(n.son, n.priere),
     data: { url: URL_PRIERE },

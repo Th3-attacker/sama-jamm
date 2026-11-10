@@ -5,6 +5,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { ChoixVille } from '@/features/priere/ChoixVille';
 import { calculerHoraires, prochainePriere } from '@/features/priere/horaires';
+import { fuseauDuLieu } from '@/features/priere/villes';
 import { useOptionsCalcul } from '@/features/priere/useOptionsCalcul';
 import { BandeauVeille } from '@/features/priere/veille';
 import { useMaintenant } from '@/hooks/useMaintenant';
@@ -14,7 +15,7 @@ import { echelleMax } from '@/theme/typographie';
 import { useLayout } from '@/theme/useLayout';
 import { useTheme } from '@/theme/useTheme';
 import { Banner } from '@/ui/Banner';
-import { DayArc } from '@/ui/DayArc';
+import { PrieresCentrale } from '@/ui/PrieresCentrale';
 import { Icon } from '@/ui/Icon';
 import { ListGroup } from '@/ui/ListGroup';
 import { ListItem } from '@/ui/ListItem';
@@ -35,6 +36,8 @@ export default function Priere() {
   const maintenant = useMaintenant();
   const options = useOptionsCalcul();
   const lieu = useReglages((s) => s.lieu);
+  // Heures affichées dans le fuseau de la ville choisie (sinon celui du téléphone).
+  const fuseau = fuseauDuLieu(lieu);
   const rappels = useReglages((s) => s.rappels);
   const definirRappel = useReglages((s) => s.definirRappel);
   const definirLieu = useReglages((s) => s.definirLieu);
@@ -84,21 +87,17 @@ export default function Priere() {
             <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.lieu, { color: couleurs.encre2 }]}>
               {`${nomLieu} · ${formatJour(maintenant, i18n.language)}`}
             </Text>
-            <DayArc
-              lever={minutesDuJour(donnees.h.lever)}
-              coucher={minutesDuJour(donnees.h.coucher)}
-              maintenant={minutesDuJour(maintenant)}
+            <PrieresCentrale
+              titre={t('accueil.prochaine', { priere: t(`priere.noms.${donnees.suivante.nom}`) })}
+              nomEtHeure={`${t(`priere.noms.${donnees.suivante.nom}`)} · ${formatHeure(donnees.suivante.heure, fuseau)}`}
+              dans={donnees.dans}
               prieres={prieres.map((p) => ({
                 nom: t(`priere.noms.${p}`),
-                heure: formatHeure(donnees.h[p]),
-                minutes: minutesDuJour(donnees.h[p]),
+                heure: formatHeure(donnees.h[p], fuseau),
+                minutes: minutesDuJour(donnees.h[p], fuseau),
                 etat: donnees.h[p] <= maintenant ? 'passee' : p === donnees.suivante.nom ? 'prochaine' : 'a-venir',
               }))}
-              dans={donnees.dans}
-              avant={t('accueil.avant', { priere: t(`priere.noms.${donnees.suivante.nom}`) })}
-              a={t('accueil.a', { heure: formatHeure(donnees.suivante.heure) })}
               description={t('accessibilite.arcDuJour')}
-              simple
             />
             <PrayerTimes
               prieres={prieres.map<LignePriere>((p) => {
@@ -108,7 +107,7 @@ export default function Priere() {
                   nom: t(`priere.noms.${p}`),
                   nomLocal: t(`priere.nomsLocaux.${p}`),
                   nomArabe: tAr(`priere.noms.${p}`),
-                  heure: formatHeure(donnees.h[p]),
+                  heure: formatHeure(donnees.h[p], fuseau),
                   etat: donnees.h[p] <= maintenant ? 'passee' : prochaine ? 'prochaine' : 'a-venir',
                   dans: prochaine ? t('commun.dans', { duree: donnees.dans }) : undefined,
                   appelActif: rappels[p],
@@ -167,7 +166,7 @@ export default function Priere() {
                 <ListItem
                   key={jour.toDateString()}
                   titre={formatJour(jour, i18n.language)}
-                  sousTitre={prieres.map((p) => formatHeure(horaires[p])).join(' · ')}
+                  sousTitre={prieres.map((p) => formatHeure(horaires[p], fuseau)).join(' · ')}
                 />
               ))}
             </ListGroup>

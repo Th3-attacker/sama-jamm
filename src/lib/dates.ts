@@ -1,16 +1,35 @@
 // Heures en 24 h, durées « 42 min » ou « 1 h 05 » (section Voix et langues).
 
-import { chiffresAffiches } from './chiffres';
+import { chiffresAffiches } from './chiffres.ts';
 
 const deux = (n: number) => String(n).padStart(2, '0');
 
-export function formatHeure(date: Date): string {
-  return chiffresAffiches(`${deux(date.getHours())}:${deux(date.getMinutes())}`);
+/**
+ * Heure et minute d'un instant dans un fuseau IANA (« Africa/Nouakchott »). Sans fuseau, ou si le fuseau est
+ * inconnu du moteur, c'est le fuseau du téléphone.
+ */
+function heureEtMinute(date: Date, fuseau?: string): { heure: number; minute: number } {
+  if (!fuseau) return { heure: date.getHours(), minute: date.getMinutes() };
+  try {
+    const parties = new Intl.DateTimeFormat('en-GB', { timeZone: fuseau, hour: 'numeric', minute: 'numeric', hourCycle: 'h23' }).formatToParts(date);
+    const lire = (type: Intl.DateTimeFormatPartTypes) => Number(parties.find((p) => p.type === type)?.value ?? 0);
+    return { heure: lire('hour'), minute: lire('minute') };
+  } catch (erreur: unknown) {
+    console.warn('Fuseau inconnu, heure du téléphone utilisée', fuseau, erreur);
+    return { heure: date.getHours(), minute: date.getMinutes() };
+  }
 }
 
-/** Minutes écoulées depuis minuit, heure locale. */
-export function minutesDuJour(date: Date): number {
-  return date.getHours() * 60 + date.getMinutes();
+/** Heure « 19:55 » d'un instant, dans le fuseau de la ville (ou celui du téléphone). */
+export function formatHeure(date: Date, fuseau?: string): string {
+  const { heure, minute } = heureEtMinute(date, fuseau);
+  return chiffresAffiches(`${deux(heure)}:${deux(minute)}`);
+}
+
+/** Minutes écoulées depuis minuit, dans le fuseau de la ville (ou celui du téléphone). */
+export function minutesDuJour(date: Date, fuseau?: string): number {
+  const { heure, minute } = heureEtMinute(date, fuseau);
+  return heure * 60 + minute;
 }
 
 export function formatDuree(minutes: number): string {
@@ -40,8 +59,16 @@ export function formatHegirien(date: Date, langue: string): string | null {
 }
 
 /** Clé de jour locale « 2026-10-29 », pour comparer des jours sans fuseau. */
-export function cleJour(date: Date): string {
-  return `${date.getFullYear()}-${deux(date.getMonth() + 1)}-${deux(date.getDate())}`;
+export function cleJour(date: Date, fuseau?: string): string {
+  if (!fuseau) return `${date.getFullYear()}-${deux(date.getMonth() + 1)}-${deux(date.getDate())}`;
+  try {
+    const parties = new Intl.DateTimeFormat('en-GB', { timeZone: fuseau, year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(date);
+    const lire = (type: Intl.DateTimeFormatPartTypes) => parties.find((p) => p.type === type)?.value ?? '00';
+    return `${lire('year')}-${lire('month')}-${lire('day')}`;
+  } catch (erreur: unknown) {
+    console.warn('Fuseau inconnu, jour du téléphone utilisé', fuseau, erreur);
+    return cleJour(date);
+  }
 }
 
 /** « octobre » : nom du mois dans la langue de l'interface (le wolof utilise le français). */

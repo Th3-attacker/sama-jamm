@@ -10,6 +10,7 @@ import { Banner } from '@/ui/Banner';
 
 import { nuitDePriere } from './horaires';
 import { useOptionsCalcul } from './useOptionsCalcul';
+import { fuseauDuLieu } from './villes';
 
 /** Plus long délai d'attente d'une bascule : au-delà, on recalcule quand même (horloge changée, veille prolongée). */
 const ATTENTE_MAX_MS = 60 * 60 * 1000;
@@ -46,6 +47,7 @@ export function BandeauVeille() {
   const { t } = useTranslation();
   const { nom } = useTheme();
   const nuit = useNuitDePriere();
+  const fuseau = fuseauDuLieu(useReglages((s) => s.lieu));
   const veilleVue = useReglages((s) => s.veilleVue);
   const marquerVeilleVue = useReglages((s) => s.marquerVeilleVue);
 
@@ -57,7 +59,7 @@ export function BandeauVeille() {
       titre={t('formules.repos')}
       langueTitre="wo"
       onFermer={() => marquerVeilleVue(nuit.cle)}>
-      {t('reglages.veilleJusqua', { heure: formatHeure(nuit.fin) })}
+      {t('reglages.veilleJusqua', { heure: formatHeure(nuit.fin, fuseau) })}
     </Banner>
   );
 }
