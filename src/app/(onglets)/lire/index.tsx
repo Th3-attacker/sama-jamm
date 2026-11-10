@@ -12,7 +12,6 @@ import { ContenuEcouter } from '@/features/ecouter/ContenuEcouter';
 import { juzParSourate } from '@/features/lire/decoupageJuz';
 import { ListeJuz } from '@/features/lire/ListeJuz';
 import { InterrupteurLireEcouter, type ModeLire } from '@/features/lire/InterrupteurLireEcouter';
-import { ListeSources } from '@/features/xassaides/ListeSources';
 import { useParametre } from '@/hooks/useParametre';
 import { useLecture } from '@/stores/lecture';
 import { echelleMax } from '@/theme/typographie';
@@ -22,6 +21,8 @@ import { Icon } from '@/ui/Icon';
 import { SegmentedControl } from '@/ui/SegmentedControl';
 import { TopBar } from '@/ui/TopBar';
 import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
+import { ListeRecitateurs } from '@/features/ecouter/ListeRecitateurs';
+import { ListeSources } from '@/features/xassaides/ListeSources';
 
 function ouvrirSourate(n: number) {
   router.push({ pathname: '/coran/[sourate]', params: { sourate: n } });
@@ -36,18 +37,19 @@ export default function Lire() {
   const marge = useMargeBasse();
   const { styleColonne: colonne } = useLayout();
   const rubrique = useParametre('rubrique');
-  const [mode, setMode] = useState<ModeLire>('lire');
+  // Le lien Xassaïdes de Plus ouvre le mode Écouter, onglet Xassaïdes.
+  const [mode, setMode] = useState<ModeLire>(rubrique === 'xassaides' ? 'ecouter' : 'lire');
   const [vueCoran, setVueCoran] = useState<'sourates' | 'juz'>('sourates');
-  const [onglet, setOnglet] = useState<'coran' | 'xassaides' | 'invocations'>(
-    rubrique === 'xassaides' || rubrique === 'invocations' ? rubrique : 'coran',
-  );
+  type Onglet = 'coran' | 'xassaides' | 'recitateurs' | 'invocations';
+  const ouverture = (r: string | undefined): Onglet => (r === 'xassaides' || r === 'recitateurs' || r === 'invocations' ? r : 'coran');
+  const [onglet, setOnglet] = useState<Onglet>(ouverture(rubrique));
   // Écran déjà monté (onglet gardé en mémoire) : une nouvelle rubrique demandée depuis Plus doit être appliquée.
   const [rubriqueVue, setRubriqueVue] = useState(rubrique);
   if (rubrique !== rubriqueVue) {
     setRubriqueVue(rubrique);
     if (rubrique === 'xassaides' || rubrique === 'invocations') {
-      setOnglet(rubrique);
-      setMode('lire');
+      setOnglet(ouverture(rubrique));
+      setMode(rubrique === 'xassaides' ? 'ecouter' : 'lire');
     }
   }
   // Reprise : la sourate et le verset où la lecture s'est arrêtée.
@@ -75,11 +77,22 @@ export default function Lire() {
             label={t('lire.bibliotheque')}
             options={[
               { id: 'coran', label: t('lire.coran') },
-              { id: 'xassaides', label: t('lire.xassaides') },
               { id: 'invocations', label: t('lire.invocations') },
             ]}
             valeur={onglet}
-            onChange={(id) => setOnglet(id === 'xassaides' || id === 'invocations' ? id : 'coran')}
+            onChange={(id) => setOnglet(ouverture(id))}
+          />
+        ) : null}
+        {mode === 'ecouter' ? (
+          <SegmentedControl
+            label={t('lire.bibliotheque')}
+            options={[
+              { id: 'coran', label: t('lire.coran') },
+              { id: 'xassaides', label: t('lire.xassaides') },
+              { id: 'recitateurs', label: t('ecouter.recitateurs') },
+            ]}
+            valeur={onglet === 'invocations' ? 'coran' : onglet}
+            onChange={(id) => setOnglet(ouverture(id))}
           />
         ) : null}
         {mode === 'lire' && onglet === 'coran' ? (
@@ -103,7 +116,8 @@ export default function Lire() {
           <CarteSourate plat enCours={repris?.n === item.n} sourate={item} juzDebut={juzParSourate.get(item.n)} onPress={() => ouvrirSourate(item.n)} />
         )}
         ListHeaderComponent={
-          mode === 'lire' && onglet === 'coran' ? (
+          <View style={{ gap: espace.espace3 }}>
+          {mode === 'lire' && onglet === 'coran' ? (
             <View style={{ gap: espace.espace3, paddingBottom: espace.espace3 }}>
               {position && repris ? (
                 <Pressable
@@ -157,22 +171,27 @@ export default function Lire() {
                 </Pressable>
               ) : null}
             </View>
-          ) : undefined
+          ) : undefined}
+          </View>
         }
         ListEmptyComponent={
-          mode === 'lire' && onglet === 'coran' && vueCoran === 'juz' ? (
+          mode === 'ecouter' ? (
+            onglet === 'xassaides' ? (
+              <ListeSources />
+            ) : onglet === 'recitateurs' ? (
+              <ListeRecitateurs />
+            ) : (
+              <ContenuEcouter
+                onToutVoir={() => {
+                  setMode('lire');
+                  setOnglet('coran');
+                }}
+              />
+            )
+          ) : mode === 'lire' && onglet === 'coran' && vueCoran === 'juz' ? (
             <ListeJuz />
-          ) : mode === 'ecouter' ? (
-            <ContenuEcouter
-              onToutVoir={() => {
-                setMode('lire');
-                setOnglet('coran');
-              }}
-            />
           ) : onglet === 'invocations' ? (
             <ListeCategories />
-          ) : onglet === 'xassaides' ? (
-            <ListeSources />
           ) : undefined
         }
         contentContainerStyle={{ ...colonne, paddingBottom: espace.espace8 + marge }}

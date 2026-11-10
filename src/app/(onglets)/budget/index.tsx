@@ -26,7 +26,12 @@ import { ListGroup } from '@/ui/ListGroup';
 import { ListItem } from '@/ui/ListItem';
 import { TextField } from '@/ui/TextField';
 import { TopBar } from '@/ui/TopBar';
+import { VersetRubrique } from '@/ui/VersetRubrique';
+import { versetRubrique } from '@/features/rubriques/versetsRubriques';
 import { useDessousOutil, useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
+
+// Verset du Coran de la rubrique : données embarquées, lues une fois.
+const verset = versetRubrique('budget');
 
 export default function Budget() {
   // Toucher l'onglet actif ramène la liste en haut.
@@ -184,6 +189,7 @@ export default function Budget() {
             }
           />
         </Pressable>
+        {verset ? <VersetRubrique verset={verset} /> : null}
 
         <View style={{ gap: espace.espace2 }}>
           <View

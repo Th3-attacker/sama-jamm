@@ -16,11 +16,16 @@ import { Dialog } from '@/ui/Dialog';
 import { SegmentedControl } from '@/ui/SegmentedControl';
 import { TasbihCounter } from '@/ui/TasbihCounter';
 import { TopBar } from '@/ui/TopBar';
+import { VersetRubrique } from '@/ui/VersetRubrique';
+import { versetRubrique } from '@/features/rubriques/versetsRubriques';
 import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
 // Au-delà, remettre à zéro demande une confirmation.
 const SEUIL_CONFIRMATION = 100;
 const LIBRE = 'libre';
+
+// Verset du Coran de la rubrique : données embarquées, lues une fois.
+const versetDhikr = versetRubrique('dhikr');
 
 export default function Dhikr() {
   useKeepAwake();
@@ -115,6 +120,7 @@ export default function Dhikr() {
             {objectif ? `${t('dhikr.objectif')} : ${objectif}` : t('dhikr.sansObjectif')}
           </Button>
         </View>
+        <View style={{ alignSelf: 'stretch' }}>{versetDhikr ? <VersetRubrique verset={versetDhikr} /> : null}</View>
       </ScrollView>
 
       {/* Feuille de l'objectif : les formules se choisissent déjà par les puces de la page. */}

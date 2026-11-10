@@ -20,11 +20,16 @@ import { BottomSheet } from '@/ui/BottomSheet';
 import { Button } from '@/ui/Button';
 import { Dialog } from '@/ui/Dialog';
 import { EnteteRetour } from '@/ui/EnteteRetour';
+import { VersetRubrique } from '@/ui/VersetRubrique';
+import { versetRubrique } from '@/features/rubriques/versetsRubriques';
 import { TextField } from '@/ui/TextField';
 import { useToast } from '@/ui/Toast';
 import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
 /** Zakat indicative : montant estimé, échéance de l'année lunaire, détail du calcul, rappel et versement. */
+// Verset du Coran de la rubrique : données embarquées, lues une fois.
+const versetZakat = versetRubrique('zakat');
+
 export default function Zakat() {
   const { t, i18n } = useTranslation();
   const formatMontant = useFormatMontant();
@@ -193,6 +198,7 @@ export default function Zakat() {
         <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, styles.note, { color: couleurs.encre2 }]}>
           {t('zakat.indicatif')}
         </Text>
+        {versetZakat ? <VersetRubrique verset={versetZakat} /> : null}
       </ScrollView>
       {autorisation.feuille}
 

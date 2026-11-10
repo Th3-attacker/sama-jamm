@@ -21,9 +21,14 @@ import { ListGroup } from '@/ui/ListGroup';
 import { ListItem } from '@/ui/ListItem';
 import { PrayerTimes, type LignePriere } from '@/ui/PrayerTimes';
 import { TopBar } from '@/ui/TopBar';
+import { VersetRubrique } from '@/ui/VersetRubrique';
+import { versetRubrique } from '@/features/rubriques/versetsRubriques';
 import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
 const JOURS_SEMAINE = 7;
+
+// Verset du Coran de la rubrique : données embarquées, lues une fois.
+const verset = versetRubrique('priere');
 
 export default function Priere() {
   // Toucher l'onglet actif ramène la liste en haut.
@@ -41,7 +46,6 @@ export default function Priere() {
   const rappels = useReglages((s) => s.rappels);
   const definirRappel = useReglages((s) => s.definirRappel);
   const definirLieu = useReglages((s) => s.definirLieu);
-  const methode = useReglages((s) => s.methode);
   const veilleAuto = useReglages((s) => s.veilleAuto);
   const tAr = i18n.getFixedT('ar');
 
@@ -120,6 +124,7 @@ export default function Priere() {
                 if (p) definirRappel(p, !rappels[p]);
               }}
             />
+            {verset ? <VersetRubrique verset={verset} /> : null}
             {/* Planche : deux tuiles, Qibla et Dhikr. */}
             <View style={[styles.tuiles, { gap: espace.espace3 }]}>
               {([
@@ -153,14 +158,6 @@ export default function Priere() {
                 </Pressable>
               ))}
             </View>
-            <ListGroup>
-              <ListItem
-                icone="settings"
-                titre={t('priere.methodeTitre')}
-                sousTitre={t(`priere.methodes.${methode}`)}
-                onPress={() => router.push('/priere/methode')}
-              />
-            </ListGroup>
             <ListGroup titre={t('priere.semaine')}>
               {donnees.semaine.map(({ jour, horaires }) => (
                 <ListItem

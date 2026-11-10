@@ -18,11 +18,16 @@ import { ListGroup } from '@/ui/ListGroup';
 import { ListItem } from '@/ui/ListItem';
 import { SegmentedControl } from '@/ui/SegmentedControl';
 import { EnteteRetour } from '@/ui/EnteteRetour';
+import { VersetRubrique } from '@/ui/VersetRubrique';
+import { versetRubrique } from '@/features/rubriques/versetsRubriques';
 import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
 type Filtre = 'tous' | SensDette;
 
 /** Dettes entre proches : ce qu'on me doit, ce que je dois, et les dettes en cours. */
+// Verset du Coran de la rubrique : données embarquées, lues une fois.
+const versetDettes = versetRubrique('dettes');
+
 export default function Dettes() {
   const { t } = useTranslation();
   const formatMontant = useFormatMontant();
@@ -146,6 +151,7 @@ export default function Dettes() {
         <Button icone="plus" pleineLargeur onPress={() => router.push('/budget/dettes/nouvelle')}>
           {t('dettes.ajouter')}
         </Button>
+        {versetDettes ? <VersetRubrique verset={versetDettes} /> : null}
       </ScrollView>
     </View>
   );
