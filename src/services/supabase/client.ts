@@ -3,19 +3,15 @@
 import { createClient } from '@supabase/supabase-js';
 import { AppState } from 'react-native';
 
-import { stockage } from '@/stores/stockage';
+import { stockageSession } from './stockageSession';
 
 export const SUPABASE_URL = 'https://jpevulpndavbwclfjfvf.supabase.co';
 export const SUPABASE_CLE_PUBLIQUE = 'sb_publishable_SLeOYcR16PR2YhgggeQHxQ_b5Zt_3o5';
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_CLE_PUBLIQUE, {
   auth: {
-    // Session gardée dans le stockage local de l'app (même mécanisme que les réglages).
-    storage: {
-      getItem: (cle) => stockage.getItem(cle) as string | null,
-      setItem: (cle, valeur) => void stockage.setItem(cle, valeur),
-      removeItem: (cle) => void stockage.removeItem(cle),
-    },
+    // Session gardée dans le trousseau du téléphone, en morceaux (voir `stockageSession.ts`).
+    storage: stockageSession,
     autoRefreshToken: true,
     persistSession: true,
     detectSessionInUrl: false,
