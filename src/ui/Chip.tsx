@@ -30,7 +30,7 @@ export function Chip({ children, selectionne, onPress, pilule = false, compacte 
         {
           paddingHorizontal: espace.espace3,
           borderRadius: pilule ? rayon.rayonPastille : rayon.rayonPuce,
-          backgroundColor: selectionne ? (pilule ? couleurs.emeraude : couleurs.emeraudeDoux) : couleurs.surface,
+          backgroundColor: selectionne ? (pilule ? couleurs.emeraudeAplat : couleurs.emeraudeDoux) : couleurs.surface,
           borderColor: selectionne ? couleurs.emeraude : couleurs.ligneForte,
         },
         pilule ? styles.pilule : null,

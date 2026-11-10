@@ -29,7 +29,7 @@ export type ButtonProps = {
 function teintes(variant: VarianteBouton, c: Couleurs) {
   switch (variant) {
     case 'principal':
-      return { fond: c.emeraude, texte: c.surEmeraude, contour: c.emeraude };
+      return { fond: c.emeraudeAplat, texte: c.surEmeraude, contour: c.emeraudeAplat };
     case 'secondaire':
       return { fond: 'transparent', texte: c.emeraude, contour: c.ligneForte };
     case 'discret':

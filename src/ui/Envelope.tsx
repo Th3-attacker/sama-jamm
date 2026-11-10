@@ -41,7 +41,7 @@ export function Envelope({ nom, depense, plafond, fixe, devise, onPress }: Envel
       ? couleurs.encre2
       : etat === 'presque-plein' || etat === 'depasse'
         ? couleurs.alerte
-        : couleurs.emeraude;
+        : couleurs.emeraudeAplat;
   // Le mot ne s'ajoute que si l'enveloppe demande attention ; il reste toujours dans le label d'accessibilité.
   const montrerMot = etat === 'depasse' || etat === 'presque-plein';
   const ratio = plafond > 0 ? Math.min(depense / plafond, 1) : depense > 0 ? 1 : 0;

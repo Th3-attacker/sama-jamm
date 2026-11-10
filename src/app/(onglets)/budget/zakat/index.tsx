@@ -114,7 +114,7 @@ export default function Zakat() {
           gap: espace.espace4,
         }}>
         <EnteteRetour titre={t('zakat.titre')} droite={t('zakat.titreAr')} />
-        <View style={{ padding: espace.espace4, borderRadius: 16, backgroundColor: couleurs.emeraude }}>
+        <View style={{ padding: espace.espace4, borderRadius: 16, backgroundColor: couleurs.emeraudeAplat }}>
           <AmountDisplay
             surEmeraude
             montant={e.type === 'due' ? e.montant : 0}

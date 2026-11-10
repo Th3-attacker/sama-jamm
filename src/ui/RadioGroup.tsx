@@ -51,7 +51,7 @@ export function RadioGroup({ label, options, valeur, onChange, encadre = true }:
                 : { paddingVertical: espace.espace3, borderBottomWidth: StyleSheet.hairlineWidth, borderColor: couleurs.ligne },
             ]}>
             <View style={[styles.cercle, { borderColor: on ? couleurs.emeraude : couleurs.ligneForte }]}>
-              {on ? <View style={[styles.point, { backgroundColor: couleurs.emeraude }]} /> : null}
+              {on ? <View style={[styles.point, { backgroundColor: couleurs.emeraudeAplat }]} /> : null}
             </View>
             <View style={styles.textes}>
               <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, { color: couleurs.encre }]}>

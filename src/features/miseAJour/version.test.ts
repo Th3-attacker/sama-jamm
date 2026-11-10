@@ -2,6 +2,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
+import { SITE, URL_VERSION } from '../../constants/liens.ts';
 import { comparerVersions, lireFichierVersion, miseAJourExigee } from './version.ts';
 
 const MAGASIN = 'https://play.google.com/store/apps/details?id=com.samajamm.app';
@@ -29,4 +30,9 @@ test('mise à jour exigée seulement sous le minimum de sa plateforme', () => {
   assert.equal(miseAJourExigee('1.2.0', f, 'android'), null);
   assert.equal(miseAJourExigee('1.0.0', f, 'ios'), null);
   assert.equal(miseAJourExigee(null, f, 'android'), null);
+});
+
+test('version.json est publié sur le même site que les pages légales', () => {
+  assert.ok(URL_VERSION.startsWith(`${SITE}/`));
+  assert.ok(URL_VERSION.startsWith('https://'));
 });

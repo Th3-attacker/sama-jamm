@@ -78,7 +78,7 @@ export function BarreCompteur({ titre, arabe = false, n, total, onCompter, onPre
           accessibilityRole="button"
           accessibilityLabel={`${t('invocations.compterBouton', { n, total })}. ${t('invocations.compterAide')}`}
           onPress={onCompter}
-          style={[styles.compter, { backgroundColor: couleurs.emeraude, borderRadius: rayon.rayonPastille }]}>
+          style={[styles.compter, { backgroundColor: couleurs.emeraudeAplat, borderRadius: rayon.rayonPastille }]}>
           <Text maxFontSizeMultiplier={echelleMax.onglets} style={[typographie.titre3, styles.chiffres, { color: couleurs.surEmeraude }]}>
             {t('invocations.compterBouton', { n, total })}
           </Text>
@@ -118,7 +118,7 @@ export function BarreCompteur({ titre, arabe = false, n, total, onCompter, onPre
         accessibilityRole="button"
         accessibilityLabel={`${valeur}. ${t('invocations.compterAide')}`}
         onPress={onCompter}
-        style={[styles.bouton, { backgroundColor: couleurs.emeraude, borderRadius: rayon.rayonPastille }]}>
+        style={[styles.bouton, { backgroundColor: couleurs.emeraudeAplat, borderRadius: rayon.rayonPastille }]}>
         <Text maxFontSizeMultiplier={echelleMax.onglets} style={[typographie.titre3, styles.chiffres, { color: couleurs.surEmeraude }]}>
           {valeur}
         </Text>

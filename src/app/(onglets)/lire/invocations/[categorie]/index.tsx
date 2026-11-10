@@ -110,7 +110,7 @@ function Moment({ categorie }: { categorie: CategorieId }) {
                 }
                 style={[styles.ligne, { gap: espace.espace3, borderBottomColor: couleurs.ligne }]}>
                 {termine ? (
-                  <View style={[styles.coche, { backgroundColor: couleurs.emeraude }]}>
+                  <View style={[styles.coche, { backgroundColor: couleurs.emeraudeAplat }]}>
                     <Icon name="check" size={20} color={couleurs.surEmeraude} />
                   </View>
                 ) : (

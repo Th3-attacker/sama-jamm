@@ -13,7 +13,7 @@ import { EtatAutorisations } from "@/features/autorisation/EtatAutorisations";
 import { useSession } from "@/features/compte/compte";
 import { ReglageTaille } from "@/features/lire/BarreTaille";
 import { ReglagesLecture } from "@/features/lire/ReglagesLecture";
-import { estLangue, langues, type Langue } from "@/i18n/langues";
+import { estLangueProposee, languesProposees, type Langue } from "@/i18n/langues";
 import { useReglages } from "@/stores/reglages";
 import { echelleMax } from "@/theme/typographie";
 import { themes } from "@/theme/tokens.generated";
@@ -100,7 +100,7 @@ export default function Reglages() {
   const [redemarrageManuel, setRedemarrageManuel] = useState(false);
 
   const langue: Langue =
-    langueEnregistree ?? (estLangue(i18n.language) ? i18n.language : "fr");
+    langueEnregistree ?? (estLangueProposee(i18n.language) ? i18n.language : "fr");
 
   const appliquerLangue = (choix: Langue) => {
     definirLangue(choix);
@@ -109,7 +109,7 @@ export default function Reglages() {
   };
 
   const choisirLangue = (id: string) => {
-    if (!estLangue(id) || id === langue) {
+    if (!estLangueProposee(id) || id === langue) {
       setFeuilleLangue(false);
       return;
     }
@@ -371,7 +371,7 @@ export default function Reglages() {
           <RadioGroup
             label={t("bienvenue.langueQuestion")}
             encadre={false}
-            options={langues.map((id) => ({ id, label: NOMS_LANGUES[id] }))}
+            options={languesProposees.map((id) => ({ id, label: NOMS_LANGUES[id] }))}
             valeur={langue}
             onChange={choisirLangue}
           />

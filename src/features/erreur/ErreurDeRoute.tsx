@@ -7,6 +7,14 @@ import { EcranErreur } from '@/ui/EcranErreur';
 
 import { journaliser } from './journal';
 
+const LONGUEUR_MAX = 400;
+
+/** En développement seulement : nom et message de l'erreur sous le code. Jamais dans l'app publiée. */
+function messageTechnique(erreur: Error): string {
+  if (!__DEV__) return '';
+  return `\n${erreur.name} : ${erreur.message}`.slice(0, LONGUEUR_MAX);
+}
+
 export function ErreurDeRoute({ error, retry }: ErrorBoundaryProps) {
   const { t } = useTranslation();
   // Journalisée une fois, au premier rendu de l'écran d'erreur.
@@ -19,7 +27,7 @@ export function ErreurDeRoute({ error, retry }: ErrorBoundaryProps) {
       titre={t('etats.erreurTitreWo')}
       sousTitre={t('etats.erreurBloque')}
       texte={t('etats.erreurTexte')}
-      detail={t('etats.erreurCode', { code })}
+      detail={`${t('etats.erreurCode', { code })}${messageTechnique(error)}`}
       action={{ libelle: t('commun.reessayer'), icone: 'reset', onPress: () => void retry() }}
     />
   );

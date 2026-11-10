@@ -6,6 +6,8 @@ import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { recitateur } from '@/features/ecouter/recitateurs';
 import { listeTelechargements, supprimerSourate, useTelechargements } from '@/features/ecouter/telechargements';
 import { sourate } from '@/features/lire/coran';
+import { pisteXassaides, sourceXassaides } from '@/features/xassaides/catalogue';
+import { listeXassaidesTelecharges, supprimerPiste } from '@/features/xassaides/telechargements';
 import { echelleMax } from '@/theme/typographie';
 import { useReglages } from '@/stores/reglages';
 import { useTheme } from '@/theme/useTheme';
@@ -40,7 +42,8 @@ export default function Telechargements() {
   const enCours = useTelechargements((s) => s.enCours);
   // Relu après chaque téléchargement ou suppression (`version` change alors).
   const liste = useMemo(() => (version >= 0 ? listeTelechargements() : []), [version]);
-  const total = liste.reduce((n, x) => n + x.octets, 0);
+  const xassaides = useMemo(() => (version >= 0 ? listeXassaidesTelecharges() : []), [version]);
+  const total = liste.reduce((n, x) => n + x.octets, 0) + xassaides.reduce((n, x) => n + x.octets, 0);
   const libre = useMemo(() => (version >= 0 ? espaceLibre() : null), [version]);
 
   const supprimer = (idRecitateur: string, n: number) => {
@@ -75,7 +78,7 @@ export default function Telechargements() {
             })}
           </ListGroup>
         ) : null}
-        {liste.length === 0 && Object.keys(enCours).length === 0 ? (
+        {liste.length === 0 && xassaides.length === 0 && Object.keys(enCours).length === 0 ? (
           <EmptyState
             icone="download"
             lang="fr"
@@ -116,6 +119,31 @@ export default function Telechargements() {
                 <Switch active={wifiSeulement} onChange={definirWifiSeulement} label={t('telechargements.wifi')} />
               </View>
             </View>
+            {xassaides.length > 0 ? (
+              <ListGroup titre={t('xassaides.titre')}>
+                {xassaides.map((x) => (
+                  <ListItem
+                    key={`${x.source}:${x.id}`}
+                    icone="headphones"
+                    titre={pisteXassaides(x.source, x.id)?.titre ?? String(x.id)}
+                    sousTitre={`${sourceXassaides(x.source)?.nom ?? x.source} · ${enMo(x.octets)}`}
+                    droite={
+                      <IconButton
+                        icone="trash"
+                        label={t('commun.supprimer')}
+                        onPress={() =>
+                          Alert.alert(t('telechargements.supprimerTitre'), t('xassaides.supprimerNote'), [
+                            { text: t('commun.annuler'), style: 'cancel' },
+                            { text: t('commun.supprimer'), style: 'destructive', onPress: () => supprimerPiste(x.source, x.id) },
+                          ])
+                        }
+                      />
+                    }
+                  />
+                ))}
+              </ListGroup>
+            ) : null}
+            {liste.length === 0 ? null : (
             <ListGroup titre={t('telechargements.surTelephone')}>
               {liste.map((x) => {
                 const s = sourate(x.sourate);
@@ -139,6 +167,7 @@ export default function Telechargements() {
                 );
               })}
             </ListGroup>
+            )}
             <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre3 }]}>
               {t('telechargements.supprimerNote')}
             </Text>

@@ -40,7 +40,7 @@ Une version passe de `dev` à `staging` puis à `main` par fusion, jamais par co
 ## Données et confidentialité
 
 - Le budget est chiffré et stocké sur le téléphone (SQLite/SQLCipher) : il n'est jamais envoyé.
-- Supabase ne sert qu'aux comptes (`profils`), au khatm collectif (`khatms`, `khatm_parts`) et aux déclarations de dons (`declarations_dons`).
+- Supabase ne sert qu'aux comptes (`profils`) et au khatm collectif (`khatms`, `khatm_parts`).
 - La clé Supabase présente dans le code est publique (« publishable ») et chaque table est protégée par RLS. Aucune autre clé n'est embarquée.
 
 ## Base Supabase
@@ -49,7 +49,7 @@ Les migrations de `supabase/migrations` s'exécutent à la main, dans l'ordre, v
 
 1. `001_comptes.sql`
 2. `002_khatm.sql`
-3. `003_dons.sql`
+3. `004_retrait_dons.sql` (seulement si la table `declarations_dons` a déjà été créée)
 
 Aucun suivi automatique des migrations n'est en place : vérifier l'état des tables avant d'en ajouter une.
 
@@ -57,7 +57,7 @@ Aucun suivi automatique des migrations n'est en place : vérifier l'état des ta
 
 ```text
 src/app/        routes expo-router
-src/features/   fonctionnalités (lecture, prière, budget, compte, khatm, dons…)
+src/features/   fonctionnalités (lecture, prière, budget, compte, khatm…)
 src/ui/         composants partagés
 src/stores/     état local (zustand)
 src/services/   client Supabase
@@ -84,6 +84,10 @@ npx eas-cli build --profile production --platform android
 La mise à jour bloquante (écran « Une nouvelle version vous attend ») ne passe pas par `expo-updates` : l'app lit `version.json` publié sur GitHub Pages et compare la version installée. Le contrôle s'applique sur iOS et Android, y compris en développement : si `version.json` impose un minimum supérieur à la version installée, l'écran bloque aussi un build local.
 
 Le chiffrement est déclaré côté iOS (`ITSAppUsesNonExemptEncryption: false`) : le budget chiffré repose sur SQLCipher et les secrets sur le stockage sécurisé du système, sans chiffrement additionnel soumis à déclaration.
+
+## Site web
+
+Le site (pages confidentialité, conditions, aide, suppression de compte, et `version.json` de la mise à jour bloquante) est un projet séparé, statique, dans `../sama-jamm-site`, prévu pour Vercel. L'app ne connaît que `SITE` dans `src/constants/liens.ts` : `URL_CONFIDENTIALITE`, `URL_CONDITIONS`, `URL_AIDE`, `URL_SUPPRIMER_COMPTE` et `URL_VERSION` en dérivent. Changer l'adresse du site demande une nouvelle version de l'app, car les builds déjà installés gardent l'ancienne. Tant que les pages contiennent des `[À VALIDER]`, ne pas les publier.
 
 ## Suite du travail
 

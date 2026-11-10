@@ -47,7 +47,7 @@ export function CarteHeros({ nom, heure, dans, prieres }: Props) {
       accessibilityRole="button"
       accessibilityLabel={`${t('accueil.avant', { priere: nom })}, ${t('accueil.a', { heure })}, ${dans}`}
       onPress={() => router.push('/priere')}
-      style={[styles.carte, { gap: espace.espace3, padding: espace.espace4, backgroundColor: couleurs.emeraude }]}>
+      style={[styles.carte, { gap: espace.espace3, padding: espace.espace4, backgroundColor: couleurs.emeraudeAplat }]}>
       <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.libelle, { color: surEmeraude }]}>
         {t('accueil.prochaine', { priere: nom })}
       </Text>

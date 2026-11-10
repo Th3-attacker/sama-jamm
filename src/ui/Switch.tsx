@@ -21,7 +21,7 @@ export function Switch({ active, onChange, label, disabled = false }: SwitchProp
       value={active}
       onValueChange={onChange}
       disabled={disabled}
-      trackColor={{ false: couleurs.surfaceCreux, true: couleurs.emeraude }}
+      trackColor={{ false: couleurs.surfaceCreux, true: couleurs.emeraudeAplat }}
       thumbColor={active ? couleurs.surEmeraude : couleurs.ligneForte}
       ios_backgroundColor={couleurs.surfaceCreux}
     />

@@ -1,7 +1,7 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { lireSaisieDate, masqueDate } from '@/features/budget/dettes';
 import { creerKhatm } from '@/features/khatm/depot';
@@ -15,6 +15,7 @@ import { ListGroup } from '@/ui/ListGroup';
 import { ListItem } from '@/ui/ListItem';
 import { TextField } from '@/ui/TextField';
 import { TopBar } from '@/ui/TopBar';
+import { EvitementClavier } from '@/ui/EvitementClavier';
 
 /** Nouveau khatm : nom, intention, date de fin ; puis l'invitation part par la feuille de partage. */
 export default function NouveauKhatm() {
@@ -59,7 +60,7 @@ export default function NouveauKhatm() {
           </Text>
         }
       />
-      <KeyboardAvoidingView style={styles.ecran} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+      <EvitementClavier style={styles.ecran}>
         <ScrollView
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={{
@@ -104,7 +105,7 @@ export default function NouveauKhatm() {
             </Text>
           </View>
         </ScrollView>
-      </KeyboardAvoidingView>
+      </EvitementClavier>
     </View>
   );
 }

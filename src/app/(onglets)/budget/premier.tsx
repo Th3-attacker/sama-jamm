@@ -1,7 +1,7 @@
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { SaisieInvalide } from '@/features/budget/depot';
 import { postesCochesParDefaut, postesDeDepart } from '@/features/budget/enveloppesDeDepart';
@@ -16,6 +16,7 @@ import { Button } from '@/ui/Button';
 import { Chip } from '@/ui/Chip';
 import { SegmentedControl } from '@/ui/SegmentedControl';
 import { TextField } from '@/ui/TextField';
+import { EvitementClavier } from '@/ui/EvitementClavier';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
@@ -96,7 +97,7 @@ export default function PremierBudget() {
 
   return (
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
-      <KeyboardAvoidingView style={styles.ecran} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+      <EvitementClavier style={styles.ecran}>
         <ScrollView
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={{
@@ -176,7 +177,7 @@ export default function PremierBudget() {
             </Button>
           </View>
         </ScrollView>
-      </KeyboardAvoidingView>
+      </EvitementClavier>
 
       <BottomSheet ouvert={ajoutDevise} titre={t('devise.ajouter')} onFermer={() => setAjoutDevise(false)}>
         {ajoutDevise ? (

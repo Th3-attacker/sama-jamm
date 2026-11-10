@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TextInput, View } from 'react-native';
+import { Platform, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
@@ -62,6 +62,10 @@ export function TextField({
           onChangeText={onChange}
           placeholder={placeholder}
           placeholderTextColor={couleurs.encre3}
+          // Props Android de la documentation React Native : curseur, sélection, sans soulignement natif.
+          cursorColor={couleurs.emeraude}
+          selectionColor={couleurs.emeraude}
+          underlineColorAndroid="transparent"
           keyboardType={clavier}
           maxLength={maxLength}
           secureTextEntry={secret}
@@ -90,6 +94,11 @@ export function TextField({
 
 const styles = StyleSheet.create({
   champ: { flexDirection: 'row', alignItems: 'center', borderWidth: 1 },
-  // Sans lineHeight : sur iPhone, un champ d'une ligne qui en a une colle son texte en haut, surtout avec Noto Sans Arabic.
-  saisie: { flex: 1, paddingVertical: 10, lineHeight: undefined, textAlignVertical: 'center' },
+  saisie: {
+    flex: 1,
+    paddingVertical: 10,
+    // iPhone seulement : sans lineHeight, le texte d'un champ d'une ligne reste centré (surtout en arabe).
+    // Sur Android, un lineHeight forcé à undefined fait disparaître le texte tapé.
+    ...Platform.select({ ios: { lineHeight: undefined } }),
+  },
 });

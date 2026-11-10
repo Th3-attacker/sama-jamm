@@ -57,7 +57,7 @@ export function BarreTaille() {
                 width: i === echelon ? 16 : 8,
                 height: i === echelon ? 16 : 8,
                 borderRadius: rayon.rayonPastille,
-                backgroundColor: i <= echelon ? couleurs.emeraude : couleurs.ligne,
+                backgroundColor: i <= echelon ? couleurs.emeraudeAplat : couleurs.ligne,
               }}
             />
           </Pressable>

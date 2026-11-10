@@ -26,7 +26,7 @@ Ordre : **A → B1 → B2 → C2 → C3 → C4 → B4 → C1 → C5 → D → E 
 | D3 | Démarrage animé (relais du démarrage natif, signature, fondu ; réduit si « Réduire les animations ») | #69 |
 | D4 | Journal local des erreurs (sans données personnelles), partagé par l'utilisateur depuis À propos | #70 |
 | E3 | Partage d'un verset : image (fond émeraude ou nuit, traduction au choix) ou texte avec lien | #71 |
-| Adhan | Appel à la prière dans les notifications (Android, sons CC0), icône de notification, essai du son ; iOS : extraits WAV de 29 s et 23 s tirés des sons CC0, à entendre sur un iPhone | #72 à #74 ; iOS : PR #80 et #81 |
+| Adhan | Appel à la prière dans les notifications (Android), icône de notification ; iOS : extraits WAV. 9 novembre 2026 : deux nouveaux appels (Fajr ; Dhuhr à Isha), canaux `priere-v3-*`, extraits iOS de 29 s et 20 s, anciens sons CC0 retirés ; à entendre sur un téléphone après un build | #72 à #74 ; iOS : PR #80 et #81 |
 | E1 · E2 | Crédit Tanzil ; translittération (réglage), repères juz et quarts de hizb, prosternations, juz en mode page | #75 |
 | F1 | Écouter : 5 récitateurs (alquran.cloud), lecteur verset par verset, plein écran, mini-lecteur, verset surligné, écoute écran éteint, écoute page par page (la page tourne seule), page mushaf en plein écran | #76 |
 | F2 · F3 | Téléchargements par sourate, minuterie, répétition du verset et de la sourate, hors ligne (échec de chargement) | fusionnée dans `dev` (`43dcd3f`) |
@@ -74,7 +74,7 @@ D1 à D4 faits ; voir le tableau « Fait ».
 
 ## E. Contenus de lecture (après les droits)
 
-E1 bis : licence du texte arabe d'alquran.cloud à confirmer (ou passer au texte de Tanzil) · E4 xassaïdes et invocations.
+E1 bis : licence du texte arabe d'alquran.cloud à confirmer (ou passer au texte de Tanzil) · E4 invocations · E5 xassaïdes : audios de xassaid.com en place dans l'app, autorisation écrite à obtenir avant publication.
 
 ## F. Écouter (après les droits audio)
 
@@ -82,7 +82,7 @@ F4 détection du réseau en continu (expo-network), si besoin.
 
 ## G. Compte et partage (facultatif en v1)
 
-G1 compte (code par e-mail, profil, suppression) fait ; synchronisation avec G2 · G2 khatm collectif fait (Supabase, temps réel, invitation par lien ou code, rappel local) · G3 dons — **à faire**.
+G1 compte (code par e-mail, profil, suppression) fait ; synchronisation avec G2 · G2 khatm collectif fait (Supabase, temps réel, invitation par lien ou code, rappel local) · G3 dons retiré de l'app (10 novembre 2026).
 
 ## H. Publication
 
@@ -90,7 +90,7 @@ G1 compte (code par e-mail, profil, suppression) fait ; synchronisation avec G2 
 | --- | --- | --- |
 | H1 | `expo-updates` (canaux et `runtimeVersion`), profil `staging`, `staging` dans la CI, déclaration de chiffrement iOS | fait (6 novembre 2026) |
 | H2 | Icônes et captures | à faire |
-| H3 | Confidentialité et suppression du compte | à faire |
+| H3 | Confidentialité et suppression du compte | en cours (9 novembre 2026) : documents dans `docs/deploiement/`, site statique `sama-jamm-site` créé, liens centralisés dans `liens.ts` ; reste : textes à valider, email, éditeur, mise en ligne sur Vercel |
 | H4 | Comptes des stores et test fermé | à faire |
 | H5 | Recette finale et publication progressive | à faire |
 
@@ -100,4 +100,4 @@ Relecture de l'arabe et du wolof ; validation des formulations religieuses par l
 
 ## Reste à faire
 
-A1 à A3 (recette sur téléphone), B3 (Maestro), C5b (sauvegarde Android), G3 (dons), H1 à H5 (publication).
+A1 à A3 (recette sur téléphone), B3 (Maestro), C5b (sauvegarde Android), H1 à H5 (publication).

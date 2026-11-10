@@ -168,7 +168,7 @@ export default function Budget() {
           style={({ pressed }) => ({
             padding: espace.espace5,
             borderRadius: rayon.rayonCarte,
-            backgroundColor: couleurs.emeraude,
+            backgroundColor: couleurs.emeraudeAplat,
             overflow: 'hidden',
             opacity: pressed ? 0.9 : 1,
           })}>
@@ -190,12 +190,12 @@ export default function Budget() {
             accessible
             accessibilityLabel={`${t('budget.repartitionMois')} : ${t('budget.depense')} ${f(mois.depense)}, ${t('budget.epargne')} ${f(mois.misDeCote)}, ${t('budget.resteLegende')} ${f(reste)}`}
             style={[styles.barre, { backgroundColor: couleurs.surfaceCreux }]}>
-            <View style={{ width: largeur(mois.depense), backgroundColor: couleurs.emeraude }} />
+            <View style={{ width: largeur(mois.depense), backgroundColor: couleurs.emeraudeAplat }} />
             <View style={{ width: largeur(mois.misDeCote), backgroundColor: couleurs.or }} />
           </View>
           <View style={styles.legende}>
             {[
-              [t('budget.depense'), mois.depense, couleurs.emeraude, null],
+              [t('budget.depense'), mois.depense, couleurs.emeraudeAplat, null],
               [t('budget.epargne'), mois.misDeCote, couleurs.or, null],
               [t('budget.resteLegende'), reste, couleurs.surfaceCreux, couleurs.ligneForte],
             ].map(([libelle, montant, fond, bord]) => (
@@ -351,7 +351,7 @@ export default function Budget() {
             gap: espace.espace2,
             paddingHorizontal: espace.espace5,
             shadowColor: couleurs.encre,
-            backgroundColor: couleurs.emeraude,
+            backgroundColor: couleurs.emeraudeAplat,
             opacity: pressed ? 0.9 : 1,
           },
         ]}>

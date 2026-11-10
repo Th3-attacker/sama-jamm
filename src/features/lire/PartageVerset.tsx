@@ -23,7 +23,7 @@ export type VersetAPartager = { sourate: number; nomSourate: string; n: number; 
 /** Couleurs fixes de la carte : elle ne dépend pas du thème choisi dans l'app. */
 const CARTE: Record<Fond, { fond: string; texte: string; accent: string; discret: string }> = {
   emeraude: {
-    fond: themes.jour.couleurs.emeraude,
+    fond: themes.jour.couleurs.emeraudeAplat,
     texte: themes.jour.couleurs.surEmeraude,
     accent: themes.jour.couleurs.or,
     discret: themes.jour.couleurs.orDoux,

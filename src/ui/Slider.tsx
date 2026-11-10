@@ -47,7 +47,7 @@ export function Slider({ label, valeurs, valeur, onChange, format }: SliderProps
                 width: i === index ? 16 : 8,
                 height: i === index ? 16 : 8,
                 borderRadius: rayon.rayonPastille,
-                backgroundColor: i <= index ? couleurs.emeraude : couleurs.ligneForte,
+                backgroundColor: i <= index ? couleurs.emeraudeAplat : couleurs.ligneForte,
               }}
             />
           </Pressable>

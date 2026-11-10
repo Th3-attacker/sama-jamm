@@ -22,7 +22,7 @@ import { useMargeBasse, useMiniLecteurVisible } from '@/features/ecouter/placeMi
 import { BandeEcoute } from '@/features/accueil/BandeEcoute';
 import { CarteHeros } from '@/features/accueil/CarteHeros';
 import { GrilleAccueil, useColonnesGrille } from '@/features/accueil/CartesAccueil';
-import { useLecteur } from '@/features/ecouter/lecteur';
+import { enEcoute as ecouteEnCours, useLecteur } from '@/features/ecouter/lecteur';
 import { SondeBarre } from '@/features/ecouter/SondeBarre';
 
 /** Un grain par jour du mois ; `lus` : clés de jour « 2026-10-29 » où une lecture a eu lieu. */
@@ -44,7 +44,7 @@ export default function Accueil() {
   const { styleColonne: colonne, largeur } = useLayout();
   const colonnesGrille = useColonnesGrille(largeur);
   const miniVisible = useMiniLecteurVisible();
-  const enEcoute = useLecteur((s) => s.position !== null);
+  const enEcoute = useLecteur(ecouteEnCours);
   const bandeEcoute = enEcoute && !miniVisible;
   const maintenant = useMaintenant();
   const lieu = useReglages((s) => s.lieu);

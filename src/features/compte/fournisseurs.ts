@@ -8,7 +8,7 @@ import { Platform } from 'react-native';
 
 import { supabase } from '@/services/supabase/client';
 
-import { lireRetourOAuth } from './validation';
+import { ErreurConnexion, lireRetourOAuth } from './validation';
 
 /** Résultat d'une connexion : réussie, ou abandonnée par la personne (pas une erreur). */
 export type IssueConnexion = 'connecte' | 'annule';
@@ -22,14 +22,14 @@ export async function connecterGoogle(): Promise<IssueConnexion> {
     provider: 'google',
     options: { redirectTo: retour, skipBrowserRedirect: true },
   });
-  if (error) throw error;
+  if (error) throw new ErreurConnexion('demarrage', error);
   const resultat = await WebBrowser.openAuthSessionAsync(data.url, retour);
   if (resultat.type !== 'success') return 'annule';
   const lu = lireRetourOAuth(resultat.url);
-  if (!lu) throw new Error('Retour de Google sans code.');
-  if ('erreur' in lu) throw new Error(lu.erreur);
+  if (!lu) throw new ErreurConnexion('retour_sans_code');
+  if ('erreur' in lu) throw new ErreurConnexion('retour_erreur');
   const echange = await supabase.auth.exchangeCodeForSession(lu.code);
-  if (echange.error) throw echange.error;
+  if (echange.error) throw new ErreurConnexion('echange', echange.error);
   return 'connecte';
 }
 

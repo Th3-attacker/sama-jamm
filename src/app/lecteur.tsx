@@ -27,6 +27,7 @@ import {
 import { recitateur } from '@/features/ecouter/recitateurs';
 import { sourateTelechargee, telechargerSourate, useTelechargements, WifiRequis } from '@/features/ecouter/telechargements';
 import { sourate, traductionDe, versetsDe } from '@/features/lire/coran';
+import { LecteurXassaide } from '@/features/xassaides/LecteurXassaide';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { Banner } from '@/ui/Banner';
@@ -42,8 +43,14 @@ import { Slider } from '@/ui/Slider';
 
 type Repetition = 'non' | 'verset' | 'sourate';
 
-/** Lecteur plein écran : anneau de progression, verset récité avec ses voisins, commandes ; réglages dans la feuille « Écoute ». */
+/** Lecteur plein écran : celui des xassaïdes quand une piste est en cours, sinon celui du Coran. */
 export default function LecteurPleinEcran() {
+  const xassaide = useLecteur((s) => s.piste !== null);
+  return xassaide ? <LecteurXassaide /> : <LecteurCoran />;
+}
+
+/** Lecteur du Coran : anneau de progression, verset récité avec ses voisins, commandes ; réglages dans la feuille « Écoute ». */
+function LecteurCoran() {
   const { t } = useTranslation();
   const { afficher } = useToast();
   const { couleurs, espace, rayon, cible, typographie } = useTheme();
@@ -271,7 +278,7 @@ export default function LecteurPleinEcran() {
                     width: 72,
                     height: 72,
                     borderRadius: rayon.rayonPastille,
-                    backgroundColor: couleurs.emeraude,
+                    backgroundColor: couleurs.emeraudeAplat,
                     opacity: pressed ? 0.85 : 1,
                   },
                 ]}>

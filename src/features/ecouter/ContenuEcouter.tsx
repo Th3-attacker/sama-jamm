@@ -29,7 +29,7 @@ export function ContenuEcouter({ onToutVoir }: { onToutVoir: () => void }) {
   const fixe = themes.jour.couleurs;
   // Pochettes : émeraude, nuit, or doux ; le nom arabe et le numéro suivent le fond.
   const pochettes = [
-    { fond: couleurs.emeraude, nom: couleurs.orSurEmeraude, numero: couleurs.surEmeraude2 },
+    { fond: couleurs.emeraudeAplat, nom: couleurs.orSurEmeraude, numero: couleurs.surEmeraude2 },
     { fond: couleurs.marqueNuit, nom: fixe.orSurEmeraude, numero: fixe.surEmeraude2 },
     { fond: couleurs.orDoux, nom: couleurs.emeraude, numero: couleurs.orTexte },
   ] as const;
@@ -63,7 +63,7 @@ export function ContenuEcouter({ onToutVoir }: { onToutVoir: () => void }) {
             ecouter(derniere);
             router.navigate('/lecteur');
           }}
-          style={[styles.hero, { gap: espace.espace4, padding: espace.espace4, backgroundColor: couleurs.emeraude, borderRadius: rayon.rayonCarte + espace.espace1 }]}>
+          style={[styles.hero, { gap: espace.espace4, padding: espace.espace4, backgroundColor: couleurs.emeraudeAplat, borderRadius: rayon.rayonCarte + espace.espace1 }]}>
           <View style={styles.marque} pointerEvents="none">
             <Logo taille={170} variante="or" />
           </View>

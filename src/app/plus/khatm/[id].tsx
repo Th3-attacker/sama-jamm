@@ -73,7 +73,7 @@ export default function EcranKhatm() {
   // Lu : plein émeraude · en cours : or doux · le vôtre : contour émeraude · libre : contour discret.
   const couleurDe = (v: VuePart) =>
     v === 'lu'
-      ? { fond: couleurs.emeraude, texte: couleurs.surEmeraude, bord: couleurs.emeraude }
+      ? { fond: couleurs.emeraudeAplat, texte: couleurs.surEmeraude, bord: couleurs.emeraudeAplat }
       : v === 'leVotre'
         ? { fond: couleurs.emeraudeDoux, texte: couleurs.emeraude, bord: couleurs.emeraude }
         : v === 'enCours'

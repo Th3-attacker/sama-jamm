@@ -15,6 +15,7 @@
     "userInterfaceStyle": "automatic",
     "ios": {
       "bundleIdentifier": "com.samajamm.app",
+      "supportsTablet": false,
       "usesAppleSignIn": true,
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
@@ -36,6 +37,7 @@
     },
     "plugins": [
       "expo-router",
+      "./plugins/android-sans-ondulation.js",
       [
         "expo-splash-screen",
         {
@@ -73,10 +75,14 @@
           "color": "#1f5f4a",
           "defaultChannel": "rappels-v1",
           "sounds": [
-            "./assets/sons/adhan_complet.ogg",
-            "./assets/sons/adhan_court.ogg",
-            "./assets/sons/adhan_complet_ios.wav",
-            "./assets/sons/adhan_court_ios.wav"
+            "./assets/sons/adhan_fajr.mp3",
+            "./assets/sons/adhan_fajr_court.mp3",
+            "./assets/sons/adhan_makkah.mp3",
+            "./assets/sons/adhan_makkah_court.mp3",
+            "./assets/sons/adhan_fajr_complet_ios.wav",
+            "./assets/sons/adhan_fajr_court_ios.wav",
+            "./assets/sons/adhan_makkah_complet_ios.wav",
+            "./assets/sons/adhan_makkah_court_ios.wav"
           ]
         }
       ],

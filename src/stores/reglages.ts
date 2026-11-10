@@ -149,15 +149,20 @@ export const useReglages = create<Donnees & Actions>()(
     }),
     {
       name: 'reglages',
-      version: 5,
+      version: 6,
       storage: createJSONStorage(() => stockage),
       // v1 → v2 : réglages de prière ; v2 → v3 : vibrations. Valeurs par défaut pour les clés absentes.
       // v3 → v4 : la taille de lecture par défaut passe du 3e au 2e cran ; une autre taille choisie est gardée.
       // v4 → v5 : translittération (absente des anciens réglages : la valeur par défaut, désactivée, s'applique).
+      // v5 → v6 : le wolof n'est plus proposé (interface et traduction) ; un ancien choix repasse au français.
       migrate: (etat, version) => {
         if (!etat || typeof etat !== 'object') return etat;
         const migre: Record<string, unknown> = version < 3 ? { ...parDefaut, ...etat } : { ...etat };
         if (version < 4 && migre.tailleLecture === 2) migre.tailleLecture = 1;
+        if (version < 6) {
+          if (migre.langue === 'wo') migre.langue = 'fr';
+          if (migre.traduction === 'wo') migre.traduction = 'fr';
+        }
         return migre;
       },
       partialize: (s) => ({

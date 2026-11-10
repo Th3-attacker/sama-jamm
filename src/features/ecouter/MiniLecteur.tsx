@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { sourate } from '@/features/lire/coran';
+import { pisteXassaides, sourceXassaides } from '@/features/xassaides/catalogue';
 import { usePlaceBas } from '@/stores/placeBas';
 import { usePleinEcran } from '@/stores/pleinEcran';
 import { echelleMax } from '@/theme/typographie';
@@ -22,15 +23,23 @@ export function MiniLecteur() {
   const enLecture = useLecteur((s) => s.enLecture);
   const idRecitateur = useLecteur((s) => s.recitateur);
   const page = useLecteur((s) => s.page);
+  const piste = useLecteur((s) => s.piste);
   const pleinEcran = usePleinEcran((s) => s.actif);
   // Mince quand le compteur fixe est visible : titre et lecture seulement (design 18).
   const mince = usePlaceBas((s) => s.outil) === 'compteur';
-  const visible = Boolean(position) && !pleinEcran;
+  const visible = (position !== null || piste !== null) && !pleinEcran;
   // Hauteur réelle (texte agrandi compris) pour que le contenu lui laisse exactement sa place.
   useEffect(() => {
     if (!visible) usePlaceBas.setState({ hauteurMini: 0 });
   }, [visible]);
-  if (!position || pleinEcran) return null;
+  if (!visible) return null;
+  // Xassaïde : titre de la piste et nom de la source ; Coran : sourate, verset et récitateur.
+  const titre = piste
+    ? (pisteXassaides(piste.source, piste.id)?.titre ?? '')
+    : position
+      ? `${sourate(position.sourate)?.nom ?? ''} · ${t('ecouter.versetN', { n: position.verset })}${page !== null ? ` · ${t('lire.pageN', { n: page })}` : ''}`
+      : '';
+  const auteur = piste ? (sourceXassaides(piste.source)?.nom ?? '') : (recitateur(idRecitateur)?.nom ?? '');
 
   return (
     <View
@@ -52,14 +61,14 @@ export function MiniLecteur() {
           numberOfLines={1}
           maxFontSizeMultiplier={echelleMax.courant}
           style={[typographie.libelle, { color: couleurs.encre }]}>
-          {`${sourate(position.sourate)?.nom ?? ''} · ${t('ecouter.versetN', { n: position.verset })}${page !== null ? ` · ${t('lire.pageN', { n: page })}` : ''}`}
+          {titre}
         </Text>
         {mince ? null : (
           <Text
             numberOfLines={1}
             maxFontSizeMultiplier={echelleMax.courant}
             style={[typographie.legende, { color: couleurs.encre2 }]}>
-            {recitateur(idRecitateur)?.nom ?? ''}
+            {auteur}
           </Text>
         )}
       </Pressable>

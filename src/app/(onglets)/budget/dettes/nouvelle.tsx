@@ -1,7 +1,7 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 
 import { SaisieInvalide } from '@/features/budget/depot';
 import {
@@ -24,6 +24,7 @@ import { SegmentedControl } from '@/ui/SegmentedControl';
 import { TextField } from '@/ui/TextField';
 import { useToast } from '@/ui/Toast';
 import { EnteteRetour } from '@/ui/EnteteRetour';
+import { EvitementClavier } from '@/ui/EvitementClavier';
 import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
 /** Ajouter une dette, ou la corriger (`?id=`) : sens, personne, montant, échéance et note. */
@@ -88,7 +89,7 @@ export default function NouvelleDette() {
 
   return (
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
-      <KeyboardAvoidingView style={styles.ecran} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+      <EvitementClavier style={styles.ecran}>
         <ScrollView
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={{
@@ -152,7 +153,7 @@ export default function NouvelleDette() {
             {t('commun.enregistrer')}
           </Button>
         </ScrollView>
-      </KeyboardAvoidingView>
+      </EvitementClavier>
     </View>
   );
 }

@@ -1,7 +1,7 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import type { BienZakat } from '@/features/budget/depot';
 import { EcranBudgetIncomplet } from '@/features/budget/EcranBudgetIncomplet';
@@ -20,6 +20,7 @@ import { ListItem } from '@/ui/ListItem';
 import { SegmentedControl } from '@/ui/SegmentedControl';
 import { TextField } from '@/ui/TextField';
 import { useToast } from '@/ui/Toast';
+import { EvitementClavier } from '@/ui/EvitementClavier';
 import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
 /** Mes biens : base du nisab, prix du gramme, ce que je possède et ce qui est à déduire. */
@@ -109,7 +110,7 @@ export default function BiensZakat() {
 
   return (
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
-      <KeyboardAvoidingView style={styles.ecran} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+      <EvitementClavier style={styles.ecran}>
         <ScrollView
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={{
@@ -225,7 +226,7 @@ export default function BiensZakat() {
             </Text>
           </View>
         </ScrollView>
-      </KeyboardAvoidingView>
+      </EvitementClavier>
     </View>
   );
 }

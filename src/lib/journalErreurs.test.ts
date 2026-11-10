@@ -31,3 +31,9 @@ test('journal en texte : en-tête puis une ligne par erreur', () => {
     'Sama Jàmm\n2026-11-01T10:00:00Z · ERR-0001 · 04/11 10:00 · TypeError · ecran · android 1.0.0',
   );
 });
+
+test('journal : le détail de connexion est partagé avec l\'entrée', () => {
+  const texte = journalEnTexte([{ ...entree(1), detail: 'echange:bad_code_verifier' }], 'Entête');
+  assert.ok(texte.endsWith('1.0.0 · echange:bad_code_verifier'));
+  assert.ok(!journalEnTexte([entree(1)], 'Entête').includes(' · undefined'));
+});

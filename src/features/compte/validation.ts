@@ -48,3 +48,29 @@ export function lireRetourOAuth(adresse: string): RetourOAuth | null {
   const erreur = params.get('error_description') ?? params.get('error');
   return erreur ? { erreur } : null;
 }
+
+/** Échec d'une connexion par fournisseur : l'étape (jamais un message) et, si connue, l'erreur d'origine. */
+export class ErreurConnexion extends Error {
+  readonly etape: 'demarrage' | 'retour_sans_code' | 'retour_erreur' | 'echange';
+  readonly origine: unknown;
+  constructor(etape: ErreurConnexion['etape'], origine?: unknown) {
+    super(`connexion : ${etape}`);
+    this.name = 'ErreurConnexion';
+    this.etape = etape;
+    this.origine = origine;
+  }
+}
+
+/** Détail court pour le journal : « echange:bad_oauth_callback » ou « demarrage:400 ». Jamais de texte libre. */
+export function detailConnexion(erreur: unknown): string | undefined {
+  if (!(erreur instanceof ErreurConnexion)) return undefined;
+  const o = erreur.origine;
+  let suite = '';
+  if (o && typeof o === 'object') {
+    const { code, status } = o as { code?: unknown; status?: unknown };
+    if (typeof code === 'string') suite = code;
+    else if (typeof status === 'number') suite = String(status);
+  }
+  const propre = suite.replace(/[^A-Za-z0-9_.-]/g, '').slice(0, 40);
+  return propre ? `${erreur.etape}:${propre}` : erreur.etape;
+}

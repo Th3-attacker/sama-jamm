@@ -462,7 +462,7 @@ function LectureSourate({
           }}
           style={[
             styles.ecouter,
-            { width: cible.cibleIos, height: cible.cibleIos, backgroundColor: couleurs.emeraude },
+            { width: cible.cibleIos, height: cible.cibleIos, backgroundColor: couleurs.emeraudeAplat },
           ]}>
           <Icon name="play" size={22} color={couleurs.surEmeraude} />
         </Pressable>

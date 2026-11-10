@@ -71,7 +71,6 @@ export function ReglagesLecture({ ouvert, onFermer }: { ouvert: boolean; onFerme
         label={t('reglages.traduction')}
         options={[
           { id: 'fr', label: 'Français' },
-          { id: 'wo', label: 'Wolof' },
           { id: 'aucune', label: t('reglages.traductionAucune') },
         ]}
         valeur={choixTraduction}
@@ -80,7 +79,7 @@ export function ReglagesLecture({ ouvert, onFermer }: { ouvert: boolean; onFerme
             definirAffichage('arabeSeul');
             return;
           }
-          if (id === 'fr' || id === 'wo') {
+          if (id === 'fr') {
             definirTraduction(id satisfies Langue);
             if (affichage === 'arabeSeul') definirAffichage('arabeTrad');
           }

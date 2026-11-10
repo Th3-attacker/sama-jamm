@@ -1,7 +1,7 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { INTENTION_MAX, NOM_OBJECTIF_MAX, projectionObjectif } from '@/features/budget/epargne';
 import { EcranBudgetIncomplet } from '@/features/budget/EcranBudgetIncomplet';
@@ -18,6 +18,7 @@ import { SegmentedControl } from '@/ui/SegmentedControl';
 import { TextField } from '@/ui/TextField';
 import { useToast } from '@/ui/Toast';
 import { EnteteRetour } from '@/ui/EnteteRetour';
+import { EvitementClavier } from '@/ui/EvitementClavier';
 import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
 type Mode = 'fixe' | 'libre';
@@ -107,7 +108,7 @@ export default function EcranObjectif() {
 
   return (
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
-      <KeyboardAvoidingView style={styles.ecran} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+      <EvitementClavier style={styles.ecran}>
         <ScrollView
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={{
@@ -182,7 +183,7 @@ export default function EcranObjectif() {
             {o ? t('commun.enregistrer') : t('epargne.creer')}
           </Button>
         </ScrollView>
-      </KeyboardAvoidingView>
+      </EvitementClavier>
     </View>
   );
 }

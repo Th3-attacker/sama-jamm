@@ -6,13 +6,13 @@ import { usePleinEcran } from '@/stores/pleinEcran';
 import { ACCESSOIRE_NATIF, reperesBarre } from '@/theme/layout';
 import { calculerPile, type PileBas } from '@/theme/pileBas';
 
-import { useLecteur } from './lecteur';
+import { enEcoute as ecouteEnCours, useLecteur } from './lecteur';
 
 export { ACCESSOIRE_NATIF };
 
 /** Vrai pendant une écoute, hors page mushaf plein écran (que la pile ait de la place ou non). */
 function useEcouteActive(): boolean {
-  const enEcoute = useLecteur((s) => s.position !== null);
+  const enEcoute = useLecteur(ecouteEnCours);
   const pleinEcran = usePleinEcran((s) => s.actif);
   return enEcoute && !pleinEcran;
 }

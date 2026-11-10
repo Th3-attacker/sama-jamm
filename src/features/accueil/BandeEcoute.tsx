@@ -5,6 +5,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { sourate } from '@/features/lire/coran';
 import { recitateur } from '@/features/ecouter/recitateurs';
 import { useLecteur } from '@/features/ecouter/lecteur';
+import { pisteXassaides, sourceXassaides } from '@/features/xassaides/catalogue';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { Icon } from '@/ui/Icon';
@@ -15,8 +16,11 @@ export function BandeEcoute() {
   const { couleurs, espace, rayon, typographie } = useTheme();
   const position = useLecteur((s) => s.position);
   const idRecitateur = useLecteur((s) => s.recitateur);
-  if (!position) return null;
-  const detail = `${sourate(position.sourate)?.nom ?? ''} · ${recitateur(idRecitateur)?.nom ?? ''}`;
+  const piste = useLecteur((s) => s.piste);
+  if (!position && !piste) return null;
+  const detail = piste
+    ? `${pisteXassaides(piste.source, piste.id)?.titre ?? ''} · ${sourceXassaides(piste.source)?.nom ?? ''}`
+    : `${position ? (sourate(position.sourate)?.nom ?? '') : ''} · ${recitateur(idRecitateur)?.nom ?? ''}`;
   return (
     <Pressable
       accessibilityRole="button"
@@ -26,7 +30,7 @@ export function BandeEcoute() {
         styles.bande,
         { gap: espace.espace3, paddingHorizontal: espace.espace4, paddingVertical: espace.espace3, borderRadius: 16, backgroundColor: couleurs.surfaceCreux },
       ]}>
-      <View style={[styles.lecture, { width: 40, height: 40, backgroundColor: couleurs.emeraude, borderRadius: rayon.rayonPastille }]}>
+      <View style={[styles.lecture, { width: 40, height: 40, backgroundColor: couleurs.emeraudeAplat, borderRadius: rayon.rayonPastille }]}>
         <Icon name="play" size={18} color={couleurs.surEmeraude} />
       </View>
       <View style={styles.texte}>

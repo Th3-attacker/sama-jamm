@@ -32,7 +32,7 @@ export function BasculeMode({ label, options, valeur, onChange }: Props) {
             style={[
               styles.option,
               { borderRadius: rayon.rayonPastille, paddingHorizontal: espace.espace3 },
-              on ? { backgroundColor: couleurs.emeraude } : null,
+              on ? { backgroundColor: couleurs.emeraudeAplat } : null,
             ]}>
             <Text
               numberOfLines={1}

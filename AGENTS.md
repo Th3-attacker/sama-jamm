@@ -152,11 +152,11 @@ Le stack suivant constitue la cible technique du projet.
 
 ### État réel du dépôt (6 novembre 2026)
 
-Constat à cette date : Expo SDK 58, React Native 0.88.1, React 19.3, TypeScript 6.0.3, expo-router, zustand pour l'état local, i18next pour les textes, SQLite chiffré (expo-sqlite avec SQLCipher) pour le budget, Supabase limité aux comptes, au khatm collectif et aux déclarations de dons.
+Constat à cette date : Expo SDK 58, React Native 0.88.1, React 19.3, TypeScript 6.0.3, expo-router, zustand pour l'état local, i18next pour les textes, SQLite chiffré (expo-sqlite avec SQLCipher) pour le budget, Supabase limité aux comptes et au khatm collectif.
 
 TanStack Query, TanStack Form et TanStack Start ne sont pas installés. Ce sont des cibles non adoptées : les sections 8, 9 et 11 ne s'appliquent qu'à partir du moment où la bibliothèque correspondante est réellement installée, et cette introduction passe par un plan approuvé.
 
-PostgreSQL n'est la source de vérité que des tables Supabase (`profils`, `khatm`, `declarations_dons`) ; les données du budget restent sur le téléphone et ne sont jamais envoyées.
+PostgreSQL n'est la source de vérité que des tables Supabase (`profils`, `khatm`) ; les données du budget restent sur le téléphone et ne sont jamais envoyées.
 
 ## Règles du stack
 

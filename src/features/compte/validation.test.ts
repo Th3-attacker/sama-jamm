@@ -2,7 +2,15 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { codePropre, emailPropre, estRetourConnexion, lireRetourOAuth, prenomPropre } from './validation.ts';
+import {
+  codePropre,
+  detailConnexion,
+  emailPropre,
+  ErreurConnexion,
+  estRetourConnexion,
+  lireRetourOAuth,
+  prenomPropre,
+} from './validation.ts';
 
 test('e-mail : nettoyé, minuscules, refus des adresses incomplètes', () => {
   assert.equal(emailPropre('  Awa.Ndiaye@Exemple.SN '), 'awa.ndiaye@exemple.sn');
@@ -37,4 +45,12 @@ test('retour OAuth : code, erreur ou rien', () => {
     erreur: 'Refusé',
   });
   assert.equal(lireRetourOAuth('samajamm://auth'), null);
+});
+
+test('détail de connexion : étape et code technique, jamais de texte libre', () => {
+  assert.equal(detailConnexion(new ErreurConnexion('retour_sans_code')), 'retour_sans_code');
+  assert.equal(detailConnexion(new ErreurConnexion('echange', { code: 'bad_code_verifier', message: 'secret' })), 'echange:bad_code_verifier');
+  assert.equal(detailConnexion(new ErreurConnexion('demarrage', { status: 400 })), 'demarrage:400');
+  assert.equal(detailConnexion(new ErreurConnexion('echange', { code: 'a b<c>=1' })), 'echange:abc1');
+  assert.equal(detailConnexion(new Error('autre')), undefined);
 });

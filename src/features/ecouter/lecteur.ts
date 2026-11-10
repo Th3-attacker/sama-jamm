@@ -1,10 +1,14 @@
-// Lecteur audio unique de l'app : écoute verset par verset, jusqu'à la fin de la sourate ou page par page.
+// Lecteur audio unique de l'app : écoute verset par verset, jusqu'à la fin de la sourate ou page par page,
+// et écoute des xassaïdes (une piste longue par fichier).
 // État partagé par l'onglet Écouter, le lecteur plein écran et le mini-lecteur ; dernière position gardée.
 import { createAudioPlaylist, setAudioModeAsync, type AudioPlaylist, type AudioPlaylistStatus } from 'expo-audio';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
 import { nombreDePages, pageDe, sourate, sourates, versetsDePage } from '@/features/lire/coran';
+import { pisteXassaides, sourceXassaides } from '@/features/xassaides/catalogue';
+import { tempsApresSaut, type Piste, type PisteEnCours } from '@/features/xassaides/pistes';
+import { sourcePiste } from '@/features/xassaides/telechargements';
 import { stockage } from '@/stores/stockage';
 
 import { rejouerVerset, resteMinuterie, type Minuterie, type RepetitionVerset } from './minuterie';
@@ -19,6 +23,11 @@ type EtatLecteur = {
   position: Position | null;
   /** Dernier verset écouté, pour « Reprendre » (gardé sur le téléphone). */
   derniere: Position | null;
+  /** Xassaïde en cours d'écoute ; `position` vaut alors null. */
+  piste: PisteEnCours | null;
+  /** Temps écoulé et durée de la piste en cours, en secondes entières (xassaïdes seulement). */
+  temps: number;
+  duree: number;
   recitateur: string;
   vitesse: number;
   enLecture: boolean;
@@ -39,6 +48,9 @@ export const useLecteur = create<EtatLecteur>()(
     (): EtatLecteur => ({
       position: null,
       derniere: null,
+      piste: null,
+      temps: 0,
+      duree: 0,
       recitateur: RECITATEURS[0]?.id ?? 'ar.alafasy',
       vitesse: 1,
       enLecture: false,
@@ -70,17 +82,44 @@ export const useLecteur = create<EtatLecteur>()(
 // Liste de lecture native (ExoPlayer, AVQueuePlayer) : les versets sont en file, le suivant est préparé pendant
 // la lecture du verset en cours, d'où un enchaînement sans attente de chargement.
 let liste: AudioPlaylist | undefined;
-/** Ce qui est en file : la sourate entière, ou des pages du mushaf ajoutées au fur et à mesure. */
-let enFile:
+type FileCoran =
   | { mode: 'sourate'; sourate: number; recitateur: string; pistes: Position[] }
-  | { mode: 'page'; dernierePage: number; recitateur: string; pistes: Position[] }
-  | null = null;
+  | { mode: 'page'; dernierePage: number; recitateur: string; pistes: Position[] };
+type FileXassaides = { mode: 'xassaides'; source: string; nomSource: string; pistes: readonly Piste[] };
+/** Ce qui est en file : la sourate entière, des pages du mushaf ajoutées au fur et à mesure, ou les xassaïdes d'une source. */
+let enFile: FileCoran | FileXassaides | null = null;
 /** Pages ajoutées d'avance en mode page. */
 const PAGES_D_AVANCE = 1;
+
+/** Vrai pendant une écoute, du Coran ou d'un xassaïde. */
+export const enEcoute = (s: EtatLecteur): boolean => s.position !== null || s.piste !== null;
 
 function metadonnees(p: Position) {
   const r = recitateur(useLecteur.getState().recitateur);
   return { title: `${sourate(p.sourate)?.nom ?? ''} · ${p.verset}`, artist: r?.nom ?? '' };
+}
+
+/** État et titre de l'écran verrouillé pour la piste `index` de la file, ou null si elle n'existe pas. */
+function pisteDeFile(f: FileCoran | FileXassaides, index: number) {
+  if (f.mode === 'xassaides') {
+    const x = f.pistes[index];
+    if (!x) return null;
+    return {
+      etat: { position: null, page: null, piste: { source: f.source, id: x.id }, temps: 0, duree: 0 },
+      titre: { title: x.titre, artist: f.nomSource },
+    };
+  }
+  const p = f.pistes[index];
+  if (!p) return null;
+  return {
+    etat: {
+      position: p,
+      derniere: p,
+      page: f.mode === 'page' ? (pageDe(p.sourate, p.verset) ?? null) : null,
+      piste: null,
+    },
+    titre: metadonnees(p),
+  };
 }
 
 /** Délai de chargement au-delà duquel le verset est considéré comme injoignable (hors ligne). */
@@ -89,7 +128,16 @@ let attenteReseau: ReturnType<typeof setTimeout> | undefined;
 let lectureDemandee = false;
 
 function surStatut(statut: AudioPlaylistStatus): void {
-  useLecteur.setState({ enLecture: statut.playing, chargement: statut.isBuffering });
+  useLecteur.setState(
+    enFile?.mode === 'xassaides'
+      ? {
+          enLecture: statut.playing,
+          chargement: statut.isBuffering,
+          temps: Math.floor(statut.currentTime) || 0,
+          duree: Math.floor(statut.duration) || 0,
+        }
+      : { enLecture: statut.playing, chargement: statut.isBuffering },
+  );
   // Pas d'événement d'erreur dans la liste de lecture : un chargement qui n'aboutit pas vaut échec réseau.
   if (statut.playing || !lectureDemandee) {
     clearTimeout(attenteReseau);
@@ -151,8 +199,18 @@ function ajouterPistes(pistes: Position[], idRecitateur: string): void {
 
 function surChangementDePiste({ previousIndex, currentIndex }: { previousIndex: number; currentIndex: number }): void {
   const f = enFile;
-  const p = f?.pistes[currentIndex];
-  if (!f || !p) return;
+  if (!f) return;
+  if (f.mode === 'xassaides') {
+    // Une piste longue par fichier : ni répétition de verset ni page à ajouter.
+    const suivante = pisteDeFile(f, currentIndex);
+    if (!suivante) return;
+    sautManuel = false;
+    useLecteur.setState(suivante.etat);
+    liste?.updateLockScreenMetadata(suivante.titre);
+    return;
+  }
+  const p = f.pistes[currentIndex];
+  if (!p) return;
   const manuel = sautManuel;
   sautManuel = false;
   if (!manuel && currentIndex === previousIndex + 1) {
@@ -174,6 +232,7 @@ function surChangementDePiste({ previousIndex, currentIndex }: { previousIndex: 
     position: p,
     derniere: p,
     page: f.mode === 'page' ? (pageDe(p.sourate, p.verset) ?? null) : null,
+    piste: null,
   });
   liste?.updateLockScreenMetadata(metadonnees(p));
   // Mode page : la page suivante entre dans la file avant la fin de la dernière.
@@ -199,34 +258,31 @@ function file(): AudioPlaylist {
 }
 
 /** Remplace la file si besoin, puis lit la piste `index`. */
-function lire(nouvelleFile: NonNullable<typeof enFile> | null, index: number): void {
+function lire(nouvelleFile: FileCoran | FileXassaides | null, index: number): void {
   const etat = useLecteur.getState();
   const l = file();
   try {
     if (nouvelleFile) {
       l.clear();
-      ajouterPistes(nouvelleFile.pistes, nouvelleFile.recitateur);
+      if (nouvelleFile.mode === 'xassaides') {
+        // Fichier téléchargé s'il existe, sinon en ligne.
+        for (const x of nouvelleFile.pistes) l.add({ uri: sourcePiste(nouvelleFile.source, x) });
+      } else ajouterPistes(nouvelleFile.pistes, nouvelleFile.recitateur);
       enFile = nouvelleFile;
     }
-    const p = enFile?.pistes[index];
-    if (!p) return;
+    const demandee = enFile ? pisteDeFile(enFile, index) : null;
+    if (!demandee) return;
     sautManuel = true;
     ecoutesDuVerset = 1;
     lectureDemandee = true;
     l.skipTo(index);
     appliquerBoucle();
     l.playbackRate = etat.vitesse;
-    useLecteur.setState({
-      position: p,
-      derniere: p,
-      page: enFile?.mode === 'page' ? (pageDe(p.sourate, p.verset) ?? null) : null,
-      erreur: false,
-      chargement: true,
-    });
+    useLecteur.setState({ ...demandee.etat, erreur: false, chargement: true });
     l.play();
-    l.setActiveForLockScreen(true, metadonnees(p));
+    l.setActiveForLockScreen(true, demandee.titre);
   } catch (erreur: unknown) {
-    console.error('Verset non chargé', erreur);
+    console.error('Piste non chargée', erreur);
     useLecteur.setState({ erreur: true, chargement: false, enLecture: false });
   }
 }
@@ -249,10 +305,28 @@ export function ecouterPage(page: number): void {
   lire({ mode: 'page', dernierePage: fin, recitateur: r, pistes: pistesDePages(page, fin, versetsDePage) }, 0);
 }
 
+/** Lance l'écoute de ce xassaïde ; les pistes suivantes de la même source s'enchaînent. */
+export function ecouterXassaide(idSource: string, idPiste: number): void {
+  const s = sourceXassaides(idSource);
+  const index = s ? s.pistes.findIndex((x) => x.id === idPiste) : -1;
+  if (!s || index < 0) return;
+  const meme = enFile?.mode === 'xassaides' && enFile.source === idSource;
+  lire(meme ? null : { mode: 'xassaides', source: s.id, nomSource: s.nom, pistes: s.pistes }, index);
+}
+
+/** Avance ou recule de `pas` secondes dans la piste en cours (xassaïdes). */
+export function sauter(pas: number): void {
+  const { piste, duree } = useLecteur.getState();
+  if (!liste || !piste || !pisteXassaides(piste.source, piste.id)) return;
+  const cible = tempsApresSaut(liste.currentTime, pas, duree);
+  useLecteur.setState({ temps: Math.floor(cible) });
+  liste.seekTo(cible).catch((erreur: unknown) => console.warn('Saut non appliqué', erreur));
+}
+
 /** Lecture ou pause ; reprend au dernier verset si rien n'est chargé. */
 export function basculer(): void {
-  const { position, derniere, enLecture } = useLecteur.getState();
-  if (!position) {
+  const { position, piste, derniere, enLecture } = useLecteur.getState();
+  if (!position && !piste) {
     if (derniere) ecouter(derniere);
     return;
   }
@@ -266,13 +340,13 @@ export function basculer(): void {
 }
 
 export function suivant(): void {
-  if (!useLecteur.getState().position) return;
+  if (!enEcoute(useLecteur.getState())) return;
   sautManuel = true;
   liste?.next();
 }
 
 export function precedent(): void {
-  if (!useLecteur.getState().position) return;
+  if (!enEcoute(useLecteur.getState())) return;
   sautManuel = true;
   liste?.previous();
 }
@@ -288,5 +362,5 @@ export function arreter(): void {
   definirMinuterie({ type: 'aucune' });
   liste?.pause();
   liste?.clearLockScreenControls();
-  useLecteur.setState({ position: null, page: null, enLecture: false, chargement: false });
+  useLecteur.setState({ position: null, page: null, piste: null, enLecture: false, chargement: false });
 }

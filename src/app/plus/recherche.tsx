@@ -1,9 +1,13 @@
 import { router } from 'expo-router';
 import { useDeferredValue, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, Pressable, SectionList, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, FlatList, Pressable, SectionList, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { ecouterXassaide } from '@/features/ecouter/lecteur';
+import { normaliserLatin } from '@/features/recherche/normaliser';
+import { SOURCES } from '@/features/xassaides/catalogue';
+import { ListItem } from '@/ui/ListItem';
 import { CarteSourate } from '@/features/lire/CarteSourate';
 import { CarteVerset } from '@/features/lire/CarteVerset';
 import { indexPret, preparerIndex, rechercher, VIDE, type ResultatVerset } from '@/features/recherche/recherche';
@@ -17,6 +21,8 @@ import { SearchField } from '@/ui/SearchField';
 type Ligne = Sourate | ResultatVerset;
 type Filtre = 'tout' | 'coran' | 'xassaides' | 'invocations';
 const FILTRES: Filtre[] = ['tout', 'coran', 'xassaides', 'invocations'];
+/** Tous les xassaïdes, avec leur source, pour la recherche par titre. */
+const XASSAIDES = SOURCES.flatMap((s) => s.pistes.map((p) => ({ source: s, piste: p })));
 
 export default function Recherche() {
   const { t } = useTranslation();
@@ -45,14 +51,22 @@ export default function Recherche() {
   const resultats = useMemo(() => (pret ? rechercher(requeteDiffree) : VIDE), [pret, requeteDiffree]);
   const enAttente = !pret && requeteDiffree.trim().length > 0;
   const recherche = requeteDiffree.trim().length > 0;
+  // Xassaïdes : recherche par titre ou par nom de la source, sans index.
+  const xassaides = useMemo(() => {
+    const q = normaliserLatin(requeteDiffree.trim());
+    if (!q) return [];
+    return XASSAIDES.filter(
+      (x) => normaliserLatin(x.piste.titre).includes(q) || normaliserLatin(x.source.nom).includes(q),
+    );
+  }, [requeteDiffree]);
   const aucun = pret && recherche && resultats.sourates.length === 0 && resultats.versets.length === 0;
 
-  const sections = [
-    { cle: 'sourates', titre: t('recherche.sourates'), data: resultats.sourates as Ligne[] },
+  const sections: { cle: string; titre: string; data: Ligne[] }[] = [
+    { cle: 'sourates', titre: t('recherche.sourates'), data: resultats.sourates },
     {
       cle: 'versets',
       titre: `${t('recherche.versets')} · ${t('recherche.resultats', { count: resultats.totalVersets })}`,
-      data: resultats.versets as Ligne[],
+      data: resultats.versets,
     },
   ].filter((s) => s.data.length > 0);
 
@@ -81,12 +95,38 @@ export default function Recherche() {
         ))}
       </View>
 
-      {filtre === 'xassaides' || filtre === 'invocations' ? (
+      {filtre === 'xassaides' ? (
+        <FlatList
+          data={xassaides}
+          keyboardShouldPersistTaps="handled"
+          keyExtractor={(x) => String(x.piste.id)}
+          contentContainerStyle={{ paddingHorizontal: espace.espace5, paddingBottom: espace.espace8 }}
+          ListEmptyComponent={
+            <EmptyState
+              icone="search"
+              lang="fr"
+              titre={recherche ? t('recherche.aucun', { terme: requeteDiffree.trim() }) : t('lire.xassaides')}
+              texte={t('xassaides.rechercheAide')}
+            />
+          }
+          renderItem={({ item }) => (
+            <ListItem
+              icone="headphones"
+              titre={item.piste.titre}
+              sousTitre={item.source.nom}
+              onPress={() => {
+                ecouterXassaide(item.source.id, item.piste.id);
+                router.navigate('/lecteur');
+              }}
+            />
+          )}
+        />
+      ) : filtre === 'invocations' ? (
         <EmptyState
           icone="search"
           lang="fr"
           titre={t(`lire.${filtre}`)}
-          texte={t(filtre === 'xassaides' ? 'lire.xassaidesAVenir' : 'lire.invocationsAVenir')}
+          texte={t('lire.invocationsAVenir')}
         />
       ) : enAttente ? (
         <ActivityIndicator

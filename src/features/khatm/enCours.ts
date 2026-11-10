@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useSession } from '@/features/compte/compte';
 import { supabase } from '@/services/supabase/client';
 
-type LignePart = { khatm_id: string; etat: string };
+import { estLignePart, lireListe, type LignePart } from './lignes';
 
 /** Khatms distincts qui ont encore au moins un juz non lu. */
 export function compterKhatmsEnCours(parts: readonly LignePart[]): number {
@@ -30,7 +30,12 @@ export function useKhatmsEnCours(): number | null {
           setNombre(null);
           return;
         }
-        setNombre(compterKhatmsEnCours((data ?? []) as LignePart[]));
+        try {
+          setNombre(compterKhatmsEnCours(lireListe(data ?? [], estLignePart)));
+        } catch (erreur: unknown) {
+          console.warn('Khatms en cours inattendus', erreur);
+          setNombre(null);
+        }
       });
     return () => {
       actif = false;

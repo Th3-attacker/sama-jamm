@@ -10,12 +10,12 @@ import { CarteSourate } from '@/features/lire/CarteSourate';
 import { sourate, sourates, type Sourate } from '@/features/lire/coran';
 import { ContenuEcouter } from '@/features/ecouter/ContenuEcouter';
 import { InterrupteurLireEcouter, type ModeLire } from '@/features/lire/InterrupteurLireEcouter';
+import { ListeSources } from '@/features/xassaides/ListeSources';
 import { useParametre } from '@/hooks/useParametre';
 import { useLecture } from '@/stores/lecture';
 import { echelleMax } from '@/theme/typographie';
 import { useLayout } from '@/theme/useLayout';
 import { useTheme } from '@/theme/useTheme';
-import { EmptyState } from '@/ui/EmptyState';
 import { Icon } from '@/ui/Icon';
 import { SegmentedControl } from '@/ui/SegmentedControl';
 import { TopBar } from '@/ui/TopBar';
@@ -155,14 +155,9 @@ export default function Lire() {
             />
           ) : onglet === 'invocations' ? (
             <ListeCategories />
-          ) : (
-          <EmptyState
-            icone="book"
-            lang="fr"
-            titre={t('lire.aVenir')}
-            texte={onglet === 'xassaides' ? t('lire.xassaidesAVenir') : t('lire.invocationsAVenir')}
-          />
-          )
+          ) : onglet === 'xassaides' ? (
+            <ListeSources />
+          ) : undefined
         }
         contentContainerStyle={{ ...colonne, paddingBottom: espace.espace8 + marge }}
         initialNumToRender={10}

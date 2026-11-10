@@ -19,7 +19,7 @@ export function journalDesErreurs(): EntreeJournal[] {
 }
 
 /** Ajoute l'erreur au journal ; un échec d'écriture n'est jamais une nouvelle erreur pour l'utilisateur. */
-export function journaliser(erreur: unknown, source: EntreeJournal['source'], date = new Date()): string {
+export function journaliser(erreur: unknown, source: EntreeJournal['source'], date = new Date(), detail?: string): string {
   const code = codeErreur(erreur, date);
   try {
     const entree: EntreeJournal = {
@@ -29,6 +29,7 @@ export function journaliser(erreur: unknown, source: EntreeJournal['source'], da
       source,
       version: versionInstallee ?? '?',
       plateforme: `${Platform.OS} ${String(Platform.Version)}`,
+      ...(detail ? { detail } : {}),
     };
     void stockage.setItem(CLE, JSON.stringify(ajouterAuJournal(journalDesErreurs(), entree)));
   } catch (e: unknown) {

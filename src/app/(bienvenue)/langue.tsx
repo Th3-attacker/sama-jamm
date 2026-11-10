@@ -9,7 +9,7 @@ import {
   appliquerSensEtRedemarrer,
   demandeRedemarrage,
 } from "@/features/bienvenue/sensDeLecture";
-import { estLangue, type Langue } from "@/i18n/langues";
+import { estLangueProposee, type Langue } from "@/i18n/langues";
 import { useReglages } from "@/stores/reglages";
 import { echelleMax } from "@/theme/typographie";
 import { useTheme } from "@/theme/useTheme";
@@ -21,7 +21,6 @@ import { PageDots } from "@/ui/PageDots";
 
 // Noms des langues dans leur propre langue : ils ne se traduisent pas.
 const OPTIONS: { id: Langue; label: string; arabe?: boolean }[] = [
-  { id: "wo", label: "Wolof" },
   { id: "fr", label: "Français" },
   { id: "ar", label: "العربية", arabe: true },
 ];
@@ -36,7 +35,7 @@ export default function EcranLangue() {
   const [redemarrageManuel, setRedemarrageManuel] = useState(false);
 
   const choisie: Langue =
-    langueEnregistree ?? (estLangue(i18n.language) ? i18n.language : "fr");
+    langueEnregistree ?? (estLangueProposee(i18n.language) ? i18n.language : "fr");
   const ivoire = couleurs.marqueIvoire;
   // Le fond émeraude ne change pas avec le thème : textes secondaires et lignes du thème jour.
   const surEmeraude2 = themes.jour.couleurs.surEmeraude2;

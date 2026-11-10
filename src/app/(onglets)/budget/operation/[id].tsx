@@ -1,7 +1,7 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { useFormatMontant } from '@/features/budget/verrou';
 import { EcranBudgetIncomplet } from '@/features/budget/EcranBudgetIncomplet';
@@ -21,6 +21,7 @@ import { useToast } from '@/ui/Toast';
 import { EnteteRetour } from '@/ui/EnteteRetour';
 import { SegmentedControl } from '@/ui/SegmentedControl';
 import { AmountDisplay } from '@/ui/AmountDisplay';
+import { EvitementClavier } from '@/ui/EvitementClavier';
 import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
 /** Corriger ou supprimer une opération (dépense ou revenu). Le jour et le cycle ne changent pas. */
@@ -123,7 +124,7 @@ export default function EcranOperation() {
 
   return (
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
-      <KeyboardAvoidingView style={styles.ecran} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+      <EvitementClavier style={styles.ecran}>
         <ScrollView
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={{
@@ -211,7 +212,7 @@ export default function EcranOperation() {
             {t('budget.supprimerOperation')}
           </Button>
         </ScrollView>
-      </KeyboardAvoidingView>
+      </EvitementClavier>
 
       <Dialog
         ouvert={confirmer}

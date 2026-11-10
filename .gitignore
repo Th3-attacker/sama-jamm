@@ -41,3 +41,6 @@ example
 # generated native folders
 /ios
 /android
+
+# Clé de compte de service Google Play (EAS Submit) : ne jamais versionner
+google-service-account.json

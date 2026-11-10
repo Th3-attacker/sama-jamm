@@ -2,12 +2,13 @@ import * as AppleAuthentication from 'expo-apple-authentication';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { envoyerCode, verifierCode } from '@/features/compte/compte';
 import { appleDisponible, connecterApple, connecterGoogle, type IssueConnexion } from '@/features/compte/fournisseurs';
-import { codePropre, emailPropre, LONGUEUR_CODE } from '@/features/compte/validation';
+import { codePropre, detailConnexion, emailPropre, LONGUEUR_CODE } from '@/features/compte/validation';
+import { journaliser } from '@/features/erreur/journal';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { Banner } from '@/ui/Banner';
@@ -15,6 +16,7 @@ import { Button } from '@/ui/Button';
 import { IconButton } from '@/ui/IconButton';
 import { Logo } from '@/ui/Logo';
 import { TextField } from '@/ui/TextField';
+import { EvitementClavier } from '@/ui/EvitementClavier';
 
 /** Connexion par code reçu par e-mail (sans mot de passe). Le budget reste toujours sur le téléphone. */
 export default function Connexion() {
@@ -50,6 +52,7 @@ export default function Connexion() {
       if ((await connecter()) === 'connecte') router.replace('/plus/compte');
     } catch (e: unknown) {
       console.warn('Connexion par fournisseur refusée', e);
+      journaliser(e, 'ecran', new Date(), detailConnexion(e));
       setErreur(t('connexion.fournisseurImpossible'));
     } finally {
       setEnvoi(false);
@@ -92,7 +95,7 @@ export default function Connexion() {
       <View style={{ paddingTop: insets.top + espace.espace2, paddingHorizontal: espace.espace4 }}>
         <IconButton icone="close" label={t('commun.fermer')} onPress={() => router.back()} />
       </View>
-      <KeyboardAvoidingView style={styles.ecran} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+      <EvitementClavier style={styles.ecran}>
         <ScrollView
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={{
@@ -175,7 +178,7 @@ export default function Connexion() {
             {t('connexion.sansCompte')}
           </Button>
         </View>
-      </KeyboardAvoidingView>
+      </EvitementClavier>
     </View>
   );
 }

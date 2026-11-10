@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { Platform, View } from 'react-native';
 
 import { ErreurDeRoute } from '@/features/erreur/ErreurDeRoute';
-import { SondeDev } from '@/features/ecouter/SondeDev';
 import { MiniLecteur } from '@/features/ecouter/MiniLecteur';
 import {
   ACCESSOIRE_NATIF,
@@ -41,7 +40,6 @@ export default function OngletsLayout() {
 
   return (
     <View style={{ flex: 1 }}>
-      {__DEV__ ? <SondeDev /> : null}
       <NativeTabs
         tintColor={couleurs.emeraude}
         // Android : fond de la planche. Sur iOS 26 le verre du système n'est pas remplacé par un aplat.
@@ -53,6 +51,8 @@ export default function OngletsLayout() {
         minimizeBehavior="never"
         sidebarAdaptable={barreLaterale}
         indicatorColor={couleurs.emeraudeDoux}
+        // Android : onde tactile aux couleurs de la pastille, à la place du violet par défaut de Material.
+        rippleColor={couleurs.emeraudeDoux}
         iconColor={{ default: couleurs.encre2, selected: couleurs.emeraude }}
         labelStyle={{
           default: { fontSize: tailleLibelle, fontWeight: '400', color: couleurs.encre2 },

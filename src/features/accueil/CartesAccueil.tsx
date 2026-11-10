@@ -179,7 +179,7 @@ function GrilleJuz({ parts, moi }: { parts: readonly Part[]; moi: string | null 
           vue === 'lu'
             ? { backgroundColor: couleurs.emeraudeDoux }
             : vue === 'leVotre'
-              ? { backgroundColor: couleurs.emeraude }
+              ? { backgroundColor: couleurs.emeraudeAplat }
               : { borderWidth: 1, borderColor: vue === 'enCours' ? couleurs.emeraude : couleurs.ligneForte };
         return <View key={p.juz} style={[styles.juz, style]} />;
       })}

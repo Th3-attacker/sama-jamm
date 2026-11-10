@@ -22,7 +22,7 @@ export function FiletProgres({ valeur, ton, label, detail }: Props) {
       accessibilityLabel={label}
       accessibilityValue={{ min: 0, max: 100, now: Math.round(borne * 100), text: detail }}
       style={[styles.piste, { backgroundColor: couleurs.surfaceCreux }]}>
-      <View style={[styles.rempli, { width: `${borne * 100}%`, backgroundColor: ton === 'or' ? couleurs.or : couleurs.emeraude }]} />
+      <View style={[styles.rempli, { width: `${borne * 100}%`, backgroundColor: ton === 'or' ? couleurs.or : couleurs.emeraudeAplat }]} />
     </View>
   );
 }

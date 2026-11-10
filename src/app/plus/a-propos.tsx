@@ -3,7 +3,14 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Linking, Platform, ScrollView, Share, StyleSheet, Text, View } from 'react-native';
 
-import { EMAIL_CONTACT, URL_CONFIDENTIALITE, URL_STORE_ANDROID } from '@/constants/liens';
+import {
+  EMAIL_CONTACT,
+  URL_AIDE,
+  URL_CONDITIONS,
+  URL_CONFIDENTIALITE,
+  URL_STORE_ANDROID,
+  URL_STORE_IOS,
+} from '@/constants/liens';
 import { journalDesErreurs } from '@/features/erreur/journal';
 import { journalEnTexte } from '@/lib/journalErreurs';
 import { echelleMax } from '@/theme/typographie';
@@ -18,7 +25,7 @@ import { TopBar } from '@/ui/TopBar';
 const SOURCES = [
   { cle: 'coran', details: ['sourceCoran', 'sourceTanzil'] },
   { cle: 'traductions', details: ['sourceTraduction'] },
-  { cle: 'recitations', details: ['sourceRecitations', 'sourceAdhan'] },
+  { cle: 'recitations', details: ['sourceRecitations', 'sourceXassaides', 'sourceAdhan'] },
   { cle: 'invocations', details: ['sourceInvocations'] },
   { cle: 'polices', details: ['polices'] },
 ] as const;
@@ -34,6 +41,7 @@ export default function APropos() {
   const { couleurs, espace, typographie, latin } = useTheme();
   const version = Constants.expoConfig?.version ?? '';
   const [detail, setDetail] = useState<CleSource | null>(null);
+  const urlStore = Platform.OS === 'ios' ? URL_STORE_IOS : URL_STORE_ANDROID;
   const source = SOURCES.find((s) => s.cle === detail);
 
   return (
@@ -54,7 +62,9 @@ export default function APropos() {
               style={[latin.titre2, { color: couleurs.encre }]}>
               {t('demarrage.signature')}
             </Text>
-            <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre3 }]}>
+            <Text
+              maxFontSizeMultiplier={echelleMax.courant}
+              style={[typographie.legende, { color: couleurs.encre3 }]}>
               {t('aPropos.version', { version })}
             </Text>
           </View>
@@ -80,9 +90,9 @@ export default function APropos() {
             <ListItem icone="user" titre={t('aPropos.contact')} onPress={() => ouvrir(`mailto:${EMAIL_CONTACT}`)} />
           ) : null}
           <ListItem icone="lock" titre={t('aPropos.confidentialite')} onPress={() => ouvrir(URL_CONFIDENTIALITE)} />
-          {Platform.OS === 'android' ? (
-            <ListItem icone="heart" titre={t('aPropos.noter')} onPress={() => ouvrir(URL_STORE_ANDROID)} />
-          ) : null}
+          <ListItem icone="book" titre={t('aPropos.conditions')} onPress={() => ouvrir(URL_CONDITIONS)} />
+          <ListItem icone="info" titre={t('aPropos.aide')} onPress={() => ouvrir(URL_AIDE)} />
+          {urlStore ? <ListItem icone="heart" titre={t('aPropos.noter')} onPress={() => ouvrir(urlStore)} /> : null}
           <ListItem
             icone="share"
             titre={t('aPropos.signaler')}

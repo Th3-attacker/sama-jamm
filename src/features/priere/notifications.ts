@@ -8,7 +8,7 @@ import { Platform } from 'react-native';
 
 import i18n from '@/i18n';
 import { formatHeure } from '@/lib/dates';
-import { useReglages, type Son } from '@/stores/reglages';
+import { useReglages, type NomPriere, type Son } from '@/stores/reglages';
 
 import { stockage } from '@/stores/stockage';
 
@@ -21,21 +21,26 @@ export const URL_ZAKAT = 'samajamm://budget/zakat';
 const TACHE = 'replanifier-prieres';
 
 // Le son d'un canal ne change plus après sa création : identifiants versionnés pour pouvoir les remplacer.
-// v2 : l'adhan (fichiers CC0 de Wikimedia Commons, intégrés par le plugin expo-notifications) remplace le son par défaut.
-const CANAUX: Record<Son, string> = {
-  complet: 'priere-v2-complet',
-  court: 'priere-v2-court',
-  doux: 'priere-v2-doux',
-  vibration: 'priere-v2-vibration',
-  silencieux: 'priere-v2-silencieux',
-};
+// v3 : deux appels, Fajr et Makkah (Dhuhr, Asr, Maghrib, Isha), chacun en version complète et courte.
+type Appel = 'fajr' | 'makkah';
+const APPELS: readonly Appel[] = ['fajr', 'makkah'];
+const appelDe = (priere: NomPriere): Appel => (priere === 'fajr' ? 'fajr' : 'makkah');
+const avecAdhan = (son: Son): son is 'complet' | 'court' => son === 'complet' || son === 'court';
+
+/** Identifiant du canal Android : un canal par appel pour l'adhan, un seul pour les autres sons. */
+function canal(son: Son, priere: NomPriere): string {
+  return avecAdhan(son) ? `priere-v3-${son}-${appelDe(priere)}` : `priere-v3-${son}`;
+}
 /** Fichiers de `assets/sons`, copiés dans les ressources Android par le plugin (nom avec l'extension). */
-const SONS_ADHAN: Partial<Record<Son, string>> = { complet: 'adhan_complet.ogg', court: 'adhan_court.ogg' };
-/**
- * iOS : pas de canaux, le son se désigne dans la notification elle-même. Extraits de 30 secondes au plus (limite d'iOS)
- * tirés des mêmes enregistrements CC0, en WAV.
- */
-const SONS_ADHAN_IOS: Partial<Record<Son, string>> = { complet: 'adhan_complet_ios.wav', court: 'adhan_court_ios.wav' };
+const SONS_ANDROID: Record<'complet' | 'court', Record<Appel, string>> = {
+  complet: { fajr: 'adhan_fajr.mp3', makkah: 'adhan_makkah.mp3' },
+  court: { fajr: 'adhan_fajr_court.mp3', makkah: 'adhan_makkah_court.mp3' },
+};
+/** iOS : pas de canaux, le son se désigne dans la notification. Extraits de 30 secondes au plus (limite d'iOS), en WAV. */
+const SONS_IOS: Record<'complet' | 'court', Record<Appel, string>> = {
+  complet: { fajr: 'adhan_fajr_complet_ios.wav', makkah: 'adhan_makkah_complet_ios.wav' },
+  court: { fajr: 'adhan_fajr_court_ios.wav', makkah: 'adhan_makkah_court_ios.wav' },
+};
 
 /**
  * Expo Go n'embarque pas les sons déclarés dans le plugin (adhan) : il ne connaît que le son par défaut.
@@ -51,9 +56,9 @@ const DANS_EXPO_GO = Constants.executionEnvironment === ExecutionEnvironment.Sto
 const SON_MUET = DANS_EXPO_GO ? 'default' : null;
 
 /** Son d'une notification d'appel : l'extrait d'adhan sur iOS, le son du canal (booléen) sur Android. */
-export function sonDeNotification(son: Son): boolean | string {
+export function sonDeNotification(son: Son, priere: NomPriere): boolean | string {
   const avecSon = son === 'complet' || son === 'court' || son === 'doux';
-  if (Platform.OS === 'ios' && !DANS_EXPO_GO) return SONS_ADHAN_IOS[son] ?? avecSon;
+  if (Platform.OS === 'ios' && !DANS_EXPO_GO && avecAdhan(son)) return SONS_IOS[son][appelDe(priere)];
   return avecSon;
 }
 
@@ -61,29 +66,36 @@ export function sonDeNotification(son: Son): boolean | string {
 export const CANAL_RAPPELS = 'rappels-v1';
 const ANCIENS_CANAUX = [
   'priere-defaut',
-  ...['complet', 'court', 'doux', 'vibration', 'silencieux'].map((son) => `priere-v1-${son}`),
+  ...['v1', 'v2'].flatMap((v) => ['complet', 'court', 'doux', 'vibration', 'silencieux'].map((son) => `priere-${v}-${son}`)),
 ];
 
 /** Crée les canaux Android (nécessaires avant la demande d'autorisation sur Android 13 et plus). */
 export async function creerCanaux(): Promise<void> {
   if (Platform.OS !== 'android') return;
   const t = i18n.t.bind(i18n);
-  // Complet et court : l'adhan ; doux : le son par défaut du téléphone.
-  for (const son of ['complet', 'court', 'doux'] as const) {
-    await Notifications.setNotificationChannelAsync(CANAUX[son], {
-      name: t(`notifications.canaux.${son}`),
-      importance: AndroidImportance.HIGH,
-      // Dans Expo Go, un fichier inconnu fait échouer la création du canal : son par défaut.
-      sound: DANS_EXPO_GO ? 'default' : (SONS_ADHAN[son] ?? 'default'),
-    });
+  // Complet et court : l'adhan de Fajr et celui de Makkah ; doux : le son par défaut du téléphone.
+  for (const son of ['complet', 'court'] as const) {
+    for (const appel of APPELS) {
+      await Notifications.setNotificationChannelAsync(`priere-v3-${son}-${appel}`, {
+        name: `${t(`notifications.canaux.${son}`)} · ${t(`notifications.canaux.${appel}`)}`,
+        importance: AndroidImportance.HIGH,
+        // Dans Expo Go, un fichier inconnu fait échouer la création du canal : son par défaut.
+        sound: DANS_EXPO_GO ? 'default' : SONS_ANDROID[son][appel],
+      });
+    }
   }
-  await Notifications.setNotificationChannelAsync(CANAUX.vibration, {
+  await Notifications.setNotificationChannelAsync('priere-v3-doux', {
+    name: t('notifications.canaux.doux'),
+    importance: AndroidImportance.HIGH,
+    sound: 'default',
+  });
+  await Notifications.setNotificationChannelAsync('priere-v3-vibration', {
     name: t('notifications.canaux.vibration'),
     importance: AndroidImportance.HIGH,
     sound: SON_MUET,
     enableVibrate: true,
   });
-  await Notifications.setNotificationChannelAsync(CANAUX.silencieux, {
+  await Notifications.setNotificationChannelAsync('priere-v3-silencieux', {
     name: t('notifications.canaux.silencieux'),
     importance: AndroidImportance.DEFAULT,
     sound: SON_MUET,
@@ -94,26 +106,6 @@ export async function creerCanaux(): Promise<void> {
     importance: AndroidImportance.DEFAULT,
   });
   for (const ancien of ANCIENS_CANAUX) await Notifications.deleteNotificationChannelAsync(ancien);
-}
-
-/**
- * Notification d'essai dans 2 secondes, sur le canal du son choisi (on entend l'adhan sans attendre la prière).
- * Faux si les notifications ne sont pas autorisées.
- */
-export async function essayerSon(son: Son): Promise<boolean> {
-  if (!(await Notifications.getPermissionsAsync()).granted) return false;
-  await creerCanaux();
-  const t = i18n.t.bind(i18n);
-  await Notifications.scheduleNotificationAsync({
-    identifier: 'essai-son',
-    content: {
-      title: t('notifications.essaiTitre'),
-      body: t('notifications.appelTexte'),
-      sound: sonDeNotification(son),
-    },
-    trigger: { type: SchedulableTriggerInputTypes.TIME_INTERVAL, seconds: 2, channelId: CANAUX[son] },
-  });
-  return true;
 }
 
 function contenu(n: Planifiee): Notifications.NotificationContentInput {
@@ -131,7 +123,7 @@ function contenu(n: Planifiee): Notifications.NotificationContentInput {
   return {
     title: t('notifications.appelTitre', { priere, heure: formatHeure(n.date) }),
     body: n.priere === 'fajr' ? t('notifications.fajrTexte') : t('notifications.appelTexte'),
-    sound: sonDeNotification(n.son),
+    sound: sonDeNotification(n.son, n.priere),
     data: { url: URL_PRIERE },
   };
 }
@@ -144,7 +136,13 @@ function lireEmpreintes(): Record<string, string> {
   try {
     const brut = stockage.getItem(CLE_EMPREINTES);
     const valeur: unknown = typeof brut === 'string' ? JSON.parse(brut) : null;
-    return valeur && typeof valeur === 'object' ? (valeur as Record<string, string>) : {};
+    const empreintes: Record<string, string> = {};
+    if (valeur && typeof valeur === 'object') {
+      for (const [cle, empreinte] of Object.entries(valeur)) {
+        if (typeof empreinte === 'string') empreintes[cle] = empreinte;
+      }
+    }
+    return empreintes;
   } catch (erreur: unknown) {
     // Empreintes illisibles : tout sera reprogrammé, comme avant.
     console.warn('Empreintes des notifications illisibles', erreur);
@@ -178,7 +176,7 @@ async function executerReplanification(): Promise<number> {
         })
       : [];
   const aProgrammer = fenetre.map((n) => {
-    const channelId = n.type === 'rappel' ? CANAL_RAPPELS : CANAUX[n.son];
+    const channelId = n.type === 'rappel' ? CANAL_RAPPELS : canal(n.son, n.priere);
     const content = contenu(n);
     // Empreinte : jour et heure, canal (son), texte (langue) ; une différence entraîne le remplacement.
     const empreinte = [n.date.getTime(), channelId, content.title, content.body, String(content.sound)].join('|');

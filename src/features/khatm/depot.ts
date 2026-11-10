@@ -11,6 +11,9 @@ import { supabase } from '@/services/supabase/client';
 
 import { creerRegistreCanaux } from './canaux';
 import type { Part } from './logique';
+import { estApercu, estKhatm, estMembre, estPart, lireListe, type Apercu, type Khatm, type Membre } from './lignes';
+
+export type { Apercu, Khatm, Membre } from './lignes';
 
 /**
  * Un seul canal temps réel par khatm, partagé par tous les écrans qui le lisent : en rouvrir un sous le même nom
@@ -26,24 +29,6 @@ const canaux = creerRegistreCanaux((id, surChangement) => {
   };
 });
 
-export type Khatm = {
-  id: string;
-  nom: string;
-  intention: string | null;
-  echeance: string | null;
-  createur: string | null;
-  code: string;
-};
-export type Membre = { user_id: string; prenom: string | null };
-export type Apercu = {
-  id: string;
-  nom: string;
-  intention: string | null;
-  echeance: string | null;
-  invite_par: string | null;
-  libres: number;
-};
-
 /** Khatms dont je suis membre, du plus récent au plus ancien. */
 export async function mesKhatms(): Promise<Khatm[]> {
   const { data, error } = await supabase
@@ -51,7 +36,7 @@ export async function mesKhatms(): Promise<Khatm[]> {
     .select('id, nom, intention, echeance, createur, code')
     .order('cree_le', { ascending: false });
   if (error) throw error;
-  return (data ?? []) as Khatm[];
+  return lireListe(data ?? [], estKhatm);
 }
 
 export async function creerKhatm(nom: string, intention: string | null, echeance: string | null): Promise<string> {
@@ -67,8 +52,8 @@ export async function creerKhatm(nom: string, intention: string | null, echeance
 export async function apercuKhatm(code: string): Promise<Apercu | null> {
   const { data, error } = await supabase.rpc('apercu_khatm', { p_code: code });
   if (error) throw error;
-  const ligne = (data as Apercu[] | null)?.[0];
-  return ligne ?? null;
+  const lignes = lireListe(data ?? [], estApercu);
+  return lignes[0] ?? null;
 }
 
 export async function rejoindreKhatm(code: string): Promise<string> {
@@ -124,12 +109,13 @@ export function useKhatm(id: string): { etat: EtatKhatm; relire: () => void } {
           setEtat({ etat: 'introuvable' });
           return;
         }
-        if (k.error || p.error || m.error || !k.data) throw k.error ?? p.error ?? m.error ?? new Error('Khatm absent');
+        if (k.error || p.error || m.error) throw k.error ?? p.error ?? m.error;
+        if (!estKhatm(k.data)) throw new Error('Réponse Supabase inattendue : khatm.');
         setEtat({
           etat: 'pret',
-          khatm: k.data as Khatm,
-          parts: (p.data ?? []) as Part[],
-          membres: (m.data ?? []) as Membre[],
+          khatm: k.data,
+          parts: lireListe(p.data ?? [], estPart),
+          membres: lireListe(m.data ?? [], estMembre),
         });
       })
       .catch((erreur: unknown) => {

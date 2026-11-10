@@ -4,12 +4,11 @@ import Constants from 'expo-constants';
 import { useEffect, useState } from 'react';
 import { Platform } from 'react-native';
 
+import { URL_VERSION } from '@/constants/liens';
 import { stockage } from '@/stores/stockage';
 
 import { lireFichierVersion, miseAJourExigee, type ConsigneVersion, type FichierVersion } from './version';
 
-/** Publié sur GitHub Pages (dépôt public sama-jamm-site). */
-export const URL_VERSION = 'https://th3-attacker.github.io/sama-jamm-site/version.json';
 const CLE_CACHE = 'miseAJour.version';
 const DELAI_MS = 5000;
 

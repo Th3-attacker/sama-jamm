@@ -7,13 +7,13 @@ import { useReglages } from '@/stores/reglages';
 
 import ar from './ar.json';
 import fr from './fr.json';
-import { estLangue, type Langue } from './langues';
+import { estLangueProposee, type Langue } from './langues';
 import wo from './wo.json';
 
-// Langue choisie à la bienvenue ; à défaut, celle du téléphone si elle est prise en charge.
+// Langue choisie à la bienvenue ; à défaut, celle du téléphone si elle est proposée.
 function langueDuTelephone(): Langue {
   const code = Localization.getLocales()[0]?.languageCode;
-  return estLangue(code) ? code : 'fr';
+  return estLangueProposee(code) ? code : 'fr';
 }
 
 // Chiffres indiens dans tous les textes traduits (nombres interpolés compris) ; le code pour le support reste tel quel.

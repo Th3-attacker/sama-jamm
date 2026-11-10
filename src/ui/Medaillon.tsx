@@ -27,7 +27,7 @@ export function Medaillon({ numero, prefixe, taille = 36, affiche, actif = false
       <View style={StyleSheet.absoluteFill}>
         <Etoile
           taille={taille}
-          remplissage={actif ? couleurs.emeraude : couleurs.orDoux}
+          remplissage={actif ? couleurs.emeraudeAplat : couleurs.orDoux}
           contour={actif ? couleurs.emeraude : couleurs.or}
         />
       </View>

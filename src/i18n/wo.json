@@ -1,7 +1,7 @@
 {
   "_meta": {
     "langue": "wo",
-    "statut": "brouillon à relire par un locuteur wolof avant publication",
+    "statut": "brouillon à relire par un locuteur wolof avant publication : interface essentielle seulement, le reste s’affiche en français",
     "repli": "fr : toute clé absente s'affiche en français (fallbackLng de i18next)"
   },
   "commun": {
@@ -10,10 +10,13 @@
     "annuler": "Neenal",
     "enregistrer": "Denc",
     "rechercher": "Seet",
-    "partager": "Séddoo",
     "ecouter": "Déglu",
-    "oui": "Waaw",
-    "non": "Déedéet"
+    "plusTard": "Ginnaaw",
+    "supprimer": "Far",
+    "reessayer": "Jéemaat",
+    "plus": "Yeneen",
+    "pause": "Taxawal",
+    "dans": "ci {{duree}}"
   },
   "formules": {
     "signature": "Jàng, déglu, julli ci jàmm.",
@@ -42,9 +45,9 @@
   "onglets": {
     "accueil": "Kër",
     "lire": "Jàng",
-    "ecouter": "Déglu",
     "priere": "Julli",
-    "budget": "Xaalis"
+    "budget": "Xaalis",
+    "plus": "Yeneen"
   },
   "priere": {
     "nomsLocaux": {
@@ -53,6 +56,12 @@
       "asr": "Tàkkusaan",
       "maghrib": "Timis",
       "isha": "Gée"
+    },
+    "titre": "Julli",
+    "sons": {
+      "complet": "Woote bu gudd",
+      "court": "Woote bu gàtt",
+      "doux": "Baat bu lewet"
     }
   },
   "bienvenue": {
@@ -61,5 +70,45 @@
   },
   "accueil": {
     "sagesse": "Wax ju rafet"
+  },
+  "menuPlus": {
+    "titre": "Yeneen",
+    "rechercher": "Seet",
+    "favoris": "Yu ma bëgg",
+    "dhikr": "Dhikr",
+    "qibla": "Qibla",
+    "invocations": "Ñaan yi",
+    "zakat": "Sakka"
+  },
+  "etats": {
+    "horsLigne": "Amul jokkoo"
+  },
+  "recherche": {
+    "titre": "Seet",
+    "tout": "Lépp"
+  },
+  "favoris": {
+    "titre": "Yu ma bëgg"
+  },
+  "connexion": {
+    "ou": "walla"
+  },
+  "dhikr": {
+    "titre": "Dhikr",
+    "objectifAtteint": "Jot nga ko"
+  },
+  "notifications": {
+    "rappelTexte": "Waajal sa bopp ci jàmm.",
+    "rappelTitre": "{{priere}} ci {{minutes}} miniit",
+    "canaux": {
+      "complet": "Woote bu gudd",
+      "court": "Woote bu gàtt",
+      "doux": "Baat bu lewet"
+    }
+  },
+  "lire": {
+    "titre": "Jàng",
+    "coran": "Alxuraan",
+    "invocations": "Ñaan yi"
   }
 }

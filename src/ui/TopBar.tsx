@@ -5,7 +5,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useBottomStack } from '@/features/ecouter/placeMiniLecteur';
-import { useLecteur } from '@/features/ecouter/lecteur';
+import { enEcoute as ecouteEnCours, useLecteur } from '@/features/ecouter/lecteur';
 import { miseEnPage } from '@/theme/tokens.generated';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
@@ -66,7 +66,7 @@ export function TopBar({
   const insets = useSafeAreaInsets();
   const { couleurs, espace, typographie, latin, cible } = useTheme();
   const chemin = usePathname();
-  const enEcoute = useLecteur((s) => s.position !== null);
+  const enEcoute = useLecteur(ecouteEnCours);
   const { miniRange } = useBottomStack();
   const casque = montrerCasque({ enEcoute, miniRange, chemin, casqueDejaPresent: actions?.some((a) => a.icone === 'headphones') ?? false });
   const avecRetour = retour !== undefined && retour !== false;

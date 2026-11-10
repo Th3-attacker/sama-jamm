@@ -21,7 +21,11 @@ import { Logo } from '@/ui/Logo';
 const LARGEUR_IMAGE = 120;
 const RELAIS_MS = 150;
 const SIGNATURE_MS = 500;
-const FONDU_MS = 200;
+/** Pause marque et signature en place, avant le fondu : assez pour les lire (total d'environ 1,4 s). */
+const PAUSE_MS = 500;
+/** « Réduire les animations » : pas de mouvement, la marque reste en place un peu plus longtemps. */
+const PAUSE_REDUITE_MS = 600;
+const FONDU_MS = 250;
 const COURBE = Easing.bezier(0.2, 0.8, 0.2, 1);
 
 export function DemarrageAnime({ onFin }: { onFin: () => void }) {
@@ -39,8 +43,8 @@ export function DemarrageAnime({ onFin }: { onFin: () => void }) {
   const ecran = useSharedValue(1);
 
   useEffect(() => {
-    // 0 à 150 ms : relais ; 150 à 650 ms : signature ; 650 à 850 ms : fondu vers l'app.
-    // « Réduire les animations » : pas de mouvement, la marque reste en place et seul le fondu joue.
+    // 0 à 150 ms : relais ; 150 à 650 ms : signature ; 650 à 1150 ms : pause ; 1150 à 1400 ms : fondu vers l'app.
+    // « Réduire les animations » : pas de mouvement, la marque reste en place, pause puis fondu.
     const anim = (duree: number) => ({ duration: duree, easing: COURBE });
     const signatureMs = reduit ? 0 : SIGNATURE_MS;
     if (!reduit) {
@@ -48,8 +52,9 @@ export function DemarrageAnime({ onFin }: { onFin: () => void }) {
       filet.value = withDelay(RELAIS_MS + 100, withTiming(1, anim(SIGNATURE_MS - 100)));
       signature.value = withDelay(RELAIS_MS + 50, withTiming(1, anim(SIGNATURE_MS - 50)));
     }
-    ecran.value = withDelay(RELAIS_MS + signatureMs, withTiming(0, { duration: FONDU_MS }));
-    const fin = setTimeout(onFin, RELAIS_MS + signatureMs + FONDU_MS);
+    const debutFondu = RELAIS_MS + signatureMs + (reduit ? PAUSE_REDUITE_MS : PAUSE_MS);
+    ecran.value = withDelay(debutFondu, withTiming(0, { duration: FONDU_MS }));
+    const fin = setTimeout(onFin, debutFondu + FONDU_MS);
     return () => clearTimeout(fin);
   }, [reduit, marque, filet, signature, ecran, onFin]);
 

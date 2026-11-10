@@ -1,7 +1,7 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { LIBELLE_BIEN_MAX, TYPES_BIEN, type TypeBien } from '@/features/budget/depot';
 import { EcranBudgetIncomplet } from '@/features/budget/EcranBudgetIncomplet';
@@ -18,6 +18,7 @@ import { Dialog } from '@/ui/Dialog';
 import { TextField } from '@/ui/TextField';
 import { useToast } from '@/ui/Toast';
 import { TopBar } from '@/ui/TopBar';
+import { EvitementClavier } from '@/ui/EvitementClavier';
 import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
 const estMetal = (t: TypeBien) => t === 'or' || t === 'argent';
@@ -92,7 +93,7 @@ export default function BienZakat() {
   return (
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
       <TopBar retour titre={titre} />
-      <KeyboardAvoidingView style={styles.ecran} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+      <EvitementClavier style={styles.ecran}>
         <ScrollView
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={{
@@ -151,7 +152,7 @@ export default function BienZakat() {
             </Button>
           ) : null}
         </ScrollView>
-      </KeyboardAvoidingView>
+      </EvitementClavier>
 
       <Dialog
         ouvert={confirmer}

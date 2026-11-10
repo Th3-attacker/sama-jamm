@@ -153,7 +153,7 @@ function Lecture({ inv, categorie, liste }: { inv: Invocation; categorie: Catego
               key={i.id}
               style={[
                 styles.segment,
-                { backgroundColor: k === index ? couleurs.or : (comptes[i.id] ?? 0) >= i.repetitions ? couleurs.emeraude : couleurs.ligneForte },
+                { backgroundColor: k === index ? couleurs.or : (comptes[i.id] ?? 0) >= i.repetitions ? couleurs.emeraudeAplat : couleurs.ligneForte },
               ]}
             />
           ))}

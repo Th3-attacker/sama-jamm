@@ -24,7 +24,7 @@ function couleur(ton: TonProgression, c: Couleurs): string {
   if (ton === 'or') return c.or;
   if (ton === 'alerte') return c.alerte;
   if (ton === 'erreur') return c.erreur;
-  return c.emeraude;
+  return c.emeraudeAplat;
 }
 
 /** Barre de progression, sa valeur toujours écrite à côté. */

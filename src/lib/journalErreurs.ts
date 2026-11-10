@@ -12,6 +12,8 @@ export type EntreeJournal = {
   source: 'ecran' | 'fatale';
   version: string;
   plateforme: string;
+  /** Étape et code technique court, jamais un message : « echange:bad_code_verifier ». */
+  detail?: string;
 };
 
 /** Ajoute une entrée en tête et garde les `JOURNAL_MAX` plus récentes. */
@@ -37,6 +39,6 @@ export function lireJournal(brut: unknown): EntreeJournal[] {
 
 /** Texte à partager : une ligne par erreur, la plus récente d'abord. */
 export function journalEnTexte(journal: EntreeJournal[], entete: string): string {
-  const lignes = journal.map((e) => `${e.quand} · ${e.code} · ${e.type} · ${e.source} · ${e.plateforme} ${e.version}`);
+  const lignes = journal.map((e) => `${e.quand} · ${e.code} · ${e.type} · ${e.source} · ${e.plateforme} ${e.version}${e.detail ? ` · ${e.detail}` : ''}`);
   return [entete, ...lignes].join('\n');
 }
