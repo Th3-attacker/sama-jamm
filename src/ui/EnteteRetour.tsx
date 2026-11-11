@@ -62,7 +62,6 @@ export function EnteteRetour({ titre, sousTitre, italique = false, fermer = fals
       </View>
       {droite ? (
         <Text
-          lang="ar"
           accessibilityLanguage="ar"
           maxFontSizeMultiplier={echelleMax.courant}
           style={[typographie.arabe, { color: couleurs.orTexte }]}>
