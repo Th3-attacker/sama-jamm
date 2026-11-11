@@ -392,7 +392,8 @@
     "sourceInconnue": "Cette source n’existe pas.",
     "reculer": "Reculer de {{n}} secondes",
     "avancer": "Avancer de {{n}} secondes",
-    "rechercheAide": "Tapez un titre ou un nom pour trouver un xassaïde."
+    "rechercheAide": "Tapez un titre ou un nom pour trouver un xassaïde.",
+    "barreTemps": "Position dans la piste"
   },
   "telechargements": {
     "titre": "Téléchargements",

@@ -7,6 +7,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   arreter,
   basculer,
+  chercher,
   definirVitesse,
   precedent,
   sauter,
@@ -18,6 +19,7 @@ import { useTelechargements, WifiRequis } from '@/features/ecouter/telechargemen
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { Banner } from '@/ui/Banner';
+import { BarreTemps } from '@/ui/BarreTemps';
 import { Button } from '@/ui/Button';
 import { Icon } from '@/ui/Icon';
 import { IconButton } from '@/ui/IconButton';
@@ -54,7 +56,6 @@ export function LecteurXassaide() {
   );
   const piste = enCours ? pisteXassaides(enCours.source, enCours.id) : undefined;
   const source = enCours ? sourceXassaides(enCours.source) : undefined;
-  const avance = duree > 0 ? Math.min(1, temps / duree) : 0;
 
   const vitesseSuivante = () => {
     const i = VITESSES.findIndex((v) => v === vitesse);
@@ -126,28 +127,15 @@ export function LecteurXassaide() {
             ) : null}
           </View>
 
-          <View style={{ paddingHorizontal: espace.espace6, gap: espace.espace2 }}>
-            <View
-              accessibilityRole="progressbar"
-              accessibilityValue={{ min: 0, max: duree, now: temps }}
-              style={[styles.barre, { height: espace.espace1, backgroundColor: couleurs.surface, borderRadius: rayon.rayonPastille }]}>
-              <View
-                style={{
-                  height: espace.espace1,
-                  width: `${Math.round(avance * 100)}%`,
-                  backgroundColor: couleurs.or,
-                  borderRadius: rayon.rayonPastille,
-                }}
-              />
-            </View>
-            <View style={styles.temps}>
-              <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre3 }]}>
-                {formatTemps(temps)}
-              </Text>
-              <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre3 }]}>
-                {duree > 0 ? formatTemps(duree) : '–'}
-              </Text>
-            </View>
+          <View style={{ paddingHorizontal: espace.espace6 }}>
+            <BarreTemps
+              label={t('xassaides.barreTemps')}
+              temps={temps}
+              duree={duree}
+              onChercher={chercher}
+              format={formatTemps}
+              pas={PAS}
+            />
           </View>
 
           <View style={[styles.commandes, { paddingHorizontal: espace.espace6, marginTop: espace.espace4 }]}>
@@ -228,8 +216,6 @@ const styles = StyleSheet.create({
   attente: { alignItems: 'center', justifyContent: 'center' },
   centre: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   texteCentre: { textAlign: 'center' },
-  barre: { overflow: 'hidden' },
-  temps: { flexDirection: 'row', justifyContent: 'space-between' },
   commandes: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   saut: { alignItems: 'center', justifyContent: 'center' },
   principal: { alignItems: 'center', justifyContent: 'center' },
