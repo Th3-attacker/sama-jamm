@@ -432,7 +432,8 @@
     "sourceInconnue": "هذا المصدر غير موجود.",
     "reculer": "الرجوع {{n}} ث",
     "avancer": "التقدّم {{n}} ث",
-    "rechercheAide": "اكتب عنوانًا أو اسمًا للعثور على قصيدة."
+    "rechercheAide": "اكتب عنوانًا أو اسمًا للعثور على قصيدة.",
+    "barreTemps": "موضع التشغيل"
   },
   "telechargements": {
     "titre": "التنزيلات",

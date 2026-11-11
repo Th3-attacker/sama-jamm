@@ -13,6 +13,7 @@ import { stockage } from '@/stores/stockage';
 
 import { rejouerVerset, resteMinuterie, type Minuterie, type RepetitionVerset } from './minuterie';
 import { positionValide, recitateur, RECITATEURS, pistesDePages, type Position } from './recitateurs';
+import { erreurDuStatut, indexDuStatut } from './statut';
 import { sourceVerset } from './telechargements';
 
 const VERSETS = sourates.map((s) => s.versets);
@@ -82,6 +83,17 @@ export const useLecteur = create<EtatLecteur>()(
 // Liste de lecture native (ExoPlayer, AVQueuePlayer) : les versets sont en file, le suivant est préparé pendant
 // la lecture du verset en cours, d'où un enchaînement sans attente de chargement.
 let liste: AudioPlaylist | undefined;
+let abonnements: { remove: () => void }[] = [];
+/**
+ * Après un échec de chargement, la liste native ne repart plus (Android : ExoPlayer reste à l'arrêt, jamais
+ * re-préparé par expo-audio). Elle est alors jetée et recréée à la prochaine lecture.
+ */
+let listeCassee = false;
+/** Piste en cours dans la file, pour reprendre au même endroit après un échec. */
+let indexCourant = 0;
+/** Relances automatiques après un échec pendant une écoute continue (coupure réseau brève). */
+const RELANCES_AUTO = 1;
+let relances = 0;
 type FileCoran =
   | { mode: 'sourate'; sourate: number; recitateur: string; pistes: Position[] }
   | { mode: 'page'; dernierePage: number; recitateur: string; pistes: Position[] };
@@ -127,7 +139,33 @@ const DELAI_RESEAU_MS = 15_000;
 let attenteReseau: ReturnType<typeof setTimeout> | undefined;
 let lectureDemandee = false;
 
+/** Échec de chargement : une relance automatique au même endroit, puis l'erreur affichée. */
+function echecLecture(raison: string, index: number): void {
+  clearTimeout(attenteReseau);
+  attenteReseau = undefined;
+  listeCassee = true;
+  indexCourant = index;
+  console.warn('Lecture interrompue', raison);
+  if (lectureDemandee && relances < RELANCES_AUTO) {
+    relances += 1;
+    // Courte pause : le lecteur natif finit de signaler son échec avant d'être jeté.
+    setTimeout(() => {
+      if (listeCassee && lectureDemandee) relancer();
+    }, 1000);
+    return;
+  }
+  lectureDemandee = false;
+  liste?.pause();
+  useLecteur.setState({ erreur: true, enLecture: false, chargement: false });
+}
+
 function surStatut(statut: AudioPlaylistStatus): void {
+  const erreurNative = erreurDuStatut(statut);
+  if (erreurNative !== null) {
+    echecLecture(erreurNative, indexDuStatut(statut, indexCourant));
+    return;
+  }
+  if (statut.playing && !statut.isBuffering) relances = 0;
   useLecteur.setState(
     enFile?.mode === 'xassaides'
       ? {
@@ -138,16 +176,14 @@ function surStatut(statut: AudioPlaylistStatus): void {
         }
       : { enLecture: statut.playing, chargement: statut.isBuffering },
   );
-  // Pas d'événement d'erreur dans la liste de lecture : un chargement qui n'aboutit pas vaut échec réseau.
+  // iOS ne signale pas l'erreur : un chargement qui n'aboutit pas vaut aussi échec réseau.
   if (statut.playing || !lectureDemandee) {
     clearTimeout(attenteReseau);
     attenteReseau = undefined;
   } else if (statut.isBuffering && attenteReseau === undefined) {
     attenteReseau = setTimeout(() => {
       attenteReseau = undefined;
-      lectureDemandee = false;
-      liste?.pause();
-      useLecteur.setState({ erreur: true, enLecture: false, chargement: false });
+      echecLecture('Délai de chargement dépassé', indexCourant);
     }, DELAI_RESEAU_MS);
   }
 }
@@ -200,6 +236,7 @@ function ajouterPistes(pistes: Position[], idRecitateur: string): void {
 function surChangementDePiste({ previousIndex, currentIndex }: { previousIndex: number; currentIndex: number }): void {
   const f = enFile;
   if (!f) return;
+  indexCourant = currentIndex;
   if (f.mode === 'xassaides') {
     // Une piste longue par fichier : ni répétition de verset ni page à ajouter.
     const suivante = pisteDeFile(f, currentIndex);
@@ -251,40 +288,76 @@ function file(): AudioPlaylist {
       (erreur: unknown) => console.warn('Mode audio non appliqué', erreur),
     );
     liste = createAudioPlaylist({ updateInterval: 500 });
-    liste.addListener('playlistStatusUpdate', surStatut);
-    liste.addListener('trackChanged', surChangementDePiste);
+    abonnements = [
+      liste.addListener('playlistStatusUpdate', surStatut),
+      liste.addListener('trackChanged', surChangementDePiste),
+    ];
   }
   return liste;
 }
 
-/** Remplace la file si besoin, puis lit la piste `index`. */
-function lire(nouvelleFile: FileCoran | FileXassaides | null, index: number): void {
+/** Libère la liste native cassée ; la suivante sera créée neuve par `file()`. */
+function jeterListe(): void {
+  const l = liste;
+  liste = undefined;
+  listeCassee = false;
+  for (const a of abonnements) a.remove();
+  abonnements = [];
+  if (!l) return;
+  try {
+    l.clearLockScreenControls();
+    l.release();
+  } catch (erreur: unknown) {
+    console.warn('Liste de lecture non libérée', erreur);
+  }
+}
+
+/**
+ * Remplace la file si besoin, puis lit la piste `index` (à `depuis` secondes pour un xassaïde repris).
+ * `relance` : nouvel essai après un échec, sans remettre à zéro le compte des relances.
+ */
+function lire(nouvelleFile: FileCoran | FileXassaides | null, index: number, depuis = 0, relance = false): void {
   const etat = useLecteur.getState();
+  if (!relance) relances = 0;
+  // Liste cassée : on repart d'une liste neuve chargée avec la même file.
+  let aCharger = nouvelleFile;
+  if (listeCassee) {
+    jeterListe();
+    aCharger ??= enFile;
+  }
   const l = file();
   try {
-    if (nouvelleFile) {
+    if (aCharger) {
       l.clear();
-      if (nouvelleFile.mode === 'xassaides') {
+      if (aCharger.mode === 'xassaides') {
         // Fichier téléchargé s'il existe, sinon en ligne.
-        for (const x of nouvelleFile.pistes) l.add({ uri: sourcePiste(nouvelleFile.source, x) });
-      } else ajouterPistes(nouvelleFile.pistes, nouvelleFile.recitateur);
-      enFile = nouvelleFile;
+        for (const x of aCharger.pistes) l.add({ uri: sourcePiste(aCharger.source, x) });
+      } else ajouterPistes(aCharger.pistes, aCharger.recitateur);
+      enFile = aCharger;
     }
     const demandee = enFile ? pisteDeFile(enFile, index) : null;
     if (!demandee) return;
     sautManuel = true;
     ecoutesDuVerset = 1;
     lectureDemandee = true;
+    indexCourant = index;
     l.skipTo(index);
     appliquerBoucle();
     l.playbackRate = etat.vitesse;
     useLecteur.setState({ ...demandee.etat, erreur: false, chargement: true });
     l.play();
+    if (depuis > 0) l.seekTo(depuis).catch((erreur: unknown) => console.warn('Reprise non placée', erreur));
     l.setActiveForLockScreen(true, demandee.titre);
   } catch (erreur: unknown) {
     console.error('Piste non chargée', erreur);
     useLecteur.setState({ erreur: true, chargement: false, enLecture: false });
   }
+}
+
+/** Reprend la piste en cours sur une liste neuve (au même temps pour un xassaïde). */
+function relancer(relance = true): void {
+  const { piste, temps } = useLecteur.getState();
+  lire(null, indexCourant, piste ? temps : 0, relance);
 }
 
 /** Lance l'écoute à ce verset (sourate entière à partir de là). */
@@ -323,11 +396,26 @@ export function sauter(pas: number): void {
   liste.seekTo(cible).catch((erreur: unknown) => console.warn('Saut non appliqué', erreur));
 }
 
+/** Place la lecture à `secondes` dans la piste en cours (xassaïdes, barre de temps). */
+export function chercher(secondes: number): void {
+  const { piste, duree } = useLecteur.getState();
+  if (!liste || !piste || !Number.isFinite(secondes)) return;
+  const cible = Math.max(0, duree > 0 ? Math.min(secondes, duree) : secondes);
+  useLecteur.setState({ temps: Math.floor(cible) });
+  liste.seekTo(cible).catch((erreur: unknown) => console.warn('Position non appliquée', erreur));
+}
+
 /** Lecture ou pause ; reprend au dernier verset si rien n'est chargé. */
 export function basculer(): void {
-  const { position, piste, derniere, enLecture } = useLecteur.getState();
+  const { position, piste, derniere, enLecture, erreur } = useLecteur.getState();
   if (!position && !piste) {
     if (derniere) ecouter(derniere);
+    return;
+  }
+  // Après un échec, « Lecture » repart sur une liste neuve au même endroit.
+  if (!enLecture && (listeCassee || erreur)) {
+    listeCassee = true;
+    relancer(false);
     return;
   }
   const l = file();
@@ -341,12 +429,14 @@ export function basculer(): void {
 
 export function suivant(): void {
   if (!enEcoute(useLecteur.getState())) return;
+  if (listeCassee) return lire(null, indexCourant + 1);
   sautManuel = true;
   liste?.next();
 }
 
 export function precedent(): void {
   if (!enEcoute(useLecteur.getState())) return;
+  if (listeCassee) return lire(null, Math.max(0, indexCourant - 1));
   sautManuel = true;
   liste?.previous();
 }
