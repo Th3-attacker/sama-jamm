@@ -19,6 +19,9 @@
       "usesAppleSignIn": true,
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
+      },
+      "entitlements": {
+        "com.apple.developer.usernotifications.time-sensitive": true
       }
     },
     "android": {
@@ -51,7 +54,7 @@
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 120,
           "dark": {
-            "backgroundColor": "#12161b",
+            "backgroundColor": "#0f1714",
             "image": "./assets/images/splash-icon-dark.png"
           }
         }
@@ -110,7 +113,8 @@
           "enableBackgroundPlayback": true
         }
       ],
-      "expo-asset"
+      "expo-asset",
+      "expo-widgets"
     ],
     "experiments": {
       "typedRoutes": true,

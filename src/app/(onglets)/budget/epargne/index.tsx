@@ -16,6 +16,7 @@ import { ListItem } from '@/ui/ListItem';
 import { EnteteRetour } from '@/ui/EnteteRetour';
 import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
+import { interlignes, tailles } from '@/theme/tokens.generated';
 /** Épargne avec intention : le total mis de côté, les objectifs et l'épargne libre. */
 export default function EcranEpargne() {
   const { t } = useTranslation();
@@ -136,7 +137,7 @@ export default function EcranEpargne() {
 const styles = StyleSheet.create({
   ecran: { flex: 1 },
   capitales: { fontFamily: 'SourceSans3_600SemiBold', letterSpacing: 0.72 },
-  total: { fontSize: 40, lineHeight: 44, alignSelf: 'stretch' },
-  proverbe: { fontSize: 18, lineHeight: 24 },
-  petit: { fontSize: 14, lineHeight: 20 },
+  total: { fontSize: tailles.t40, lineHeight: interlignes.l44, alignSelf: 'stretch' },
+  proverbe: { fontSize: tailles.t18, lineHeight: interlignes.l24 },
+  petit: { fontSize: tailles.t14, lineHeight: interlignes.l20 },
 });

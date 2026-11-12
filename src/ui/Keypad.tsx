@@ -7,6 +7,7 @@ import { useTheme } from '@/theme/useTheme';
 
 import { Icon } from './Icon';
 
+import { tailles } from '@/theme/tokens.generated';
 export type ToucheClavier = '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '000' | 'efface';
 
 export type KeypadProps = {
@@ -69,5 +70,5 @@ const styles = StyleSheet.create({
   grille: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' },
   touche: { width: '31%', height: 56, alignItems: 'center', justifyContent: 'center' },
   // Source Sans même en arabe : les touches de 31 % ne portent pas les chiffres plus larges de Noto Sans Arabic.
-  chiffre: { fontFamily: 'SourceSans3_600SemiBold', fontSize: 24, lineHeight: 32 },
+  chiffre: { fontFamily: 'SourceSans3_600SemiBold', fontSize: tailles.t24, lineHeight: 32 },
 });

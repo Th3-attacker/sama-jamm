@@ -6,7 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useBottomStack } from '@/features/ecouter/placeMiniLecteur';
 import { enEcoute as ecouteEnCours, useLecteur } from '@/features/ecouter/lecteur';
-import { miseEnPage } from '@/theme/tokens.generated';
+import { interlignes, miseEnPage, tailles } from '@/theme/tokens.generated';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 
@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
   centre: { textAlign: 'center' },
   texte: { alignItems: 'center', justifyContent: 'center' },
   // Planche : « Aa » en Source Serif 18.
-  glyphe: { fontSize: 18, lineHeight: 24 },
+  glyphe: { fontSize: tailles.t18, lineHeight: interlignes.l24 },
   // Planche « Dhikr » : « Remettre à zéro » en 16/24 gras.
   libelle: { fontFamily: 'SourceSans3_600SemiBold' },
 });

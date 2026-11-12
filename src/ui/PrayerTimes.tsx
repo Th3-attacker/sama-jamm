@@ -6,6 +6,7 @@ import { useTheme } from '@/theme/useTheme';
 
 import { Icon } from './Icon';
 
+import { tailles } from '@/theme/tokens.generated';
 export type LignePriere = {
   id: string;
   nom: string;
@@ -99,7 +100,7 @@ export function PrayerTimes({ prieres, onBasculerAppel }: PrayerTimesProps) {
 const styles = StyleSheet.create({
   ligne: { flexDirection: 'row', alignItems: 'center' },
   noms: { flex: 1 },
-  arabe: { fontFamily: 'Amiri_400Regular', fontSize: 22, lineHeight: 32, writingDirection: 'rtl' },
+  arabe: { fontFamily: 'Amiri_400Regular', fontSize: tailles.t22, lineHeight: 32, writingDirection: 'rtl' },
   heure: { fontVariant: ['tabular-nums'] },
   cloche: { alignItems: 'center', justifyContent: 'center' },
 });

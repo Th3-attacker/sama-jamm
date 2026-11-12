@@ -210,10 +210,6 @@
     "sajda": "سجدة",
     "modeVerset": "آية بآية",
     "modePage": "صفحة",
-    "affichage": "العرض",
-    "arabeSeul": "العربية",
-    "arabeTrad": "العربية + ترجمة",
-    "tradSeule": "الترجمة",
     "translitteration": "النقحرة",
     "tailleArabe": "حجم النص العربي",
     "reduireTexte": "تصغير النص",
@@ -266,7 +262,6 @@
     "khatmRepris": "متابعة من {{sourate}}، الآية {{verset}}",
     "invocationsAVenir": "أذكار كل وقت من اليوم قريبًا.",
     "reglagesLecture": "القراءة",
-    "apercuTraduction": "﴿إِنَّ مَعَ الْعُسْرِ يُسْرًا﴾",
     "chiffresArabes": "الأرقام المشرقية",
     "chiffresArabesAide": "أرقام الآيات ١٢٣ بدل 123",
     "recitateurDefaut": "القارئ الافتراضي",
@@ -543,7 +538,10 @@
       "silencieux": "صامت",
       "rappels": "تذكيرات",
       "fajr": "الفجر",
-      "makkah": "من الظهر إلى العشاء"
+      "makkah": "من الظهر إلى العشاء",
+      "khatm": "الختمة",
+      "lecture": "التشغيل الجاري",
+      "telechargements": "التنزيلات"
     }
   },
   "qibla": {
@@ -718,13 +716,10 @@
     "fond": "خلفية الصورة",
     "emeraude": "زمردي",
     "nuit": "ليلي",
-    "ajouterTraduction": "إضافة الترجمة",
-    "ajouterTraductionDetail": "بالفرنسية، تحت النص العربي",
     "partagerImage": "مشاركة الصورة",
     "copierTexte": "نسخ النص والرابط",
     "titreFeuille": "مشاركة آية",
     "reference": "{{sourate}} · الآية {{verset}}",
-    "source": "ترجمة محمد حميد الله · سما جام",
     "marque": "سما جام",
     "copie": "تم نسخ الآية"
   },
@@ -743,7 +738,6 @@
     "veilleJusqua": "الوضع الهادئ حتى الفجر، {{heure}} · إضاءة خافتة",
     "lecture": "القراءة",
     "langueApp": "لغة التطبيق",
-    "traduction": "الترجمة",
     "priere": "الصلاة",
     "budget": "الميزانية",
     "devise": "العملة",
@@ -759,7 +753,6 @@
     "tailleEcriture": "حجم الخط",
     "tailleNote": "للقراءة آية بآية. في وضع الصفحة يتكيّف الخط لتظهر الصفحة كاملة على الشاشة.",
     "translit": "النقحرة",
-    "traductionAucune": "بدون",
     "translitAideCourte": "القراءة بالحروف اللاتينية",
     "translitAide": "تحت النص العربي بالحروف اللاتينية (Tanzil، بالإنجليزية)",
     "deviseDetail": "تغيير عملة الميزانية أو إضافة عملتك",
@@ -791,7 +784,6 @@
     "texte": "سما جام تطبيق مجاني دون إعلانات، للقراءة والاستماع والصلاة وتدبير ميزانية البيت.",
     "sources": "المصادر والتراخيص",
     "sourceCoran": "نص القرآن: الرسم العثماني، عبر alquran.cloud (api.alquran.cloud)، دون أي تعديل.",
-    "sourceTraduction": "الترجمة الفرنسية: محمد حميد الله، عبر alquran.cloud.",
     "sourceAdhan": "الأذان: تسجيلان (الفجر، ثم من الظهر إلى العشاء)، مجانيان ومقدَّمان لتطبيق سما جام.",
     "polices": "الخطوط: Cormorant Garamond وSource Serif 4 وSource Sans 3 وAmiri وAmiri Quran وNoto Sans Arabic (رخصة SIL للخطوط المفتوحة). الأيقونات: Lucide (رخصة ISC).",
     "remerciements": "شكر وتقدير",
@@ -813,10 +805,6 @@
       "coran": {
         "titre": "نص القرآن",
         "resume": "الرسم العثماني · علامات تنزيل، CC BY 3.0"
-      },
-      "traductions": {
-        "titre": "الترجمات",
-        "resume": "محمد حميد الله (الفرنسية)"
       },
       "invocations": {
         "titre": "الأذكار",

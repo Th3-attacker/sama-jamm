@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 
+import { rayon } from '@/theme/tokens.generated';
 export type RadioOption = {
   id: string;
   label: string;
@@ -77,7 +78,7 @@ export function RadioGroup({ label, options, valeur, onChange, encadre = true }:
 
 const styles = StyleSheet.create({
   option: { flexDirection: 'row', alignItems: 'center', minHeight: 56 },
-  cercle: { width: 24, height: 24, borderRadius: 12, borderWidth: 2, alignItems: 'center', justifyContent: 'center' },
-  point: { width: 12, height: 12, borderRadius: 6 },
+  cercle: { width: 24, height: 24, borderRadius: rayon.rayonCarte, borderWidth: 2, alignItems: 'center', justifyContent: 'center' },
+  point: { width: 12, height: 12, borderRadius: rayon.rayonPuce },
   textes: { flex: 1 },
 });

@@ -2,7 +2,7 @@
 // Source : édition « quran-uthmani » d'alquran.cloud, reproduite sans modification (vérifié sur la sourate 2 :
 // 286 versets identiques ; le texte diffère de celui de Tanzil). Licence de cette édition à confirmer.
 // Métadonnées des sourates : donnees/sourates.json, noms français alignés sur ceux de l'app.
-// Les gros fichiers (texte, traduction, pages : environ 2,4 Mo) ne sont lus qu'au premier besoin, pas au
+// Les gros fichiers (texte, translittération, pages) ne sont lus qu'au premier besoin, pas au
 // démarrage de l'app : le routeur charge tous les écrans d'un coup.
 import donneesSourates from '@/data/sourates.json';
 
@@ -26,7 +26,6 @@ const MOTS_BASMALA = 4;
 const SANS_BASMALA_EN_TETE = new Set([1, 9]);
 
 let texteEnMemoire: readonly (readonly string[])[] | undefined;
-let traductionEnMemoire: readonly (readonly string[])[] | undefined;
 
 /**
  * Index 0 = sourate 1 ; une chaîne de caractères par verset.
@@ -46,12 +45,6 @@ function texte(): readonly (readonly string[])[] {
   return texteEnMemoire;
 }
 
-/** Traduction française (Muhammad Hamidullah, via alquran.cloud), alignée sur `texte()`. */
-function traduction(): readonly (readonly string[])[] {
-  traductionEnMemoire ??= require('@/data/coran/fr.json');
-  return traductionEnMemoire ?? [];
-}
-
 /** Sourate inconnue si le numéro n'est pas un entier de 1 à 114. */
 export function sourate(n: number): Sourate | undefined {
   return Number.isInteger(n) && n >= 1 && n <= sourates.length ? sourates[n - 1] : undefined;
@@ -61,12 +54,6 @@ export function sourate(n: number): Sourate | undefined {
 export function versetsDe(n: number): readonly string[] {
   const s = sourate(n);
   return s ? (texte()[s.n - 1] ?? []) : [];
-}
-
-/** Traduction des versets d'une sourate, dans le même ordre que `versetsDe`. */
-export function traductionDe(n: number): readonly string[] {
-  const s = sourate(n);
-  return s ? (traduction()[s.n - 1] ?? []) : [];
 }
 
 // --- Translittération et repères (Tanzil, CC BY 3.0 ; voir scripts/donnees-coran.mjs) ----------
@@ -101,7 +88,7 @@ function pages(): Pages {
   return pagesEnMemoire ?? [];
 }
 
-export type VersetPage = { sourate: number; verset: number; texte: string; trad: string };
+export type VersetPage = { sourate: number; verset: number; texte: string };
 /** Une page peut enchaîner deux sourates : un segment par suite continue. */
 export type SegmentPage = { sourate: number; versets: VersetPage[] };
 
@@ -125,31 +112,29 @@ function indexPages(): Map<string, number> {
   return indexDesPages;
 }
 
-/** Basmala (arabe et traduction), reprise du premier verset d'Al-Fâtiha ; `undefined` pour Al-Fâtiha et At-Tawba. */
 /** Sens du nom de la sourate en français (« L'Ouverture »), ou undefined. Liste à faire relire. */
 export function sensDe(n: number): string | undefined {
   const sens: { fr: readonly string[] } = require('@/data/sens-sourates.json');
   return sourate(n) ? sens.fr[n - 1] : undefined;
 }
 
-export function basmalaDe(n: number): { arabe: string; trad: string } | undefined {
+/** Basmala (arabe), reprise du premier verset d'Al-Fâtiha ; `undefined` pour Al-Fâtiha et At-Tawba. */
+export function basmalaDe(n: number): { arabe: string } | undefined {
   if (SANS_BASMALA_EN_TETE.has(n)) return undefined;
-  return { arabe: versetsDe(1)[0] ?? '', trad: traductionDe(1)[0] ?? '' };
+  return { arabe: versetsDe(1)[0] ?? '' };
 }
 
-/** Versets d'une sourate avec leur traduction, alignés ; tableau vide si la sourate est inconnue. */
-export function versetsAvecTraduction(n: number): { n: number; texte: string; trad: string }[] {
-  const trad = traductionDe(n);
-  return versetsDe(n).map((v, i) => ({ n: i + 1, texte: v, trad: trad[i] ?? '' }));
+/** Versets d'une sourate avec leur numéro (arabe seul) ; tableau vide si la sourate est inconnue. */
+export function versetsNumerotes(n: number): { n: number; texte: string }[] {
+  return versetsDe(n).map((texte, i) => ({ n: i + 1, texte }));
 }
 
-/** Versets d'une page : texte, traduction et référence, dans l'ordre de lecture. */
+/** Versets d'une page : texte et référence, dans l'ordre de lecture. */
 export function versetsDePage(p: number): VersetPage[] {
   return refsDePage(p).map(([s, v]) => ({
     sourate: s,
     verset: v,
     texte: versetsDe(s)[v - 1] ?? '',
-    trad: traductionDe(s)[v - 1] ?? '',
   }));
 }
 

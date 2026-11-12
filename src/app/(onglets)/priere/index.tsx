@@ -25,6 +25,7 @@ import { VersetRubrique } from '@/ui/VersetRubrique';
 import { versetRubrique } from '@/features/rubriques/versetsRubriques';
 import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
+import { interlignes, tailles } from '@/theme/tokens.generated';
 const JOURS_SEMAINE = 7;
 
 // Verset du Coran de la rubrique : données embarquées, lues une fois.
@@ -176,9 +177,9 @@ export default function Priere() {
 
 const styles = StyleSheet.create({
   ecran: { flex: 1 },
-  lieu: { fontSize: 14, lineHeight: 20 },
+  lieu: { fontSize: tailles.t14, lineHeight: interlignes.l20 },
   tuiles: { flexDirection: 'row' },
   tuile: { flex: 1, flexDirection: 'row', alignItems: 'center', borderWidth: 1 },
   tuileTextes: { flex: 1, minWidth: 0 },
-  tuileTitre: { fontSize: 16, lineHeight: 24 },
+  tuileTitre: { fontSize: tailles.t16, lineHeight: interlignes.l24 },
 });

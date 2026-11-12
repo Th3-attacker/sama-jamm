@@ -4,6 +4,7 @@ import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { Switch } from '@/ui/Switch';
 
+import { interlignes, tailles } from '@/theme/tokens.generated';
 type Props = {
   titre: string;
   detail: string;
@@ -33,6 +34,6 @@ const styles = StyleSheet.create({
   ligne: { flexDirection: 'row', alignItems: 'center', borderBottomWidth: 1 },
   textes: { flex: 1, minWidth: 0 },
   // Planche : titre 16/24 en gras, détail 14/20 en normal.
-  titre: { fontSize: 16, lineHeight: 24 },
-  detail: { fontSize: 14, lineHeight: 20 },
+  titre: { fontSize: tailles.t16, lineHeight: interlignes.l24 },
+  detail: { fontSize: tailles.t14, lineHeight: interlignes.l20 },
 });

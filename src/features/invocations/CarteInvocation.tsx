@@ -4,7 +4,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { marqueur } from '@/features/lire/PageMushaf';
 import { useTaillesLecture } from '@/features/lire/BarreTaille';
 import { TranslitVerset } from '@/features/lire/TranslitVerset';
-import { sourate, traductionDe, translitDe, versetsDe } from '@/features/lire/coran';
+import { sourate, translitDe, versetsDe } from '@/features/lire/coran';
 import { useReglages } from '@/stores/reglages';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
@@ -12,15 +12,15 @@ import { Icon } from '@/ui/Icon';
 
 import type { Invocation } from './donnees';
 
-export type Contenu = { n: number; arabe: string; trad: string; translit: string };
+import { interlignes, rayon, tailles } from '@/theme/tokens.generated';
+export type Contenu = { n: number; arabe: string; translit: string };
 
 export function contenuDe(inv: Invocation): Contenu[] {
   const arabes = versetsDe(inv.sourate);
-  const trads = traductionDe(inv.sourate);
   const translits = translitDe(inv.sourate);
   return Array.from({ length: inv.a - inv.de + 1 }, (_, k) => {
     const n = inv.de + k;
-    return { n, arabe: arabes[n - 1] ?? '', trad: trads[n - 1] ?? '', translit: translits[n - 1] ?? '' };
+    return { n, arabe: arabes[n - 1] ?? '', translit: translits[n - 1] ?? '' };
   });
 }
 
@@ -45,7 +45,6 @@ export function CarteInvocation({ source, contenu, termine, onChoisir, onEcouter
   const { t } = useTranslation();
   const { couleurs, espace, rayon, typographie } = useTheme();
   const { tailleArabe, tailleTrad } = useTaillesLecture();
-  const affichage = useReglages((s) => s.affichage);
   const translitActive = useReglages((s) => s.translitLecture);
 
   return (
@@ -66,22 +65,15 @@ export function CarteInvocation({ source, contenu, termine, onChoisir, onEcouter
           <View style={styles.espace} />
           {termine ? <Icon name="check-circle" size={20} color={couleurs.emeraude} /> : null}
         </View>
-        {affichage !== 'tradSeule' ? (
-          <Text
-            accessibilityLanguage="ar"
-            maxFontSizeMultiplier={echelleMax.grand}
-            style={[typographie.coran, tailleArabe, styles.arabe, { color: couleurs.encre }]}>
-            {contenu.map((v) => `${v.arabe} ${marqueur(v.n)}`).join(' ')}
-          </Text>
-        ) : null}
-        {affichage !== 'tradSeule' && translitActive
+        <Text
+          accessibilityLanguage="ar"
+          maxFontSizeMultiplier={echelleMax.grand}
+          style={[typographie.coran, tailleArabe, styles.arabe, { color: couleurs.encre }]}>
+          {contenu.map((v) => `${v.arabe} ${marqueur(v.n)}`).join(' ')}
+        </Text>
+        {translitActive
           ? contenu.map((v) => (v.translit ? <TranslitVerset key={v.n} texte={v.translit} taille={tailleTrad} /> : null))
           : null}
-        {affichage !== 'arabeSeul' ? (
-          <Text maxFontSizeMultiplier={echelleMax.grand} style={[typographie.lecture, tailleTrad, { color: couleurs.encre }]}>
-            {contenu.map((v) => v.trad).join(' ')}
-          </Text>
-        ) : null}
       </Pressable>
       <View style={[styles.actions, { borderTopColor: couleurs.ligne, paddingHorizontal: espace.espace4, paddingVertical: espace.espace2 }]}>
         <Pressable accessibilityRole="button" onPress={onEcouter} style={[styles.ecouter, { gap: espace.espace2 }]}>
@@ -102,8 +94,8 @@ export function CarteInvocation({ source, contenu, termine, onChoisir, onEcouter
 
 const styles = StyleSheet.create({
   sourceLigne: { flexDirection: 'row', alignItems: 'center' },
-  pastille: { borderRadius: 999, flexShrink: 1 },
-  source: { fontSize: 14, lineHeight: 20 },
+  pastille: { borderRadius: rayon.rayonPastille, flexShrink: 1 },
+  source: { fontSize: tailles.t14, lineHeight: interlignes.l20 },
   espace: { flex: 1 },
   arabe: { textAlign: 'right', writingDirection: 'rtl' },
   actions: { flexDirection: 'row', alignItems: 'center', borderTopWidth: StyleSheet.hairlineWidth },

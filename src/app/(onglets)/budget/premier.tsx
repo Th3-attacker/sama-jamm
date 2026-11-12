@@ -20,6 +20,7 @@ import { EvitementClavier } from '@/ui/EvitementClavier';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
+import { interlignes, tailles } from '@/theme/tokens.generated';
 /** Premier budget : devise, jour de paie, revenu du cycle, enveloppes de départ et leurs plafonds. */
 export default function PremierBudget() {
   const { t } = useTranslation();
@@ -198,7 +199,7 @@ export default function PremierBudget() {
 const styles = StyleSheet.create({
   ecran: { flex: 1 },
   puces: { flexDirection: 'row', flexWrap: 'wrap' },
-  petit: { fontSize: 14, lineHeight: 20 },
+  petit: { fontSize: tailles.t14, lineHeight: interlignes.l20 },
   centre: { textAlign: 'center' },
   espace: { flex: 1 },
 });

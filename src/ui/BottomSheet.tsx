@@ -20,6 +20,7 @@ import { useTheme } from '@/theme/useTheme';
 
 import { IconButton } from './IconButton';
 
+import { espace } from '@/theme/tokens.generated';
 export type BottomSheetProps = {
   ouvert: boolean;
   titre: string;
@@ -142,7 +143,7 @@ export function BottomSheet({ ouvert, titre, onFermer, children }: BottomSheetPr
 const styles = StyleSheet.create({
   fenetre: { flex: 1, justifyContent: 'flex-end' },
   carte: { overflow: 'hidden' },
-  poignee: { alignSelf: 'center', width: 40, height: 4, borderRadius: 2, marginTop: 8, marginBottom: 8 },
+  poignee: { alignSelf: 'center', width: 40, height: 4, borderRadius: 2, marginTop: espace.espace2, marginBottom: espace.espace2 },
   entete: { flexDirection: 'row', alignItems: 'center' },
   titre: { flex: 1 },
 });

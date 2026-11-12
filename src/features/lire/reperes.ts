@@ -51,6 +51,11 @@ export function creerReperes(d: DonneesReperes) {
   };
 }
 
+/** Translittération sans ses balises de mise en forme, pour la recherche et les cartes à plat. */
+export function translitSansBalises(texte: string): string {
+  return texte.replace(/<\/?[a-z]+>/gi, '');
+}
+
 export type SegmentTranslit = { texte: string; style: 'normal' | 'long' | 'muet' };
 
 /**

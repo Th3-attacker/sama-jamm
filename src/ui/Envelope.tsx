@@ -7,6 +7,7 @@ import { type Devise } from '@/lib/montant';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 
+import { rayon } from '@/theme/tokens.generated';
 export type EnvelopeProps = {
   nom: string;
   depense: number;
@@ -92,5 +93,5 @@ const styles = StyleSheet.create({
   ligne: { borderBottomWidth: StyleSheet.hairlineWidth },
   tete: { flexDirection: 'row', alignItems: 'baseline' },
   nom: { flex: 1 },
-  piste: { height: 4, borderRadius: 999, overflow: 'hidden' },
+  piste: { height: 4, borderRadius: rayon.rayonPastille, overflow: 'hidden' },
 });

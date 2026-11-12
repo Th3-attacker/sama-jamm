@@ -175,7 +175,7 @@ export function CalendrierDate({ label, valeur, onChange, placeholder, erreur }:
                     {
                       minHeight: cible.cibleAndroid,
                       borderRadius: rayon.rayonCarte,
-                      backgroundColor: choisi ? couleurs.emeraude : 'transparent',
+                      backgroundColor: choisi ? couleurs.emeraudeAplat : 'transparent',
                       borderWidth: estAujourdhui(numero) && !choisi ? 1 : 0,
                       borderColor: couleurs.emeraude,
                     },

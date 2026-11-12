@@ -27,6 +27,7 @@ import { useToast } from '@/ui/Toast';
 import { EnteteRetour } from '@/ui/EnteteRetour';
 import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
+import { interlignes, tailles } from '@/theme/tokens.generated';
 /** Une enveloppe du cycle en cours : plafond, dépensé, reste, dépenses ; modifier le plafond, renommer, supprimer. */
 export default function EcranEnveloppe() {
   const { t, i18n } = useTranslation();
@@ -262,7 +263,7 @@ export default function EcranEnveloppe() {
 const styles = StyleSheet.create({
   ecran: { flex: 1 },
   carte: { borderWidth: 1 },
-  petit: { fontSize: 14, lineHeight: 20 },
+  petit: { fontSize: tailles.t14, lineHeight: interlignes.l20 },
   gras: { fontFamily: 'SourceSans3_600SemiBold' },
   rangee: { flexDirection: 'row', alignItems: 'center' },
   moitie: { flex: 1 },

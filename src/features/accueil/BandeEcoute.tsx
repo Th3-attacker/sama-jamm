@@ -10,6 +10,7 @@ import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { Icon } from '@/ui/Icon';
 
+import { interlignes, tailles } from '@/theme/tokens.generated';
 /** Bande « Continuer l'écoute » : rouvre le lecteur sur la sourate et le récitateur en cours. */
 export function BandeEcoute() {
   const { t } = useTranslation();
@@ -50,6 +51,6 @@ const styles = StyleSheet.create({
   lecture: { alignItems: 'center', justifyContent: 'center' },
   texte: { flex: 1 },
   // Planche : titre 16/24 en gras, détail 14/20.
-  titre: { fontSize: 16, lineHeight: 24 },
-  detail: { fontSize: 14, lineHeight: 20 },
+  titre: { fontSize: tailles.t16, lineHeight: interlignes.l24 },
+  detail: { fontSize: tailles.t14, lineHeight: interlignes.l20 },
 });

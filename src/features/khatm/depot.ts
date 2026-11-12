@@ -5,7 +5,7 @@ import { SchedulableTriggerInputTypes } from 'expo-notifications';
 import { useEffect, useState } from 'react';
 
 import { useSession } from '@/features/compte/compte';
-import { CANAL_RAPPELS, creerCanaux } from '@/features/priere/notifications';
+import { CANAL_KHATM, creerCanaux } from '@/features/priere/notifications';
 import i18n from '@/i18n';
 import { supabase } from '@/services/supabase/client';
 
@@ -169,6 +169,6 @@ export async function programmerRappelKhatm(khatm: Khatm, juzEnCours: number | n
       body: i18n.t('notifications.khatmTexte', { nom: khatm.nom, date: fin }),
       data: { url: `samajamm://plus/khatm/${khatm.id}` },
     },
-    trigger: { type: SchedulableTriggerInputTypes.DATE, date, channelId: CANAL_RAPPELS },
+    trigger: { type: SchedulableTriggerInputTypes.DATE, date, channelId: CANAL_KHATM },
   });
 }

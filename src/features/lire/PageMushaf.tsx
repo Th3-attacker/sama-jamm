@@ -5,6 +5,7 @@ import { Pressable, StyleSheet, Text, View, type LayoutChangeEvent } from 'react
 import { basmalaDe, reperes, segmentsDePage, sourate } from '@/features/lire/coran';
 import { useTheme } from '@/theme/useTheme';
 
+import { interlignes, tailles } from '@/theme/tokens.generated';
 const CHIFFRES_ARABES = '٠١٢٣٤٥٦٧٨٩';
 
 /** Marqueur de verset style mushaf : chiffres arabo-indiens entre crochets ornés, ﴿٥﴾. */
@@ -220,8 +221,8 @@ const styles = StyleSheet.create({
   cadreInterieur: { flex: 1, borderWidth: 1 },
   cadre: { flex: 1, overflow: 'hidden', justifyContent: 'center' },
   centre: { textAlign: 'center', writingDirection: 'rtl' },
-  numeroPage: { fontSize: 12, lineHeight: 16 },
-  numeroBas: { fontSize: 14, lineHeight: 20 },
+  numeroPage: { fontSize: tailles.t12, lineHeight: interlignes.l16 },
+  numeroBas: { fontSize: tailles.t14, lineHeight: interlignes.l20 },
   bandeau: { alignItems: 'center', justifyContent: 'center', paddingVertical: 2 },
   justifie: { textAlign: 'justify', writingDirection: 'rtl' },
 });

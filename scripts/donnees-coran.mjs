@@ -1,4 +1,4 @@
-// Convertit les données de Tanzil (tanzil.net, CC BY 3.0 ; traduction non commerciale) pour l'app.
+// Convertit les données de Tanzil (tanzil.net, CC BY 3.0 ) pour l'app.
 // Usage : node scripts/donnees-coran.mjs <dossier contenant quran-data.js et en.transliteration.txt>
 // Le fichier JavaScript de Tanzil n'est jamais exécuté : ses tableaux sont lus comme du texte.
 import { readFileSync, writeFileSync } from 'node:fs';

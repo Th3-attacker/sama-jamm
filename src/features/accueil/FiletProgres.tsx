@@ -2,6 +2,7 @@ import { StyleSheet, View } from 'react-native';
 
 import { useTheme } from '@/theme/useTheme';
 
+import { rayon } from '@/theme/tokens.generated';
 type Props = {
   /** 0 à 1. */
   valeur: number;
@@ -28,6 +29,6 @@ export function FiletProgres({ valeur, ton, label, detail }: Props) {
 }
 
 const styles = StyleSheet.create({
-  piste: { height: 3, borderRadius: 999, overflow: 'hidden' },
-  rempli: { height: 3, borderRadius: 999 },
+  piste: { height: 3, borderRadius: rayon.rayonPastille, overflow: 'hidden' },
+  rempli: { height: 3, borderRadius: rayon.rayonPastille },
 });

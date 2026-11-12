@@ -8,6 +8,7 @@ import { useTheme } from '@/theme/useTheme';
 
 import { IconButton } from './IconButton';
 
+import { interlignes, tailles } from '@/theme/tokens.generated';
 export type EnteteRetourProps = {
   titre: string;
   /** Une ligne sous le titre (14/20 `encre3`). */
@@ -76,6 +77,6 @@ const styles = StyleSheet.create({
   ligne: { flexDirection: 'row', alignItems: 'center' },
   retour: { marginStart: -12 },
   textes: { flex: 1 },
-  sousTitre: { fontSize: 14, lineHeight: 20 },
-  sousTitreItalique: { fontSize: 16 },
+  sousTitre: { fontSize: tailles.t14, lineHeight: interlignes.l20 },
+  sousTitreItalique: { fontSize: tailles.t16 },
 });

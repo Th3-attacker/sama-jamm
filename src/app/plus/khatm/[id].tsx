@@ -26,6 +26,7 @@ import { Button } from '@/ui/Button';
 import { ProgressBar } from '@/ui/ProgressBar';
 import { TopBar } from '@/ui/TopBar';
 
+import { interlignes, tailles } from '@/theme/tokens.generated';
 /** Un khatm collectif : les 30 juz en direct, mon juz, inviter. */
 export default function EcranKhatm() {
   const { t, i18n } = useTranslation();
@@ -326,7 +327,7 @@ const styles = StyleSheet.create({
   chiffre: { fontVariant: ['tabular-nums'] },
   nom: { flexShrink: 1, fontFamily: 'SourceSans3_600SemiBold' },
   regulier: { fontFamily: 'SourceSans3_400Regular' },
-  trad: { fontSize: 16, lineHeight: 24 },
+  trad: { fontSize: tailles.t16, lineHeight: interlignes.l24 },
   legende: { flexDirection: 'row', flexWrap: 'wrap' },
   legendeLigne: { flexDirection: 'row', alignItems: 'center' },
   ligneMembre: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', minHeight: 44 },

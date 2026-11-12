@@ -7,6 +7,7 @@ import { defaultDatabaseDirectory, deleteDatabaseAsync, openDatabaseAsync, type 
 
 import { devisesIntegrees } from '@/lib/montant';
 
+import { ChiffrementIndisponible, verifierChiffrement } from './chiffrement';
 import { migrations, VERSION_SCHEMA } from './schema';
 
 const NOM_BASE = 'budget.db';
@@ -71,12 +72,15 @@ async function ouvrir(): Promise<SQLiteDatabase> {
   const cle = await cleDuBudget();
   const db = await openDatabaseAsync(NOM_BASE);
   try {
+    // Sans SQLCipher, la clé serait ignorée et la base resterait en clair : on refuse d'aller plus loin.
+    verifierChiffrement(await db.getFirstAsync<{ cipher_version: string }>('PRAGMA cipher_version'));
     // Valeur validée (64 chiffres hexadécimaux) : la syntaxe x'…' de SQLCipher n'accepte pas de paramètre lié.
     await db.execAsync(`PRAGMA key = "x'${cle}'"`);
     // Première lecture : échoue ici (« file is not a database ») si la clé ne correspond pas au fichier.
     await db.getFirstAsync('SELECT count(*) FROM sqlite_master');
   } catch (erreur) {
     await db.closeAsync();
+    if (erreur instanceof ChiffrementIndisponible) throw erreur;
     throw new BudgetIllisible(erreur);
   }
   await db.execAsync('PRAGMA foreign_keys = ON');

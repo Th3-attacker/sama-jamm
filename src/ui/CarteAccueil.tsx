@@ -7,6 +7,7 @@ import { useTheme } from '@/theme/useTheme';
 import { Icon } from './Icon';
 import type { IconName } from './types';
 
+import { interlignes, tailles } from '@/theme/tokens.generated';
 export type CarteAccueilProps = {
   icone: IconName;
   titre: string;
@@ -58,5 +59,5 @@ const styles = StyleSheet.create({
   carte: { flex: 1, borderWidth: 1, minHeight: 124 },
   pied: { marginTop: 'auto' },
   entete: { flexDirection: 'row', alignItems: 'center' },
-  titre: { flex: 1, fontSize: 14, lineHeight: 20 },
+  titre: { flex: 1, fontSize: tailles.t14, lineHeight: interlignes.l20 },
 });

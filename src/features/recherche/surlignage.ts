@@ -1,4 +1,4 @@
-// Surlignage des mots trouvés dans une traduction (planche « Recherche ») : sans accents ni casse, mot entier.
+// Surlignage des mots trouvés dans une translittération (planche « Recherche ») : sans accents ni casse, mot entier.
 import { contientArabe, normaliserLatin } from './normaliser.ts';
 
 export type Morceau = { texte: string; trouve: boolean };

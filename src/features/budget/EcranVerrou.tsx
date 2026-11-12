@@ -9,6 +9,7 @@ import { Button } from '@/ui/Button';
 import { Etoile } from '@/ui/Etoile';
 import { Icon } from '@/ui/Icon';
 
+import { rayon } from '@/theme/tokens.generated';
 const TAILLE_ETOILE = 88;
 
 type Props = { deverrouiller: () => Promise<boolean> };
@@ -87,7 +88,7 @@ const styles = StyleSheet.create({
     bottom: -6,
     width: 36,
     height: 36,
-    borderRadius: 999,
+    borderRadius: rayon.rayonPastille,
     borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',

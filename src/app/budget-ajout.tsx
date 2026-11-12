@@ -19,6 +19,7 @@ import { appliquerTouche, Keypad } from '@/ui/Keypad';
 import { SegmentedControl } from '@/ui/SegmentedControl';
 import { useToast } from '@/ui/Toast';
 
+import { interlignes, rayon, tailles } from '@/theme/tokens.generated';
 /**
  * Ajouter une dépense : page ouverte depuis le budget (planche « BudgetAjout »). En-tête avec retour, montant au
  * pavé, enveloppe, compte, note, puis « Enregistrer » en pied de page.
@@ -214,11 +215,11 @@ const styles = StyleSheet.create({
   ecran: { flex: 1 },
   entete: { flexDirection: 'row', alignItems: 'center', minHeight: 56 },
   titre: { flex: 1, textAlign: 'center', fontFamily: 'SourceSans3_600SemiBold' },
-  pastille: { height: 32, borderRadius: 999, justifyContent: 'center' },
+  pastille: { height: 32, borderRadius: rayon.rayonPastille, justifyContent: 'center' },
   contenu: { flexGrow: 1 },
   montant: { alignItems: 'center' },
-  grandMontant: { fontSize: 56, lineHeight: 60, alignSelf: 'stretch', textAlign: 'center' },
-  info: { fontSize: 14, lineHeight: 20, textAlign: 'center' },
+  grandMontant: { fontSize: tailles.t56, lineHeight: interlignes.l60, alignSelf: 'stretch', textAlign: 'center' },
+  info: { fontSize: tailles.t14, lineHeight: interlignes.l20, textAlign: 'center' },
   puces: { flexDirection: 'row', flexWrap: 'wrap' },
   // Sans lineHeight (voir TextField) : le texte reste centré dans le champ, même en arabe.
   note: { minHeight: 48, borderWidth: 1, lineHeight: undefined, textAlignVertical: 'center' },

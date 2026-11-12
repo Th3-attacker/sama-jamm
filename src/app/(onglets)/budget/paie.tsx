@@ -19,6 +19,7 @@ import { EnteteRetour } from '@/ui/EnteteRetour';
 import { EvitementClavier } from '@/ui/EvitementClavier';
 import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
+import { interlignes, tailles } from '@/theme/tokens.generated';
 /** Jour de paie : le revenu reçu, mettre de côté d'abord, puis répartir entre les enveloppes. */
 export default function JourDePaie() {
   const { t } = useTranslation();
@@ -235,5 +236,5 @@ const styles = StyleSheet.create({
   ecran: { flex: 1 },
   pied: { borderTopWidth: StyleSheet.hairlineWidth },
   reste: { flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between' },
-  petit: { fontSize: 14, lineHeight: 20 },
+  petit: { fontSize: tailles.t14, lineHeight: interlignes.l20 },
 });

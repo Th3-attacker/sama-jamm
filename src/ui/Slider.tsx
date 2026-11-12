@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 
+import { interlignes, tailles } from '@/theme/tokens.generated';
 export type SliderProps = {
   /** Lu par les lecteurs d'écran. */
   label: string;
@@ -59,7 +60,7 @@ export function Slider({ label, valeurs, valeur, onChange, format }: SliderProps
 
 const styles = StyleSheet.create({
   entete: { flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between' },
-  valeur: { fontSize: 14, lineHeight: 20, fontVariant: ['tabular-nums'] },
+  valeur: { fontSize: tailles.t14, lineHeight: interlignes.l20, fontVariant: ['tabular-nums'] },
   piste: { flexDirection: 'row', alignItems: 'center' },
   cran: { flex: 1, minHeight: 44, alignItems: 'center', justifyContent: 'center' },
 });

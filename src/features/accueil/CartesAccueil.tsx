@@ -24,6 +24,7 @@ import { colonnesGrille } from './colonnes';
 import { AnneauDhikr } from './AnneauDhikr';
 import { FiletProgres } from './FiletProgres';
 
+import { espace, interlignes, tailles } from '@/theme/tokens.generated';
 /** Carte « Reprendre » : la sourate et le verset où la lecture s'est arrêtée. Sans lecture : invitation à Al-Fâtiha. */
 function CarteReprendre() {
   const { t } = useTranslation();
@@ -276,11 +277,11 @@ const styles = StyleSheet.create({
   ligne: { flexDirection: 'row' },
   chiffres: { fontVariant: ['tabular-nums'] },
   // Planche : textes secondaires des cartes en 14/20, montant en 24/30 (Source Sans, gras).
-  detail: { fontSize: 14, lineHeight: 20 },
-  montant: { fontSize: 24, lineHeight: 30, fontVariant: ['tabular-nums'] },
+  detail: { fontSize: tailles.t14, lineHeight: interlignes.l20 },
+  montant: { fontSize: tailles.t24, lineHeight: interlignes.l30, fontVariant: ['tabular-nums'] },
   dhikr: { flexDirection: 'row', alignItems: 'center' },
   dhikrTextes: { flex: 1 },
   // 30 carrés de 10, dix par rangée, écart 4 (136 de large).
-  grilleJuz: { flexDirection: 'row', flexWrap: 'wrap', gap: 4, width: 136 },
+  grilleJuz: { flexDirection: 'row', flexWrap: 'wrap', gap: espace.espace1, width: 136 },
   juz: { width: 10, height: 10, borderRadius: 3 },
 });

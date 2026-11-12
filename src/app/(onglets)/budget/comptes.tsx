@@ -26,6 +26,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { IconName } from '@/ui/types';
 import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
+import { tailles } from '@/theme/tokens.generated';
 const ICONES: Record<TypeCompte, IconName> = { especes: 'wallet', mobile: 'bolt', banque: 'lock' };
 
 /** Où se trouve l'argent du foyer : chaque compte avec son solde, et le total. */
@@ -269,5 +270,5 @@ const styles = StyleSheet.create({
   titreLigne: { flexDirection: 'row', alignItems: 'center' },
   retour: { marginStart: -12 },
   titre: { flex: 1 },
-  sousTitre: { fontSize: 16 },
+  sousTitre: { fontSize: tailles.t16 },
 });

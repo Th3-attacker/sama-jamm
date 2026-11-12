@@ -5,19 +5,21 @@ import { ActivityIndicator, FlatList, Pressable, SectionList, StyleSheet, Text, 
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ecouterXassaide } from '@/features/ecouter/lecteur';
-import { normaliserLatin } from '@/features/recherche/normaliser';
+import { contientArabe, normaliserLatin } from '@/features/recherche/normaliser';
 import { SOURCES } from '@/features/xassaides/catalogue';
 import { ListItem } from '@/ui/ListItem';
 import { CarteSourate } from '@/features/lire/CarteSourate';
 import { CarteVerset } from '@/features/lire/CarteVerset';
 import { indexPret, preparerIndex, rechercher, VIDE, type ResultatVerset } from '@/features/recherche/recherche';
 import type { Sourate } from '@/features/lire/coran';
+import { useReglages } from '@/stores/reglages';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { Chip } from '@/ui/Chip';
 import { EmptyState } from '@/ui/EmptyState';
 import { SearchField } from '@/ui/SearchField';
 
+import { espace, interlignes, tailles } from '@/theme/tokens.generated';
 type Ligne = Sourate | ResultatVerset;
 type Filtre = 'tout' | 'coran' | 'xassaides' | 'invocations';
 const FILTRES: Filtre[] = ['tout', 'coran', 'xassaides', 'invocations'];
@@ -33,6 +35,9 @@ export default function Recherche() {
   const [requete, setRequete] = useState('');
   // La frappe reste fluide : la recherche suit avec un léger retard.
   const requeteDiffree = useDeferredValue(requete);
+  const translitActive = useReglages((s) => s.translitLecture);
+  // Une requête en lettres latines trouve par la translittération : elle s'affiche alors, surlignée.
+  const montrerTranslit = translitActive || (requeteDiffree.trim() !== '' && !contientArabe(requeteDiffree));
   // Index préparé par paquets après l'ouverture de l'écran ; la requête tapée entre-temps part dès qu'il est prêt.
   const [pret, setPret] = useState(indexPret);
   useEffect(() => {
@@ -193,7 +198,7 @@ export default function Recherche() {
                 sourate={item.sourate}
                 verset={item.verset}
                 texte={item.texte}
-                trad={item.trad}
+                translit={montrerTranslit ? item.translit : undefined}
                 onPress={() =>
                   router.push({
                     pathname: '/coran/[sourate]',
@@ -215,7 +220,7 @@ const styles = StyleSheet.create({
   entete: { flexDirection: 'row', alignItems: 'center' },
   champ: { flex: 1 },
   filtres: { flexDirection: 'row', flexWrap: 'wrap' },
-  fermer: { fontSize: 16, lineHeight: 24, paddingHorizontal: 8 },
-  aide: { fontSize: 14, lineHeight: 20 },
+  fermer: { fontSize: tailles.t16, lineHeight: interlignes.l24, paddingHorizontal: espace.espace2 },
+  aide: { fontSize: tailles.t14, lineHeight: interlignes.l20 },
   titreSection: { textTransform: 'uppercase', letterSpacing: 0.84 },
 });

@@ -15,6 +15,7 @@ import { Button } from '@/ui/Button';
 
 import iconeApp from '../../../assets/images/icon.png';
 
+import { interlignes, tailles } from '@/theme/tokens.generated';
 function ouvrirReglagesTelephone() {
   Linking.openSettings().catch((erreur: unknown) => {
     console.warn('Réglages du téléphone inaccessibles', erreur);
@@ -124,7 +125,7 @@ export default function Rappels() {
         </Text>
         <Text
           maxFontSizeMultiplier={echelleMax.courant}
-          style={[typographie.translitteration, { color: couleurs.encre2, fontSize: 18, marginTop: espace.espace2 }]}>
+          style={[typographie.translitteration, { color: couleurs.encre2, fontSize: tailles.t18, marginTop: espace.espace2 }]}>
           {t('bienvenue.rappelsSousTitre')}
         </Text>
         {refusees ? (
@@ -165,6 +166,6 @@ const styles = StyleSheet.create({
   iconeApp: { width: 38, height: 38, borderRadius: 9 },
   notificationTextes: { flex: 1 },
   notificationEntete: { flexDirection: 'row', justifyContent: 'space-between' },
-  notificationTitre: { fontSize: 16, lineHeight: 24 },
-  notificationDetail: { fontSize: 14, lineHeight: 20 },
+  notificationTitre: { fontSize: tailles.t16, lineHeight: interlignes.l24 },
+  notificationDetail: { fontSize: tailles.t14, lineHeight: interlignes.l20 },
 });

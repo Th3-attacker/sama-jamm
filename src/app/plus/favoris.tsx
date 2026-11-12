@@ -4,7 +4,9 @@ import { useTranslation } from 'react-i18next';
 import { FlatList, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { CarteVerset } from '@/features/lire/CarteVerset';
-import { traductionDe, versetsDe } from '@/features/lire/coran';
+import { translitDe, versetsDe } from '@/features/lire/coran';
+import { translitSansBalises } from '@/features/lire/reperes';
+import { useReglages } from '@/stores/reglages';
 import { useFavoris } from '@/stores/favoris';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
@@ -29,6 +31,7 @@ export default function Favoris() {
   const { t } = useTranslation();
   const { couleurs, espace, typographie } = useTheme();
   const [filtre, setFiltre] = useState<Filtre>('tous');
+  const translitActive = useReglages((s) => s.translitLecture);
   const cles = useFavoris((s) => s.versets);
   const favoris = cles.map(lire).filter((f): f is Favori => f !== null);
 
@@ -73,7 +76,7 @@ export default function Favoris() {
               sourate={item.sourate}
               verset={item.verset}
               texte={versetsDe(item.sourate)[item.verset - 1] ?? ''}
-              trad={traductionDe(item.sourate)[item.verset - 1]}
+              translit={translitActive ? translitSansBalises(translitDe(item.sourate)[item.verset - 1] ?? '') : undefined}
               onPress={() =>
                 router.push({
                   pathname: '/coran/[sourate]',

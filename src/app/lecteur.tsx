@@ -26,7 +26,7 @@ import {
 } from '@/features/ecouter/minuterie';
 import { recitateur } from '@/features/ecouter/recitateurs';
 import { sourateTelechargee, telechargerSourate, useTelechargements, WifiRequis } from '@/features/ecouter/telechargements';
-import { sourate, traductionDe, versetsDe } from '@/features/lire/coran';
+import { sourate, versetsDe } from '@/features/lire/coran';
 import { LecteurXassaide } from '@/features/xassaides/LecteurXassaide';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
@@ -41,6 +41,7 @@ import { useToast } from '@/ui/Toast';
 import { SegmentedControl } from '@/ui/SegmentedControl';
 import { Slider } from '@/ui/Slider';
 
+import { espace, interlignes, rayon, tailles } from '@/theme/tokens.generated';
 type Repetition = 'non' | 'verset' | 'sourate';
 
 /** Lecteur plein écran : celui des xassaïdes quand une piste est en cours, sinon celui du Coran. */
@@ -88,11 +89,9 @@ function LecteurCoran() {
 
   const s = position ? sourate(position.sourate) : undefined;
   const arabes = position ? versetsDe(position.sourate) : [];
-  const traductions = position ? traductionDe(position.sourate) : [];
   const texte = position ? arabes[position.verset - 1] : undefined;
   const avant = position ? arabes[position.verset - 2] : undefined;
   const apres = position ? arabes[position.verset] : undefined;
-  const trad = position ? traductions[position.verset - 1] : undefined;
 
   // Anneau : avancée dans la sourate, par versets (la durée du son n'est pas connue à l'avance).
   const TAILLE_ANNEAU = height < 700 ? 150 : 220;
@@ -221,13 +220,6 @@ function LecteurCoran() {
                   maxFontSizeMultiplier={echelleMax.grand}
                   style={[typographie.coran, styles.versetCourant, styles.arabe, { color: couleurs.encre }]}>
                   {texte}
-                </Text>
-              ) : null}
-              {trad ? (
-                <Text
-                  maxFontSizeMultiplier={echelleMax.courant}
-                  style={[typographie.lecture, styles.traduction, styles.centre, { color: couleurs.encre2 }]}>
-                  {trad}
                 </Text>
               ) : null}
               {apres ? (
@@ -407,22 +399,21 @@ const styles = StyleSheet.create({
   titres: { flex: 1, alignItems: 'center' },
   centreScroll: { alignItems: 'center', flexGrow: 1, justifyContent: 'center' },
   centre: { textAlign: 'center' },
-  // Planche : verset en cours 34/64, traduction 16/24, vitesse 16/24, minuterie 14/20.
-  versetCourant: { fontSize: 34, lineHeight: 64 },
-  traduction: { fontSize: 16, lineHeight: 24 },
-  vitesse: { fontSize: 16, lineHeight: 24 },
-  texteMinuterie: { fontSize: 14, lineHeight: 20 },
-  resumeMinuterie: { fontSize: 14, lineHeight: 20 },
+  // Planche : verset en cours 34/64, vitesse 16/24, minuterie 14/20.
+  versetCourant: { fontSize: tailles.t34, lineHeight: interlignes.l64 },
+  vitesse: { fontSize: tailles.t16, lineHeight: interlignes.l24 },
+  texteMinuterie: { fontSize: tailles.t14, lineHeight: interlignes.l20 },
+  resumeMinuterie: { fontSize: tailles.t14, lineHeight: interlignes.l20 },
   arabe: { textAlign: 'center', writingDirection: 'rtl', alignSelf: 'stretch' },
-  piste: { height: 4, borderRadius: 999, overflow: 'hidden' },
-  remplissage: { height: 4, borderRadius: 999 },
+  piste: { height: 4, borderRadius: rayon.rayonPastille, overflow: 'hidden' },
+  remplissage: { height: 4, borderRadius: rayon.rayonPastille },
   commandes: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   commandeSimple: { width: 48, height: 48, alignItems: 'center', justifyContent: 'center' },
   principal: { alignItems: 'center', justifyContent: 'center' },
   minuterie: {
     alignSelf: 'center',
     minHeight: 40,
-    paddingHorizontal: 16,
+    paddingHorizontal: espace.espace4,
     borderWidth: 1,
     flexDirection: 'row',
     alignItems: 'center',

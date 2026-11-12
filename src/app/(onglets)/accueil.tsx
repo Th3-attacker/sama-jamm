@@ -26,6 +26,7 @@ import { GrilleAccueil, useColonnesGrille } from '@/features/accueil/CartesAccue
 import { enEcoute as ecouteEnCours, useLecteur } from '@/features/ecouter/lecteur';
 import { SondeBarre } from '@/features/ecouter/SondeBarre';
 
+import { interlignes, tailles } from '@/theme/tokens.generated';
 /** Un grain par jour du mois ; `lus` : clés de jour « 2026-10-29 » où une lecture a eu lieu. */
 function joursDuMois(maintenant: Date, lus: readonly string[]): JourFil[] {
   const total = new Date(maintenant.getFullYear(), maintenant.getMonth() + 1, 0).getDate();
@@ -167,7 +168,7 @@ export default function Accueil() {
 const styles = StyleSheet.create({
   ecran: { flex: 1 },
   // Planche : date en italique 14/20.
-  date: { fontSize: 14, lineHeight: 20 },
+  date: { fontSize: tailles.t14, lineHeight: interlignes.l20 },
   // Planche : « WAX JU RAFET » en 12/16, majuscules, interlettrage 0,06 em.
-  etiquette: { fontSize: 12, lineHeight: 16, textTransform: 'uppercase', letterSpacing: 0.72 },
+  etiquette: { fontSize: tailles.t12, lineHeight: interlignes.l16, textTransform: 'uppercase', letterSpacing: 0.72 },
 });

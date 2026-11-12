@@ -18,6 +18,7 @@ import { SchemaQibla } from '@/ui/SchemaQibla';
 import { TopBar } from '@/ui/TopBar';
 import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
+import { interlignes, tailles } from '@/theme/tokens.generated';
 const TOLERANCE = 3;
 // Seize points cardinaux, tous les 22,5°.
 const DIRECTIONS = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15'] as const;
@@ -140,12 +141,12 @@ export default function Qibla() {
 
 const styles = StyleSheet.create({
   centreBloc: { alignItems: 'center' },
-  degres: { fontSize: 56, lineHeight: 60 },
-  directionTexte: { fontSize: 18, lineHeight: 24, textAlign: 'center' },
+  degres: { fontSize: tailles.t56, lineHeight: interlignes.l60 },
+  directionTexte: { fontSize: tailles.t18, lineHeight: interlignes.l24, textAlign: 'center' },
   schema: { alignSelf: 'center' },
   trouvee: { textAlign: 'center' },
   ecran: { flex: 1 },
   conseil: { flexDirection: 'row', alignItems: 'flex-start' },
   iconeConseil: { marginTop: 1 },
-  texteConseil: { flex: 1, fontSize: 14, lineHeight: 20 },
+  texteConseil: { flex: 1, fontSize: tailles.t14, lineHeight: interlignes.l20 },
 });

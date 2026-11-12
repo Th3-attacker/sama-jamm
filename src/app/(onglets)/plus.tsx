@@ -18,6 +18,7 @@ import type { IconName } from '@/ui/types';
 import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 import { SondeBarre } from '@/features/ecouter/SondeBarre';
 
+import { espace, interlignes, rayon, tailles } from '@/theme/tokens.generated';
 const enMo = (octets: number) => `${(octets / 1_000_000).toFixed(1).replace('.', ',')} Mo`;
 
 type Tuile = { id: string; icone: IconName; href: Href; titre: string; sous: string };
@@ -139,14 +140,14 @@ export default function Plus() {
 const styles = StyleSheet.create({
   ecran: { flex: 1 },
   // Planche : sous-titre en italique 16/24.
-  sousTitre: { fontSize: 16, lineHeight: 24 },
+  sousTitre: { fontSize: tailles.t16, lineHeight: interlignes.l24 },
   grille: { flexDirection: 'row', flexWrap: 'wrap' },
   // Planche : rayon 16, hauteur minimale 108, pastille 40 de rayon 14, titre 16/24, sous-titre 14/20.
   tuile: { flexBasis: '47%', flexGrow: 1, borderWidth: 1, borderRadius: 16, minHeight: 108 },
   pastille: { width: 40, height: 40, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },
-  titre: { fontSize: 16, lineHeight: 24 },
-  sous: { fontSize: 14, lineHeight: 20 },
-  badge: { position: 'absolute', top: 12, end: 12, paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6 },
-  badgeTexte: { fontSize: 12, lineHeight: 16 },
+  titre: { fontSize: tailles.t16, lineHeight: interlignes.l24 },
+  sous: { fontSize: tailles.t14, lineHeight: interlignes.l20 },
+  badge: { position: 'absolute', top: 12, end: 12, paddingHorizontal: espace.espace2, paddingVertical: espace.espace1, borderRadius: rayon.rayonPuce },
+  badgeTexte: { fontSize: tailles.t12, lineHeight: interlignes.l16 },
   carte: { borderWidth: 1, borderRadius: 16, overflow: 'hidden' },
 });

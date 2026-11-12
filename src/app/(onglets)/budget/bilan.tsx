@@ -20,6 +20,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { TopBar } from '@/ui/TopBar';
 import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
+import { tailles } from '@/theme/tokens.generated';
 const CHOIX: readonly ChoixBilan[] = ['reporter', 'epargner', 'sadaqa'];
 
 /** Bilan du cycle terminé : pour le reste de chaque enveloppe, reporter (défaut), épargner ou donner en sadaqa. */
@@ -190,7 +191,7 @@ const styles = StyleSheet.create({
   titreLigne: { flexDirection: 'row', alignItems: 'center' },
   retour: { marginStart: -12 },
   titre: { flex: 1 },
-  sousTitre: { fontSize: 16 },
+  sousTitre: { fontSize: tailles.t16 },
   carte: { borderWidth: 1 },
   ligne: { flexDirection: 'row', alignItems: 'baseline' },
   nom: { flex: 1 },
