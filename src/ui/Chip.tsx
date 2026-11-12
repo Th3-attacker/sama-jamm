@@ -1,5 +1,6 @@
 import { Pressable, StyleSheet, Text } from 'react-native';
 
+import { chiffresAffiches } from '@/lib/chiffres';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 
@@ -37,8 +38,8 @@ export function Chip({ children, selectionne, onPress, pilule = false, compacte 
         compacte ? styles.compacte : null,
         pilule ? { paddingHorizontal: espace.espace4 } : null,
       ]}>
-      <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, { color: selectionne ? (pilule ? couleurs.surEmeraude : compacte ? couleurs.emeraude : couleurs.surEmeraudeDoux) : couleurs.encre }]}>
-        {compte === undefined ? children : `${children} ${compte}`}
+      <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, styles.texte, { color: selectionne ? (pilule ? couleurs.surEmeraude : compacte ? couleurs.emeraude : couleurs.surEmeraudeDoux) : couleurs.encre }]}>
+        {compte === undefined ? children : `${children} ${chiffresAffiches(String(compte))}`}
       </Text>
     </Pressable>
   );
@@ -48,4 +49,5 @@ const styles = StyleSheet.create({
   puce: { minHeight: 40, justifyContent: 'center', borderWidth: 1 },
   pilule: { minHeight: 44 },
   compacte: { minHeight: 36 },
+  texte: { textAlignVertical: 'center', includeFontPadding: false },
 });
