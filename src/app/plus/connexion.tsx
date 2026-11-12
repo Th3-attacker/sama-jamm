@@ -7,7 +7,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { envoyerCode, verifierCode } from '@/features/compte/compte';
 import { appleDisponible, connecterApple, connecterGoogle, type IssueConnexion } from '@/features/compte/fournisseurs';
-import { codePropre, detailConnexion, emailPropre, LONGUEUR_CODE } from '@/features/compte/validation';
+import { codePropre, detailConnexion, emailPropre, saisieCode } from '@/features/compte/validation';
 import { journaliser } from '@/features/erreur/journal';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
@@ -157,9 +157,8 @@ export default function Connexion() {
               <TextField
                 label={t('connexion.code')}
                 valeur={code}
-                onChange={setCode}
+                onChange={(v) => setCode(saisieCode(v))}
                 clavier="number-pad"
-                maxLength={LONGUEUR_CODE + 1}
                 placeholder="123456"
               />
               {erreur ? <Banner ton="erreur">{erreur}</Banner> : null}

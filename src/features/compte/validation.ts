@@ -9,6 +9,11 @@ export function emailPropre(saisie: string): string | null {
   return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e) && e.length <= 254 ? e : null;
 }
 
+/** Saisie du code reçu par e-mail : chiffres seulement, 6 au plus (le reste est retiré à la frappe et au collage). */
+export function saisieCode(saisie: string): string {
+  return saisie.replace(/\D/g, '').slice(0, LONGUEUR_CODE);
+}
+
 /** Code reçu par e-mail : exactement 6 chiffres, espaces ignorés. */
 export function codePropre(saisie: string): string | null {
   const c = saisie.replace(/\s/g, '');

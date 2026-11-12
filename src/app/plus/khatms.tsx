@@ -5,7 +5,7 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { useSession } from '@/features/compte/compte';
 import { mesKhatms, type Khatm } from '@/features/khatm/depot';
-import { lireCode } from '@/features/khatm/logique';
+import { lireCode, saisieCodeKhatm } from '@/features/khatm/logique';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { Banner } from '@/ui/Banner';
@@ -94,7 +94,13 @@ export default function MesKhatms() {
             <Button icone="plus" pleineLargeur onPress={() => router.push('/plus/khatm-nouveau')}>
               {t('khatm.nouveau')}
             </Button>
-            <TextField label={t('khatm.rejoindreCode')} valeur={code} onChange={setCode} placeholder="ABCD2345" />
+            <TextField
+              label={t('khatm.rejoindreCode')}
+              valeur={code}
+              onChange={(v) => setCode(saisieCodeKhatm(v))}
+              placeholder="ABCD2345"
+              majuscules
+            />
             <Button
               variant="secondaire"
               pleineLargeur

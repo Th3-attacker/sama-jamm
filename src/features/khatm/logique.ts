@@ -5,6 +5,7 @@ export type Part = { juz: number; user_id: string | null; etat: EtatPart };
 export type VuePart = 'lu' | 'enCours' | 'leVotre' | 'libre';
 
 export const NB_JUZ = 30;
+const LONGUEUR_CODE_KHATM = 8;
 const FORMAT_CODE = /^[A-Z2-9]{8}$/;
 
 /** Ce que voit un membre pour un juz : le sien en cours, lu, en cours chez un autre, ou libre. */
@@ -39,4 +40,13 @@ export function lireCode(saisie: string): string | null {
   const brut = saisie.trim().split('/').pop() ?? '';
   const code = brut.replace(/[\s-]/g, '').toUpperCase();
   return FORMAT_CODE.test(code) ? code : null;
+}
+
+/**
+ * Saisie du code d'invitation : majuscules, caractères permis seulement (A à Z et 2 à 9), 8 au plus.
+ * Un lien collé (`samajamm://khatm/CODE`) donne son code ; le reste est retiré à la frappe et au collage.
+ */
+export function saisieCodeKhatm(saisie: string): string {
+  const brut = saisie.includes('/') ? (saisie.trim().split('/').pop() ?? '') : saisie;
+  return brut.toUpperCase().replace(/[^A-Z2-9]/g, '').slice(0, LONGUEUR_CODE_KHATM);
 }

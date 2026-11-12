@@ -2,7 +2,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { lienInvitation, lireCode, resumeKhatm, vuePart, type Part } from './logique.ts';
+import { lienInvitation, lireCode, resumeKhatm, saisieCodeKhatm, vuePart, type Part } from './logique.ts';
 
 const parts: Part[] = Array.from({ length: 30 }, (_, i) => ({
   juz: i + 1,
@@ -28,4 +28,11 @@ test('lien et code d’invitation', () => {
   assert.equal(lireCode(' abcd-2345 '), 'ABCD2345');
   assert.equal(lireCode('ABC'), null);
   assert.equal(lireCode('ABCD1345'), null);
+});
+
+test('saisieCodeKhatm : majuscules, caractères permis, 8 au plus', () => {
+  assert.equal(saisieCodeKhatm('abcd2345'), 'ABCD2345');
+  assert.equal(saisieCodeKhatm('ab-cd 23 45 99'), 'ABCD2345');
+  assert.equal(saisieCodeKhatm('ab01cd'), 'ABCD');
+  assert.equal(saisieCodeKhatm('samajamm://khatm/abcd2345'), 'ABCD2345');
 });

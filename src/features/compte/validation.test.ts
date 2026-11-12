@@ -10,6 +10,7 @@ import {
   estRetourConnexion,
   lireRetourOAuth,
   prenomPropre,
+  saisieCode,
 } from './validation.ts';
 
 test('e-mail : nettoyé, minuscules, refus des adresses incomplètes', () => {
@@ -53,4 +54,10 @@ test('détail de connexion : étape et code technique, jamais de texte libre', (
   assert.equal(detailConnexion(new ErreurConnexion('demarrage', { status: 400 })), 'demarrage:400');
   assert.equal(detailConnexion(new ErreurConnexion('echange', { code: 'a b<c>=1' })), 'echange:abc1');
   assert.equal(detailConnexion(new Error('autre')), undefined);
+});
+
+test('saisieCode : chiffres seulement, 6 au plus', () => {
+  assert.equal(saisieCode('12a3 456 789'), '123456');
+  assert.equal(saisieCode('abc'), '');
+  assert.equal(saisieCode('1234567'), '123456');
 });
