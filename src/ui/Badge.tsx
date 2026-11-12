@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native';
 
-import type { Couleurs } from '@/theme/tokens.generated';
+import { interlignes, tailles, type Couleurs } from '@/theme/tokens.generated';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 
@@ -50,7 +50,7 @@ export function Badge({ children, ton = 'neutre', icone }: BadgeProps) {
         },
       ]}>
       {icone ? <Icon name={icone} size={14} color={t.texte} /> : null}
-      <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, styles.texte, { color: t.texte }]}>
+      <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, styles.texte, { color: t.texte }]}>
         {children}
       </Text>
     </View>
@@ -58,6 +58,7 @@ export function Badge({ children, ton = 'neutre', icone }: BadgeProps) {
 }
 
 const styles = StyleSheet.create({
-  badge: { alignSelf: 'flex-start', flexDirection: 'row', alignItems: 'center', borderWidth: 1, paddingVertical: 2 },
-  texte: { fontWeight: '600', textAlignVertical: 'center', includeFontPadding: false },
+  badge: { alignSelf: 'flex-start', flexDirection: 'row', alignItems: 'center', borderWidth: 1, minHeight: 22 },
+  // Planche : texte 12/16 graisse 600 ; `libelle` porte déjà la famille semi-gras (latin et arabe).
+  texte: { fontSize: tailles.t12, lineHeight: interlignes.l16 },
 });
