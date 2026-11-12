@@ -40,3 +40,4 @@ Tenu par l'agent de code (voir `AGENTS.md`, section 1). Un écart par ligne : da
 
 | Date | Paquet | Raison |
 | --- | --- | --- |
+| 2026-11-12 | `expo-widgets` ~58.0.28 | Widgets, activité en direct (fiche technique, « Hors de l'app »). Installé par le propriétaire du dépôt ; plugin ajouté à `app.json`. Aucun widget écrit pour l'instant |

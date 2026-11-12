@@ -113,7 +113,8 @@
           "enableBackgroundPlayback": true
         }
       ],
-      "expo-asset"
+      "expo-asset",
+      "expo-widgets"
     ],
     "experiments": {
       "typedRoutes": true,
