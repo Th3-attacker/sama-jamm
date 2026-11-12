@@ -250,7 +250,11 @@
     "modeVersetCourt": "Verset",
     "modeSourateCourt": "Sourate",
     "modePageCourt": "Page",
-    "verset": "Verset"
+    "verset": "Verset",
+    "reprendreCourt": "Reprendre",
+    "marquePages": "Marque-pages",
+    "khatmCourt": "Khatm {{lus}}/30",
+    "ecouterNom": "Écouter {{nom}}"
   },
   "khatm": {
     "titre": "Khatm collectif",

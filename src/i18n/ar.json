@@ -270,7 +270,11 @@
     "modeVersetCourt": "آية",
     "modeSourateCourt": "سورة",
     "modePageCourt": "صفحة",
-    "verset": "الآية"
+    "verset": "الآية",
+    "reprendreCourt": "متابعة",
+    "marquePages": "العلامات",
+    "khatmCourt": "ختمة {{lus}}/30",
+    "ecouterNom": "استمع إلى {{nom}}"
   },
   "khatm": {
     "titre": "ختمة جماعية",

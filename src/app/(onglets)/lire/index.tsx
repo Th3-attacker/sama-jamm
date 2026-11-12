@@ -8,6 +8,7 @@ import { FiletProgres } from '@/features/accueil/FiletProgres';
 import { usePremierKhatm } from '@/features/khatm/premier';
 import { CarteSourate } from '@/features/lire/CarteSourate';
 import { sourate, sourates, type Sourate } from '@/features/lire/coran';
+import { ecouter } from '@/features/ecouter/lecteur';
 import { ContenuEcouter } from '@/features/ecouter/ContenuEcouter';
 import { juzParSourate } from '@/features/lire/decoupageJuz';
 import { ListeJuz } from '@/features/lire/ListeJuz';
@@ -97,15 +98,46 @@ export default function Lire() {
           />
         ) : null}
         {mode === 'lire' && onglet === 'coran' ? (
-          <SegmentedControl
-            label={t('lire.vue')}
-            options={[
-              { id: 'sourates', label: t('lire.vueSourates') },
-              { id: 'juz', label: t('lire.vueJuz') },
-            ]}
-            valeur={vueCoran}
-            onChange={(id) => setVueCoran(id === 'juz' ? 'juz' : 'sourates')}
-          />
+          <View accessibilityRole="tablist" style={[styles.onglets, { gap: espace.espace5, borderBottomColor: couleurs.ligne }]}>
+            {(['sourates', 'juz'] as const).map((id) => {
+              const actif = vueCoran === id;
+              return (
+                <Pressable
+                  key={id}
+                  accessibilityRole="tab"
+                  accessibilityState={{ selected: actif }}
+                  onPress={() => setVueCoran(id)}
+                  style={[styles.onglet, { borderBottomColor: actif ? couleurs.emeraude : 'transparent' }]}>
+                  <Text
+                    maxFontSizeMultiplier={echelleMax.courant}
+                    style={[typographie.libelle, { color: actif ? couleurs.emeraude : couleurs.encre2 }]}>
+                    {t(id === 'sourates' ? 'lire.vueSourates' : 'lire.vueJuz')}
+                  </Text>
+                </Pressable>
+              );
+            })}
+            <Pressable
+              accessibilityRole="tab"
+              accessibilityState={{ selected: false }}
+              onPress={() => router.push('/plus/favoris')}
+              style={[styles.onglet, { borderBottomColor: 'transparent' }]}>
+              <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, { color: couleurs.encre2 }]}>
+                {t('lire.marquePages')}
+              </Text>
+            </Pressable>
+            {premierKhatm ? (
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={`${premierKhatm.nom}, ${t('lire.khatmLus', { lus: premierKhatm.lus })}`}
+                onPress={() => router.push({ pathname: '/plus/khatm/[id]', params: { id: premierKhatm.id } })}
+                style={[styles.lienKhatm, { gap: espace.espace2 }]}>
+                <Icon name="users" size={16} color={couleurs.orTexte} />
+                <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, styles.libelleKhatm, { color: couleurs.orTexte }]}>
+                  {t('lire.khatmCourt', { lus: premierKhatm.lus })}
+                </Text>
+              </Pressable>
+            ) : null}
+          </View>
         ) : null}
       </View>
 
@@ -121,55 +153,55 @@ export default function Lire() {
           {mode === 'lire' && onglet === 'coran' ? (
             <View style={{ gap: espace.espace3, paddingBottom: espace.espace3 }}>
               {position && repris ? (
-                <Pressable
-                  accessibilityRole="button"
-                  accessibilityLabel={`${t('lire.reprendre', { nom: repris.nom })}, ${t('accueil.versetSur', { n: position.verset, total: repris.versets })}`}
-                  onPress={() =>
-                    router.push({
-                      pathname: '/coran/[sourate]',
-                      params: { sourate: repris.n, verset: position.verset, mode: position.mode },
-                    })
-                  }
-                  style={({ pressed }) => [
-                    styles.reprise,
-                    {
-                      gap: espace.espace4,
-                      backgroundColor: pressed ? couleurs.surfaceCreux : couleurs.surface,
-                      borderColor: couleurs.ligne,
-                    },
-                  ]}>
-                  <View style={[styles.pastille, { backgroundColor: couleurs.emeraudeDoux }]}>
-                    <Icon name="book" size={20} color={couleurs.surEmeraudeDoux} />
-                  </View>
-                  <View style={[styles.repriseTexte, { gap: espace.espace1 }]}>
-                    <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, styles.repriseTitre, { color: couleurs.encre }]}>
-                      {t('lire.reprendre', { nom: repris.nom })}
-                    </Text>
-                    <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.repriseDetail, { color: couleurs.encre2 }]}>
-                      {t('accueil.versetSur', { n: position.verset, total: repris.versets })}
-                    </Text>
-                    <FiletProgres
-                      ton="or"
-                      valeur={position.verset / repris.versets}
-                      label={t('lire.reprendre', { nom: repris.nom })}
-                      detail={t('accueil.versetSur', { n: position.verset, total: repris.versets })}
-                    />
-                  </View>
-                </Pressable>
-              ) : null}
-              {premierKhatm ? (
-                <Pressable
-                  accessibilityRole="button"
-                  accessibilityLabel={`${premierKhatm.nom}, ${t('lire.khatmLus', { lus: premierKhatm.lus })}`}
-                  onPress={() => router.push({ pathname: '/plus/khatm/[id]', params: { id: premierKhatm.id } })}
-                  style={({ pressed }) => [styles.bandeKhatm, { gap: espace.espace3, backgroundColor: pressed ? couleurs.surfaceCreux : couleurs.orDoux }]}>
-                  <Icon name="users" size={20} color={couleurs.orTexte} />
-                  <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.repriseDetail, styles.repriseTexte, { color: couleurs.encre }]}>
-                    <Text style={typographie.libelle}>{premierKhatm.nom}</Text>
-                    {` · ${t('lire.khatmLus', { lus: premierKhatm.lus })}`}
-                  </Text>
-                  <Icon name="chevron-right" size={18} color={couleurs.encre3} />
-                </Pressable>
+                <View style={[styles.reprise, { gap: espace.espace3, backgroundColor: couleurs.surface, borderColor: couleurs.ligne }]}>
+                  <Pressable
+                    accessibilityRole="button"
+                    accessibilityLabel={`${t('lire.reprendre', { nom: repris.nom })}, ${t('accueil.versetSur', { n: position.verset, total: repris.versets })}`}
+                    onPress={() =>
+                      router.push({
+                        pathname: '/coran/[sourate]',
+                        params: { sourate: repris.n, verset: position.verset, mode: position.mode },
+                      })
+                    }
+                    style={[styles.repriseLien, { gap: espace.espace3 }]}>
+                    <View style={[styles.tuile, { backgroundColor: couleurs.emeraudeAplat, borderRadius: rayon.rayonCarte }]}>
+                      <Text
+                        accessibilityLanguage="ar"
+                        maxFontSizeMultiplier={echelleMax.grand}
+                        style={[typographie.arabe, styles.tuileNom, { color: couleurs.orSurEmeraude }]}>
+                        {repris.arabe}
+                      </Text>
+                    </View>
+                    <View style={[styles.repriseTexte, { gap: espace.espace1 }]}>
+                      <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, styles.surtitre, { color: couleurs.orTexte }]}>
+                        {t('lire.reprendreCourt')}
+                      </Text>
+                      <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.titre2, { color: couleurs.encre }]}>
+                        {repris.nom}
+                      </Text>
+                      <View style={[styles.progression, { gap: espace.espace2 }]}>
+                        <View style={[styles.piste, { backgroundColor: couleurs.surfaceCreux }]}>
+                          <View
+                            style={[
+                              styles.remplissage,
+                              { backgroundColor: couleurs.or, width: `${Math.min(100, Math.round((position.verset / repris.versets) * 100))}%` },
+                            ]}
+                          />
+                        </View>
+                        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre3 }]}>
+                          {`${position.verset} / ${repris.versets}`}
+                        </Text>
+                      </View>
+                    </View>
+                  </Pressable>
+                  <Pressable
+                    accessibilityRole="button"
+                    accessibilityLabel={t('lire.ecouterNom', { nom: repris.nom })}
+                    onPress={() => ecouter({ sourate: repris.n, verset: position.verset })}
+                    style={[styles.jouer, { backgroundColor: couleurs.emeraudeAplat }]}>
+                    <Icon name="play" size={20} color={couleurs.surEmeraude} />
+                  </Pressable>
+                </View>
               ) : null}
             </View>
           ) : undefined}
@@ -207,11 +239,20 @@ export default function Lire() {
 
 const styles = StyleSheet.create({
   ecran: { flex: 1 },
-  // Planche : carte de reprise de rayon 16 (padding 12/16), pastille de 40.
-  reprise: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderRadius: 16, paddingVertical: espace.espace3, paddingHorizontal: espace.espace4 },
-  pastille: { width: 40, height: 40, borderRadius: rayon.rayonPastille, alignItems: 'center', justifyContent: 'center' },
+  // Planche : carte de reprise de rayon 18, padding 12 ; tuile du nom arabe de 56 ; bouton écouter de 44.
+  reprise: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderRadius: rayon.rayonFeuille, padding: espace.espace3 },
+  repriseLien: { flex: 1, flexDirection: 'row', alignItems: 'center' },
+  tuile: { width: 56, height: 56, alignItems: 'center', justifyContent: 'center' },
+  tuileNom: { fontFamily: 'Amiri_700Bold', fontSize: tailles.t18, lineHeight: interlignes.l24 },
   repriseTexte: { flex: 1 },
-  repriseTitre: { fontSize: tailles.t16, lineHeight: interlignes.l24 },
-  repriseDetail: { fontSize: tailles.t14, lineHeight: interlignes.l20 },
-  bandeKhatm: { flexDirection: 'row', alignItems: 'center', borderRadius: rayon.rayonCarte, paddingVertical: espace.espace3, paddingHorizontal: espace.espace4 },
+  surtitre: { fontSize: tailles.t12, lineHeight: interlignes.l16, letterSpacing: 0.7, textTransform: 'uppercase' },
+  progression: { flexDirection: 'row', alignItems: 'center' },
+  piste: { flex: 1, height: 3, borderRadius: 3, overflow: 'hidden' },
+  remplissage: { height: 3, borderRadius: 3 },
+  jouer: { width: 44, height: 44, borderRadius: rayon.rayonPastille, alignItems: 'center', justifyContent: 'center' },
+  // Onglets soulignés : Sourates · Juz · Marque-pages, le lien Khatm à droite.
+  onglets: { flexDirection: 'row', alignItems: 'center', borderBottomWidth: 1 },
+  onglet: { paddingVertical: espace.espace2, borderBottomWidth: 2, marginBottom: -1, minHeight: 44, justifyContent: 'center' },
+  lienKhatm: { marginStart: 'auto', flexDirection: 'row', alignItems: 'center', minHeight: 44 },
+  libelleKhatm: { fontSize: tailles.t14, lineHeight: interlignes.l20 },
 });
