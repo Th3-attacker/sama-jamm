@@ -30,11 +30,10 @@ import { recitateur } from '@/features/ecouter/recitateurs';
 import { sourateTelechargee, telechargerSourate, useTelechargements, WifiRequis } from '@/features/ecouter/telechargements';
 import { reperes, sourate, versetsDe } from '@/features/lire/coran';
 import { cleVerset, useFavoris } from '@/stores/favoris';
-import { formatTemps } from '@/features/xassaides/pistes';
+import { formatTemps } from '@/features/ecouter/temps';
 import { AnneauProgression } from '@/ui/AnneauProgression';
 import { pourcentage } from '@/ui/anneau';
 import { BarreTemps } from '@/ui/BarreTemps';
-import { LecteurXassaide } from '@/features/xassaides/LecteurXassaide';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { Banner } from '@/ui/Banner';
@@ -47,17 +46,11 @@ import { useToast } from '@/ui/Toast';
 import { SegmentedControl } from '@/ui/SegmentedControl';
 import { Slider } from '@/ui/Slider';
 
-import { espace, interlignes, rayon, tailles } from '@/theme/tokens.generated';
+import { interlignes, tailles } from '@/theme/tokens.generated';
 type Repetition = 'non' | 'verset' | 'sourate';
 
-/** Lecteur plein écran : celui des xassaïdes quand une piste est en cours, sinon celui du Coran. */
-export default function LecteurPleinEcran() {
-  const xassaide = useLecteur((s) => s.piste !== null);
-  return xassaide ? <LecteurXassaide /> : <LecteurCoran />;
-}
-
 /** Lecteur du Coran : anneau de progression, verset récité avec ses voisins, commandes ; réglages dans la feuille « Écoute ». */
-function LecteurCoran() {
+export default function LecteurPleinEcran() {
   const { t } = useTranslation();
   const { afficher } = useToast();
   const { couleurs, espace, rayon, cible, typographie } = useTheme();
@@ -238,8 +231,6 @@ function LecteurCoran() {
                     format={formatTemps}
                     pas={15}
                     restant
-                    ton="emeraude"
-                    fine
                   />
                 ) : (
                   // Sans durées : « Verset N sur M » comme avant.

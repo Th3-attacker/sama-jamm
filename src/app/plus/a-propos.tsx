@@ -22,7 +22,7 @@ import { TopBar } from '@/ui/TopBar';
 /** Sources regroupées comme dans la maquette : un titre, un résumé, le détail complet dans une feuille. */
 const SOURCES = [
   { cle: 'coran', details: ['sourceCoran', 'sourceTanzil'] },
-  { cle: 'recitations', details: ['sourceRecitations', 'sourceXassaides', 'sourceAdhan'] },
+  { cle: 'recitations', details: ['sourceRecitations', 'sourceAdhan'] },
   { cle: 'invocations', details: ['sourceInvocations'] },
   { cle: 'polices', details: ['polices'] },
 ] as const;

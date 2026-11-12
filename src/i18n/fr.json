@@ -65,13 +65,11 @@
       "khatm": "Un juz chacun",
       "dhikr": "Compteur et objectifs",
       "qibla": "Direction de la Kaaba",
-      "xassaides": "Chants et causeries",
       "invocations": "Matin, soir, voyage",
       "zakat": "Estimation à 2,5 %"
     },
     "dhikr": "Dhikr",
     "qibla": "Qibla",
-    "xassaides": "Xassaïdes",
     "invocations": "Invocations",
     "zakat": "Zakat"
   },
@@ -180,9 +178,8 @@
   "lire": {
     "titre": "Lire",
     "lireOuEcouter": "Lire ou écouter",
-    "sousTitre": "Coran, xassaïdes, invocations",
+    "sousTitre": "Coran, invocations",
     "coran": "Coran",
-    "xassaides": "Xassaïdes",
     "invocations": "Invocations",
     "sourate": "Sourate",
     "versets_one": "{{count}} verset",
@@ -397,27 +394,6 @@
     "votreVoix": "Votre voix",
     "autresVoix": "Autres voix",
     "styleRecitateur": "Hafs · murattal · 114 sourates"
-  },
-  "xassaides": {
-    "titre": "Xassaïdes",
-    "sources": "Voix et kourels",
-    "genres": {
-      "xassaide": "Xassaïdes",
-      "causerie": "Causeries"
-    },
-    "audios_one": "{{count}} audio",
-    "audios_other": "{{count}} audios",
-    "chercher": "Chercher un titre",
-    "reseau": "Les audios viennent de xassaid.com et s’écoutent en ligne. Téléchargez une piste pour l’écouter sans réseau.",
-    "telecharger": "Télécharger {{titre}}, {{taille}}",
-    "echec": "Le téléchargement s’est interrompu. Touchez de nouveau pour le reprendre.",
-    "supprimerNote": "L’audio sera retiré de ce téléphone. Vous pourrez toujours l’écouter en ligne.",
-    "sourceInconnue": "Cette source n’existe pas.",
-    "reculer": "Reculer de {{n}} secondes",
-    "avancer": "Avancer de {{n}} secondes",
-    "rechercheAide": "Tapez un titre ou un nom pour trouver un xassaïde.",
-    "barreTemps": "Position dans la piste",
-    "intro": "Poèmes de louange et d’enseignement, en arabe et en wolofal."
   },
   "telechargements": {
     "titre": "Téléchargements",
@@ -674,14 +650,12 @@
     "sousTitre": "Gardés sur ce téléphone, lisibles sans réseau.",
     "tous": "Tous",
     "versets": "Versets",
-    "chants": "Chants",
     "invocations": "Invocations",
-    "videTexte": "Rien ici pour l’instant. Touchez le signet d’un verset, d’un chant ou d’une invocation pour le retrouver ici, même hors ligne.",
+    "videTexte": "Rien ici pour l’instant. Touchez le signet d’un verset ou d’une invocation pour le retrouver ici, même hors ligne.",
     "ouvrirBibliotheque": "Ouvrir la bibliothèque",
     "filtrer": "Filtrer",
-    "chantsInvocations": "Chants et invocations",
     "invocationCitadelle": "Invocation · Citadelle du musulman",
-    "chantsAVenir": "Les chants et les invocations arrivent bientôt."
+    "chantsAVenir": "Les invocations arrivent bientôt."
   },
   "partage": {
     "titre": "Partager",
@@ -772,7 +746,6 @@
     "aucuneErreur": "Aucune erreur enregistrée.",
     "sourceTanzil": "Translittération, juz, hizb et prosternations : Tanzil Project (tanzil.net), licence CC BY 3.0, reproduits sans modification.",
     "sourceInvocations": "Invocations : La Citadelle du musulman (Hisn al-Muslim) de Sa’id bin Ali bin Wahf al-Qahtani. Texte arabe tiré du fichier adhkar.json de rn0x (github.com/rn0x/Adhkar-json). Licence : fichier publié sans licence formelle, dont l’auteur déclare l’usage libre et gratuit. Titres français établis pour Sama Jàmm.",
-    "sourceXassaides": "Xassaïdes et causeries : audios de xassaid.com, écoutés en ligne, gratuits et sans usage commercial.",
     "sourceRecitations": "Récitations : alquran.cloud (Islamic Network), autorisées par les récitateurs ou leurs ayants droit pour une diffusion gratuite et non commerciale.",
     "version": "Sama Jàmm · version {{version}}",
     "confidentialite": "Politique de confidentialité",

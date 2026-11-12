@@ -1,4 +1,4 @@
-// Versets gardés en favoris, lisibles sans réseau. Les chants viendront avec leurs écrans.
+// Versets gardés en favoris, lisibles sans réseau.
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 

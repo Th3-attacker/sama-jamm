@@ -1,14 +1,10 @@
-// Lecteur audio unique de l'app : écoute verset par verset, jusqu'à la fin de la sourate ou page par page,
-// et écoute des xassaïdes (une piste longue par fichier).
+// Lecteur audio unique de l'app : écoute verset par verset, jusqu'à la fin de la sourate ou page par page.
 // État partagé par l'onglet Écouter, le lecteur plein écran et le mini-lecteur ; dernière position gardée.
 import { createAudioPlaylist, setAudioModeAsync, type AudioPlaylist, type AudioPlaylistStatus } from 'expo-audio';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
 import { nombreDePages, pageDe, sourate, sourates, versetsDePage } from '@/features/lire/coran';
-import { pisteXassaides, sourceXassaides } from '@/features/xassaides/catalogue';
-import { tempsApresSaut, type Piste, type PisteEnCours } from '@/features/xassaides/pistes';
-import { sourcePiste } from '@/features/xassaides/telechargements';
 import { stockage } from '@/stores/stockage';
 
 import { versetAuTemps } from './durees';
@@ -26,11 +22,8 @@ type EtatLecteur = {
   position: Position | null;
   /** Dernier verset écouté, pour « Reprendre » (gardé sur le téléphone). */
   derniere: Position | null;
-  /** Xassaïde en cours d'écoute ; `position` vaut alors null. */
-  piste: PisteEnCours | null;
-  /** Temps écoulé dans la piste en cours, en secondes entières ; `duree` n'est mesurée que pour les xassaïdes. */
+  /** Temps écoulé dans le verset en cours, en secondes entières. */
   temps: number;
-  duree: number;
   recitateur: string;
   vitesse: number;
   enLecture: boolean;
@@ -51,9 +44,7 @@ export const useLecteur = create<EtatLecteur>()(
     (): EtatLecteur => ({
       position: null,
       derniere: null,
-      piste: null,
       temps: 0,
-      duree: 0,
       recitateur: RECITATEURS[0]?.id ?? 'ar.alafasy',
       vitesse: 1,
       enLecture: false,
@@ -99,14 +90,13 @@ let relances = 0;
 type FileCoran =
   | { mode: 'sourate'; sourate: number; recitateur: string; pistes: Position[] }
   | { mode: 'page'; dernierePage: number; recitateur: string; pistes: Position[] };
-type FileXassaides = { mode: 'xassaides'; source: string; nomSource: string; pistes: readonly Piste[] };
-/** Ce qui est en file : la sourate entière, des pages du mushaf ajoutées au fur et à mesure, ou les xassaïdes d'une source. */
-let enFile: FileCoran | FileXassaides | null = null;
+/** Ce qui est en file : la sourate entière, ou des pages du mushaf ajoutées au fur et à mesure. */
+let enFile: FileCoran | null = null;
 /** Pages ajoutées d'avance en mode page. */
 const PAGES_D_AVANCE = 1;
 
-/** Vrai pendant une écoute, du Coran ou d'un xassaïde. */
-export const enEcoute = (s: EtatLecteur): boolean => s.position !== null || s.piste !== null;
+/** Vrai pendant une écoute. */
+export const enEcoute = (s: EtatLecteur): boolean => s.position !== null;
 
 function metadonnees(p: Position) {
   const r = recitateur(useLecteur.getState().recitateur);
@@ -114,15 +104,7 @@ function metadonnees(p: Position) {
 }
 
 /** État et titre de l'écran verrouillé pour la piste `index` de la file, ou null si elle n'existe pas. */
-function pisteDeFile(f: FileCoran | FileXassaides, index: number) {
-  if (f.mode === 'xassaides') {
-    const x = f.pistes[index];
-    if (!x) return null;
-    return {
-      etat: { position: null, page: null, piste: { source: f.source, id: x.id }, temps: 0, duree: 0 },
-      titre: { title: x.titre, artist: f.nomSource },
-    };
-  }
+function pisteDeFile(f: FileCoran, index: number) {
   const p = f.pistes[index];
   if (!p) return null;
   return {
@@ -130,7 +112,6 @@ function pisteDeFile(f: FileCoran | FileXassaides, index: number) {
       position: p,
       derniere: p,
       page: f.mode === 'page' ? (pageDe(p.sourate, p.verset) ?? null) : null,
-      piste: null,
     },
     titre: metadonnees(p),
   };
@@ -168,12 +149,11 @@ function surStatut(statut: AudioPlaylistStatus): void {
     return;
   }
   if (statut.playing && !statut.isBuffering) relances = 0;
-  // Le temps écoulé dans la piste sert aux xassaïdes (barre de temps) et au temps de la sourate (Coran).
+  // Le temps écoulé dans le verset sert au temps de la sourate.
   useLecteur.setState({
     enLecture: statut.playing,
     chargement: statut.isBuffering,
     temps: Math.floor(statut.currentTime) || 0,
-    ...(enFile?.mode === 'xassaides' ? { duree: Math.floor(statut.duration) || 0 } : {}),
   });
   // iOS ne signale pas l'erreur : un chargement qui n'aboutit pas vaut aussi échec réseau.
   if (statut.playing || !lectureDemandee) {
@@ -236,15 +216,6 @@ function surChangementDePiste({ previousIndex, currentIndex }: { previousIndex: 
   const f = enFile;
   if (!f) return;
   indexCourant = currentIndex;
-  if (f.mode === 'xassaides') {
-    // Une piste longue par fichier : ni répétition de verset ni page à ajouter.
-    const suivante = pisteDeFile(f, currentIndex);
-    if (!suivante) return;
-    sautManuel = false;
-    useLecteur.setState(suivante.etat);
-    liste?.updateLockScreenMetadata(suivante.titre);
-    return;
-  }
   const p = f.pistes[currentIndex];
   if (!p) return;
   const manuel = sautManuel;
@@ -268,7 +239,6 @@ function surChangementDePiste({ previousIndex, currentIndex }: { previousIndex: 
     position: p,
     derniere: p,
     page: f.mode === 'page' ? (pageDe(p.sourate, p.verset) ?? null) : null,
-    piste: null,
   });
   liste?.updateLockScreenMetadata(metadonnees(p));
   // Mode page : la page suivante entre dans la file avant la fin de la dernière.
@@ -312,10 +282,10 @@ function jeterListe(): void {
 }
 
 /**
- * Remplace la file si besoin, puis lit la piste `index` (à `depuis` secondes pour un xassaïde repris).
+ * Remplace la file si besoin, puis lit la piste `index` (à `depuis` secondes).
  * `relance` : nouvel essai après un échec, sans remettre à zéro le compte des relances.
  */
-function lire(nouvelleFile: FileCoran | FileXassaides | null, index: number, depuis = 0, relance = false): void {
+function lire(nouvelleFile: FileCoran | null, index: number, depuis = 0, relance = false): void {
   const etat = useLecteur.getState();
   if (!relance) relances = 0;
   // Liste cassée : on repart d'une liste neuve chargée avec la même file.
@@ -328,10 +298,7 @@ function lire(nouvelleFile: FileCoran | FileXassaides | null, index: number, dep
   try {
     if (aCharger) {
       l.clear();
-      if (aCharger.mode === 'xassaides') {
-        // Fichier téléchargé s'il existe, sinon en ligne.
-        for (const x of aCharger.pistes) l.add({ uri: sourcePiste(aCharger.source, x) });
-      } else ajouterPistes(aCharger.pistes, aCharger.recitateur);
+      ajouterPistes(aCharger.pistes, aCharger.recitateur);
       enFile = aCharger;
     }
     const demandee = enFile ? pisteDeFile(enFile, index) : null;
@@ -353,10 +320,9 @@ function lire(nouvelleFile: FileCoran | FileXassaides | null, index: number, dep
   }
 }
 
-/** Reprend la piste en cours sur une liste neuve (au même temps pour un xassaïde). */
+/** Reprend le verset en cours sur une liste neuve. */
 function relancer(relance = true): void {
-  const { piste, temps } = useLecteur.getState();
-  lire(null, indexCourant, piste ? temps : 0, relance);
+  lire(null, indexCourant, 0, relance);
 }
 
 /** Lance l'écoute à ce verset (sourate entière à partir de là). */
@@ -377,33 +343,6 @@ export function ecouterPage(page: number): void {
   lire({ mode: 'page', dernierePage: fin, recitateur: r, pistes: pistesDePages(page, fin, versetsDePage) }, 0);
 }
 
-/** Lance l'écoute de ce xassaïde ; les pistes suivantes de la même source s'enchaînent. */
-export function ecouterXassaide(idSource: string, idPiste: number): void {
-  const s = sourceXassaides(idSource);
-  const index = s ? s.pistes.findIndex((x) => x.id === idPiste) : -1;
-  if (!s || index < 0) return;
-  const meme = enFile?.mode === 'xassaides' && enFile.source === idSource;
-  lire(meme ? null : { mode: 'xassaides', source: s.id, nomSource: s.nom, pistes: s.pistes }, index);
-}
-
-/** Avance ou recule de `pas` secondes dans la piste en cours (xassaïdes). */
-export function sauter(pas: number): void {
-  const { piste, duree } = useLecteur.getState();
-  if (!liste || !piste || !pisteXassaides(piste.source, piste.id)) return;
-  const cible = tempsApresSaut(liste.currentTime, pas, duree);
-  useLecteur.setState({ temps: Math.floor(cible) });
-  liste.seekTo(cible).catch((erreur: unknown) => console.warn('Saut non appliqué', erreur));
-}
-
-/** Place la lecture à `secondes` dans la piste en cours (xassaïdes, barre de temps). */
-export function chercher(secondes: number): void {
-  const { piste, duree } = useLecteur.getState();
-  if (!liste || !piste || !Number.isFinite(secondes)) return;
-  const cible = Math.max(0, duree > 0 ? Math.min(secondes, duree) : secondes);
-  useLecteur.setState({ temps: Math.floor(cible) });
-  liste.seekTo(cible).catch((erreur: unknown) => console.warn('Position non appliquée', erreur));
-}
-
 /** Place la lecture à `secondes` dans la sourate en cours (écoute par sourate, durées des versets connues). */
 export function chercherSourate(secondes: number): void {
   const { position, recitateur: idRecitateur } = useLecteur.getState();
@@ -415,8 +354,8 @@ export function chercherSourate(secondes: number): void {
 
 /** Lecture ou pause ; reprend au dernier verset si rien n'est chargé. */
 export function basculer(): void {
-  const { position, piste, derniere, enLecture, erreur } = useLecteur.getState();
-  if (!position && !piste) {
+  const { position, derniere, enLecture, erreur } = useLecteur.getState();
+  if (!position) {
     if (derniere) ecouter(derniere);
     return;
   }
@@ -460,5 +399,5 @@ export function arreter(): void {
   definirMinuterie({ type: 'aucune' });
   liste?.pause();
   liste?.clearLockScreenControls();
-  useLecteur.setState({ position: null, page: null, piste: null, enLecture: false, chargement: false });
+  useLecteur.setState({ position: null, page: null, enLecture: false, chargement: false });
 }

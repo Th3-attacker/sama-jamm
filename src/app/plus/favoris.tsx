@@ -14,9 +14,9 @@ import { Chip } from '@/ui/Chip';
 import { EmptyState } from '@/ui/EmptyState';
 import { TopBar } from '@/ui/TopBar';
 
-type Filtre = 'tous' | 'versets' | 'chants' | 'invocations';
-const FILTRES: Filtre[] = ['tous', 'versets', 'chants', 'invocations'];
-/** Seuls les versets se mettent en favori pour l'instant : chants et invocations restent à zéro. */
+type Filtre = 'tous' | 'versets' | 'invocations';
+const FILTRES: Filtre[] = ['tous', 'versets', 'invocations'];
+/** Seuls les versets se mettent en favori pour l'instant : les invocations restent à zéro. */
 const compter = (id: Filtre, versets: number) => (id === 'tous' || id === 'versets' ? versets : 0);
 
 type Favori = { sourate: number; verset: number };

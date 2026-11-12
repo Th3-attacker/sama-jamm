@@ -22,7 +22,6 @@ import { SegmentedControl } from '@/ui/SegmentedControl';
 import { TopBar } from '@/ui/TopBar';
 import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 import { ListeRecitateurs } from '@/features/ecouter/ListeRecitateurs';
-import { ListeSources } from '@/features/xassaides/ListeSources';
 
 import { espace, interlignes, rayon, tailles } from '@/theme/tokens.generated';
 function ouvrirSourate(n: number) {
@@ -38,19 +37,18 @@ export default function Lire() {
   const marge = useMargeBasse();
   const { styleColonne: colonne } = useLayout();
   const rubrique = useParametre('rubrique');
-  // Le lien Xassaïdes de Plus ouvre le mode Écouter, onglet Xassaïdes.
-  const [mode, setMode] = useState<ModeLire>(rubrique === 'xassaides' ? 'ecouter' : 'lire');
+  const [mode, setMode] = useState<ModeLire>('lire');
   const [vueCoran, setVueCoran] = useState<'sourates' | 'juz'>('sourates');
-  type Onglet = 'coran' | 'xassaides' | 'recitateurs' | 'invocations';
-  const ouverture = (r: string | undefined): Onglet => (r === 'xassaides' || r === 'recitateurs' || r === 'invocations' ? r : 'coran');
+  type Onglet = 'coran' | 'recitateurs' | 'invocations';
+  const ouverture = (r: string | undefined): Onglet => (r === 'recitateurs' || r === 'invocations' ? r : 'coran');
   const [onglet, setOnglet] = useState<Onglet>(ouverture(rubrique));
   // Écran déjà monté (onglet gardé en mémoire) : une nouvelle rubrique demandée depuis Plus doit être appliquée.
   const [rubriqueVue, setRubriqueVue] = useState(rubrique);
   if (rubrique !== rubriqueVue) {
     setRubriqueVue(rubrique);
-    if (rubrique === 'xassaides' || rubrique === 'invocations') {
+    if (rubrique === 'invocations') {
       setOnglet(ouverture(rubrique));
-      setMode(rubrique === 'xassaides' ? 'ecouter' : 'lire');
+      setMode('lire');
     }
   }
   // Reprise : la sourate et le verset où la lecture s'est arrêtée.
@@ -70,7 +68,7 @@ export default function Lire() {
         actions={[{ icone: 'search', label: t('menuPlus.rechercher'), onPress: () => router.push('/plus/recherche') }]}
       />
 
-      {/* Barre fixe : l'interrupteur Lire | Écouter, et Coran | Xassaïdes | Invocations tant qu'on est sur Lire. */}
+      {/* Barre fixe : l'interrupteur Lire | Écouter, et Coran | Invocations tant qu'on est sur Lire. */}
       <View style={[colonne, { gap: espace.espace3, paddingBottom: espace.espace3, backgroundColor: couleurs.fond }]}>
         <InterrupteurLireEcouter mode={mode} onChange={setMode} />
         {mode === 'lire' ? (
@@ -89,7 +87,6 @@ export default function Lire() {
             label={t('lire.bibliotheque')}
             options={[
               { id: 'coran', label: t('lire.coran') },
-              { id: 'xassaides', label: t('lire.xassaides') },
               { id: 'recitateurs', label: t('ecouter.recitateurs') },
             ]}
             valeur={onglet === 'invocations' ? 'coran' : onglet}
@@ -208,9 +205,7 @@ export default function Lire() {
         }
         ListEmptyComponent={
           mode === 'ecouter' ? (
-            onglet === 'xassaides' ? (
-              <ListeSources />
-            ) : onglet === 'recitateurs' ? (
+            onglet === 'recitateurs' ? (
               <ListeRecitateurs />
             ) : (
               <ContenuEcouter

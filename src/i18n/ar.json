@@ -69,13 +69,11 @@
       "khatm": "جزء لكل واحد",
       "dhikr": "عدّاد وأهداف",
       "qibla": "اتجاه الكعبة",
-      "xassaides": "قصائد ودروس",
       "invocations": "الصباح والمساء والسفر",
       "zakat": "تقدير بنسبة 2.5٪"
     },
     "dhikr": "الذكر",
     "qibla": "القبلة",
-    "xassaides": "القصائد",
     "invocations": "الأذكار",
     "zakat": "الزكاة"
   },
@@ -192,9 +190,8 @@
   "lire": {
     "titre": "القراءة",
     "lireOuEcouter": "للقراءة أو الاستماع",
-    "sousTitre": "القرآن، القصائد، الأذكار",
+    "sousTitre": "القرآن، الأذكار",
     "coran": "القرآن",
-    "xassaides": "القصائد",
     "invocations": "الأذكار",
     "sourate": "سورة",
     "versets_zero": "{{count}} آية",
@@ -433,31 +430,6 @@
     "votreVoix": "صوتك",
     "autresVoix": "أصوات أخرى",
     "styleRecitateur": "حفص · مرتّل · 114 سورة"
-  },
-  "xassaides": {
-    "titre": "القصائد",
-    "sources": "الأصوات والفرق",
-    "genres": {
-      "xassaide": "قصائد",
-      "causerie": "دروس"
-    },
-    "audios_zero": "لا تسجيلات",
-    "audios_one": "تسجيل واحد",
-    "audios_two": "تسجيلان",
-    "audios_few": "{{count}} تسجيلات",
-    "audios_many": "{{count}} تسجيلًا",
-    "audios_other": "{{count}} تسجيل",
-    "chercher": "ابحث عن عنوان",
-    "reseau": "التسجيلات من موقع xassaid.com وتُسمع عبر الإنترنت. نزّل تسجيلًا للاستماع إليه بلا شبكة.",
-    "telecharger": "تنزيل {{titre}}، {{taille}}",
-    "echec": "انقطع التنزيل. المس مرة أخرى لإعادته.",
-    "supprimerNote": "سيُحذف التسجيل من هذا الهاتف. يمكنك دائمًا الاستماع إليه عبر الإنترنت.",
-    "sourceInconnue": "هذا المصدر غير موجود.",
-    "reculer": "الرجوع {{n}} ث",
-    "avancer": "التقدّم {{n}} ث",
-    "rechercheAide": "اكتب عنوانًا أو اسمًا للعثور على قصيدة.",
-    "barreTemps": "موضع التشغيل",
-    "intro": "قصائد المديح والتعليم، بالعربية والولوفال."
   },
   "telechargements": {
     "titre": "التنزيلات",
@@ -730,14 +702,12 @@
     "sousTitre": "محفوظة على هذا الهاتف، تُقرأ دون اتصال.",
     "tous": "الكل",
     "versets": "آيات",
-    "chants": "قصائد",
     "invocations": "أذكار",
-    "videTexte": "لا شيء هنا بعد. المس علامة آية أو قصيدة أو ذكر لتجده هنا، حتى دون اتصال.",
+    "videTexte": "لا شيء هنا بعد. المس علامة آية أو ذكر لتجده هنا، حتى دون اتصال.",
     "ouvrirBibliotheque": "فتح المكتبة",
     "filtrer": "تصفية",
-    "chantsInvocations": "القصائد والأذكار",
     "invocationCitadelle": "ذكر · حصن المسلم",
-    "chantsAVenir": "القصائد والأذكار قريبًا."
+    "chantsAVenir": "الأذكار قريبًا."
   },
   "partage": {
     "titre": "مشاركة",
@@ -828,7 +798,6 @@
     "aucuneErreur": "لا توجد أخطاء مسجّلة.",
     "sourceTanzil": "النقحرة والأجزاء والأحزاب والسجدات: مشروع تنزيل (tanzil.net)، رخصة CC BY 3.0، دون تعديل.",
     "sourceInvocations": "الأذكار: حصن المسلم لسعيد بن علي بن وهف القحطاني. النص العربي من ملف adhkar.json للمطوّر rn0x (github.com/rn0x/Adhkar-json) الذي نُشر دون رخصة رسمية، وأعلن صاحبه إباحة استعماله مجانًا وبحرية. عناوين الفصول بالفرنسية أُعدّت لتطبيق سما جام.",
-    "sourceXassaides": "القصائد والدروس: تسجيلات موقع xassaid.com، تُسمع عبر الإنترنت، مجانًا وبلا استعمال تجاري.",
     "sourceRecitations": "التلاوات: alquran.cloud (Islamic Network)، بإذن القرّاء أو ورثتهم للنشر المجاني غير التجاري.",
     "version": "سما جام · الإصدار {{version}}",
     "confidentialite": "سياسة الخصوصية",

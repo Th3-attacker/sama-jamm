@@ -7,7 +7,6 @@ import { useSession } from '@/features/compte/compte';
 import { listeTelechargements, useTelechargements } from '@/features/ecouter/telechargements';
 import { useKhatmsEnCours } from '@/features/khatm/enCours';
 import { LigneHub } from '@/features/plus/LigneHub';
-import { listeXassaidesTelecharges } from '@/features/xassaides/telechargements';
 import { useFavoris } from '@/stores/favoris';
 import { echelleMax } from '@/theme/typographie';
 import { useLayout } from '@/theme/useLayout';
@@ -27,12 +26,11 @@ const TUILES = [
   { id: 'khatm', titre: 'menuPlus.khatm', sous: 'menuPlus.tuiles.khatm', icone: 'users', href: '/plus/khatms' },
   { id: 'dhikr', titre: 'menuPlus.dhikr', sous: 'menuPlus.tuiles.dhikr', icone: 'target', href: '/priere/dhikr' },
   { id: 'qibla', titre: 'menuPlus.qibla', sous: 'menuPlus.tuiles.qibla', icone: 'compass', href: '/priere/qibla' },
-  { id: 'xassaides', titre: 'menuPlus.xassaides', sous: 'menuPlus.tuiles.xassaides', icone: 'headphones', href: { pathname: '/lire', params: { rubrique: 'xassaides' } } },
   { id: 'invocations', titre: 'menuPlus.invocations', sous: 'menuPlus.tuiles.invocations', icone: 'moon', href: { pathname: '/lire', params: { rubrique: 'invocations' } } },
   { id: 'zakat', titre: 'menuPlus.zakat', sous: 'menuPlus.tuiles.zakat', icone: 'balance', href: '/budget/zakat' },
 ] as const satisfies readonly Tuile[];
 
-/** Onglet Plus : six raccourcis, puis Favoris, Téléchargements, Compte, Réglages et À propos. */
+/** Onglet Plus : cinq raccourcis, puis Favoris, Téléchargements, Compte, Réglages et À propos. */
 export default function Plus() {
   const defilement = useRef<ComponentRef<typeof ScrollView>>(null);
   useScrollToTop(defilement);
@@ -46,11 +44,7 @@ export default function Plus() {
   // Relue après chaque téléchargement ou suppression (`version` change alors).
   const version = useTelechargements((s) => s.version);
   const octets = useMemo(
-    () =>
-      version >= 0
-        ? listeTelechargements().reduce((n, x) => n + x.octets, 0) +
-          listeXassaidesTelecharges().reduce((n, x) => n + x.octets, 0)
-        : 0,
+    () => (version >= 0 ? listeTelechargements().reduce((n, x) => n + x.octets, 0) : 0),
     [version],
   );
 

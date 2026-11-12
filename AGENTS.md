@@ -2,7 +2,7 @@
 
 Règles pour tout agent de code (Claude Code ou autre) qui travaille sur ce dépôt. À lire en entier avant la première modification. Si une règle de ce fichier contredit une demande, s'arrêter et poser la question.
 
-Sama Jàmm est une app musulmane en React Native avec Expo : Coran, xassaïdes, invocations, écoute, horaires de prière, qibla, dhikr, khatm collectif, budget du foyer (MRU, F CFA), zakat et dettes entre proches. Interface en français et en arabe, formules en wolof. Langue de travail : le français.
+Sama Jàmm est une app musulmane en React Native avec Expo : Coran, invocations, écoute, horaires de prière, qibla, dhikr, khatm collectif, budget du foyer (MRU, F CFA), zakat et dettes entre proches. Interface en français et en arabe, formules en wolof. Langue de travail : le français.
 
 ## 1. Sources de vérité, dans l'ordre
 
@@ -38,7 +38,7 @@ Un écart trouvé entre deux sources, ou entre une source et le code, se note da
 - Le Coran s'affiche en arabe seul. Aucune traduction sous les versets, dans aucun écran, partage, widget ou notification.
 - La translittération n'apparaît que si l'utilisateur l'active (Réglages de lecture). Désactivée par défaut, y compris sur l'écran de partage.
 - Les écrans Réglages et Réglages en arabe n'ont plus de ligne « Traduction ».
-- Le sens en français reste pour les invocations et les xassaïdes seulement.
+- Le sens en français reste pour les invocations seulement.
 - Le texte sacré n'est jamais tronqué (`numberOfLines` interdit), abrégé, mis en majuscules ni en gras synthétique. Le contenu (`contenu.db`) est en lecture seule.
 
 ### Apparence
