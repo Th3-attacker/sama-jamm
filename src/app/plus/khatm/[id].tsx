@@ -21,6 +21,7 @@ import { reperes } from '@/features/lire/coran';
 import { useParametre } from '@/hooks/useParametre';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
+import { KhatmGrid, type EtatJuz } from '@/ui/KhatmGrid';
 import { Banner } from '@/ui/Banner';
 import { Button } from '@/ui/Button';
 import { ProgressBar } from '@/ui/ProgressBar';
@@ -35,9 +36,6 @@ export default function EcranKhatm() {
   const moi = useSession((s) => s.session?.user.id ?? null);
   const { etat, relire } = useKhatm(id);
   const [message, setMessage] = useState<string | null>(null);
-  const [largeur, setLargeur] = useState(0);
-  // Six colonnes : largeur de chaque case, écarts de 8 déduits.
-  const caseLargeur = largeur > 0 ? Math.floor((largeur - espace.espace2 * 5) / 6) : '15%';
 
   const resume = etat.etat === 'pret' ? resumeKhatm(etat.parts, moi) : null;
   const monJuz = resume?.monJuz ?? null;
@@ -107,15 +105,8 @@ export default function EcranKhatm() {
     }
   };
 
-  // Lu : plein émeraude · en cours : or doux · le vôtre : contour émeraude · libre : contour discret.
-  const couleurDe = (v: VuePart) =>
-    v === 'lu'
-      ? { fond: couleurs.emeraudeAplat, texte: couleurs.surEmeraude, bord: couleurs.emeraudeAplat }
-      : v === 'leVotre'
-        ? { fond: couleurs.emeraudeDoux, texte: couleurs.emeraude, bord: couleurs.emeraude }
-        : v === 'enCours'
-          ? { fond: couleurs.orDoux, texte: couleurs.orTexte, bord: couleurs.or }
-          : { fond: couleurs.surface, texte: couleurs.encre, bord: couleurs.ligneForte };
+  const etatJuz = (v: VuePart): EtatJuz => (v === 'enCours' ? 'en-cours' : v === 'leVotre' ? 'vous' : v);
+  const juzDuGroupe = parts.map((p) => ({ n: p.juz, etat: etatJuz(vuePart(p, moi)) }));
 
   const ouvrirMonJuz = () => {
     const debut = resume.monJuz ? reperes().debutJuz(resume.monJuz) : null;
@@ -197,46 +188,12 @@ export default function EcranKhatm() {
         </View>
 
         {/* Grille des 30 juz : toucher un juz libre pour le prendre. */}
-        <View style={[styles.grille, { gap: espace.espace2 }]} onLayout={(e) => setLargeur(e.nativeEvent.layout.width)}>
-          {parts.map((p) => {
-            const v = vuePart(p, moi);
-            const c = couleurDe(v);
-            return (
-              <Pressable
-                key={p.juz}
-                accessibilityRole="button"
-                accessibilityLabel={t('accessibilite.juz', {
-                  n: p.juz,
-                  etat: t(`khatm.${v === 'leVotre' ? 'vous' : v}`),
-                })}
-                disabled={v !== 'libre'}
-                onPress={() => agir(() => prendreJuz(khatm.id, p.juz), t('khatm.dejaPris'))}
-                style={({ pressed }) => [
-                  styles.case,
-                  {
-                    width: caseLargeur,
-                    borderWidth: v === 'leVotre' ? 2 : 1,
-                    borderRadius: 10,
-                    backgroundColor: c.fond,
-                    borderColor: c.bord,
-                    opacity: pressed ? 0.8 : 1,
-                  },
-                ]}>
-                <Text style={[typographie.libelle, styles.chiffre, { color: c.texte }]}>{p.juz}</Text>
-              </Pressable>
-            );
-          })}
-        </View>
-        <View style={[styles.legende, { gap: espace.espace4 }]}>
-          {(['lu', 'enCours', 'leVotre', 'libre'] as const).map((v) => (
-            <View key={v} style={[styles.legendeLigne, { gap: espace.espace2 }]}>
-              <View style={[styles.pastille, { backgroundColor: couleurDe(v).fond, borderColor: couleurDe(v).bord, borderWidth: v === 'leVotre' ? 2 : 1 }]} />
-              <Text style={[typographie.legende, { color: couleurs.encre2 }]}>
-                {t(`khatm.${v === 'leVotre' ? 'vous' : v}`)}
-              </Text>
-            </View>
-          ))}
-        </View>
+        <KhatmGrid
+          juz={juzDuGroupe}
+          onChoisir={(n) => agir(() => prendreJuz(khatm.id, n), t('khatm.dejaPris'))}
+          legende={{ lu: t('khatm.lu'), 'en-cours': t('khatm.enCours'), vous: t('khatm.vous'), libre: t('khatm.libre') }}
+          libelleJuz={(n, etat) => t('accessibilite.juz', { n, etat: t(`khatm.${etat === 'en-cours' ? 'enCours' : etat}`) })}
+        />
 
         {message ? <Banner ton="attention">{message}</Banner> : null}
         {resume.monJuz !== null ? (
