@@ -10,9 +10,7 @@ Comparaison faite le 12 novembre 2026 avec `design-system/components/index.d.ts`
 
 | Composant | Écart |
 | --- | --- |
-| `Badge` | Tons `neutre/succes/alerte/erreur` ; le contrat dit `neutre/emeraude/or/alerte/erreur` et une `icone` |
-| `Slider` | Prend `valeurs` (liste) ; le contrat : `min`, `max`, `pas`, `gauche`, `droite` |
-| `Toast` | `texte` ; le contrat : `children` |
+| `Toast` | `afficher({ texte })` (API impérative sous `ToastProvider`, 89 appels) ; le contrat : composant avec `children`. Gardé tel quel : renommer n'apporterait rien |
 | `PrayerTimes`, `TasbihCounter` | Props de l'app (`onBasculerAppel`, `onCompter`) ; le contrat est une vue sans état |
 | `TopBar` | `actions[].onPress` au lieu de `onClick` (voulu) |
 
@@ -36,3 +34,6 @@ Comparaison faite le 12 novembre 2026 avec `design-system/components/index.d.ts`
 ## Reste à faire
 
 Aligner `ReadingCard`, `VerseShareCard`, `AudioPlayer`, `SavingsGoal` (extraction en composants du design system) et reprendre `Badge`, `Slider`, `Toast`. Chaque extraction touche des écrans entiers : à faire avec les planches sous les yeux.
+
+## Mis en conformité le 12 novembre 2026 (vérification des composants)
+`Badge` (tons `neutre`, `emeraude`, `or`, `alerte`, `erreur`, `icone` de 14) et `Slider` (`min`, `max`, `pas`, `gauche`, `droite` ; crans calculés par `cransDe`, testé). Il ne reste que l'écart `Toast` ci-dessus et l'extraction de `ReadingCard`, `AudioPlayer`, `SavingsGoal`.
