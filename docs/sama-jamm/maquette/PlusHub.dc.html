@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Plus, tout Sama Jàmm</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/samajamm/tokens.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&amp;family=Source+Sans+3:wght@400;600&amp;family=Source+Serif+4:ital,wght@0,400;1,400&amp;display=swap">
+<style>
+body{margin:0}
+a{color:var(--emeraude)}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: var(--fond); color: var(--encre); font-family: var(--font-ui);">
+  <div style="flex-grow: 1; padding: 56px 20px 0; display: flex; flex-direction: column; gap: 16px; overflow: hidden;">
+    <div style="display: flex; align-items: flex-start; justify-content: space-between;">
+      <div>
+        <h1 style="margin: 0; font-family: var(--font-display); font-weight: 600; font-size: 40px; line-height: 44px; color: var(--emeraude);">Plus</h1>
+        <p style="margin: 0; font-family: var(--font-lecture); font-style: italic; font-size: 16px; line-height: 24px; color: var(--encre-2);">Tout Sama Jàmm, au même endroit.</p>
+      </div>
+      <a href="Recherche.dc.html" aria-label="Rechercher" style="width: 44px; height: 44px; border-radius: 999px; display: flex; align-items: center; justify-content: center; color: var(--encre-2);"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="M16 16l4 4"></path></svg></a>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px;">
+      <sc-for list="{{tuiles}}" as="t" hint-placeholder-count="6">
+        <a href="{{t.href}}" style="position: relative; display: flex; flex-direction: column; gap: 4px; min-height: 108px; padding: 16px; box-sizing: border-box; border-radius: 16px; background: {{t.bg}}; border: 1px solid var(--ligne); text-decoration: none; color: var(--encre);">
+          <span style="width: 40px; height: 40px; border-radius: 14px; margin-bottom: 8px; background: {{t.pastille}}; color: {{t.encre}}; display: flex; align-items: center; justify-content: center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{t.d}}"></path></svg></span>
+          <span style="font-size: 16px; line-height: 24px; font-weight: 600;">{{t.titre}}</span>
+          <span style="font-size: 14px; line-height: 20px; color: var(--encre-2);">{{t.texte}}</span>
+          <span style="position: absolute; top: 12px; right: 12px; padding: 4px 8px; border-radius: 6px; background: var(--or-doux); color: var(--or-texte); font-size: 12px; line-height: 16px; font-weight: 600; display: {{t.badge}};">1 en cours</span>
+        </a>
+      </sc-for>
+    </div>
+    <div role="list" style="display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--ligne); border-radius: 16px; overflow: hidden;">
+      <sc-for list="{{lignes}}" as="l" hint-placeholder-count="6">
+        <a role="listitem" href="{{l.href}}" style="display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 0 16px; border-top: {{l.trait}}; text-decoration: none; color: var(--encre);">
+          <span style="width: 32px; height: 32px; border-radius: 999px; background: var(--surface-creux); color: var(--encre-2); display: flex; align-items: center; justify-content: center; flex: none;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{l.d}}"></path></svg></span>
+          <span style="flex-grow: 1; font-size: 16px; line-height: 24px;">{{l.titre}}</span>
+          <span style="font-size: 14px; color: var(--encre-3);">{{l.valeur}}</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--encre-3)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 6l6 6-6 6"></path></svg>
+        </a>
+      </sc-for>
+    </div>
+  </div>
+  <nav aria-label="Navigation principale" style="width: 390px; height: 84px; box-sizing: border-box; padding: 8px 8px 24px; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); background: var(--surface); border-top: 1px solid var(--ligne);">
+    <sc-for list="{{onglets}}" as="o" hint-placeholder-count="5">
+      <a href="{{o.href}}" aria-current="{{o.current}}" style="display: flex; flex-direction: column; align-items: center; gap: 4px; text-decoration: none; color: {{o.color}};">
+        <span style="width: 56px; height: 30px; border-radius: 999px; display: flex; align-items: center; justify-content: center; background: {{o.pill}};"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{o.d}}"></path></svg></span>
+        <span style="font-size: 12px; line-height: 16px; font-weight: {{o.weight}};">{{o.label}}</span>
+      </a>
+    </sc-for>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const I = {
+      home: 'M4 11l8-7 8 7v8a1 1 0 0 1-1 1h-4v-6h-6v6H5a1 1 0 0 1-1-1z',
+      book: 'M12 6.5c-2-1.5-5-2-8-1.5v14c3-.5 6 0 8 1.5 2-1.5 5-2 8-1.5V5c-3-.5-6 0-8 1.5zM12 6.5v14',
+      clock: 'M12 3.5a8.5 8.5 0 1 0 0 17a8.5 8.5 0 1 0 0-17zM12 7.5V12l3 2',
+      wallet: 'M5.5 6.5h13a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2zM3.5 10h17M15.5 14.5a1 1 0 1 0 2 0a1 1 0 1 0-2 0',
+      grid: 'M6 5h4a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zM14 5h4a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zM6 13h4a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-4a1 1 0 0 1 1-1zM14 13h4a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1v-4a1 1 0 0 1 1-1z',
+      users: 'M9 5.5a3 3 0 1 0 0 6a3 3 0 1 0 0-6zM3.5 19c.7-3 2.9-4.75 5.5-4.75s4.8 1.75 5.5 4.75M16.5 5.5a2.5 2.5 0 1 0 0 5a2.5 2.5 0 1 0 0-5zM15.75 13.6c2.4-.15 4.25 1.4 4.75 4.4',
+      target: 'M12 3.5a8.5 8.5 0 1 0 0 17a8.5 8.5 0 1 0 0-17zM12 7.25a4.75 4.75 0 1 0 0 9.5a4.75 4.75 0 1 0 0-9.5z',
+      compass: 'M12 3.5a8.5 8.5 0 1 0 0 17a8.5 8.5 0 1 0 0-17zM15 9l-1.75 4.25L9 15l1.75-4.25z',
+      moon: 'M19.5 14.5A7.75 7.75 0 1 1 9.5 4.5a6.25 6.25 0 0 0 10 10z',
+      balance: 'M12 4v16M8 20h8M5 7.5h14M7.5 7.5l-3 6a3 3 0 0 0 6 0zM16.5 7.5l-3 6a3 3 0 0 0 6 0z',
+      headphones: 'M4 15v-3a8 8 0 0 1 16 0v3M4.5 14h1A1.5 1.5 0 0 1 7 15.5v3A1.5 1.5 0 0 1 5.5 20h-1A1.5 1.5 0 0 1 3 18.5v-3A1.5 1.5 0 0 1 4.5 14zM18.5 14h1a1.5 1.5 0 0 1 1.5 1.5v3a1.5 1.5 0 0 1-1.5 1.5h-1a1.5 1.5 0 0 1-1.5-1.5v-3a1.5 1.5 0 0 1 1.5-1.5z',
+      bookmark: 'M7 4h10a1 1 0 0 1 1 1v15l-6-4-6 4V5a1 1 0 0 1 1-1z',
+      download: 'M12 4v11M7.5 10.5L12 15l4.5-4.5M5 19.5h14',
+      user: 'M12 4.5a3.5 3.5 0 1 0 0 7a3.5 3.5 0 1 0 0-7zM5 20c1.2-3.6 4-5.5 7-5.5s5.8 1.9 7 5.5',
+      settings: 'M4 7h9M17 7h3M4 17h3M11 17h9M15 5a2 2 0 1 0 0 4a2 2 0 1 0 0-4zM9 15a2 2 0 1 0 0 4a2 2 0 1 0 0-4z',
+      heart: 'M12 19.5s-7.5-4.6-7.5-10.1A4 4 0 0 1 12 7.2a4 4 0 0 1 7.5 2.2c0 5.5-7.5 10.1-7.5 10.1z',
+      info: 'M12 3.5a8.5 8.5 0 1 0 0 17a8.5 8.5 0 1 0 0-17zM12 11v5.5'
+    };
+    const T = [
+      ['accueil', 'Accueil', 'Accueil.dc.html', I.home],
+      ['lire', 'Lire', 'Bibliotheque.dc.html', I.book],
+      ['priere', 'Prière', 'Priere.dc.html', I.clock],
+      ['budget', 'Budget', 'Budget.dc.html', I.wallet],
+      ['plus', 'Plus', 'PlusHub.dc.html', I.grid]
+    ];
+    const actif = 'plus';
+    const v = { bg: 'var(--surface)', pastille: 'var(--emeraude-doux)', encre: 'var(--sur-emeraude-doux)', badge: 'none' };
+    const o = { bg: 'var(--surface)', pastille: 'var(--or-doux)', encre: 'var(--or-texte)', badge: 'none' };
+    const L = [
+      { href: 'Favoris.dc.html', d: I.bookmark, titre: 'Favoris', valeur: '12' },
+      { href: 'Telechargements.dc.html', d: I.download, titre: 'Téléchargements', valeur: '240 Mo' },
+      { href: 'Compte.dc.html', d: I.user, titre: 'Compte et synchronisation', valeur: '' },
+      { href: 'Reglages.dc.html', d: I.settings, titre: 'Réglages', valeur: '' },
+      { href: 'APropos.dc.html', d: I.info, titre: 'À propos', valeur: '' }
+    ];
+    return {
+      tuiles: [
+        Object.assign({ href: 'Khatm.dc.html', d: I.users, titre: 'Khatm collectif', texte: 'Un juz chacun', }, o, { badge: 'block' }),
+        Object.assign({ href: 'Dhikr.dc.html', d: I.target, titre: 'Dhikr', texte: 'Compteur et objectifs' }, v),
+        Object.assign({ href: 'Qibla.dc.html', d: I.compass, titre: 'Qibla', texte: 'Direction de la Kaaba' }, v),
+        Object.assign({ href: 'Xassaides.dc.html', d: I.book, titre: 'Xassaïdes', texte: 'Textes et chants' }, v),
+        Object.assign({ href: 'Invocations.dc.html', d: I.moon, titre: 'Invocations', texte: 'Matin, soir, voyage' }, v),
+        Object.assign({ href: 'BudgetZakat.dc.html', d: I.balance, titre: 'Zakat', texte: 'Estimation à 2,5 %' }, v)
+      ],
+      lignes: L.map((l, i) => Object.assign({}, l, { trait: i === 0 ? '0' : '1px solid var(--ligne)' })),
+      onglets: T.map((t) => {
+        const on = t[0] === actif;
+        return { label: t[1], href: t[2], d: t[3], color: on ? 'var(--emeraude)' : 'var(--encre-2)', pill: on ? 'var(--emeraude-doux)' : 'transparent', weight: on ? 600 : 400, current: on ? 'page' : 'false' };
+      })
+    };
+  }
+}
+</script>
+</body>
+</html>

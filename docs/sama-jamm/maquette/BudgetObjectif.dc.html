@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Nouvel objectif</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/samajamm/tokens.css">
+<link rel="stylesheet" href="ds/samajamm/components/bundle.css">
+<script src="ds/samajamm/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&amp;family=Source+Sans+3:wght@400;600&amp;family=Source+Serif+4:ital,wght@0,400;1,400&amp;display=swap">
+<style>
+body{margin:0}
+a{color:var(--emeraude)}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: var(--fond); color: var(--encre); font-family: var(--font-ui);">
+  <div style="flex-grow: 1; padding: 56px 20px 0; display: flex; flex-direction: column; gap: 16px; overflow: hidden;">
+    <div style="display: flex; flex-direction: column; gap: 4px;">
+      <div style="display: flex; align-items: center; gap: 4px;">
+        <a href="BudgetEpargne.dc.html" aria-label="Retour à l'épargne" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: var(--encre); margin-left: -12px;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"></path><path d="M11 6l-6 6 6 6"></path></svg></a>
+        <h1 style="margin: 0; font-family: var(--font-display); font-weight: 600; font-size: 30px; line-height: 36px; color: var(--emeraude);">Nouvel objectif</h1>
+      </div>
+      <p style="margin: 0; font-family: var(--font-lecture); font-style: italic; font-size: 16px; line-height: 24px; color: var(--encre-2);">Un objectif, une intention.</p>
+    </div>
+    <x-import component-from-global-scope="SamaJamm.TextField" label="Nom" default-value="Rentrée scolaire"></x-import>
+    <x-import component-from-global-scope="SamaJamm.TextField" label="Votre intention" placeholder="Pourquoi mettre de côté ?" default-value="Fournitures et tenues des enfants" aide="Elle s'affiche sous le nom, pour vous rappeler pourquoi."></x-import>
+    <x-import component-from-global-scope="SamaJamm.SegmentedControl" label="Montant visé" valeur="{{mode}}" on-change="{{choisir}}" options="{{modes}}"></x-import>
+    <sc-if value="{{fixe}}" hint-placeholder-val="{{ true }}">
+      <div style="display: flex; gap: 12px;">
+        <x-import component-from-global-scope="SamaJamm.TextField" label="Montant visé" default-value="150 000" suffixe="MRU" input-mode="numeric" style="flex: 1;"></x-import>
+        <x-import component-from-global-scope="SamaJamm.TextField" label="À chaque paie" default-value="15 000" suffixe="MRU" input-mode="numeric" style="flex: 1;"></x-import>
+      </div>
+    </sc-if>
+    <sc-if value="{{libre}}" hint-placeholder-val="{{ false }}">
+      <x-import component-from-global-scope="SamaJamm.TextField" label="À chaque paie (facultatif)" default-value="15 000" suffixe="MRU" input-mode="numeric"></x-import>
+    </sc-if>
+    <div style="padding: 16px 16px; background: var(--or-doux); border-radius: 12px; font-size: 14px; line-height: 20px; color: var(--encre);">{{projection}}</div>
+    <div style="margin-top: auto; padding-bottom: 16px;">
+      <div style="position: relative;"><x-import component-from-global-scope="SamaJamm.Button" variant="principal" pleine-largeur="{{oui}}">Créer l'objectif</x-import><a href="BudgetEpargne.dc.html" aria-label="Créer l'objectif" style="position: absolute; inset: 0; border-radius: 12px;"></a></div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { mode: 'fixe' }; }
+  renderVals() {
+    const fixe = this.state.mode === 'fixe';
+    return {
+      mode: this.state.mode,
+      modes: [{ id: 'fixe', label: 'Montant fixé' }, { id: 'libre', label: 'Sans montant' }],
+      choisir: (id) => this.setState({ mode: id }),
+      fixe: fixe,
+      libre: !fixe,
+      projection: fixe
+        ? '15 000 MRU à chaque paie pendant 10 mois : objectif atteint en août 2027, avant la rentrée.'
+        : 'Sans montant fixé, pas de barre : chaque dépôt compte, même petit.',
+      oui: true
+    };
+  }
+}
+</script>
+</body>
+</html>

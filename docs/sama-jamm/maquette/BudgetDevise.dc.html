@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Budget · devise</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/samajamm/tokens.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&amp;family=Source+Sans+3:wght@400;600&amp;display=swap">
+<style>
+body{margin:0}
+a{color:var(--emeraude)}
+input:focus-visible,button:focus-visible{outline:2px solid var(--emeraude);outline-offset:2px}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; padding: 56px 20px 32px; display: flex; flex-direction: column; gap: 12px; background: var(--fond); color: var(--encre); font-family: 'Source Sans 3', system-ui, sans-serif; overflow: hidden;">
+  <div style="display: flex; align-items: center; gap: 4px;">
+    <a href="Reglages.dc.html" aria-label="Retour aux réglages" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: var(--encre); margin-left: -12px;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"></path><path d="M11 6l-6 6 6 6"></path></svg></a>
+    <h1 style="margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 600; font-size: 30px; line-height: 36px; color: var(--emeraude);">Devise</h1>
+  </div>
+  <p style="margin: 0; font-size: 16px; line-height: 24px; color: var(--encre-2);">Choisissez la monnaie de votre budget, ou ajoutez la vôtre.</p>
+  <div role="radiogroup" aria-label="Devise du budget" style="display: flex; flex-direction: column; gap: 8px;">
+    <sc-for list="{{devises}}" as="d" hint-placeholder-count="2">
+      <button type="button" role="radio" aria-checked="{{d.checked}}" onClick="{{d.pick}}" style="min-height: 64px; padding: 12px 16px; border-radius: 12px; display: flex; align-items: center; gap: 12px; text-align: left; cursor: pointer; font-family: inherit; background: {{d.bg}}; border: {{d.border}};">
+        <span style="width: 20px; height: 20px; border-radius: 999px; box-sizing: border-box; flex: none; border: {{d.radio}}; background: {{d.dot}};"></span>
+        <span style="flex-grow: 1; display: flex; flex-direction: column;"><span style="font-size: 16px; line-height: 24px; font-weight: 600; color: var(--encre);">{{d.nom}}</span><span style="font-size: 14px; line-height: 20px; color: var(--encre-3);">{{d.detail}}</span></span>
+        <span style="font-size: 16px; font-weight: 600; color: var(--emeraude); font-variant-numeric: tabular-nums; white-space: nowrap;">{{d.apercu}}</span>
+      </button>
+    </sc-for>
+  </div>
+  <sc-if value="{{formFerme}}" hint-placeholder-val="{{ true }}">
+    <button type="button" onClick="{{ouvrir}}" style="height: 48px; border-radius: 12px; border: 1px dashed var(--ligne-forte); background: transparent; color: var(--emeraude); font-family: inherit; font-size: 16px; font-weight: 600; cursor: pointer;">+ Ajouter ma devise</button>
+  </sc-if>
+  <sc-if value="{{formOuvert}}" hint-placeholder-val="{{ false }}">
+    <div style="padding: 16px; border-radius: 12px; background: var(--surface); border: 1px solid var(--ligne); display: flex; flex-direction: column; gap: 12px;">
+      <div style="display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 8px;">
+        <label style="display: flex; flex-direction: column; gap: 4px; font-size: 14px; font-weight: 600; color: var(--encre-2);">Nom<input type="text" value="{{nom}}" onChange="{{setNom}}" placeholder="Dirham marocain" style="height: 40px; padding: 0 12px; border-radius: 8px; border: 1px solid var(--ligne-forte); font-family: inherit; font-size: 16px; color: var(--encre);"></label>
+        <label style="display: flex; flex-direction: column; gap: 4px; font-size: 14px; font-weight: 600; color: var(--encre-2);">Symbole<input type="text" value="{{symbole}}" onChange="{{setSymbole}}" placeholder="DH" style="height: 40px; padding: 0 12px; border-radius: 8px; border: 1px solid var(--ligne-forte); font-family: inherit; font-size: 16px; color: var(--encre);"></label>
+      </div>
+      <div style="display: flex; gap: 12px; align-items: center; font-size: 14px; font-weight: 600; color: var(--encre-2);">
+        <span style="width: 72px;">Symbole</span>
+        <div style="display: flex; padding: 4px; border-radius: 9px; background: var(--surface-creux);">
+          <button type="button" onClick="{{avant}}" aria-pressed="{{posAvant.p}}" style="height: 30px; padding: 0 12px; border: 0; border-radius: 7px; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; background: {{posAvant.bg}}; color: {{posAvant.fg}};">Avant</button>
+          <button type="button" onClick="{{apres}}" aria-pressed="{{posApres.p}}" style="height: 30px; padding: 0 12px; border: 0; border-radius: 7px; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; background: {{posApres.bg}}; color: {{posApres.fg}};">Après</button>
+        </div>
+      </div>
+      <div style="display: flex; gap: 12px; align-items: center; font-size: 14px; font-weight: 600; color: var(--encre-2);">
+        <span style="width: 72px;">Décimales</span>
+        <div style="display: flex; padding: 4px; border-radius: 9px; background: var(--surface-creux);">
+          <sc-for list="{{decs}}" as="x" hint-placeholder-count="3">
+            <button type="button" onClick="{{x.pick}}" aria-pressed="{{x.p}}" style="height: 30px; width: 40px; border: 0; border-radius: 7px; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; background: {{x.bg}}; color: {{x.fg}};">{{x.n}}</button>
+          </sc-for>
+        </div>
+      </div>
+      <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 8px; border-top: 1px solid var(--ligne);">
+        <span style="font-size: 14px; color: var(--encre-3);">Aperçu</span>
+        <span style="font-size: 18px; font-weight: 600; font-variant-numeric: tabular-nums;">{{apercuPerso}}</span>
+      </div>
+      <button type="button" onClick="{{ajouter}}" style="height: 44px; border-radius: 10px; border: 0; background: var(--emeraude); color: var(--sur-emeraude); font-family: inherit; font-size: 16px; font-weight: 600; cursor: pointer;">Ajouter et utiliser</button>
+    </div>
+  </sc-if>
+  <p style="margin: auto 0 0; font-size: 14px; line-height: 20px; color: var(--encre-2);">Un carnet de budget garde une seule devise. En changer ne convertit pas les montants déjà saisis : l'app propose d'indiquer un taux ou d'ouvrir un nouveau carnet.</p>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = {
+      choix: 'mru',
+      perso: [],
+      form: false,
+      nom: '',
+      symbole: '',
+      position: 'apres',
+      decimales: 2
+    };
+  }
+  fmt(montant, symbole, position, decimales) {
+    const s = montant.toLocaleString('fr-FR', { minimumFractionDigits: decimales, maximumFractionDigits: decimales }).replace(/ | /g, ' ');
+    return position === 'avant' ? symbole + ' ' + s : s + ' ' + symbole;
+  }
+  renderVals() {
+    const base = [
+      { id: 'mru', nom: 'Ouguiya mauritanien', detail: 'MRU · 1 ouguiya = 5 khoums', symbole: 'MRU', position: 'apres', decimales: 0 },
+      { id: 'xof', nom: 'Franc CFA (UEMOA)', detail: 'XOF · sans décimales', symbole: 'F CFA', position: 'apres', decimales: 0 }
+    ];
+    const toutes = base.concat(this.state.perso);
+    const sel = (on) => ({ bg: on ? 'var(--emeraude-doux)' : 'var(--surface)', border: on ? '2px solid var(--emeraude)' : '1px solid var(--ligne)', radio: on ? '6px solid var(--emeraude)' : '2px solid var(--ligne-forte)', dot: on ? 'var(--surface)' : 'transparent' });
+    const seg = (on) => ({ p: on ? 'true' : 'false', bg: on ? 'var(--surface)' : 'transparent', fg: on ? 'var(--emeraude)' : 'var(--encre-2)' });
+    const symb = this.state.symbole || '¤';
+    return {
+      devises: toutes.map((d) => Object.assign({
+        nom: d.nom, detail: d.detail, apercu: this.fmt(1250, d.symbole, d.position, d.decimales),
+        checked: d.id === this.state.choix ? 'true' : 'false',
+        pick: () => this.setState({ choix: d.id })
+      }, sel(d.id === this.state.choix))),
+      formOuvert: this.state.form,
+      formFerme: !this.state.form,
+      ouvrir: () => this.setState({ form: true }),
+      nom: this.state.nom,
+      symbole: this.state.symbole,
+      setNom: (e) => this.setState({ nom: e.target.value }),
+      setSymbole: (e) => this.setState({ symbole: e.target.value }),
+      posAvant: seg(this.state.position === 'avant'),
+      posApres: seg(this.state.position === 'apres'),
+      avant: () => this.setState({ position: 'avant' }),
+      apres: () => this.setState({ position: 'apres' }),
+      decs: [0, 1, 2].map((n) => Object.assign({ n: n, pick: () => this.setState({ decimales: n }) }, seg(this.state.decimales === n))),
+      apercuPerso: this.fmt(1250, symb, this.state.position, this.state.decimales),
+      ajouter: () => {
+        const id = 'perso-' + (this.state.perso.length + 1);
+        const nom = this.state.nom || 'Ma devise';
+        const d = { id: id, nom: nom, detail: 'Devise personnalisée · ' + this.state.decimales + ' décimale' + (this.state.decimales > 1 ? 's' : ''), symbole: symb, position: this.state.position, decimales: this.state.decimales };
+        this.setState({ perso: this.state.perso.concat([d]), choix: id, form: false, nom: '', symbole: '' });
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

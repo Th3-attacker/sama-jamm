@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Qibla trouvée</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/samajamm/tokens.css">
+<link rel="stylesheet" href="ds/samajamm/components/bundle.css">
+<script src="ds/samajamm/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&amp;family=Source+Sans+3:wght@400;600&amp;display=swap">
+<style>
+body{margin:0}
+a{color:var(--emeraude)}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: var(--fond); color: var(--encre); font-family: var(--font-ui);">
+  <div style="flex-grow: 1; padding: 56px 20px 0; display: flex; flex-direction: column; gap: 20px; overflow: hidden;">
+    <div style="display: flex; align-items: center; gap: 4px;">
+      <a href="Priere.dc.html" aria-label="Retour aux horaires" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: var(--encre); margin-left: -12px;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"></path><path d="M11 6l-6 6 6 6"></path></svg></a>
+      <span style="font-size: 18px; line-height: 24px; font-weight: 600;">Qibla</span>
+    </div>
+    <div style="padding-top: 24px;">
+      <x-import component-from-global-scope="SamaJamm.QiblaCompass" cap="{{q.cap}}" qibla="{{q.qibla}}" lieu="Nouakchott"></x-import>
+    </div>
+    <p style="margin: 0; text-align: center; font-size: 16px; line-height: 24px; color: var(--encre-2);">Le téléphone a vibré une fois. Gardez cette direction pour la prière.</p>
+  </div>
+  <dc-import name="TabBar" actif="priere" hint-size="390px,84px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return { q: { cap: 75, qibla: 76.5 } }; }
+}
+</script>
+</body>
+</html>

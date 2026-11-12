@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Écouter · récitateur</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/samajamm/tokens.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&amp;family=Cormorant+Garamond:wght@600&amp;family=Source+Sans+3:wght@400;600&amp;family=Source+Serif+4:ital,wght@0,400;1,400&amp;display=swap">
+<style>
+body{margin:0}
+a{color:var(--emeraude)}
+</style>
+</helmet>
+<div style="position: relative; width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; overflow: hidden; background: var(--fond); color: var(--encre); font-family: var(--font-ui);">
+  <div style="flex-grow: 1; min-height: 0; padding: 52px 20px 0; display: flex; flex-direction: column; gap: 16px; overflow: hidden;">
+    <div style="display: flex; align-items: center; gap: 4px; margin-left: -12px;"><a href="LecteurAudioSuite.dc.html" aria-label="Retour au lecteur" style="width: 44px; height: 44px; border-radius: 999px; flex: none; display: flex; align-items: center; justify-content: center; color: var(--encre);"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"></path></svg></a><h1 style="margin: 0; font-family: var(--font-display); font-weight: 600; font-size: 30px; line-height: 36px; color: var(--emeraude);">Récitateur</h1></div>
+    <div style="padding: 18px; border-radius: 22px; background: var(--emeraude-aplat); color: var(--sur-emeraude); display: flex; flex-direction: column; gap: 14px;">
+      <div style="display: flex; align-items: center; gap: 14px;"><span style="width: 56px; height: 56px; border-radius: 999px; flex: none; display: flex; align-items: center; justify-content: center; background: var(--or-doux); color: var(--or-texte); font-size: 18px; font-weight: 600;">MA</span><span style="display: flex; flex-direction: column; gap: 2px;"><span style="font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--or-texte); color: var(--or-sur-emeraude);">Votre voix</span><span style="font-family: var(--font-display); font-weight: 600; font-size: 24px; line-height: 28px;">Mishary Al-Afasy</span><span style="font-size: 13px; line-height: 18px; color: var(--sur-emeraude-2);">Hafs · murattal · 114 sourates</span></span></div>
+      <div style="display: flex; gap: 10px;"><a href="LecteurAudio.dc.html" style="flex: 1; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; gap: 6px; background: var(--sur-emeraude); color: var(--emeraude); font-size: 15px; font-weight: 600; text-decoration: none;"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z" fill="currentColor"></path></svg>Écouter</a><a href="Telechargements.dc.html" style="flex: 1; height: 44px; border-radius: 12px; box-sizing: border-box; border: 1px solid var(--sur-emeraude-2); display: flex; align-items: center; justify-content: center; gap: 6px; color: var(--sur-emeraude); font-size: 15px; font-weight: 600; text-decoration: none;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7.5 10.5L12 15l4.5-4.5M5 19.5h14"></path></svg>Tout télécharger</a></div>
+    </div>
+    <h2 style="margin: 4px 0 0; font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--encre-3);">Autres voix</h2>
+    <div role="radiogroup" aria-label="Choisir un récitateur" style="display: flex; flex-direction: column; margin-top: -8px;">
+      <sc-for list="{{voix}}" as="v" hint-placeholder-count="4">
+        <div style="display: flex; align-items: center; gap: 12px; min-height: 64px; border-bottom: 1px solid var(--ligne);">
+          <button type="button" role="radio" aria-checked="{{v.on}}" onClick="{{v.pick}}" style="flex-grow: 1; min-width: 0; display: flex; align-items: center; gap: 12px; border: 0; padding: 0; background: transparent; text-align: left; cursor: pointer; font-family: inherit; color: var(--encre);"><span style="width: 44px; height: 44px; border-radius: 999px; flex: none; display: flex; align-items: center; justify-content: center; background: var(--or-doux); color: var(--or-texte); font-size: 14px; font-weight: 600;">{{v.init}}</span><span style="display: flex; flex-direction: column;"><span style="font-size: 16px; line-height: 22px; font-weight: 600;">{{v.nom}}</span><span style="font-size: 12px; line-height: 16px; color: var(--encre-3);">{{v.style}}</span></span></button>
+          <button type="button" onClick="{{v.ecouter}}" aria-label="{{v.extraitLabel}}" style="height: 36px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--ligne-forte); background: {{v.extraitBg}}; color: var(--emeraude); display: flex; align-items: center; gap: 4px; cursor: pointer; font-family: inherit; font-size: 13px; font-weight: 600;">{{v.extrait}}</button>
+          <span aria-hidden="true" style="width: 22px; height: 22px; border-radius: 999px; box-sizing: border-box; flex: none; border: {{v.radio}};"></span>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+  <a href="LecteurAudio.dc.html" aria-label="Lecture en cours : ouvrir le lecteur" style="flex: none; position: relative; margin: 0 12px 8px; padding: 10px; border-radius: 16px; background: var(--emeraude-aplat); color: var(--sur-emeraude); display: flex; align-items: center; gap: 12px; text-decoration: none; overflow: hidden;">
+    <span aria-hidden="true" style="position: absolute; top: 4px; left: 50%; width: 28px; height: 3px; margin-left: -14px; border-radius: 3px; background: var(--sur-emeraude-2); opacity: 0.5;"></span>
+    <span lang="ar" style="width: 44px; height: 44px; border-radius: 10px; flex: none; background: var(--or-doux); color: var(--or-texte); display: flex; align-items: center; justify-content: center; font-family: var(--font-arabe); font-size: 14px;">الكهف</span>
+    <span style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column;"><span style="font-size: 15px; line-height: 20px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Al-Kahf · verset 10</span><span style="font-size: 12px; line-height: 16px; color: var(--sur-emeraude-2);">Mishary Al-Afasy</span></span>
+    <span style="width: 40px; height: 40px; flex: none; display: flex; align-items: center; justify-content: center;"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5h3v13H8zM13 5.5h3v13h-3z" fill="currentColor"></path></svg></span>
+    <span aria-hidden="true" style="position: absolute; left: 10px; right: 10px; bottom: 4px; height: 2px; border-radius: 2px; background: rgba(255,255,255,0.22);"><span style="display: block; width: 34%; height: 2px; border-radius: 2px; background: var(--or-sur-emeraude);"></span></span>
+  </a>
+  <dc-import name="TabBar" actif="lire" hint-size="390px,84px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { choix: 'ma', extrait: null }; }
+  renderVals() {
+    const s = this.state;
+    const V = [
+      ['ma', 'MA', 'Mishary Al-Afasy', 'Hafs · murattal'],
+      ['hu', 'MH', 'Mahmoud Khalil Al-Husary', 'Hafs · murattal'],
+      ['ab', 'AB', 'Abdul Basit Abdus-Samad', 'Hafs · mujawwad'],
+      ['x', '··', '[Récitateur à choisir]', '[Riwaya · style]']
+    ];
+    return {
+      voix: V.map((v) => ({
+        init: v[1], nom: v[2], style: v[3],
+        on: s.choix === v[0] ? 'true' : 'false',
+        radio: s.choix === v[0] ? '7px solid var(--emeraude)' : '2px solid var(--ligne-forte)',
+        pick: () => this.setState({ choix: v[0] }),
+        extrait: s.extrait === v[0] ? '❚❚ Extrait' : '▶ Extrait',
+        extraitLabel: 'Écouter un extrait : ' + v[2],
+        extraitBg: s.extrait === v[0] ? 'var(--emeraude-doux)' : 'transparent',
+        ecouter: () => this.setState({ extrait: s.extrait === v[0] ? null : v[0] })
+      }))
+    };
+  }
+}
+</script>
+</body>
+</html>

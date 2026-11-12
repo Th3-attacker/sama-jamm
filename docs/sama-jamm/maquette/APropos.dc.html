@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>À propos</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/samajamm/tokens.css">
+<link rel="stylesheet" href="ds/samajamm/components/bundle.css">
+<script src="ds/samajamm/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&amp;family=Source+Sans+3:wght@400;600&amp;family=Source+Serif+4:ital,wght@0,400;1,400&amp;display=swap">
+<style>
+body{margin:0}
+a{color:var(--emeraude)}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: var(--fond); color: var(--encre); font-family: var(--font-ui);">
+  <div style="flex-grow: 1; padding: 56px 20px 0; display: flex; flex-direction: column; gap: 16px; overflow: hidden;">
+    <div style="display: flex; align-items: center; gap: 4px;">
+      <a href="PlusHub.dc.html" aria-label="Retour à Plus" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: var(--encre); margin-left: -12px;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"></path><path d="M11 6l-6 6 6 6"></path></svg></a>
+      <h1 style="margin: 0; font-family: var(--font-display); font-weight: 600; font-size: 30px; line-height: 36px; color: var(--emeraude);">À propos</h1>
+    </div>
+    <div style="display: flex; align-items: center; gap: 16px;">
+      <img src="/_blob/34e0a577c9ebc8ba5013828d61e2297f" alt="" style="width: 52px; height: 52px; display: block;">
+      <div style="display: flex; flex-direction: column;">
+        <span lang="wo" style="font-family: var(--font-display); font-size: 24px; line-height: 30px; font-weight: 600;">Jàng, déglu, julli ci jàmm.</span>
+        <a href="MiseAJour.dc.html" aria-label="Vérifier la version" style="font-size: 14px; line-height: 20px; color: var(--encre-3); text-decoration: none; display: inline-flex; cursor: pointer;">Sama Jàmm · version 1.0.0</a>
+      </div>
+    </div>
+    <p style="margin: 0; font-size: 16px; line-height: 24px; color: var(--encre-2);">Une app gratuite, sans publicité, pour lire, écouter, prier et tenir le budget du foyer.</p>
+    <x-import component-from-global-scope="SamaJamm.ListGroup" titre="Sources">
+      <x-import component-from-global-scope="SamaJamm.ListItem" icone="book" titre="Texte du Coran" sous-titre="alquran.cloud · repères et translittération : Tanzil" fin="chevron"></x-import>
+      <x-import component-from-global-scope="SamaJamm.ListItem" icone="globe" titre="Traduction française" sous-titre="Muhammad Hamidullah" fin="chevron"></x-import>
+      <x-import component-from-global-scope="SamaJamm.ListItem" icone="headphones" titre="Récitations et xassaïdes" sous-titre="Islamic Network · xassaid.com" fin="chevron"></x-import>
+      <x-import component-from-global-scope="SamaJamm.ListItem" icone="moon" titre="Invocations" sous-titre="La Citadelle du musulman (Hisn al-Muslim)" fin="chevron"></x-import>
+    </x-import>
+    <x-import component-from-global-scope="SamaJamm.ListGroup">
+      <x-import component-from-global-scope="SamaJamm.ListItem" icone="info" titre="Aide et contact" fin="chevron"></x-import>
+      <x-import component-from-global-scope="SamaJamm.ListItem" icone="info" titre="Signaler un problème" fin="chevron"></x-import>
+      <x-import component-from-global-scope="SamaJamm.ListItem" icone="lock" titre="Politique de confidentialité" fin="chevron"></x-import>
+      <x-import component-from-global-scope="SamaJamm.ListItem" icone="heart" titre="Donner votre avis sur le store" fin="chevron"></x-import>
+    </x-import>
+  </div>
+  <dc-import name="TabBar" actif="plus" hint-size="390px,84px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

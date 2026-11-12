@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Ajouter un revenu</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/samajamm/tokens.css">
+<link rel="stylesheet" href="ds/samajamm/components/bundle.css">
+<script src="ds/samajamm/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&amp;family=Source+Sans+3:wght@400;600&amp;display=swap">
+<style>
+body{margin:0}
+a{color:var(--emeraude)}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: var(--fond); color: var(--encre); font-family: var(--font-ui);">
+  <div style="flex-grow: 1; padding: 56px 20px 24px; display: flex; flex-direction: column; gap: 16px; overflow: hidden;">
+    <div style="display: flex; align-items: center; justify-content: space-between;">
+      <a href="Budget.dc.html" aria-label="Fermer" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: var(--encre); margin-left: -12px;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"></path></svg></a>
+      <span style="font-size: 18px; line-height: 24px; font-weight: 600;">Nouveau revenu</span>
+      <span style="width: 44px;"></span>
+    </div>
+    <x-import component-from-global-scope="SamaJamm.AmountDisplay" montant="{{m}}" signe="+" ton="revenu" centre="{{oui}}" saisie="{{oui}}" detail="Reçu aujourd'hui · jeudi 29 octobre"></x-import>
+    <div role="group" aria-label="Type de revenu" style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;">
+      <x-import component-from-global-scope="SamaJamm.Chip" selectionne="{{oui}}">Salaire</x-import>
+      <x-import component-from-global-scope="SamaJamm.Chip">Commerce</x-import>
+      <x-import component-from-global-scope="SamaJamm.Chip">Cadeau</x-import>
+      <x-import component-from-global-scope="SamaJamm.Chip">Autre</x-import>
+    </div>
+    <x-import component-from-global-scope="SamaJamm.SegmentedControl" label="Reçu sur" valeur="banque" options="{{comptes}}"></x-import>
+    <x-import component-from-global-scope="SamaJamm.Keypad"></x-import>
+    <div style="position: relative;"><x-import component-from-global-scope="SamaJamm.Button" variant="principal" pleine-largeur="{{oui}}">Enregistrer et répartir</x-import><a href="BudgetPaie.dc.html" aria-label="Enregistrer et répartir" style="position: absolute; inset: 0; border-radius: 12px;"></a></div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return { oui: true, m: 350000, comptes: [{ id: 'especes', label: 'Espèces' }, { id: 'mobile', label: 'Mobile money' }, { id: 'banque', label: 'Banque' }] };
+  }
+}
+</script>
+</body>
+</html>

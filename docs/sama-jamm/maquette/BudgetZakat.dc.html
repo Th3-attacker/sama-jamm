@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Budget · zakat</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/samajamm/tokens.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri&amp;family=Cormorant+Garamond:wght@600&amp;family=Source+Sans+3:wght@400;600&amp;display=swap">
+<style>
+body{margin:0}
+a{color:var(--emeraude)}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: var(--fond); color: var(--encre); font-family: 'Source Sans 3', system-ui, sans-serif;">
+  <div style="flex-grow: 1; padding: 56px 24px 0; display: flex; flex-direction: column; gap: 16px; overflow: hidden;">
+    <div style="display: flex; align-items: center; gap: 4px;">
+      <a href="BudgetEpargne.dc.html" aria-label="Retour à l'épargne" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: var(--encre); margin-left: -12px;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"></path><path d="M11 6l-6 6 6 6"></path></svg></a>
+      <h1 style="margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 600; font-size: 30px; line-height: 36px; color: var(--emeraude);">Zakat</h1>
+      <span lang="ar" style="margin-left: auto; font-family: Amiri, serif; font-size: 22px; color: var(--or-texte);">الزكاة</span>
+    </div>
+    <section aria-label="Montant dû" style="padding: 16px; border-radius: 16px; background: var(--emeraude); color: var(--sur-emeraude); display: flex; flex-direction: column; gap: 4px;">
+      <span style="font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--or-sur-emeraude);">Zakat estimée · 2,5 %</span>
+      <span style="font-size: 44px; line-height: 48px; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap;">31 250 MRU</span>
+      <span style="font-size: 14px; line-height: 20px; color: var(--sur-emeraude-2);">Due dans 4 mois, au terme de l'année lunaire.</span>
+    </section>
+    <div style="display: flex; flex-direction: column; font-size: 16px; line-height: 24px; font-variant-numeric: tabular-nums;">
+      <div style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--ligne);"><a href="ZakatBiens.dc.html" aria-label="Détail des biens" style="text-decoration: none; color: inherit; display: inline-flex; cursor: pointer;">Épargne mise de côté</a><span>1 250 000 MRU</span></div>
+      <div style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--ligne);"><span>Or et argent détenus</span><span style="color: var(--encre-3);">[à saisir]</span></div>
+      <div style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--ligne);"><span>Sommes qu'on vous doit</span><span>0 MRU</span></div>
+      <div style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--ligne);"><span>Dettes à régler cette année</span><span>− 0 MRU</span></div>
+      <div style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 2px solid var(--encre); font-weight: 600;"><span>Base de calcul</span><span>1 250 000 MRU</span></div>
+      <div style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--ligne);"><span>Nisab · 85 g d'or</span><span style="color: var(--encre-3);">[cours du jour]</span></div>
+      <div style="display: flex; justify-content: space-between; padding: 12px 0;"><span>Au-dessus du nisab depuis</span><span style="color: var(--encre-3);">[date hégirienne]</span></div>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px;">
+      <button type="button" style="height: 48px; border-radius: 12px; border: 1px solid var(--ligne-forte); background: var(--surface); color: var(--emeraude); font-family: inherit; font-size: 16px; font-weight: 600;">Me le rappeler</button>
+      <button type="button" style="height: 48px; border-radius: 12px; border: 0; background: var(--emeraude); color: var(--sur-emeraude); font-family: inherit; font-size: 16px; font-weight: 600;">Marquer versée</button>
+    </div>
+    <p style="margin: 0; font-size: 14px; line-height: 20px; color: var(--encre-2);">Calcul indicatif. La méthode (nisab en or ou en argent, biens inclus) est à valider avec le référent religieux du projet.</p>
+  </div>
+  <dc-import name="TabBar" actif="budget" hint-size="390px,84px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

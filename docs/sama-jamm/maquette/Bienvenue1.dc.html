@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Bienvenue · choix de la langue</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/samajamm/tokens.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri&amp;family=Cormorant+Garamond:wght@600&amp;family=Source+Sans+3:wght@400;600&amp;family=Source+Serif+4:ital,wght@0,400;1,400&amp;display=swap">
+<style>
+body{margin:0}
+a{color:var(--fond)}a:hover{color:var(--emeraude-doux)}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; padding: 96px 24px 40px; display: flex; flex-direction: column; background: var(--emeraude); color: var(--sur-emeraude); font-family: 'Source Sans 3', system-ui, sans-serif;">
+  <img src="/_blob/fa556d469a4ab7fcaaf83225b68a6b68" alt="" style="width: 96px; height: 96px; display: block; margin-left: -16px;">
+  <h1 lang="wo" style="margin: 24px 0 0; font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 600; font-size: 56px; line-height: 60px;">Dalal ak jàmm.</h1>
+  <p style="margin: 12px 0 0; font-family: 'Source Serif 4', Georgia, serif; font-style: italic; font-size: 18px; line-height: 24px; color: var(--sur-emeraude-2);">Bienvenue, installez-vous en paix.</p>
+  <div style="flex-grow: 1;"></div>
+  <p id="langue" style="margin: 0 0 12px; font-size: 14px; line-height: 20px; font-weight: 600; color: var(--sur-emeraude-2);">Choisissez votre langue</p>
+  <div role="radiogroup" aria-labelledby="langue" style="display: flex; flex-direction: column; gap: 12px;">
+    <button type="button" role="radio" aria-checked="{{fr.checked}}" onClick="{{pickFr}}" style="height: 56px; padding: 0 16px; border-radius: 12px; display: flex; align-items: center; justify-content: space-between; font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 18px; font-weight: 600; cursor: pointer; background: {{fr.bg}}; color: {{fr.fg}}; border: 1px solid {{fr.border}};"><span>Français</span><span style="font-size: 14px; font-weight: 400;">{{fr.mark}}</span></button>
+    <button type="button" role="radio" aria-checked="{{ar.checked}}" onClick="{{pickAr}}" style="height: 56px; padding: 0 16px; border-radius: 12px; display: flex; align-items: center; justify-content: space-between; font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 18px; font-weight: 600; cursor: pointer; background: {{ar.bg}}; color: {{ar.fg}}; border: 1px solid {{ar.border}};"><span lang="ar" style="font-family: Amiri, serif; font-size: 22px; font-weight: 400;">العربية</span><span style="font-size: 14px; font-weight: 400;">{{ar.mark}}</span></button>
+  </div>
+  <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 32px;">
+    <div style="display: flex; gap: 8px;" aria-label="Étape 1 sur 3">
+      <span style="width: 20px; height: 6px; border-radius: 999px; background: var(--or);"></span>
+      <span style="width: 6px; height: 6px; border-radius: 999px; background: var(--ligne-forte);"></span>
+      <span style="width: 6px; height: 6px; border-radius: 999px; background: var(--ligne-forte);"></span>
+    </div>
+    <a href="Bienvenue2.dc.html" style="height: 52px; padding: 0 32px; border-radius: 12px; display: flex; align-items: center; background: var(--sur-emeraude); color: var(--emeraude); font-size: 16px; font-weight: 600; text-decoration: none;">Continuer</a>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { langue: 'fr' }; }
+  renderVals() {
+    const l = this.state.langue;
+    const opt = (id) => {
+      const on = id === l;
+      return { bg: on ? 'var(--fond)' : 'transparent', fg: on ? 'var(--emeraude)' : 'var(--fond)', border: on ? 'var(--fond)' : 'var(--ligne-forte)', checked: on ? 'true' : 'false', mark: on ? 'Choisie' : '' };
+    };
+    return {
+      fr: opt('fr'), ar: opt('ar'),
+      pickFr: () => this.setState({ langue: 'fr' }),
+      pickAr: () => this.setState({ langue: 'ar' })
+    };
+  }
+}
+</script>
+</body>
+</html>

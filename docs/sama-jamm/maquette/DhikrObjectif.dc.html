@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Formule et objectif du dhikr</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/samajamm/tokens.css">
+<link rel="stylesheet" href="ds/samajamm/components/bundle.css">
+<script src="ds/samajamm/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri&amp;family=Cormorant+Garamond:wght@600&amp;family=Source+Sans+3:wght@400;600&amp;family=Source+Serif+4:ital,wght@0,400;1,400&amp;display=swap">
+<style>
+body{margin:0}
+a{color:var(--emeraude)}
+</style>
+</helmet>
+<div style="position: relative; width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: var(--fond); color: var(--encre); font-family: var(--font-ui); overflow: hidden;">
+  <div style="padding: 56px 20px 0; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+    <span style="font-size: 18px; line-height: 24px; font-weight: 600;">Dhikr</span>
+    <span style="font-size: 44px; line-height: 48px; font-weight: 600; font-variant-numeric: tabular-nums;">21</span>
+  </div>
+  <x-import component-from-global-scope="SamaJamm.BottomSheet" titre="Formule et objectif">
+    <x-import component-from-global-scope="SamaJamm.RadioGroup" label="Formule" nom="formule" valeur="{{formule}}" on-change="{{choisirFormule}}" options="{{formules}}"></x-import>
+    <x-import component-from-global-scope="SamaJamm.SegmentedControl" label="Objectif" valeur="{{objectif}}" on-change="{{choisirObjectif}}" options="{{objectifs}}"></x-import>
+    <p lang="ar" dir="rtl" style="margin: 0; text-align: center; font-family: var(--font-arabe); font-size: 24px; line-height: 30px;">{{arabe}}</p>
+    <div style="position: relative;"><x-import component-from-global-scope="SamaJamm.Button" variant="principal" pleine-largeur="{{oui}}">Commencer</x-import><a href="Dhikr.dc.html" aria-label="Commencer" style="position: absolute; inset: 0; border-radius: 12px;"></a></div>
+  </x-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { formule: 'subhan', objectif: '33' }; }
+  renderVals() {
+    const F = {
+      subhan: ['Subḥāna-llāh', 'Gloire à Allah', 'سُبْحَانَ ٱللَّٰهِ'],
+      hamd: ['Al-ḥamdu li-llāh', 'Louange à Allah', 'ٱلْحَمْدُ لِلَّٰهِ'],
+      akbar: ['Allāhu akbar', 'Allah est le plus grand', 'ٱللَّٰهُ أَكْبَرُ'],
+      tahlil: ['Lā ilāha illa-llāh', 'Nulle divinité sauf Allah', 'لَا إِلَٰهَ إِلَّا ٱللَّٰهُ'],
+      istighfar: ['Astaghfiru-llāh', 'Je demande pardon à Allah', 'أَسْتَغْفِرُ ٱللَّٰهَ']
+    };
+    return {
+      oui: true,
+      formule: this.state.formule,
+      formules: Object.keys(F).map((k) => ({ id: k, label: F[k][0], description: F[k][1] })),
+      choisirFormule: (id) => this.setState({ formule: id }),
+      arabe: F[this.state.formule][2],
+      objectif: this.state.objectif,
+      objectifs: [{ id: '33', label: '33' }, { id: '99', label: '99' }, { id: '100', label: '100' }, { id: 'libre', label: 'Libre' }],
+      choisirObjectif: (id) => this.setState({ objectif: id })
+    };
+  }
+}
+</script>
+</body>
+</html>

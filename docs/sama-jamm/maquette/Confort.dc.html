@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Confort visuel et luminosité</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri&amp;family=Cormorant+Garamond:wght@600&amp;family=Source+Sans+3:wght@400;600&amp;family=Source+Serif+4:ital,wght@0,400;1,400&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#1F5F4A}a:hover{color:#154133}
+</style>
+</helmet>
+<div style="width: 1200px; height: 900px; box-sizing: border-box; padding: 48px 56px; display: flex; flex-direction: column; gap: 24px; background: #F7F7F5; color: #1B2024; font-family: 'Source Sans 3', system-ui, sans-serif;">
+  <div style="display: flex; flex-direction: column; gap: 4px;">
+    <h1 style="margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 600; font-size: 40px; line-height: 44px; color: #1F5F4A;">Le thème suit la lumière, pas l'inverse</h1>
+    <p style="margin: 0; font-size: 16px; line-height: 24px; color: #4A5258;">Même verset, trois thèmes, en arabe avec la translittération activée. Chiffres pour une lecture la nuit dans une chambre sombre (5 lux), écran réglé à 10 cd/m².</p>
+  </div>
+  <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px;">
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <div style="height: 230px; border-radius: 16px; background: #F7F7F5; border: 1px solid #C4C9CD; padding: 20px; box-sizing: border-box; display: flex; flex-direction: column; gap: 8px;">
+        <span style="font-size: 12px; line-height: 16px; color: #5E666C;">Al-Fâtiha · verset 1</span>
+        <p lang="ar" dir="rtl" style="margin: 0; font-family: Amiri, serif; font-size: 28px; line-height: 48px; text-align: right; color: #1B2024;">بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</p>
+        <p style="margin: 0; font-family: 'Source Serif 4', Georgia, serif; font-style: italic; font-size: 14px; line-height: 20px; color: #4A5258;">Bismillāhi r-raḥmāni r-raḥīm</p>
+      </div>
+      <div style="display: flex; align-items: center; justify-content: space-between;"><strong style="font-size: 16px;">Jour</strong><span style="font-size: 12px; line-height: 20px; font-weight: 600; padding: 0 8px; border-radius: 6px; background: #F9E3E1; color: #8C1D17;">Éblouit la nuit</span></div>
+      <p style="margin: 0; font-size: 14px; line-height: 20px; color: #4A5258;">9,3 cd/m² en moyenne, 19,5 fois la luminance de la chambre. Idéal le jour et en extérieur.</p>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <div style="height: 230px; border-radius: 16px; background: #0F1714; border: 1px solid #2A3530; padding: 20px; box-sizing: border-box; display: flex; flex-direction: column; gap: 8px;">
+        <span style="font-size: 12px; line-height: 16px; color: #A2ABA6;">Al-Fâtiha · verset 1</span>
+        <p lang="ar" dir="rtl" style="margin: 0; font-family: Amiri, serif; font-size: 28px; line-height: 48px; text-align: right; color: #EEF1EE;">بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</p>
+        <p style="margin: 0; font-family: 'Source Serif 4', Georgia, serif; font-style: italic; font-size: 14px; line-height: 20px; color: #C4CBC6;">Bismillāhi r-raḥmāni r-raḥīm</p>
+      </div>
+      <div style="display: flex; align-items: center; justify-content: space-between;"><strong style="font-size: 16px;">Nuit</strong><span style="font-size: 12px; line-height: 20px; font-weight: 600; padding: 0 8px; border-radius: 6px; background: #E4EFEB; color: #1F5F4A;">Confortable</span></div>
+      <p style="margin: 0; font-size: 14px; line-height: 20px; color: #4A5258;">0,5 cd/m², au niveau de la chambre. Texte baissé de 13 % pour limiter le halo des lettres claires.</p>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <div style="height: 230px; border-radius: 16px; background: #0E1115; border: 1px solid #20272E; padding: 20px; box-sizing: border-box; display: flex; flex-direction: column; gap: 8px;">
+        <span style="font-size: 12px; line-height: 16px; color: #9AA0A5;">Al-Fâtiha · verset 1</span>
+        <p lang="ar" dir="rtl" style="margin: 0; font-family: Amiri, serif; font-size: 28px; line-height: 48px; text-align: right; color: #C9CDD0;">بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</p>
+        <p style="margin: 0; font-family: 'Source Serif 4', Georgia, serif; font-style: italic; font-size: 14px; line-height: 20px; color: #B3B8BC;">Bismillāhi r-raḥmāni r-raḥīm</p>
+      </div>
+      <div style="display: flex; align-items: center; justify-content: space-between;"><strong style="font-size: 16px;">Veille</strong><span style="font-size: 12px; line-height: 20px; font-weight: 600; padding: 0 8px; border-radius: 6px; background: #E4EFEB; color: #1F5F4A;">Le plus doux</span></div>
+      <p style="margin: 0; font-size: 14px; line-height: 20px; color: #4A5258;">0,4 cd/m², texte baissé de 33 %, or atténué. Proposé entre Isha et Fajr, pour le tahajjud et l'aube.</p>
+    </div>
+  </div>
+  <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px;">
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <h2 style="margin: 0; font-size: 18px; line-height: 24px; font-weight: 600;">Contraste réel du texte, reflets compris</h2>
+      <table style="border-collapse: collapse; font-size: 14px; line-height: 20px;">
+        <thead>
+          <tr style="text-align: left; color: #4A5258;"><th style="padding: 4px 8px; border-bottom: 1px solid #DDE0E2; font-weight: 600;">Situation</th><th style="padding: 4px 8px; border-bottom: 1px solid #DDE0E2; font-weight: 600;">Jour</th><th style="padding: 4px 8px; border-bottom: 1px solid #DDE0E2; font-weight: 600;">Nuit</th><th style="padding: 4px 8px; border-bottom: 1px solid #DDE0E2; font-weight: 600;">Veille</th></tr>
+        </thead>
+        <tbody>
+          <tr><td style="padding: 4px 8px; border-bottom: 1px solid #DDE0E2;">Chambre sombre</td><td style="padding: 4px 8px; border-bottom: 1px solid #DDE0E2;">55:1</td><td style="padding: 4px 8px; border-bottom: 1px solid #DDE0E2;">41:1</td><td style="padding: 4px 8px; border-bottom: 1px solid #DDE0E2;">42:1</td></tr>
+          <tr><td style="padding: 4px 8px; border-bottom: 1px solid #DDE0E2;">Intérieur</td><td style="padding: 4px 8px; border-bottom: 1px solid #DDE0E2;">31:1</td><td style="padding: 4px 8px; border-bottom: 1px solid #DDE0E2;">23:1</td><td style="padding: 4px 8px; border-bottom: 1px solid #DDE0E2;">21:1</td></tr>
+          <tr><td style="padding: 4px 8px; border-bottom: 1px solid #DDE0E2;">Extérieur à l'ombre</td><td style="padding: 4px 8px; border-bottom: 1px solid #DDE0E2; font-weight: 600; color: #1F5F4A;">6,0:1</td><td style="padding: 4px 8px; border-bottom: 1px solid #DDE0E2;">4,8:1</td><td style="padding: 4px 8px; border-bottom: 1px solid #DDE0E2;">4,0:1</td></tr>
+          <tr><td style="padding: 4px 8px; border-bottom: 1px solid #DDE0E2;">Plein soleil</td><td style="padding: 4px 8px; border-bottom: 1px solid #DDE0E2; font-weight: 600; color: #1F5F4A;">2,7:1</td><td style="padding: 4px 8px; border-bottom: 1px solid #DDE0E2;">2,3:1</td><td style="padding: 4px 8px; border-bottom: 1px solid #DDE0E2;">2,0:1</td></tr>
+        </tbody>
+      </table>
+      <p style="margin: 0; font-size: 14px; line-height: 20px; color: #4A5258;">Colonne Nuit mesurée avec l'ancien vert nuit #12161B : à remesurer avec #0F1714, l'écart attendu est faible (contraste propre 16:1 au lieu de 15:1). Hypothèses : reflet de l'écran 4,5 %, écran à 10, 200, 800 et 1 600 cd/m². Au soleil, aucun thème ne dépasse 2,8:1 : seuls la taille et la graisse du texte sauvent la lecture.</p>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <h2 style="margin: 0; font-size: 18px; line-height: 24px; font-weight: 600;">Ce que l'app fait</h2>
+      <ol style="margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px; font-size: 16px; line-height: 24px;">
+        <li>Suit le mode clair ou sombre du téléphone, sans jamais forcer la luminosité.</li>
+        <li>Propose la Veille automatique entre Isha et Fajr, à partir des horaires calculés sur le téléphone.</li>
+        <li>Ouvre sur un écran de démarrage vert nuit en mode sombre : pas de flash blanc à l'appel de Fajr.</li>
+        <li>Affiche l'heure de la prochaine prière en 18 pt graisse 600, jamais en or seul, pour rester lisible au soleil.</li>
+        <li>Plafonne la saturation des couleurs pour que l'or et l'émeraude ne « vibrent » pas sur fond sombre.</li>
+      </ol>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1200,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

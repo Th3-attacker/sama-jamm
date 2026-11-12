@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Bienvenue · rappels</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/samajamm/tokens.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&amp;family=Source+Sans+3:wght@400;600&amp;family=Source+Serif+4:ital,wght@0,400;1,400&amp;display=swap">
+<style>
+body{margin:0}
+a{color:var(--emeraude)}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; padding: 56px 24px 40px; display: flex; flex-direction: column; background: var(--fond); color: var(--encre); font-family: 'Source Sans 3', system-ui, sans-serif;">
+  <a href="Bienvenue2.dc.html" aria-label="Retour à l'étape précédente" style="width: 44px; height: 44px; margin: 0 0 0 -12px; display: flex; align-items: center; justify-content: center; color: var(--encre);"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"></path><path d="M11 6l-6 6 6 6"></path></svg></a>
+  <div style="background: var(--surface); border: 1px solid var(--ligne); border-radius: 18px; padding: 16px 16px; display: flex; gap: 12px; align-items: flex-start; box-shadow: var(--ombre-1);">
+    <img src="/_blob/441a828125a0a82137af7e42f15872b8" alt="" style="width: 38px; height: 38px; border-radius: 9px; flex: none; display: block;">
+    <div style="display: flex; flex-direction: column; gap: 4px; flex-grow: 1;">
+      <div style="display: flex; justify-content: space-between;"><span style="font-size: 14px; line-height: 20px; font-weight: 600;">Sama Jàmm</span><span style="font-size: 12px; line-height: 16px; color: var(--encre-3);">maintenant</span></div>
+      <span lang="wo" style="font-size: 16px; line-height: 24px; font-weight: 600;">Waxtu julli jot na · Asr</span>
+      <span style="font-size: 14px; line-height: 20px; color: var(--encre-2);">16:35 · heure d'exemple</span>
+    </div>
+  </div>
+  <h1 lang="wo" style="margin: 32px 0 0; font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 600; font-size: 40px; line-height: 44px; color: var(--emeraude);">Waxtu julli jot na.</h1>
+  <p style="margin: 8px 0 0; font-family: 'Source Serif 4', Georgia, serif; font-style: italic; font-size: 18px; line-height: 24px; color: var(--encre-2);">L'heure de la prière est arrivée.</p>
+  <div style="margin-top: 24px; display: flex; flex-direction: column; border-top: 1px solid var(--ligne);">
+    <div style="display: flex; align-items: center; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--ligne);">
+      <div style="flex-grow: 1; display: flex; flex-direction: column;"><span id="t1" style="font-size: 16px; line-height: 24px; font-weight: 600;">Appel à la prière</span><span style="font-size: 14px; line-height: 20px; color: var(--encre-2);">Un son doux à chaque prière</span></div>
+      <button type="button" role="switch" aria-checked="true" aria-labelledby="t1" style="width: 52px; height: 32px; border-radius: 999px; border: 0; padding: 4px; background: var(--emeraude); display: flex; justify-content: flex-end; cursor: pointer;"><span style="width: 26px; height: 26px; border-radius: 999px; background: var(--fond);"></span></button>
+    </div>
+    <div style="display: flex; align-items: center; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--ligne);">
+      <div style="flex-grow: 1; display: flex; flex-direction: column;"><span id="t2" style="font-size: 16px; line-height: 24px; font-weight: 600;">Rappel 10 minutes avant</span><span style="font-size: 14px; line-height: 20px; color: var(--encre-2);">Pour se préparer sans se presser</span></div>
+      <button type="button" role="switch" aria-checked="true" aria-labelledby="t2" style="width: 52px; height: 32px; border-radius: 999px; border: 0; padding: 4px; background: var(--emeraude); display: flex; justify-content: flex-end; cursor: pointer;"><span style="width: 26px; height: 26px; border-radius: 999px; background: var(--fond);"></span></button>
+    </div>
+    <div style="display: flex; align-items: center; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--ligne);">
+      <div style="flex-grow: 1; display: flex; flex-direction: column;"><span id="t3" style="font-size: 16px; line-height: 24px; font-weight: 600;">Veille automatique</span><span style="font-size: 14px; line-height: 20px; color: var(--encre-2);">Lumière atténuée entre Isha et Fajr</span></div>
+      <button type="button" role="switch" aria-checked="true" aria-labelledby="t3" style="width: 52px; height: 32px; border-radius: 999px; border: 0; padding: 4px; background: var(--emeraude); display: flex; justify-content: flex-end; cursor: pointer;"><span style="width: 26px; height: 26px; border-radius: 999px; background: var(--fond);"></span></button>
+    </div>
+  </div>
+  <div style="flex-grow: 1;"></div>
+  <a href="AutorisationNotifications.dc.html" style="height: 52px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: var(--emeraude); color: var(--sur-emeraude); font-size: 16px; font-weight: 600; text-decoration: none;">Commencer</a>
+  <div style="display: flex; gap: 8px; justify-content: center; margin-top: 20px;" aria-label="Étape 3 sur 3">
+    <span style="width: 6px; height: 6px; border-radius: 999px; background: var(--ligne-forte);"></span>
+    <span style="width: 6px; height: 6px; border-radius: 999px; background: var(--ligne-forte);"></span>
+    <span style="width: 20px; height: 6px; border-radius: 999px; background: var(--or);"></span>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Connexion</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/samajamm/tokens.css">
+<link rel="stylesheet" href="ds/samajamm/components/bundle.css">
+<script src="ds/samajamm/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&amp;family=Source+Sans+3:wght@400;600&amp;family=Source+Serif+4:ital,wght@0,400;1,400&amp;display=swap">
+<style>
+body{margin:0}
+a{color:var(--emeraude)}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: var(--fond); color: var(--encre); font-family: var(--font-ui);">
+  <div style="flex-grow: 1; padding: 56px 24px 32px; display: flex; flex-direction: column; gap: 16px; overflow: hidden;">
+    <a href="Reglages.dc.html" aria-label="Fermer" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: var(--encre); margin-left: -12px;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"></path></svg></a>
+    <img src="/_blob/34e0a577c9ebc8ba5013828d61e2297f" alt="" style="width: 56px; height: 56px; display: block;">
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <h1 style="margin: 0; font-family: var(--font-display); font-weight: 600; font-size: 30px; line-height: 36px; color: var(--emeraude);">Se connecter</h1>
+      <p style="margin: 0; font-size: 16px; line-height: 24px; color: var(--encre-2);">Pour lire à plusieurs et retrouver vos favoris sur un autre téléphone. Votre budget reste sur ce téléphone.</p>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 8px;">
+      <button type="button" style="min-height: 48px; border: 0; border-radius: 12px; background: #000000; color: var(--surface); font-family: inherit; font-size: 16px; font-weight: 600;">Continuer avec Apple</button>
+      <button type="button" style="min-height: 48px; border: 1px solid var(--ligne-forte); border-radius: 12px; background: var(--surface); color: var(--encre); font-family: inherit; font-size: 16px; font-weight: 600;">Continuer avec Google</button>
+    </div>
+    <div role="separator" style="display: flex; align-items: center; gap: 12px; color: var(--encre-3); font-size: 14px;"><span style="flex: 1; height: 1px; background: var(--ligne);"></span>ou<span style="flex: 1; height: 1px; background: var(--ligne);"></span></div>
+    <x-import component-from-global-scope="SamaJamm.TextField" label="Adresse e-mail" placeholder="nom@exemple.com" type="email" aide="Nous vous envoyons un lien de connexion, sans mot de passe."></x-import>
+    <x-import component-from-global-scope="SamaJamm.Button" variant="secondaire" pleine-largeur="{{oui}}">Recevoir un lien</x-import>
+    <a href="Accueil.dc.html" style="margin-top: auto; min-height: 44px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; color: var(--emeraude); text-decoration: none;">Continuer sans compte</a>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return { oui: true }; }
+}
+</script>
+</body>
+</html>

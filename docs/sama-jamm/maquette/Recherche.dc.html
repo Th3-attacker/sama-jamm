@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Recherche</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/samajamm/tokens.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri&amp;family=Source+Sans+3:wght@400;600&amp;family=Source+Serif+4:ital,wght@0,400;1,400&amp;display=swap">
+<style>
+body{margin:0}
+a{color:var(--emeraude)}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: var(--fond); color: var(--encre); font-family: 'Source Sans 3', system-ui, sans-serif;">
+  <div style="flex-grow: 1; padding: 56px 20px 0; display: flex; flex-direction: column; gap: 16px; overflow: hidden;">
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <div style="position: relative; flex-grow: 1; display: flex; align-items: center; height: 48px; border-radius: 12px; background: var(--surface-creux); border: 1px solid var(--ligne-forte);">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--encre-3)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="position: absolute; left: 12px;"><circle cx="11" cy="11" r="6.5"></circle><path d="M16 16l4 4"></path></svg>
+        <label for="q" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0);">Rechercher</label>
+        <input id="q" type="search" value="raḥīm" style="flex-grow: 1; height: 46px; padding: 0 12px 0 48px; border: 0; background: transparent; font-family: inherit; font-size: 16px; color: var(--encre);">
+      </div>
+      <a href="Accueil.dc.html" style="height: 44px; padding: 0 8px; display: flex; align-items: center; font-size: 16px; font-weight: 600; text-decoration: none;">Fermer</a>
+    </div>
+    <div style="display: flex; gap: 8px; flex-wrap: nowrap;">
+      <button type="button" aria-pressed="true" style="height: 36px; padding: 0 12px; border-radius: 6px; border: 1px solid var(--emeraude); background: var(--emeraude-doux); color: var(--emeraude); font-family: inherit; font-size: 14px; font-weight: 600;">Tout</button>
+      <button type="button" aria-pressed="false" style="height: 36px; padding: 0 12px; border-radius: 6px; border: 1px solid var(--ligne-forte); background: var(--surface); color: var(--encre); font-family: inherit; font-size: 14px; font-weight: 600;">Coran</button>
+      <button type="button" aria-pressed="false" style="height: 36px; padding: 0 12px; border-radius: 6px; border: 1px solid var(--ligne-forte); background: var(--surface); color: var(--encre); font-family: inherit; font-size: 14px; font-weight: 600;">Xassaïdes</button>
+      <button type="button" aria-pressed="false" style="height: 36px; padding: 0 12px; border-radius: 6px; border: 1px solid var(--ligne-forte); background: var(--surface); color: var(--encre); font-family: inherit; font-size: 14px; font-weight: 600;">Invocations</button>
+    </div>
+    <p style="margin: 4px 0 0; font-size: 14px; line-height: 20px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--encre-3);">Coran</p>
+    <a href="Lecteur.dc.html" style="display: flex; flex-direction: column; gap: 4px; padding: 12px 0; border-bottom: 1px solid var(--ligne); text-decoration: none; color: var(--encre);">
+      <span style="font-size: 14px; line-height: 20px; font-weight: 600; color: var(--or-texte);">Al-Fâtiha · verset 1</span>
+      <span lang="ar" dir="rtl" style="font-family: Amiri, serif; font-size: 22px; line-height: 40px; text-align: right;">بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</span>
+      <span style="font-family: 'Source Serif 4', Georgia, serif; font-size: 16px; line-height: 24px;">Bismi-llāhi r-raḥmāni r-<mark style="background: var(--or-doux); color: var(--encre); padding: 0 4px; border-radius: 3px;">raḥīm</mark></span>
+    </a>
+    <a href="Lecteur.dc.html" style="display: flex; flex-direction: column; gap: 4px; padding: 12px 0; border-bottom: 1px solid var(--ligne); text-decoration: none; color: var(--encre);">
+      <span style="font-size: 14px; line-height: 20px; font-weight: 600; color: var(--or-texte);">Al-Fâtiha · verset 3</span>
+      <span lang="ar" dir="rtl" style="font-family: Amiri, serif; font-size: 22px; line-height: 40px; text-align: right;">ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</span>
+      <span style="font-family: 'Source Serif 4', Georgia, serif; font-size: 16px; line-height: 24px;">Ar-raḥmāni r-<mark style="background: var(--or-doux); color: var(--encre); padding: 0 4px; border-radius: 3px;">raḥīm</mark></span>
+    </a>
+    <div style="margin-top: 8px; padding: 16px 16px; background: var(--surface-creux); border-radius: 12px; display: flex; flex-direction: column; gap: 4px;">
+      <span style="font-size: 14px; line-height: 20px; font-weight: 600;">Cherchez comme vous parlez</span>
+      <span style="font-size: 14px; line-height: 20px; color: var(--encre-2);">En arabe ou en translittération, même sans connexion.</span>
+    </div>
+  </div>
+  <dc-import name="TabBar" actif="lire" hint-size="390px,84px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

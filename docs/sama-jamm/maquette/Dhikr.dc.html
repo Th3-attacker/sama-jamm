@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Prière · dhikr</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/samajamm/tokens.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri&amp;family=Cormorant+Garamond:wght@600&amp;family=Source+Sans+3:wght@400;600&amp;family=Source+Serif+4:ital,wght@0,400;1,400&amp;display=swap">
+<style>
+body{margin:0}
+a{color:var(--emeraude)}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: var(--fond); color: var(--encre); font-family: 'Source Sans 3', system-ui, sans-serif;">
+  <div style="flex-grow: 1; padding: 56px 24px 0; display: flex; flex-direction: column; align-items: center; gap: 16px; overflow: hidden;">
+    <div style="width: 100%; display: flex; align-items: center; justify-content: space-between;">
+      <a href="Priere.dc.html" aria-label="Retour aux horaires" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: var(--encre); margin-left: -12px;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"></path><path d="M11 6l-6 6 6 6"></path></svg></a>
+      <span style="font-size: 16px; font-weight: 600;">Dhikr</span>
+      <button type="button" onClick="{{reset}}" style="height: 44px; border: 0; background: transparent; color: var(--emeraude); font-family: inherit; font-size: 16px; font-weight: 600;">Remettre à zéro</button>
+    </div>
+    <div style="position: relative;"><div style="display: flex; gap: 8px; width: 100%; justify-content: center;">
+      <sc-for list="{{formules}}" as="f" hint-placeholder-count="3">
+        <button type="button" aria-pressed="{{f.pressed}}" onClick="{{f.pick}}" style="height: 36px; padding: 0 12px; border-radius: 6px; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; border: 1px solid {{f.border}}; background: {{f.bg}}; color: {{f.fg}};">{{f.court}}</button>
+      </sc-for>
+    </div><a href="DhikrObjectif.dc.html" aria-label="Changer la formule et l'objectif" style="position: absolute; inset: 0; border-radius: 999px;"></a></div>
+    <p lang="ar" dir="rtl" style="margin: 12px 0 0; font-family: Amiri, serif; font-size: 34px; line-height: 64px; text-align: center;">{{actuelle.ar}}</p>
+    <p style="margin: -8px 0 0; font-family: 'Source Serif 4', Georgia, serif; font-style: italic; font-size: 16px; line-height: 24px; color: var(--encre-2);">{{actuelle.tr}}</p>
+    <button type="button" onClick="{{compter}}" aria-label="Compter un grain : {{compte}} sur 33" style="position: relative; width: 248px; height: 248px; margin-top: 12px; border: 0; padding: 0; border-radius: 999px; background: var(--surface); box-shadow: var(--ombre-1); cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: inherit; color: var(--encre);">
+      <svg width="248" height="248" viewBox="0 0 248 248" aria-hidden="true" style="position: absolute; left: 0; top: 0;">
+        <circle cx="124" cy="124" r="110" fill="none" stroke="var(--surface-creux)" stroke-width="10"></circle>
+        <circle cx="124" cy="124" r="110" fill="none" stroke="{{ringColor}}" stroke-width="10" stroke-linecap="round" stroke-dasharray="691.15" stroke-dashoffset="{{offset}}" transform="rotate(-90 124 124)"></circle>
+      </svg>
+      <span aria-live="polite" style="position: relative; font-size: 56px; line-height: 60px; font-weight: 600; font-variant-numeric: tabular-nums;">{{compte}}</span>
+      <span style="position: relative; font-size: 14px; line-height: 20px; color: var(--encre-3);">{{sousCompte}}</span>
+    </button>
+    <sc-if value="{{fini}}" hint-placeholder-val="{{ false }}">
+      <div style="margin-top: 8px; display: flex; flex-direction: column; align-items: center;">
+        <p lang="wo" style="margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 600; font-size: 30px; line-height: 36px; color: var(--emeraude);">Sant Yàlla.</p>
+        <p style="margin: 0; font-family: 'Source Serif 4', Georgia, serif; font-style: italic; font-size: 16px; line-height: 24px; color: var(--encre-2);">Rendez grâce à Dieu.</p>
+      </div>
+    </sc-if>
+    <sc-if value="{{enCours}}" hint-placeholder-val="{{ true }}">
+      <p style="margin: 8px 0 0; font-size: 14px; line-height: 20px; color: var(--encre-2); text-align: center;">Touchez le cercle à chaque formule. Une légère vibration confirme le grain.</p>
+    </sc-if>
+  </div>
+  <dc-import name="TabBar" actif="priere" hint-size="390px,84px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { compte: 21, choix: 0 }; }
+  renderVals() {
+    const F = [
+      { court: 'Subḥāna llāh', ar: 'سُبْحَانَ ٱللَّٰهِ', tr: 'Subḥāna llāh' },
+      { court: 'Al-ḥamdu lillāh', ar: 'ٱلْحَمْدُ لِلَّٰهِ', tr: 'Al-ḥamdu lillāh' },
+      { court: 'Allāhu akbar', ar: 'ٱللَّٰهُ أَكْبَرُ', tr: 'Allāhu akbar' }
+    ];
+    const objectif = 33;
+    const c = this.state.compte;
+    const fini = c >= objectif;
+    const C = 691.15;
+    return {
+      formules: F.map((f, i) => {
+        const on = i === this.state.choix;
+        return { court: f.court, pressed: on ? 'true' : 'false', border: on ? 'var(--emeraude)' : 'var(--ligne-forte)', bg: on ? 'var(--emeraude-doux)' : 'var(--surface)', fg: on ? 'var(--emeraude)' : 'var(--encre)', pick: () => this.setState({ choix: i, compte: 0 }) };
+      }),
+      actuelle: F[this.state.choix],
+      compte: c,
+      sousCompte: fini ? 'Objectif atteint' : 'sur ' + objectif,
+      offset: (C * (1 - Math.min(c / objectif, 1))).toFixed(2),
+      ringColor: fini ? 'var(--emeraude)' : 'var(--or)',
+      fini: fini,
+      enCours: !fini,
+      compter: () => this.setState({ compte: Math.min(c + 1, objectif) }),
+      reset: () => this.setState({ compte: 0 })
+    };
+  }
+}
+</script>
+</body>
+</html>

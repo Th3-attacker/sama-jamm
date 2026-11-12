@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>InvocationsMoment</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/samajamm/tokens.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri&amp;family=Cormorant+Garamond:wght@600&amp;family=Source+Sans+3:wght@400;600;700&amp;display=swap">
+<style>
+body{margin:0}
+
+body{margin:0}
+.s{width:390px;height:844px;box-sizing:border-box;display:flex;flex-direction:column;background:var(--fond);color:var(--encre);font-family:var(--font-ui)}
+.s a{color:inherit;text-decoration:none}
+.c{flex-grow:1;padding:56px 24px 0;display:flex;flex-direction:column;gap:16px;overflow:hidden}
+.t{display:flex;align-items:center;gap:4px}
+.back{width:44px;height:44px;display:flex;align-items:center;justify-content:center;margin-left:-12px;color:var(--encre)}
+.s h1{margin:0;font-family:var(--font-display);font-weight:600;font-size:30px;line-height:36px;color:var(--emeraude)}
+.sub{margin:0;font-family:var(--font-lecture);font-style:italic;font-size:16px;line-height:24px;color:var(--encre-2)}
+.s .hero{background:var(--emeraude);color:var(--sur-emeraude);border-radius:var(--rayon-carte);padding:20px;display:flex;flex-direction:column;gap:12px}
+.hero .k{font-size:14px;line-height:20px;color:var(--sur-emeraude-2)}
+.hero .big{font-family:var(--font-display);font-weight:600;font-size:30px;line-height:36px}
+.bar{height:8px;border-radius:var(--rayon-pastille);background:rgba(255,255,255,.22);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--or-sur-emeraude);border-radius:var(--rayon-pastille)}
+.btn{align-self:flex-start;height:48px;padding:0 20px;border-radius:var(--rayon-pastille);background:var(--sur-emeraude);color:var(--emeraude);font-size:16px;line-height:24px;font-weight:600;display:flex;align-items:center;gap:8px}
+.h2{display:flex;align-items:baseline;justify-content:space-between;font-size:18px;line-height:24px;font-weight:600}
+.h2 span{font-size:14px;line-height:20px;font-weight:400;color:var(--encre-3)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.card{background:var(--surface);border:1px solid var(--ligne);border-radius:var(--rayon-carte);padding:12px;display:flex;align-items:center;gap:12px;min-height:56px;box-sizing:border-box}
+.ico{width:40px;height:40px;border-radius:var(--rayon-pastille);background:var(--emeraude-doux);color:var(--sur-emeraude-doux);display:flex;align-items:center;justify-content:center;flex:none}
+.card b{display:block;font-size:14px;line-height:20px;font-weight:600}
+.card small{display:block;font-size:14px;line-height:20px;color:var(--encre-3)}
+.band{background:var(--or-doux);border-radius:var(--rayon-carte);padding:12px 16px;display:flex;align-items:center;gap:12px;min-height:56px;box-sizing:border-box;font-size:14px;line-height:20px}
+.row{display:flex;align-items:center;gap:12px;min-height:72px;border-bottom:1px solid var(--ligne);box-sizing:border-box}
+.med{position:relative;width:40px;height:40px;flex:none;display:flex;align-items:center;justify-content:center;font-size:14px;line-height:20px;font-weight:600;color:var(--or-texte)}
+.med span{position:relative}
+.done{background:var(--emeraude);border-radius:50%;color:var(--sur-emeraude)}
+.row .tx{flex-grow:1;min-width:0}
+.row b{display:block;font-size:16px;line-height:24px;font-weight:600}
+.row small{display:block;font-size:14px;line-height:20px;color:var(--encre-3)}
+.ar{font-family:var(--font-arabe);font-size:22px;line-height:40px;color:var(--emeraude);direction:rtl;white-space:nowrap}
+.cnt{font-size:14px;line-height:20px;color:var(--encre-2);font-variant-numeric:tabular-nums}
+.tabs{display:flex;gap:8px}
+.chip{height:44px;padding:0 16px;border-radius:var(--rayon-pastille);border:1px solid var(--ligne-forte);display:flex;align-items:center;font-size:14px;line-height:20px;white-space:nowrap}
+.chip.on{background:var(--emeraude);color:var(--sur-emeraude);border-color:var(--emeraude);font-weight:600}
+.seg{display:flex;gap:4px}
+.seg i{flex:1;height:4px;border-radius:2px;background:var(--ligne-forte)}
+.seg i.f{background:var(--emeraude)}.seg i.n{background:var(--or)}
+.read{background:var(--surface);border:1px solid var(--ligne);border-radius:var(--rayon-carte);padding:20px;display:flex;flex-direction:column;gap:16px}
+.read .src{align-self:flex-start;font-size:14px;line-height:20px;color:var(--or-texte);background:var(--or-doux);border-radius:var(--rayon-pastille);padding:4px 12px}
+.read .arb{font-family:var(--font-arabe);font-size:28px;line-height:56px;color:var(--encre);direction:rtl;text-align:right}
+.read .tr{font-family:var(--font-lecture);font-style:italic;font-size:16px;line-height:24px;color:var(--encre-2)}
+.read .fr{font-family:var(--font-lecture);font-size:18px;line-height:24px}
+.stack{flex:none;height:72px;background:var(--surface);border-top:1px solid var(--ligne);display:flex;align-items:center;gap:12px;padding:0 24px;box-sizing:border-box}
+.nav{width:48px;height:48px;border-radius:50%;border:1px solid var(--ligne-forte);display:flex;align-items:center;justify-content:center;flex:none}
+.count{white-space:nowrap;flex-grow:1;height:48px;border-radius:var(--rayon-pastille);background:var(--emeraude);color:var(--sur-emeraude);display:flex;align-items:center;justify-content:center;gap:12px;font-size:18px;line-height:24px;font-weight:600;font-variant-numeric:tabular-nums}
+
+</style>
+</helmet>
+<div class="s"><div class="c" style="gap:12px">
+<div style="display:flex;flex-direction:column;gap:4px"><div class="t"><a class="back" href="Invocations.dc.html" aria-label="Retour aux invocations"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M11 6l-6 6 6 6"/></svg></a><h1>Matin</h1></div><p class="sub">Après Fajr, jusqu'au lever du soleil.</p></div>
+<div class="tabs" style="overflow:hidden;margin-right:-24px"><span class="chip on">Matin</span><span class="chip">Soir</span><span class="chip">Avant de dormir</span><span class="chip">Voyage</span></div>
+<div class="bar" style="background:var(--ligne-forte)"><i style="width:8%;background:var(--or)"></i></div>
+<div class="cnt">1 sur 12 aujourd'hui</div>
+<div style="display:flex;flex-direction:column"><a class="row" href="InvocationsLecture.dc.html"><span class="med done"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span class="tx"><b>Au réveil</b><small>Rapporté par Al-Bukhârî</small></span><span class="cnt">1 fois</span></a><a class="row" href="InvocationsLecture.dc.html"><span class="med"><svg width="40" height="40" viewBox="0 0 36 36" aria-hidden="true" style="position:absolute;left:0;top:0"><polygon points="18,2 22.68,6.69 29.31,6.69 29.31,13.32 34,18 29.31,22.68 29.31,29.31 22.68,29.31 18,34 13.32,29.31 6.69,29.31 6.69,22.68 2,18 6.69,13.32 6.69,6.69 13.32,6.69" fill="var(--or-doux)" stroke="var(--or)" stroke-width="1.25" stroke-linejoin="round"/></svg><span>2</span></span><span class="tx"><b>Le matin</b><small>Rapporté par Muslim</small></span><span class="cnt">1 fois</span></a><a class="row" href="InvocationsLecture.dc.html"><span class="med"><svg width="40" height="40" viewBox="0 0 36 36" aria-hidden="true" style="position:absolute;left:0;top:0"><polygon points="18,2 22.68,6.69 29.31,6.69 29.31,13.32 34,18 29.31,22.68 29.31,29.31 22.68,29.31 18,34 13.32,29.31 6.69,29.31 6.69,22.68 2,18 6.69,13.32 6.69,6.69 13.32,6.69" fill="var(--or-doux)" stroke="var(--or)" stroke-width="1.25" stroke-linejoin="round"/></svg><span>3</span></span><span class="tx"><b>Protection</b><small>Abû Dâwûd, At-Tirmidhî</small></span><span class="cnt">3 fois</span></a><a class="row" href="InvocationsLecture.dc.html"><span class="med"><svg width="40" height="40" viewBox="0 0 36 36" aria-hidden="true" style="position:absolute;left:0;top:0"><polygon points="18,2 22.68,6.69 29.31,6.69 29.31,13.32 34,18 29.31,22.68 29.31,29.31 22.68,29.31 18,34 13.32,29.31 6.69,29.31 6.69,22.68 2,18 6.69,13.32 6.69,6.69 13.32,6.69" fill="var(--or-doux)" stroke="var(--or)" stroke-width="1.25" stroke-linejoin="round"/></svg><span>4</span></span><span class="tx"><b>Sourate Al-Ikhlâs</b><small>Abû Dâwûd, At-Tirmidhî</small></span><span class="cnt">3 fois</span></a><a class="row" href="InvocationsLecture.dc.html"><span class="med"><svg width="40" height="40" viewBox="0 0 36 36" aria-hidden="true" style="position:absolute;left:0;top:0"><polygon points="18,2 22.68,6.69 29.31,6.69 29.31,13.32 34,18 29.31,22.68 29.31,29.31 22.68,29.31 18,34 13.32,29.31 6.69,29.31 6.69,22.68 2,18 6.69,13.32 6.69,6.69 13.32,6.69" fill="var(--or-doux)" stroke="var(--or)" stroke-width="1.25" stroke-linejoin="round"/></svg><span>5</span></span><span class="tx"><b>Demander le pardon</b><small>Rapporté par Al-Bukhârî</small></span><span class="cnt">1 fois</span></a><a class="row" href="InvocationsLecture.dc.html"><span class="med"><svg width="40" height="40" viewBox="0 0 36 36" aria-hidden="true" style="position:absolute;left:0;top:0"><polygon points="18,2 22.68,6.69 29.31,6.69 29.31,13.32 34,18 29.31,22.68 29.31,29.31 22.68,29.31 18,34 13.32,29.31 6.69,29.31 6.69,22.68 2,18 6.69,13.32 6.69,6.69 13.32,6.69" fill="var(--or-doux)" stroke="var(--or)" stroke-width="1.25" stroke-linejoin="round"/></svg><span>6</span></span><span class="tx"><b>Louange</b><small>Rapporté par Muslim</small></span><span class="cnt">100 fois</span></a></div>
+</div><dc-import name="TabBar" actif="lire" hint-size="390px,84px"></dc-import></div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

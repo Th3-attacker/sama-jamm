@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Avant la demande de position</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/samajamm/tokens.css">
+<link rel="stylesheet" href="ds/samajamm/components/bundle.css">
+<script src="ds/samajamm/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&amp;family=Source+Sans+3:wght@400;600&amp;family=Source+Serif+4:ital,wght@0,400;1,400&amp;display=swap">
+<style>
+body{margin:0}
+a{color:var(--emeraude)}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: var(--fond); color: var(--encre); font-family: var(--font-ui);">
+  <div style="flex-grow: 1; padding: 96px 24px 32px; display: flex; flex-direction: column; gap: 16px; overflow: hidden;">
+    <x-import component-from-global-scope="SamaJamm.EmptyState" icone="pin" titre="Fan nga nekk ?" lang="wo" sous-titre="Où êtes-vous ?" texte="Votre position sert à deux choses, et elle ne quitte jamais ce téléphone."></x-import>
+    <x-import component-from-global-scope="SamaJamm.ListGroup">
+      <x-import component-from-global-scope="SamaJamm.ListItem" icone="clock" titre="Les horaires de prière" sous-titre="Calculés pour l'endroit exact où vous êtes"></x-import>
+      <x-import component-from-global-scope="SamaJamm.ListItem" icone="kaaba" titre="La direction de la qibla" sous-titre="Depuis votre position, vers la Kaaba"></x-import>
+      <x-import component-from-global-scope="SamaJamm.ListItem" icone="lock" ton="neutre" titre="Jamais envoyée" sous-titre="Pas de serveur, pas de suivi, pas de publicité"></x-import>
+    </x-import>
+    <a href="EtatPosition.dc.html" aria-label="Si vous refusez : choisir une ville" style="margin: 0; font-size: 14px; line-height: 20px; color: var(--encre-3); text-align: center; text-decoration: none; display: block; cursor: pointer;">Le téléphone va vous demander l'autorisation. Si vous refusez, vous choisirez votre ville dans une liste.</a>
+    <div style="margin-top: auto;">
+      <div style="position: relative;"><x-import component-from-global-scope="SamaJamm.Button" variant="principal" pleine-largeur="{{oui}}">Continuer</x-import><a href="Bienvenue3.dc.html" aria-label="Continuer" style="position: absolute; inset: 0; border-radius: 12px;"></a></div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return { oui: true }; }
+}
+</script>
+</body>
+</html>

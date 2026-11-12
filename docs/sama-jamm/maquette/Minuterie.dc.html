@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Écouter · minuterie et répétition</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/samajamm/tokens.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&amp;family=Cormorant+Garamond:wght@600&amp;family=Source+Sans+3:wght@400;600&amp;family=Source+Serif+4:ital,wght@0,400;1,400&amp;display=swap">
+<style>
+body{margin:0}
+a{color:var(--emeraude)}
+</style>
+</helmet>
+<div style="position: relative; width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; overflow: hidden; background: var(--fond); color: var(--encre); font-family: var(--font-ui);">
+  <a href="LecteurAudio.dc.html" aria-label="Fermer et revenir au lecteur" style="flex-grow: 1; min-height: 0; position: relative; display: flex; flex-direction: column; align-items: center; padding-top: 60px; text-decoration: none; color: var(--encre);">
+    <span lang="ar" style="width: 150px; height: 150px; border-radius: 22px; display: flex; align-items: center; justify-content: center; background: var(--emeraude-aplat); color: var(--or-sur-emeraude); font-family: var(--font-arabe); font-weight: 700; font-size: 38px;">الكهف</span>
+    <span style="margin-top: 12px; font-family: var(--font-display); font-weight: 600; font-size: 24px;">Al-Kahf</span>
+    <span style="position: absolute; inset: 0; background: var(--voile);"></span>
+  </a>
+  <section aria-label="Écoute" style="flex: none; margin-top: -24px; position: relative; padding: 10px 20px 28px; border-radius: 24px 24px 0 0; background: var(--surface); box-shadow: var(--ombre-2); display: flex; flex-direction: column; gap: 14px;">
+    <span aria-hidden="true" style="align-self: center; width: 36px; height: 4px; border-radius: 4px; background: var(--ligne-forte); opacity: 0.6;"></span>
+    <h1 style="margin: 0; font-family: var(--font-display); font-weight: 600; font-size: 26px; line-height: 30px; color: var(--emeraude);">Écoute</h1>
+    <div style="display: flex; flex-direction: column; gap: 6px;"><span style="font-size: 14px; line-height: 20px; font-weight: 600;">Arrêter la lecture</span>
+      <div role="radiogroup" aria-label="Arrêter la lecture" style="display: flex; flex-direction: column;">
+        <sc-for list="{{arrets}}" as="a" hint-placeholder-count="5"><button type="button" role="radio" aria-checked="{{a.on}}" onClick="{{a.pick}}" style="min-height: 46px; display: flex; align-items: center; justify-content: space-between; border: 0; border-bottom: 1px solid var(--ligne); background: transparent; cursor: pointer; font-family: inherit; font-size: 16px; color: var(--encre); text-align: left;"><span>{{a.label}}</span><span aria-hidden="true" style="width: 22px; height: 22px; border-radius: 999px; box-sizing: border-box; border: {{a.radio}};"></span></button></sc-for>
+      </div></div>
+    <div style="display: flex; flex-direction: column; gap: 8px;"><span style="font-size: 14px; line-height: 20px; font-weight: 600;">Répéter</span>
+      <div role="radiogroup" aria-label="Répéter" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); padding: 3px; border-radius: 999px; background: var(--surface-creux);">
+        <sc-for list="{{reps}}" as="r" hint-placeholder-count="3"><button type="button" role="radio" aria-checked="{{r.on}}" onClick="{{r.pick}}" style="height: 36px; border: 0; border-radius: 999px; cursor: pointer; font-family: inherit; font-size: 14px; font-weight: 600; background: {{r.bg}}; color: {{r.fg}};">{{r.label}}</button></sc-for>
+      </div></div>
+    <div style="display: flex; flex-direction: column; gap: 8px;"><span style="font-size: 14px; line-height: 20px; font-weight: 600;">Vitesse</span>
+      <div role="radiogroup" aria-label="Vitesse" style="display: flex; gap: 8px;">
+        <sc-for list="{{vitesses}}" as="v" hint-placeholder-count="4"><button type="button" role="radio" aria-checked="{{v.on}}" onClick="{{v.pick}}" style="height: 36px; padding: 0 14px; border-radius: 999px; box-sizing: border-box; border: {{v.bord}}; background: {{v.bg}}; color: {{v.fg}}; cursor: pointer; font-family: inherit; font-size: 14px; font-weight: 600;">{{v.label}}</button></sc-for>
+      </div></div>
+    <a href="LecteurAudio.dc.html" style="height: 50px; border-radius: 14px; display: flex; align-items: center; justify-content: center; background: var(--emeraude-aplat); color: var(--sur-emeraude); font-size: 16px; font-weight: 600; text-decoration: none;">Terminé</a>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { arret: 'fin', rep: 'non', vit: '1' }; }
+  renderVals() {
+    const s = this.state;
+    const seg = (on) => ({ on: on ? 'true' : 'false', bg: on ? 'var(--surface)' : 'transparent', fg: on ? 'var(--emeraude)' : 'var(--encre-2)' });
+    return {
+      arrets: [['fin', 'À la fin de la sourate'], ['15', 'Dans 15 min'], ['30', 'Dans 30 min'], ['60', 'Dans 60 min'], ['non', 'Ne pas arrêter']].map((a) => ({
+        label: a[1], on: s.arret === a[0] ? 'true' : 'false',
+        radio: s.arret === a[0] ? '7px solid var(--emeraude)' : '2px solid var(--ligne-forte)',
+        pick: () => this.setState({ arret: a[0] })
+      })),
+      reps: [['non', 'Non'], ['verset', 'Verset ×3'], ['sourate', 'Sourate']].map((r) => Object.assign({ label: r[1], pick: () => this.setState({ rep: r[0] }) }, seg(s.rep === r[0]))),
+      vitesses: [['0.75', '0,75×'], ['1', '1×'], ['1.25', '1,25×'], ['1.5', '1,5×']].map((v) => ({
+        label: v[1], on: s.vit === v[0] ? 'true' : 'false',
+        bg: s.vit === v[0] ? 'var(--emeraude-doux)' : 'transparent',
+        fg: s.vit === v[0] ? 'var(--emeraude)' : 'var(--encre-2)',
+        bord: s.vit === v[0] ? '1px solid var(--emeraude-doux)' : '1px solid var(--ligne-forte)',
+        pick: () => this.setState({ vit: v[0] })
+      }))
+    };
+  }
+}
+</script>
+</body>
+</html>

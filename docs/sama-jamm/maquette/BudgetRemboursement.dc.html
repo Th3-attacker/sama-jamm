@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Remboursement</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/samajamm/tokens.css">
+<link rel="stylesheet" href="ds/samajamm/components/bundle.css">
+<script src="ds/samajamm/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&amp;family=Source+Sans+3:wght@400;600&amp;family=Source+Serif+4:ital,wght@0,400;1,400&amp;display=swap">
+<style>
+body{margin:0}
+a{color:var(--emeraude)}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: var(--fond); color: var(--encre); font-family: var(--font-ui);">
+  <div style="flex-grow: 1; padding: 56px 20px 20px; display: flex; flex-direction: column; gap: 16px; overflow: hidden;">
+    <div style="display: flex; align-items: center; gap: 4px;">
+      <a href="BudgetDette.dc.html" aria-label="Fermer" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: var(--encre); margin-left: -12px;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12"></path><path d="M18 6L6 18"></path></svg></a>
+      <h1 style="margin: 0; font-family: var(--font-display); font-weight: 600; font-size: 30px; line-height: 36px; color: var(--emeraude);">Remboursement</h1>
+    </div>
+    <p style="margin: -4px 0 0; font-size: 14px; line-height: 20px; color: var(--encre-2);">Ibrahima vous doit encore 25 000 MRU.</p>
+    <x-import component-from-global-scope="SamaJamm.AmountDisplay" montant="{{montant}}" libelle="Montant reçu" detail="{{detail}}" saisie="{{oui}}" centre="{{oui}}"></x-import>
+    <div style="display: flex; gap: 8px;">
+      <x-import component-from-global-scope="SamaJamm.Chip" selectionne="{{oui}}">Aujourd'hui</x-import>
+      <x-import component-from-global-scope="SamaJamm.Chip">Hier</x-import>
+      <x-import component-from-global-scope="SamaJamm.Chip">Autre date</x-import>
+    </div>
+    <div style="margin-top: auto; display: flex; flex-direction: column; gap: 12px;">
+      <x-import component-from-global-scope="SamaJamm.Keypad" on-touche="{{touche}}"></x-import>
+      <div style="position: relative;"><x-import component-from-global-scope="SamaJamm.Button" variant="principal" pleine-largeur="{{oui}}">Enregistrer</x-import><a href="BudgetDette.dc.html" aria-label="Enregistrer" style="position: absolute; inset: 0; border-radius: 12px;"></a></div>
+      <x-import component-from-global-scope="SamaJamm.Button" variant="discret" pleine-largeur="{{oui}}">Faire remise du reste</x-import>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { saisie: '5000' }; }
+  renderVals() {
+    const f = (n) => n.toLocaleString('fr-FR').replace(/ | /g, ' ');
+    const m = parseInt(this.state.saisie || '0', 10);
+    const reste = 25000 - m;
+    return {
+      oui: true,
+      montant: m,
+      detail: reste >= 0 ? 'Il restera ' + f(reste) + ' F' : 'Ce montant dépasse ce qui reste : ' + f(25000) + ' F',
+      touche: (k) => {
+        if (k === 'efface') return this.setState({ saisie: this.state.saisie.slice(0, -1) || '0' });
+        const s = (this.state.saisie === '0' ? '' : this.state.saisie) + k;
+        if (s.length <= 8) this.setState({ saisie: s });
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Budget · ajouter une dépense</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/samajamm/tokens.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600&amp;display=swap">
+<style>
+body{margin:0}
+a{color:var(--emeraude)}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; padding: 56px 20px 32px; display: flex; flex-direction: column; gap: 12px; background: var(--fond); color: var(--encre); font-family: 'Source Sans 3', system-ui, sans-serif;">
+  <div style="display: flex; align-items: center; justify-content: space-between;">
+    <a href="Budget.dc.html" aria-label="Retour au budget" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: var(--encre); margin-left: -12px;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"></path><path d="M11 6l-6 6 6 6"></path></svg></a>
+    <span style="font-size: 16px; font-weight: 600;">Nouvelle dépense</span>
+    <span style="height: 32px; padding: 0 12px; border-radius: 999px; background: var(--surface-creux); display: flex; align-items: center; font-size: 14px; font-weight: 600; color: var(--encre-2);">Aujourd'hui</span>
+  </div>
+  <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 0;">
+    <span aria-live="polite" style="font-size: 56px; line-height: 60px; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap;">{{montantAffiche}}</span>
+    <span style="font-size: 14px; line-height: 20px; color: var(--encre-2);">{{info}}</span>
+  </div>
+  <div role="radiogroup" aria-label="Enveloppe" style="display: flex; flex-wrap: wrap; gap: 8px;">
+    <sc-for list="{{categories}}" as="c" hint-placeholder-count="6">
+      <button type="button" role="radio" aria-checked="{{c.checked}}" onClick="{{c.pick}}" style="height: 36px; padding: 0 12px; border-radius: 6px; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; border: 1px solid {{c.border}}; background: {{c.bg}}; color: {{c.fg}};">{{c.nom}}</button>
+    </sc-for>
+  </div>
+  <div role="radiogroup" aria-label="Payé avec" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); padding: 4px; background: var(--surface-creux); border-radius: 12px;">
+    <sc-for list="{{comptes}}" as="k" hint-placeholder-count="3">
+      <button type="button" role="radio" aria-checked="{{k.checked}}" onClick="{{k.pick}}" style="height: 36px; border: 0; border-radius: 9px; font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; background: {{k.bg}}; color: {{k.fg}};">{{k.nom}}</button>
+    </sc-for>
+  </div>
+  <label style="display: flex; align-items: center; height: 44px; padding: 0 16px; border-radius: 12px; border: 1px solid var(--ligne-forte); background: var(--surface); font-size: 16px; color: var(--encre-3);"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0);">Note</span><input type="text" placeholder="Note, facultative (ex. marché du matin)" style="flex-grow: 1; border: 0; background: transparent; font-family: inherit; font-size: 16px; color: var(--encre);"></label>
+  <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: auto;">
+    <sc-for list="{{touches}}" as="t" hint-placeholder-count="12">
+      <button type="button" aria-label="{{t.label}}" onClick="{{t.press}}" style="height: 54px; border: 0; border-radius: 12px; background: var(--surface); box-shadow: var(--ombre-1); font-family: inherit; font-size: 24px; font-weight: 600; color: var(--encre); cursor: pointer;">{{t.txt}}</button>
+    </sc-for>
+  </div>
+  <a href="Budget.dc.html" style="height: 52px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: var(--emeraude); color: var(--sur-emeraude); font-size: 16px; font-weight: 600; text-decoration: none;">Enregistrer</a>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { montant: '2500', cat: 0, compte: 0 }; }
+  renderVals() {
+    const C = [
+      { nom: 'Dépense quotidienne', reste: 58000 },
+      { nom: 'Transport', reste: 7500 },
+      { nom: 'Électricité et eau', reste: 7000 },
+      { nom: 'Famille et entraide', reste: 15000 },
+      { nom: 'Sadaqa', reste: 7000 },
+      { nom: 'Autre', reste: 43000 }
+    ];
+    const K = ['Espèces', 'Mobile money', 'Banque'];
+    const f = (n) => n.toLocaleString('fr-FR').replace(/ | /g, ' ');
+    const m = parseInt(this.state.montant || '0', 10);
+    const cat = C[this.state.cat];
+    const apres = cat.reste - m;
+    const push = (d) => {
+      const s = (this.state.montant === '0' ? '' : this.state.montant) + d;
+      if (s.length <= 8) this.setState({ montant: s });
+    };
+    const keys = ['1','2','3','4','5','6','7','8','9','000','0','⌫'];
+    return {
+      montantAffiche: f(m) + ' F',
+      info: apres >= 0 ? cat.nom + ' · il restera ' + f(apres) + ' F' : cat.nom + ' · dépasse de ' + f(-apres) + ' F',
+      categories: C.map((c, i) => {
+        const on = i === this.state.cat;
+        return { nom: c.nom, checked: on ? 'true' : 'false', border: on ? 'var(--emeraude)' : 'var(--ligne-forte)', bg: on ? 'var(--emeraude-doux)' : 'var(--surface)', fg: on ? 'var(--emeraude)' : 'var(--encre)', pick: () => this.setState({ cat: i }) };
+      }),
+      comptes: K.map((k, i) => {
+        const on = i === this.state.compte;
+        return { nom: k, checked: on ? 'true' : 'false', bg: on ? 'var(--surface)' : 'transparent', fg: on ? 'var(--emeraude)' : 'var(--encre-2)', pick: () => this.setState({ compte: i }) };
+      }),
+      touches: keys.map((k) => ({
+        txt: k,
+        label: k === '⌫' ? 'Effacer le dernier chiffre' : k,
+        press: k === '⌫' ? () => this.setState({ montant: this.state.montant.slice(0, -1) || '0' }) : () => push(k)
+      }))
+    };
+  }
+}
+</script>
+</body>
+</html>

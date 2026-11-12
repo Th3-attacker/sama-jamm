@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Accueil</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/samajamm/tokens.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&amp;family=Source+Sans+3:wght@400;600&amp;family=Source+Serif+4:ital,wght@0,400;1,400&amp;display=swap">
+<style>
+body{margin:0}
+a{color:var(--emeraude)}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: var(--fond); color: var(--encre); font-family: var(--font-ui);">
+  <div style="flex-grow: 1; padding: 56px 20px 0; display: flex; flex-direction: column; gap: 12px; overflow: hidden;">
+    <div style="display: flex; align-items: center; justify-content: space-between;">
+      <div>
+        <h1 lang="wo" style="margin: 0; font-family: var(--font-display); font-weight: 600; font-size: 30px; line-height: 36px; color: var(--emeraude);">Jàmm nga am ?</h1>
+        <p style="margin: 0; font-family: var(--font-lecture); font-style: italic; font-size: 14px; line-height: 20px; color: var(--encre-2);">Jeudi 29 octobre</p>
+      </div>
+      <a href="Recherche.dc.html" aria-label="Rechercher" style="width: 44px; height: 44px; border-radius: 999px; display: flex; align-items: center; justify-content: center; color: var(--encre-2);"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="M16 16l4 4"></path></svg></a>
+    </div>
+    <a href="Priere.dc.html" aria-label="Prochaine prière : Asr à 16:35, dans 42 minutes" style="display: flex; flex-direction: column; gap: 12px; padding: 16px 16px; border-radius: 24px; background: var(--emeraude); color: var(--sur-emeraude); text-decoration: none;">
+      <span style="font-size: 14px; line-height: 20px;">Prochaine prière · Asr</span>
+      <span style="display: flex; align-items: baseline; gap: 8px;">
+        <span style="font-size: 56px; line-height: 60px; font-weight: 600; font-variant-numeric: tabular-nums;">42</span>
+        <span style="font-size: 18px; line-height: 24px;">min</span>
+        <span style="margin-inline-start: auto; font-family: var(--font-display); font-size: 30px; line-height: 36px; font-weight: 600; font-variant-numeric: tabular-nums;">16:35</span>
+      </span>
+      <svg width="314" height="20" viewBox="0 0 314 20" aria-hidden="true" style="display: block;">
+        <line x1="4" y1="10" x2="310" y2="10" stroke="var(--sur-emeraude)" stroke-width="1.5" stroke-dasharray="2 5"></line>
+        <line x1="4" y1="10" x2="226" y2="10" stroke="var(--sur-emeraude)" stroke-width="2.5" stroke-linecap="round"></line>
+        <circle cx="12" cy="10" r="4.5" fill="var(--sur-emeraude)"></circle>
+        <circle cx="157" cy="10" r="4.5" fill="var(--sur-emeraude)"></circle>
+        <circle cx="226" cy="10" r="7" fill="var(--emeraude)" stroke="var(--sur-emeraude)" stroke-width="2.5"></circle>
+        <circle cx="278" cy="10" r="4.5" fill="var(--emeraude)" stroke="var(--sur-emeraude)" stroke-width="1.5"></circle>
+        <circle cx="302" cy="10" r="4.5" fill="var(--emeraude)" stroke="var(--sur-emeraude)" stroke-width="1.5"></circle>
+      </svg>
+      <span style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); text-align: center; font-size: 12px; line-height: 16px; font-variant-numeric: tabular-nums;">
+        <span>Fajr<br>06:05</span><span>Dhuhr<br>13:20</span><b>Asr<br>16:35</b><span>Maghrib<br>19:10</span><span>Isha<br>20:25</span>
+      </span>
+    </a>
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px;">
+      <a href="Lecteur.dc.html" style="display: flex; flex-direction: column; gap: 4px; min-height: 124px; padding: 16px; box-sizing: border-box; border-radius: 16px; background: var(--surface); border: 1px solid var(--ligne); text-decoration: none; color: var(--encre);">
+        <span style="display: flex; align-items: center; gap: 8px; font-size: 14px; line-height: 20px; color: var(--encre-3);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 6.5c-2-1.5-5-2-8-1.5v14c3-.5 6 0 8 1.5 2-1.5 5-2 8-1.5V5c-3-.5-6 0-8 1.5zM12 6.5v14"></path></svg>Reprendre</span>
+        <span style="font-family: var(--font-display); font-weight: 600; font-size: 24px; line-height: 30px;">Al-Kahf</span>
+        <span style="font-size: 14px; line-height: 20px; color: var(--encre-2);">Verset 46 sur 110</span>
+        <span style="margin-top: auto; height: 3px; border-radius: 999px; background: var(--surface-creux); display: block;"><span style="display: block; width: 42%; height: 3px; border-radius: 999px; background: var(--or);"></span></span>
+      </a>
+      <a href="Khatm.dc.html" style="position: relative; display: flex; flex-direction: column; gap: 8px; min-height: 124px; padding: 16px; box-sizing: border-box; border-radius: 16px; background: var(--surface); border: 1px solid var(--ligne); text-decoration: none; color: var(--encre);">
+        <span style="display: flex; align-items: center; gap: 8px; font-size: 14px; line-height: 20px; color: var(--encre-3);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5.5a3 3 0 1 0 0 6a3 3 0 1 0 0-6zM3.5 19c.7-3 2.9-4.75 5.5-4.75s4.8 1.75 5.5 4.75M16.5 5.5a2.5 2.5 0 1 0 0 5a2.5 2.5 0 1 0 0-5zM15.75 13.6c2.4-.15 4.25 1.4 4.75 4.4"></path></svg>Khatm de la famille</span>
+        <span role="img" aria-label="18 juz lus sur 30, votre juz est le 12" style="display: grid; grid-template-columns: repeat(10, 10px); gap: 4px;">
+          <sc-for list="{{juz}}" as="j" hint-placeholder-count="30"><span style="width: 10px; height: 10px; border-radius: 3px; box-sizing: border-box; background: {{j.bg}}; border: {{j.border}};"></span></sc-for>
+        </span>
+        <span style="margin-top: auto; font-size: 14px; line-height: 20px; color: var(--encre-2);">18 sur 30 · votre juz : 12</span>
+      </a>
+      <a href="BudgetPremier.dc.html" style="display: flex; flex-direction: column; gap: 4px; min-height: 124px; padding: 16px; box-sizing: border-box; border-radius: 16px; background: var(--surface); border: 1px solid var(--ligne); text-decoration: none; color: var(--encre);">
+        <span style="display: flex; align-items: center; gap: 8px; font-size: 14px; line-height: 20px; color: var(--encre-3);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5.5 6.5h13a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2zM3.5 10h17"></path></svg>Budget du mois</span>
+        <span style="font-size: 24px; line-height: 30px; font-weight: 600; font-variant-numeric: tabular-nums;">128 000 <span style="font-size: 14px; font-weight: 400; color: var(--encre-2);">MRU</span></span>
+        <span style="font-size: 14px; line-height: 20px; color: var(--encre-2);">Il reste 9 jours de cycle</span>
+        <span style="margin-top: auto; height: 3px; border-radius: 999px; background: var(--surface-creux); display: block;"><span style="display: block; width: 62%; height: 3px; border-radius: 999px; background: var(--emeraude);"></span></span>
+      </a>
+      <a href="Dhikr.dc.html" style="display: flex; flex-direction: column; gap: 4px; min-height: 124px; padding: 16px; box-sizing: border-box; border-radius: 16px; background: var(--surface); border: 1px solid var(--ligne); text-decoration: none; color: var(--encre);">
+        <span style="display: flex; align-items: center; gap: 8px; font-size: 14px; line-height: 20px; color: var(--encre-3);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5a8.5 8.5 0 1 0 0 17a8.5 8.5 0 1 0 0-17zM12 7.25a4.75 4.75 0 1 0 0 9.5a4.75 4.75 0 1 0 0-9.5z"></path></svg>Dhikr</span>
+        <span style="display: flex; align-items: center; gap: 12px;">
+          <svg width="52" height="52" viewBox="0 0 52 52" role="img" aria-label="21 sur 33" style="display: block; flex: none;">
+            <circle cx="26" cy="26" r="21" fill="none" stroke="var(--surface-creux)" stroke-width="5"></circle>
+            <circle cx="26" cy="26" r="21" fill="none" stroke="var(--or)" stroke-width="5" stroke-linecap="round" stroke-dasharray="131.95" stroke-dashoffset="48" transform="rotate(-90 26 26)"></circle>
+            <text x="26" y="31" text-anchor="middle" font-size="14" font-weight="600" fill="var(--encre)" font-family="Source Sans 3, system-ui, sans-serif">21</text>
+          </svg>
+          <span style="font-size: 14px; line-height: 20px; color: var(--encre-2);">sur 33<br>Subḥāna-llāh</span>
+        </span>
+      </a>
+    </div>
+    <a href="LecteurAudio.dc.html" style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 16px; background: var(--surface-creux); text-decoration: none; color: var(--encre);">
+      <span style="width: 40px; height: 40px; border-radius: 999px; background: var(--emeraude); color: var(--sur-emeraude); display: flex; align-items: center; justify-content: center; flex: none;"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z" fill="currentColor"></path></svg></span>
+      <span style="display: flex; flex-direction: column; flex-grow: 1;"><span style="font-size: 16px; line-height: 24px; font-weight: 600;">Continuer l'écoute</span><span style="font-size: 14px; line-height: 20px; color: var(--encre-2);">Al-Fâtiha · Mishary Al-Afasy</span></span>
+      <span style="font-size: 14px; color: var(--encre-3); font-variant-numeric: tabular-nums;">1:12</span>
+    </a>
+    <section aria-label="Wax ju rafet, sagesse du jour" style="padding: 16px 16px; background: var(--or-doux); border-radius: 12px; display: flex; flex-direction: column; gap: 4px;">
+      <span style="font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--or-texte);">Wax ju rafet</span>
+      <p lang="wo" style="margin: 0; font-family: var(--font-display); font-weight: 600; font-size: 24px; line-height: 30px;">Ndank-ndank mooy jàpp golo ci ñaay.</p>
+    </section>
+  </div>
+  <nav aria-label="Navigation principale" style="width: 390px; height: 84px; box-sizing: border-box; padding: 8px 8px 24px; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); background: var(--surface); border-top: 1px solid var(--ligne);">
+    <sc-for list="{{onglets}}" as="o" hint-placeholder-count="5">
+      <a href="{{o.href}}" aria-current="{{o.current}}" style="display: flex; flex-direction: column; align-items: center; gap: 4px; text-decoration: none; color: {{o.color}};">
+        <span style="width: 56px; height: 30px; border-radius: 999px; display: flex; align-items: center; justify-content: center; background: {{o.pill}};"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{o.d}}"></path></svg></span>
+        <span style="font-size: 12px; line-height: 16px; font-weight: {{o.weight}};">{{o.label}}</span>
+      </a>
+    </sc-for>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const I = {
+      home: 'M4 11l8-7 8 7v8a1 1 0 0 1-1 1h-4v-6h-6v6H5a1 1 0 0 1-1-1z',
+      book: 'M12 6.5c-2-1.5-5-2-8-1.5v14c3-.5 6 0 8 1.5 2-1.5 5-2 8-1.5V5c-3-.5-6 0-8 1.5zM12 6.5v14',
+      clock: 'M12 3.5a8.5 8.5 0 1 0 0 17a8.5 8.5 0 1 0 0-17zM12 7.5V12l3 2',
+      wallet: 'M5.5 6.5h13a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2zM3.5 10h17M15.5 14.5a1 1 0 1 0 2 0a1 1 0 1 0-2 0',
+      grid: 'M6 5h4a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zM14 5h4a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zM6 13h4a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-4a1 1 0 0 1 1-1zM14 13h4a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1v-4a1 1 0 0 1 1-1z'
+    };
+    const T = [
+      ['accueil', 'Accueil', 'Accueil.dc.html', I.home],
+      ['lire', 'Lire', 'Bibliotheque.dc.html', I.book],
+      ['priere', 'Prière', 'Priere.dc.html', I.clock],
+      ['budget', 'Budget', 'Budget.dc.html', I.wallet],
+      ['plus', 'Plus', 'PlusHub.dc.html', I.grid]
+    ];
+    const actif = 'accueil';
+    // 30 juz : 18 lus (doux), le vôtre (plein), 11 libres (contour). Lu = emeraude-doux, vous = emeraude plein, pour la Veille.
+    const juz = Array.from({ length: 30 }, (_, i) => {
+      const n = i + 1;
+      if (n === 12) return { bg: 'var(--emeraude)', border: '0' };
+      if (n <= 19) return { bg: 'var(--emeraude-doux)', border: '0' };
+      return { bg: 'transparent', border: '1px solid var(--ligne-forte)' };
+    });
+    return {
+      juz,
+      onglets: T.map((t) => {
+        const on = t[0] === actif;
+        return { label: t[1], href: t[2], d: t[3], color: on ? 'var(--emeraude)' : 'var(--encre-2)', pill: on ? 'var(--emeraude-doux)' : 'transparent', weight: on ? 600 : 400, current: on ? 'page' : 'false' };
+      })
+    };
+  }
+}
+</script>
+</body>
+</html>

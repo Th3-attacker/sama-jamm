@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Favoris vides</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/samajamm/tokens.css">
+<link rel="stylesheet" href="ds/samajamm/components/bundle.css">
+<script src="ds/samajamm/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&amp;family=Source+Sans+3:wght@400;600&amp;family=Source+Serif+4:ital,wght@0,400;1,400&amp;display=swap">
+<style>
+body{margin:0}
+a{color:var(--emeraude)}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: var(--fond); color: var(--encre); font-family: var(--font-ui);">
+  <div style="flex-grow: 1; padding: 56px 20px 0; display: flex; flex-direction: column; gap: 16px; overflow: hidden;">
+    <div style="display: flex; flex-direction: column; gap: 4px;">
+      <div style="display: flex; align-items: center; gap: 4px;">
+        <a href="Accueil.dc.html" aria-label="Retour" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: var(--encre); margin-left: -12px;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"></path><path d="M11 6l-6 6 6 6"></path></svg></a>
+        <h1 style="margin: 0; font-family: var(--font-display); font-weight: 600; font-size: 30px; line-height: 36px; color: var(--emeraude);">Favoris</h1>
+      </div>
+      <p style="margin: 0; font-family: var(--font-lecture); font-style: italic; font-size: 16px; line-height: 24px; color: var(--encre-2);">Gardés sur ce téléphone, lisibles sans réseau.</p>
+    </div>
+    <div style="flex-grow: 1; display: flex; flex-direction: column; justify-content: center; padding-bottom: 64px;">
+      <x-import component-from-global-scope="SamaJamm.EmptyState" titre="Jàmm rekk" sous-titre="La paix, seulement." icone="bookmark" texte="Rien ici pour l'instant. Touchez le signet d'un verset, d'un chant ou d'une invocation pour le retrouver ici, même hors ligne." action="{{ouvrir}}"></x-import>
+    </div>
+  </div>
+  <dc-import name="TabBar" actif="accueil" hint-size="390px,84px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return { ouvrir: { label: 'Ouvrir la bibliothèque', icone: 'book' } }; }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Méthode de calcul</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/samajamm/tokens.css">
+<link rel="stylesheet" href="ds/samajamm/components/bundle.css">
+<script src="ds/samajamm/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&amp;family=Source+Sans+3:wght@400;600&amp;family=Source+Serif+4:ital,wght@0,400;1,400&amp;display=swap">
+<style>
+body{margin:0}
+a{color:var(--emeraude)}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: var(--fond); color: var(--encre); font-family: var(--font-ui);">
+  <div style="flex-grow: 1; padding: 56px 20px 0; display: flex; flex-direction: column; gap: 16px; overflow: hidden;">
+    <div style="display: flex; flex-direction: column; gap: 4px;">
+      <div style="display: flex; align-items: center; gap: 4px;">
+        <a href="PriereRappels.dc.html" aria-label="Retour à l'appel et aux rappels" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: var(--encre); margin-left: -12px;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"></path><path d="M11 6l-6 6 6 6"></path></svg></a>
+        <h1 style="margin: 0; font-family: var(--font-display); font-weight: 600; font-size: 30px; line-height: 36px; color: var(--emeraude);">Méthode de calcul</h1>
+      </div>
+      <p style="margin: 0; font-family: var(--font-lecture); font-style: italic; font-size: 16px; line-height: 24px; color: var(--encre-2);">Prenez celle de votre mosquée, puis ajustez à la minute près.</p>
+    </div>
+    <x-import component-from-global-scope="SamaJamm.RadioGroup" label="Méthode" nom="methode" valeur="mwl" options="{{methodes}}"></x-import>
+    <x-import component-from-global-scope="SamaJamm.SegmentedControl" label="Heure d'Asr" valeur="standard" options="{{asr}}"></x-import>
+    <section aria-label="Ajustements" style="display: flex; flex-direction: column; gap: 8px;">
+      <h2 style="margin: 0; font-size: 14px; line-height: 20px; font-weight: 600; color: var(--encre-2);">Ajuster, en minutes</h2>
+      <div style="background: var(--surface); border: 1px solid var(--ligne); border-radius: 12px; overflow: hidden;">
+        <sc-for list="{{ajustements}}" as="a" hint-placeholder-count="5">
+          <div style="display: flex; align-items: center; gap: 8px; min-height: 56px; padding: 4px 8px 4px 16px; box-sizing: border-box; border-top: {{a.filet}};">
+            <span style="flex-grow: 1; font-size: 16px; line-height: 24px;">{{a.nom}} <span style="font-size: 14px; color: var(--encre-3); font-variant-numeric: tabular-nums;">· {{a.heure}}</span></span>
+            <button type="button" aria-label="{{a.moins}}" style="width: 44px; height: 44px; border: 0; border-radius: 999px; background: transparent; color: var(--emeraude); display: flex; align-items: center; justify-content: center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14"></path></svg></button>
+            <span style="min-width: 52px; text-align: center; font-size: 16px; font-weight: 600; font-variant-numeric: tabular-nums;">{{a.valeur}}</span>
+            <button type="button" aria-label="{{a.plus}}" style="width: 44px; height: 44px; border: 0; border-radius: 999px; background: transparent; color: var(--emeraude); display: flex; align-items: center; justify-content: center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button>
+          </div>
+        </sc-for>
+      </div>
+      <p style="margin: 0; font-size: 14px; line-height: 20px; color: var(--encre-3);">Comparez avec l'horaire affiché à votre mosquée pendant quelques jours.</p>
+    </section>
+  </div>
+  <dc-import name="TabBar" actif="priere" hint-size="390px,84px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const A = [['Fajr', '06:05', 0], ['Dhuhr', '13:20', 2], ['Asr', '16:35', 0], ['Maghrib', '19:10', 3], ['Isha', '20:25', 0]];
+    return {
+      methodes: [
+        { id: 'mwl', label: 'Ligue islamique mondiale', description: 'Fajr 18°, Isha 17°' },
+        { id: 'egypte', label: 'Autorité égyptienne', description: 'Fajr 19,5°, Isha 17,5°' },
+        { id: 'ummalqura', label: 'Umm al-Qura', description: 'Fajr 18,5°, Isha 90 min après Maghrib' },
+        { id: 'uoif', label: 'UOIF', description: 'Fajr 12°, Isha 12°' }
+      ],
+      asr: [{ id: 'standard', label: 'Standard' }, { id: 'hanafite', label: 'Hanafite' }],
+      ajustements: A.map((a, i) => ({
+        nom: a[0], heure: a[1], valeur: (a[2] > 0 ? '+' : '') + a[2] + ' min',
+        moins: 'Retirer une minute à ' + a[0], plus: 'Ajouter une minute à ' + a[0],
+        filet: i === 0 ? '0' : '1px solid var(--ligne)'
+      }))
+    };
+  }
+}
+</script>
+</body>
+</html>

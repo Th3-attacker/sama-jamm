@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Qibla sans boussole</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/samajamm/tokens.css">
+<link rel="stylesheet" href="ds/samajamm/components/bundle.css">
+<script src="ds/samajamm/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&amp;family=Source+Sans+3:wght@400;600&amp;display=swap">
+<style>
+body{margin:0}
+a{color:var(--emeraude)}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: var(--fond); color: var(--encre); font-family: var(--font-ui);">
+  <div style="flex-grow: 1; padding: 56px 20px 0; display: flex; flex-direction: column; gap: 16px; overflow: hidden;">
+    <div style="display: flex; align-items: center; gap: 4px;">
+      <a href="Priere.dc.html" aria-label="Retour aux horaires" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: var(--encre); margin-left: -12px;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"></path><path d="M11 6l-6 6 6 6"></path></svg></a>
+      <span style="font-size: 18px; line-height: 24px; font-weight: 600;">Qibla</span>
+    </div>
+    <x-import component-from-global-scope="SamaJamm.Banner" ton="info" titre="Ce téléphone n'a pas de boussole">La direction est donnée en degrés depuis le nord. Repérez le nord avec le soleil, une carte ou une autre boussole.</x-import>
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; padding-top: 8px;">
+      <span style="font-size: 56px; line-height: 60px; font-weight: 600; font-variant-numeric: tabular-nums;">76°</span>
+      <span style="font-size: 18px; line-height: 24px; color: var(--encre-2);">est-nord-est · depuis Nouakchott</span>
+    </div>
+    <svg width="220" height="220" viewBox="0 0 220 220" role="img" aria-label="La qibla est à 76 degrés à droite du nord" style="align-self: center; display: block;">
+      <circle cx="110" cy="110" r="100" fill="var(--surface)" stroke="var(--ligne)" stroke-width="1.5"></circle>
+      <path d="M110 110 L110 22" stroke="var(--encre-2)" stroke-width="2" stroke-linecap="round"></path>
+      <polygon points="110,12 104,24 116,24" fill="var(--encre-2)"></polygon>
+      <text x="110" y="44" text-anchor="middle" font-family="Source Sans 3, sans-serif" font-size="13" font-weight="600" fill="var(--encre-2)">N</text>
+      <path d="M110 30 A 80 80 0 0 1 187.6 90.6" fill="none" stroke="var(--or)" stroke-width="2" stroke-dasharray="4 4"></path>
+      <path d="M110 110 L196.5 89.3" stroke="var(--emeraude)" stroke-width="2.5" stroke-linecap="round"></path>
+      <polygon points="196.5,77.3 199.3,83.8 205.8,84.5 202,89.3 205.8,94.1 199.3,94.8 196.5,101.3 193.7,94.8 187.2,94.1 191,89.3 187.2,84.5 193.7,83.8" fill="var(--or)" stroke="var(--or-texte)" stroke-width="1"></polygon>
+      <circle cx="110" cy="110" r="5" fill="var(--emeraude)"></circle>
+    </svg>
+    <ol style="margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px; font-size: 16px; line-height: 24px; color: var(--encre);">
+      <li>Tournez-vous vers le nord.</li>
+      <li>Tournez vers la droite d'un peu moins d'un quart de tour : 76°.</li>
+    </ol>
+  </div>
+  <dc-import name="TabBar" actif="priere" hint-size="390px,84px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

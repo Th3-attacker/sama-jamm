@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Démarrage sombre</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div role="img" aria-label="Écran de démarrage sombre : marque or au centre d'un fond vert nuit" style="position: relative; width: 390px; height: 844px; box-sizing: border-box; background: #0F1714; display: flex; align-items: center; justify-content: center;">
+  <img src="/_blob/59ce802c17de74314894bbd6bfedf3c7" alt="" style="width: 120px; height: 120px; display: block;">
+  <span aria-hidden="true" style="position: absolute; left: 50%; top: 50%; width: 200px; height: 200px; margin: -96px 0 0 -96px; border: 1px dashed {{guide}}; border-radius: 999px; box-sizing: border-box;"></span>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"repere":{"editor":"boolean","default":false},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return { guide: this.props.repere ? 'rgba(184,154,94,0.45)' : 'transparent' }; }
+}
+</script>
+</body>
+</html>

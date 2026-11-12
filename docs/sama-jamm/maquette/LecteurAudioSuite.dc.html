@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Écouter · lecteur défilé</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/samajamm/tokens.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&amp;family=Cormorant+Garamond:wght@600&amp;family=Source+Sans+3:wght@400;600&amp;family=Source+Serif+4:ital,wght@0,400;1,400&amp;display=swap">
+<style>
+body{margin:0}
+a{color:var(--emeraude)}
+</style>
+</helmet>
+<div style="position: relative; width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; overflow: hidden; background: var(--fond); color: var(--encre); font-family: var(--font-ui);">
+  <a href="LecteurAudio.dc.html" aria-label="Revenir en haut du lecteur" style="flex: none; padding: 52px 16px 12px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--ligne); text-decoration: none; color: var(--encre);">
+    <span lang="ar" style="width: 48px; height: 48px; border-radius: 12px; flex: none; display: flex; align-items: center; justify-content: center; background: var(--emeraude-aplat); color: var(--or-sur-emeraude); font-family: var(--font-arabe); font-weight: 700; font-size: 16px;">الكهف</span>
+    <span style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column;"><span style="font-size: 16px; line-height: 22px; font-weight: 600;">Al-Kahf</span><span style="font-size: 12px; line-height: 16px; color: var(--encre-3);">Mishary Al-Afasy · 12:40</span></span>
+    <span style="width: 44px; height: 44px; border-radius: 999px; flex: none; display: flex; align-items: center; justify-content: center; background: var(--emeraude-aplat); color: var(--sur-emeraude);"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5h3v13H8zM13 5.5h3v13h-3z" fill="currentColor"></path></svg></span>
+  </a>
+  <div style="flex-grow: 1; min-height: 0; overflow: hidden; padding: 16px 14px 0; display: flex; flex-direction: column; gap: 14px;">
+    <section aria-label="Verset en cours" style="border-radius: 20px; background: var(--surface); border: 1px solid var(--ligne); padding: 16px; display: flex; flex-direction: column; gap: 8px;">
+      <div style="display: flex; justify-content: space-between;"><span style="font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--or-texte);">Verset en cours</span><span style="font-size: 13px; font-weight: 600; color: var(--emeraude);">18:10</span></div>
+      <p lang="ar" dir="rtl" style="margin: 0; font-family: var(--font-coran); font-size: 23px; line-height: 46px; text-align: right;">إِذْ أَوَى ٱلْفِتْيَةُ إِلَى ٱلْكَهْفِ فَقَالُوا۟ رَبَّنَآ ءَاتِنَا مِن لَّدُنكَ رَحْمَةً وَهَيِّئْ لَنَا مِنْ أَمْرِنَا رَشَدًا</p>
+      <sc-if value="{{translit}}" hint-placeholder-val="{{ false }}"><p style="margin: 0; font-family: var(--font-lecture); font-style: italic; font-size: 14px; line-height: 20px; color: var(--encre-3);">Idh awā l-fityatu ilā l-kahfi fa-qālū rabbanā ātinā min ladunka raḥmatan wa hayyiʾ lanā min amrinā rashadā.</p></sc-if>
+      <p lang="ar" dir="rtl" style="margin: 0; font-family: var(--font-coran); font-size: 20px; line-height: 40px; text-align: right; opacity: 0.45;">فَضَرَبْنَا عَلَىٰٓ ءَاذَانِهِمْ فِى ٱلْكَهْفِ سِنِينَ عَدَدًا</p>
+    </section>
+    <section aria-label="À suivre" style="border-radius: 20px; background: var(--surface); border: 1px solid var(--ligne); padding: 16px; display: flex; flex-direction: column; gap: 8px;">
+      <span style="font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--or-texte);">À suivre</span>
+      <div style="display: flex; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--ligne);"><span style="width: 36px; height: 36px; border-radius: 10px; flex: none; display: flex; align-items: center; justify-content: center; background: var(--or-doux); color: var(--or-texte); font-size: 13px; font-weight: 600;">19</span><span style="display: flex; flex-direction: column;"><span style="font-size: 16px; line-height: 22px; font-weight: 600;">Maryam</span><span style="font-size: 12px; line-height: 16px; color: var(--encre-3);">Sourate 19</span></span></div>
+      <div style="display: flex; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 0;"><span style="width: 36px; height: 36px; border-radius: 10px; flex: none; display: flex; align-items: center; justify-content: center; background: var(--or-doux); color: var(--or-texte); font-size: 13px; font-weight: 600;">20</span><span style="display: flex; flex-direction: column;"><span style="font-size: 16px; line-height: 22px; font-weight: 600;">Ta-Ha</span><span style="font-size: 12px; line-height: 16px; color: var(--encre-3);">Sourate 20</span></span></div>
+    </section>
+    <section aria-label="Récitateur" style="border-radius: 20px; background: var(--surface); border: 1px solid var(--ligne); padding: 16px; display: flex; flex-direction: column; gap: 8px;">
+      <span style="font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--or-texte);">Récitateur</span>
+      <div style="display: flex; align-items: center; gap: 12px;"><span style="width: 44px; height: 44px; border-radius: 999px; flex: none; display: flex; align-items: center; justify-content: center; background: var(--or-doux); color: var(--or-texte); font-weight: 600;">MA</span><span style="flex-grow: 1; display: flex; flex-direction: column;"><span style="font-size: 16px; line-height: 22px; font-weight: 600;">Mishary Al-Afasy</span><span style="font-size: 12px; line-height: 16px; color: var(--encre-3);">Hafs · murattal</span></span><a href="Recitateur.dc.html" style="height: 36px; padding: 0 14px; box-sizing: border-box; border-radius: 999px; border: 1px solid var(--ligne-forte); display: flex; align-items: center; font-size: 14px; font-weight: 600; color: var(--emeraude); text-decoration: none;">Changer</a></div>
+    </section>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"translitteration":{"editor":"boolean","default":false},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return { translit: this.props.translitteration ?? false }; }
+}
+</script>
+</body>
+</html>

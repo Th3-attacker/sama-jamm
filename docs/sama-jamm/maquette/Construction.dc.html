@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Construction du logo</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&amp;family=Source+Sans+3:wght@400;600&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#1F5F4A}a:hover{color:#154133}
+</style>
+</helmet>
+<div style="width: 1200px; height: 760px; box-sizing: border-box; padding: 56px 64px; display: flex; gap: 48px; background: #F7F7F5; color: #1B2024; font-family: 'Source Sans 3', system-ui, sans-serif;">
+  <div style="flex: none; display: flex; flex-direction: column; gap: 16px;">
+    <img src="/_blob/c6405d48b5faab19b0f7a7f773cf2fa5" alt="Tracé de construction de la marque : cercles, carrés, boîte du livre et zone de protection" style="width: 520px; height: 520px; display: block; border-radius: 12px; border: 1px solid #DDE0E2;">
+    <div style="display: flex; gap: 20px; font-size: 14px; line-height: 20px; color: #4A5258;">
+      <span style="display: flex; align-items: center; gap: 4px;"><span style="width: 18px; height: 0; border-top: 2px dashed #B08A3E;"></span>Cercles et carrés de construction</span>
+      <span style="display: flex; align-items: center; gap: 4px;"><span style="width: 18px; height: 0; border-top: 2px dashed #C0392B;"></span>Boîte du livre</span>
+      <span style="display: flex; align-items: center; gap: 4px;"><span style="width: 18px; height: 0; border-top: 2px dashed #B8BDC2;"></span>Zone de protection</span>
+    </div>
+  </div>
+  <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 24px;">
+    <h1 style="margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 600; font-size: 40px; line-height: 44px; color: #1F5F4A;">Construction</h1>
+    <ol style="margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 12px; font-size: 16px; line-height: 24px;">
+      <li><strong>Étoile :</strong> deux carrés de même rayon R, tournés de 45° ; les creux tombent à 0,765 R.</li>
+      <li><strong>Trait :</strong> 11,5 % de R, angles arrondis, pour rester net de 40 px à l'affiche.</li>
+      <li><strong>Livre :</strong> 1,06 R de large sur 0,66 R de haut, dos de 0,085 R, pages creusées de 0,09 R vers le dos.</li>
+      <li><strong>Encombrement :</strong> 2,115 R de diamètre, trait compris.</li>
+      <li><strong>Zone de protection :</strong> la hauteur du livre, tout autour.</li>
+    </ol>
+    <div style="display: flex; flex-direction: column; gap: 12px;">
+      <h2 style="margin: 0; font-size: 18px; line-height: 24px; font-weight: 600;">Tailles minimales</h2>
+      <div style="display: flex; align-items: flex-end; gap: 16px;">
+        <img src="/_blob/74d212f1f0ad081c93b3802de174f1c2" alt="Icône à 120 px" style="width: 120px; height: 120px; border-radius: 27px; display: block;">
+        <img src="/_blob/74d212f1f0ad081c93b3802de174f1c2" alt="Icône à 87 px" style="width: 87px; height: 87px; border-radius: 19px; display: block;">
+        <img src="/_blob/74d212f1f0ad081c93b3802de174f1c2" alt="Icône à 58 px" style="width: 58px; height: 58px; border-radius: 13px; display: block;">
+        <img src="/_blob/74d212f1f0ad081c93b3802de174f1c2" alt="Icône à 40 px" style="width: 40px; height: 40px; border-radius: 9px; display: block;">
+        <span style="width: 1px; height: 56px; background: #DDE0E2;"></span>
+        <img src="/_blob/a6fae289613af4cb78ef2ae05dd169c0" alt="Petite taille à 32 px" style="width: 32px; height: 32px; display: block;">
+        <img src="/_blob/a6fae289613af4cb78ef2ae05dd169c0" alt="Petite taille à 24 px" style="width: 24px; height: 24px; display: block;">
+        <img src="/_blob/a6fae289613af4cb78ef2ae05dd169c0" alt="Petite taille à 16 px" style="width: 16px; height: 16px; display: block;">
+      </div>
+      <p style="margin: 0; font-size: 14px; line-height: 20px; color: #4A5258;">Marque au trait : 40 px minimum. Logo horizontal : 120 px de large minimum. En dessous de 40 px (notification Android, favicon), la version petite taille pleine prend le relais.</p>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1200,"height":760}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

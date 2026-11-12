@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Lire · lecteur en Veille</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/samajamm/tokens.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri&amp;family=Cormorant+Garamond:wght@600&amp;family=Source+Sans+3:wght@400;600&amp;family=Source+Serif+4:ital,wght@0,400;1,400&amp;display=swap">
+<style>
+body{margin:0}
+a{color:var(--emeraude)}a:hover{color:#7FC4AB}
+</style>
+</helmet>
+<div data-theme="veille" style="position: relative; width: 390px; height: 844px; box-sizing: border-box; overflow: hidden; background: var(--fond); color: var(--encre); font-family: 'Source Sans 3', system-ui, sans-serif;">
+  <div style="padding: 56px 12px 0; display: flex; align-items: center; justify-content: space-between;">
+    <a href="Bibliotheque.dc.html" aria-label="Retour à la bibliothèque" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: var(--encre);"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"></path><path d="M11 6l-6 6 6 6"></path></svg></a>
+    <span style="font-size: 16px; line-height: 24px; font-weight: 600;">Al-Fâtiha</span>
+    <button type="button" aria-label="Réglages de lecture" style="width: 44px; height: 44px; border: 0; background: transparent; font-family: 'Source Serif 4', Georgia, serif; font-size: 18px; color: var(--encre);">Aa</button>
+  </div>
+  <div style="margin: 8px 16px 0; padding: 12px 16px; display: flex; align-items: center; gap: 12px; background: var(--surface); border: 1px solid var(--ligne); border-radius: 12px;">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--or-texte)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"></path></svg>
+    <div style="display: flex; flex-direction: column;">
+      <span lang="wo" style="font-size: 16px; line-height: 24px; font-weight: 600; color: var(--encre);">Fanaanal ak jàmm.</span>
+      <span style="font-size: 14px; line-height: 20px; color: var(--encre-3);">Veille jusqu'à Fajr, 06:05 · lumière atténuée</span>
+    </div>
+  </div>
+  <div style="padding: 12px 16px 0; display: flex; flex-direction: column; gap: 8px;">
+    <article style="display: grid; grid-template-columns: 32px minmax(0, 1fr); column-gap: 8px; padding: 12px 8px;">
+      <span style="position: relative; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; margin-top: 12px;"><svg width="30" height="30" viewBox="0 0 36 36" aria-hidden="true" style="position: absolute; left: 0; top: 0;"><polygon points="18,2 22.68,6.69 29.31,6.69 29.31,13.32 34,18 29.31,22.68 29.31,29.31 22.68,29.31 18,34 13.32,29.31 6.69,29.31 6.69,22.68 2,18 6.69,13.32 6.69,6.69 13.32,6.69" fill="var(--or-doux)" stroke="var(--or)" stroke-width="1.25"></polygon></svg><span style="position: relative; font-size: 11px; font-weight: 600; color: var(--or-texte);">2</span></span>
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <p lang="ar" dir="rtl" style="margin: 0; font-family: Amiri, serif; font-size: 28px; line-height: 56px; text-align: right;">ٱلْحَمْدُ لِلَّهِ رَبِّ ٱلْعَٰلَمِينَ</p>
+        <sc-if value="{{translit}}" hint-placeholder-val="{{ false }}"><p style="margin: 0; font-family: 'Source Serif 4', Georgia, serif; font-style: italic; font-size: 16px; line-height: 24px; color: var(--encre-2);">Al-ḥamdu lillāhi rabbi l-ʿālamīn</p></sc-if>
+      </div>
+    </article>
+    <article style="display: grid; grid-template-columns: 32px minmax(0, 1fr); column-gap: 8px; padding: 12px 8px; border-top: 1px solid var(--ligne);">
+      <span style="position: relative; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; margin-top: 12px;"><svg width="30" height="30" viewBox="0 0 36 36" aria-hidden="true" style="position: absolute; left: 0; top: 0;"><polygon points="18,2 22.68,6.69 29.31,6.69 29.31,13.32 34,18 29.31,22.68 29.31,29.31 22.68,29.31 18,34 13.32,29.31 6.69,29.31 6.69,22.68 2,18 6.69,13.32 6.69,6.69 13.32,6.69" fill="var(--or-doux)" stroke="var(--or)" stroke-width="1.25"></polygon></svg><span style="position: relative; font-size: 11px; font-weight: 600; color: var(--or-texte);">3</span></span>
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <p lang="ar" dir="rtl" style="margin: 0; font-family: Amiri, serif; font-size: 28px; line-height: 56px; text-align: right;">ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</p>
+        <sc-if value="{{translit}}" hint-placeholder-val="{{ false }}"><p style="margin: 0; font-family: 'Source Serif 4', Georgia, serif; font-style: italic; font-size: 16px; line-height: 24px; color: var(--encre-2);">Ar-raḥmāni r-raḥīm</p></sc-if>
+      </div>
+    </article>
+    <article style="display: grid; grid-template-columns: 32px minmax(0, 1fr); column-gap: 8px; padding: 12px 8px; border-top: 1px solid var(--ligne);">
+      <span style="position: relative; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; margin-top: 12px;"><svg width="30" height="30" viewBox="0 0 36 36" aria-hidden="true" style="position: absolute; left: 0; top: 0;"><polygon points="18,2 22.68,6.69 29.31,6.69 29.31,13.32 34,18 29.31,22.68 29.31,29.31 22.68,29.31 18,34 13.32,29.31 6.69,29.31 6.69,22.68 2,18 6.69,13.32 6.69,6.69 13.32,6.69" fill="var(--or-doux)" stroke="var(--or)" stroke-width="1.25"></polygon></svg><span style="position: relative; font-size: 11px; font-weight: 600; color: var(--or-texte);">4</span></span>
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <p lang="ar" dir="rtl" style="margin: 0; font-family: Amiri, serif; font-size: 28px; line-height: 56px; text-align: right;">مَٰلِكِ يَوْمِ ٱلدِّينِ</p>
+        <sc-if value="{{translit}}" hint-placeholder-val="{{ false }}"><p style="margin: 0; font-family: 'Source Serif 4', Georgia, serif; font-style: italic; font-size: 16px; line-height: 24px; color: var(--encre-2);">Māliki yawmi d-dīn</p></sc-if>
+      </div>
+    </article>
+  </div>
+  <div role="toolbar" aria-label="Outils de lecture" style="position: absolute; left: 24px; right: 24px; bottom: 28px; height: 60px; padding: 0 8px; display: flex; align-items: center; justify-content: space-between; background: var(--surface); border: 1px solid var(--ligne); border-radius: 999px;">
+    <div style="display: flex; padding: 4px; background: var(--surface-creux); border-radius: 999px; font-size: 14px; font-weight: 600;">
+      <span style="padding: 8px 12px; border-radius: 999px; background: var(--emeraude); color: var(--fond);">Verset</span>
+      <span style="padding: 8px 12px; border-radius: 999px; color: var(--encre-2);">Page</span>
+    </div>
+    <a href="LecteurAudio.dc.html" aria-label="Écouter" style="width: 44px; height: 44px; border-radius: 999px; background: var(--emeraude); color: var(--fond); display: flex; align-items: center; justify-content: center;"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z" fill="currentColor"></path></svg></a>
+    <button type="button" aria-label="Ajouter un marque-page" style="width: 44px; height: 44px; border: 0; background: transparent; color: var(--encre-2); display: flex; align-items: center; justify-content: center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4h10a1 1 0 0 1 1 1v15l-6-4-6 4V5a1 1 0 0 1 1-1z"></path></svg></button>
+    <button type="button" aria-label="Minuterie de sommeil" style="width: 44px; height: 44px; border: 0; background: transparent; color: var(--encre-2); display: flex; align-items: center; justify-content: center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="7.5"></circle><path d="M12 9.5V13l2.5 1.5M9.5 3h5"></path></svg></button>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"translitteration":{"editor":"boolean","default":false},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return { translit: this.props.translitteration ?? false }; }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Prière · qibla</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/samajamm/tokens.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&amp;family=Source+Sans+3:wght@400;600&amp;display=swap">
+<style>
+body{margin:0}
+a{color:var(--emeraude)}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: var(--fond); color: var(--encre); font-family: 'Source Sans 3', system-ui, sans-serif;">
+  <div style="flex-grow: 1; padding: 56px 24px 0; display: flex; flex-direction: column; align-items: center; gap: 12px; overflow: hidden;">
+    <div style="width: 100%; display: flex; align-items: center; justify-content: space-between;">
+      <a href="Priere.dc.html" aria-label="Retour aux horaires" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: var(--encre); margin-left: -12px;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"></path><path d="M11 6l-6 6 6 6"></path></svg></a>
+      <span style="font-size: 16px; font-weight: 600;">Qibla</span>
+      <span style="width: 44px;"></span>
+    </div>
+    <h1 style="margin: 8px 0 0; font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 600; font-size: 30px; line-height: 36px; color: var(--emeraude); text-align: center;">Encore un peu à droite</h1>
+    <p style="margin: 0; font-size: 16px; line-height: 24px; color: var(--encre-2); text-align: center;">Tournez le téléphone jusqu'à ce que l'étoile arrive sous le repère du haut.</p>
+    <a href="QiblaTrouvee.dc.html" aria-label="Qibla trouvée" style="display: contents; color: inherit; text-decoration: none;"><svg width="300" height="300" viewBox="0 0 300 300" role="img" aria-label="Boussole : la qibla est à environ 20 degrés à droite" style="display: block; margin-top: 16px;">
+      <circle cx="150" cy="150" r="140" fill="var(--surface)" stroke="var(--ligne)" stroke-width="1.5"></circle>
+      <circle cx="150" cy="150" r="108" fill="none" stroke="var(--surface-creux)" stroke-width="1"></circle>
+      <g stroke="var(--ligne-forte)" stroke-width="1.5" stroke-linecap="round">
+        <line x1="150" y1="14" x2="150" y2="26"></line><line x1="218" y1="32.2" x2="212" y2="42.6"></line><line x1="267.8" y1="82" x2="257.4" y2="88"></line><line x1="286" y1="150" x2="274" y2="150"></line><line x1="267.8" y1="218" x2="257.4" y2="212"></line><line x1="218" y1="267.8" x2="212" y2="257.4"></line><line x1="150" y1="286" x2="150" y2="274"></line><line x1="82" y1="267.8" x2="88" y2="257.4"></line><line x1="32.2" y1="218" x2="42.6" y2="212"></line><line x1="14" y1="150" x2="26" y2="150"></line><line x1="32.2" y1="82" x2="42.6" y2="88"></line><line x1="82" y1="32.2" x2="88" y2="42.6"></line>
+      </g>
+      <text x="150" y="48" text-anchor="middle" font-family="Source Sans 3, sans-serif" font-size="13" font-weight="600" fill="var(--encre-2)">N</text>
+      <polygon points="150,2 144,14 156,14" fill="var(--emeraude)"></polygon>
+      <line x1="150" y1="150" x2="194.5" y2="27.8" stroke="var(--or)" stroke-width="2" stroke-dasharray="5 5"></line>
+      <circle cx="150" cy="150" r="6" fill="var(--emeraude)"></circle>
+      <polygon transform="translate(194.5 27.8)" points="0,-14 4.1,-9.89 9.9,-9.9 9.89,-4.1 14,0 9.89,4.1 9.9,9.9 4.1,9.89 0,14 -4.1,9.89 -9.9,9.9 -9.89,4.1 -14,0 -9.89,-4.1 -9.9,-9.9 -4.1,-9.89" fill="var(--or)" stroke="var(--or-texte)" stroke-width="1"></polygon>
+    </svg></a>
+    <div style="margin-top: 12px; padding: 12px 16px; width: 100%; box-sizing: border-box; border-radius: 12px; background: var(--surface-creux); display: flex; gap: 12px; align-items: flex-start;">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--info)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 1px;"><circle cx="12" cy="12" r="8.5"></circle><path d="M12 11v5M12 8h.01"></path></svg>
+      <a href="QiblaSansBoussole.dc.html" aria-label="Pas de boussole sur ce téléphone" style="font-size: 14px; line-height: 20px; color: var(--encre); text-decoration: none; display: inline-flex; cursor: pointer;">Boussole imprécise ? Éloignez-vous des objets métalliques et dessinez un 8 avec le téléphone.</a>
+    </div>
+  </div>
+  <dc-import name="TabBar" actif="priere" hint-size="390px,84px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

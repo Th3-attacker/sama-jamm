@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Démarrage clair</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div role="img" aria-label="Écran de démarrage clair : marque émeraude au centre d'un fond ivoire" style="position: relative; width: 390px; height: 844px; box-sizing: border-box; background: #F7F7F5; display: flex; align-items: center; justify-content: center;">
+  <a href="Bienvenue1.dc.html" aria-label="Toucher pour commencer" style="position: absolute; inset: 0; z-index: 2;"></a>
+  <img src="/_blob/34e0a577c9ebc8ba5013828d61e2297f" alt="" style="width: 120px; height: 120px; display: block;">
+  <span aria-hidden="true" style="position: absolute; left: 50%; top: 50%; width: 200px; height: 200px; margin: -100px 0 0 -100px; border: 1px dashed {{guide}}; border-radius: 999px; box-sizing: border-box;"></span>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"repere":{"editor":"boolean","default":false},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return { guide: this.props.repere ? 'rgba(31,95,74,0.35)' : 'transparent' }; }
+}
+</script>
+</body>
+</html>

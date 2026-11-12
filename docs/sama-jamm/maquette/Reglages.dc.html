@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Réglages</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/samajamm/tokens.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&amp;family=Source+Sans+3:wght@400;600&amp;display=swap">
+<style>
+body{margin:0}
+a{color:var(--emeraude)}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: var(--fond); color: var(--encre); font-family: 'Source Sans 3', system-ui, sans-serif;">
+  <div style="flex-grow: 1; padding: 56px 20px 0; display: flex; flex-direction: column; gap: 8px; overflow: hidden;">
+    <div style="display: flex; align-items: center; gap: 4px;">
+      <a href="Accueil.dc.html" aria-label="Retour" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: var(--encre); margin-left: -12px;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"></path><path d="M11 6l-6 6 6 6"></path></svg></a>
+      <h1 style="margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 600; font-size: 30px; line-height: 36px; color: var(--emeraude);">Réglages</h1>
+    </div>
+    <h2 style="margin: 12px 0 4px; font-size: 14px; line-height: 20px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--encre-3);">Apparence</h2>
+    <div role="radiogroup" aria-label="Thème" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px;">
+      <button type="button" role="radio" aria-checked="true" style="height: 64px; border-radius: 10px; border: 2px solid var(--emeraude); background: var(--emeraude-doux); color: var(--emeraude); font-family: inherit; font-size: 14px; font-weight: 600; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;"><span style="display: flex;"><span style="width: 12px; height: 18px; border-radius: 4px 0 0 4px; background: var(--fond); border: 1px solid var(--ligne-forte);"></span><span style="width: 12px; height: 18px; border-radius: 0 4px 4px 0; background: var(--marque-nuit);"></span></span>Auto</button>
+      <button type="button" role="radio" aria-checked="false" style="height: 64px; border-radius: 10px; border: 1px solid var(--ligne-forte); background: var(--surface); color: var(--encre); font-family: inherit; font-size: 14px; font-weight: 600; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;"><span style="width: 24px; height: 18px; border-radius: 4px; background: var(--fond); border: 1px solid var(--ligne-forte);"></span>Jour</button>
+      <button type="button" role="radio" aria-checked="false" style="height: 64px; border-radius: 10px; border: 1px solid var(--ligne-forte); background: var(--surface); color: var(--encre); font-family: inherit; font-size: 14px; font-weight: 600; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;"><span style="width: 24px; height: 18px; border-radius: 4px; background: var(--marque-nuit);"></span>Nuit</button>
+      <button type="button" role="radio" aria-checked="false" style="height: 64px; border-radius: 10px; border: 1px solid var(--ligne-forte); background: var(--surface); color: var(--encre); font-family: inherit; font-size: 14px; font-weight: 600; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;"><span style="width: 24px; height: 18px; border-radius: 4px; background: #0E1115; border: 1px solid #A28955;"></span>Veille</button>
+    </div>
+    <div style="display: flex; align-items: center; gap: 12px; min-height: 56px; border-bottom: 1px solid var(--ligne);">
+      <span style="flex-grow: 1; display: flex; flex-direction: column;"><span id="v1" style="font-size: 16px; line-height: 24px;">Veille automatique</span><span style="font-size: 14px; line-height: 20px; color: var(--encre-3);">Entre Isha et Fajr</span></span>
+      <button type="button" role="switch" aria-checked="true" aria-labelledby="v1" style="width: 52px; height: 32px; border-radius: 999px; border: 0; padding: 4px; background: var(--emeraude); display: flex; justify-content: flex-end;"><span style="width: 26px; height: 26px; border-radius: 999px; background: var(--fond);"></span></button>
+    </div>
+    <div style="display: flex; align-items: center; gap: 12px; min-height: 56px; border-bottom: 1px solid var(--ligne);">
+      <span style="font-size: 16px; line-height: 24px; flex: none;">Taille du texte</span>
+      <span style="flex-grow: 1; display: flex; align-items: center; gap: 8px;"><span style="font-family: 'Source Serif 4', Georgia, serif; font-size: 14px; color: var(--encre-2);">A</span><span style="flex-grow: 1; height: 4px; border-radius: 999px; background: var(--surface-creux); position: relative; display: block;"><span style="position: absolute; left: 0; top: 0; width: 62%; height: 4px; border-radius: 999px; background: var(--emeraude);"></span><span style="position: absolute; left: 62%; top: -10px; width: 24px; height: 24px; margin-left: -12px; border-radius: 999px; background: var(--surface); border: 2px solid var(--emeraude); box-sizing: border-box;"></span></span><span style="font-family: 'Source Serif 4', Georgia, serif; font-size: 18px; color: var(--encre-2);">A</span></span>
+    </div>
+    <h2 style="margin: 16px 0 0; font-size: 14px; line-height: 20px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--encre-3);">Lecture</h2>
+    <a href="ArAccueil.dc.html" style="display: flex; align-items: center; min-height: 48px; border-bottom: 1px solid var(--ligne); text-decoration: none; color: var(--encre);; gap: 8px"><span style="flex-grow: 1; font-size: 16px;">Langue de l'app</span><span style="font-size: 16px; color: var(--encre-2);">Français</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--encre-3)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></a>
+    <div style="display: flex; align-items: center; min-height: 48px; border-bottom: 1px solid var(--ligne);; gap: 8px"><span id="v2" style="flex-grow: 1; font-size: 16px;">Translittération</span><button type="button" role="switch" aria-checked="true" aria-labelledby="v2" style="width: 52px; height: 32px; border-radius: 999px; border: 0; padding: 4px; background: var(--emeraude); display: flex; justify-content: flex-end;"><span style="width: 26px; height: 26px; border-radius: 999px; background: var(--fond);"></span></button></div>
+    <h2 style="margin: 16px 0 0; font-size: 14px; line-height: 20px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--encre-3);">Prière</h2>
+    <a href="PriereMethode.dc.html" style="display: flex; align-items: center; min-height: 48px; border-bottom: 1px solid var(--ligne); text-decoration: none; color: var(--encre);; gap: 8px"><span style="flex-grow: 1; font-size: 16px;">Méthode de calcul</span><span style="font-size: 16px; color: var(--encre-2);">Ligue islamique mondiale</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--encre-3)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></a>
+    <a href="PriereRappels.dc.html" style="display: flex; align-items: center; min-height: 48px; border-bottom: 1px solid var(--ligne); text-decoration: none; color: var(--encre);; gap: 8px"><span style="flex-grow: 1; font-size: 16px;">Appel et rappels</span><span style="font-size: 16px; color: var(--encre-2);">Prière par prière</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--encre-3)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></a>
+    <h2 style="margin: 16px 0 0; font-size: 14px; line-height: 20px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--encre-3);">Budget</h2>
+    <a href="BudgetDevise.dc.html" style="display: flex; align-items: center; min-height: 48px; border-bottom: 1px solid var(--ligne); text-decoration: none; color: var(--encre);; gap: 8px"><span style="flex-grow: 1; font-size: 16px;">Devise</span><span style="font-size: 16px; color: var(--encre-2);">Ouguiya · MRU</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--encre-3)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></a>
+    <h2 style="margin: 16px 0 0; font-size: 14px; line-height: 20px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--encre-3);">Compte, en option</h2>
+    <a href="Compte.dc.html" style="display: flex; align-items: center; min-height: 48px; border-bottom: 1px solid var(--ligne); text-decoration: none; color: var(--encre);; gap: 8px"><span style="flex-grow: 1; font-size: 16px;">Compte et synchronisation</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--encre-3)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></a>
+    <a href="CompteSupprimer.dc.html" style="min-height: 48px; display: flex; align-items: center; text-decoration: none; font-size: 16px; font-weight: 600; color: var(--erreur);; gap: 8px">Supprimer mon compte</a>
+  </div>
+  <dc-import name="TabBar" actif="accueil" hint-size="390px,84px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

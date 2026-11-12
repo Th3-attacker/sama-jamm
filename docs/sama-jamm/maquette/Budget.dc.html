@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Budget · le mois</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/samajamm/tokens.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&amp;family=Source+Sans+3:wght@400;600&amp;display=swap">
+<style>
+body{margin:0}
+a{color:var(--emeraude)}
+</style>
+</helmet>
+<div style="position: relative; width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: var(--fond); color: var(--encre); font-family: 'Source Sans 3', system-ui, sans-serif;">
+  <div style="flex-grow: 1; padding: 56px 24px 0; display: flex; flex-direction: column; gap: 16px; overflow: hidden;">
+    <div style="display: flex; align-items: center; justify-content: space-between;">
+      <div>
+        <h1 style="margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 600; font-size: 40px; line-height: 44px; color: var(--emeraude);">Budget</h1>
+        <p style="margin: 0; font-size: 14px; line-height: 20px; color: var(--encre-3);">Du 25 octobre au 24 novembre · <a href="BudgetDevise.dc.html" style="font-weight: 600;">MRU</a></p>
+      </div>
+      <span style="display: flex; align-items: center; gap: 8px; height: 32px; padding: 0 12px; border-radius: 999px; background: var(--surface-creux); font-size: 12px; font-weight: 600; color: var(--encre-2);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"></rect><a href="BudgetVerrou.dc.html" aria-label="Verrouiller le budget" d="M8 11V8a4 4 0 0 1 8 0v3" style="text-decoration: none; color: inherit; display: inline-flex; cursor: pointer;"></a></svg>Sur ce téléphone</span>
+    </div>
+    <section aria-label="Dépense du jour" style="padding: 16px; border-radius: 16px; background: var(--emeraude); color: var(--fond); display: flex; flex-direction: column; gap: 4px;">
+      <span style="font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent-inverse);">Dépense du jour</span>
+      <a href="BudgetHistorique.dc.html" aria-label="Voir les dépenses du jour" style="font-size: 44px; line-height: 48px; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; text-decoration: none; color: inherit; display: inline-flex; cursor: pointer;">5 000 MRU</a>
+      <a href="BudgetBilan.dc.html" aria-label="Bilan du cycle" style="font-size: 14px; line-height: 20px; color: var(--sur-emeraude-2); text-decoration: none; display: inline-flex; cursor: pointer;">Il reste 137 500 MRU pour 27 jours, jusqu'à la paie.</a>
+    </section>
+    <section aria-label="Répartition du mois" style="display: flex; flex-direction: column; gap: 8px;">
+      <div style="display: flex; height: 12px; border-radius: 999px; overflow: hidden; background: var(--surface-creux);">
+        <span style="width: 49.3%; background: var(--emeraude);"></span>
+        <span style="width: 11.4%; background: var(--or);"></span>
+      </div>
+      <div style="display: flex; justify-content: space-between; font-size: 12px; line-height: 16px; color: var(--encre-2); font-variant-numeric: tabular-nums;">
+        <span style="display: flex; align-items: center; gap: 4px;"><span style="width: 8px; height: 8px; border-radius: 2px; background: var(--emeraude);"></span>Dépensé 172 500</span>
+        <span style="display: flex; align-items: center; gap: 4px;"><a href="BudgetEpargne.dc.html" aria-label="Épargne" style="width: 8px; height: 8px; border-radius: 2px; background: var(--or); text-decoration: none; color: inherit; display: inline-flex; cursor: pointer;"></a>Épargné 40 000</span>
+        <span style="display: flex; align-items: center; gap: 4px;"><a href="BudgetComptes.dc.html" aria-label="Comptes" style="width: 8px; height: 8px; border-radius: 2px; background: var(--surface-creux); border: 1px solid var(--ligne-forte); box-sizing: border-box; text-decoration: none; color: inherit; display: inline-flex; cursor: pointer;"></a>Reste 137 500</span>
+      </div>
+      <a href="BudgetRevenu.dc.html" aria-label="Ajouter un revenu" style="font-size: 12px; line-height: 16px; color: var(--encre-3); text-decoration: none; display: inline-flex; cursor: pointer;">Reçu ce mois : 350 000 MRU</a>
+    </section>
+    <a href="BudgetDettes.dc.html" aria-label="Dettes : on me doit 85 000 MRU, je dois 30 000 MRU" style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 12px; background: var(--surface); border: 1px solid var(--ligne); text-decoration: none; color: var(--encre);">
+      <span style="flex-grow: 1; display: flex; flex-direction: column; gap: 4px;"><span style="font-size: 16px; line-height: 24px; font-weight: 600;">Dettes</span><span style="font-size: 14px; line-height: 20px; color: var(--encre-3); font-variant-numeric: tabular-nums;">On me doit 85 000 MRU · Je dois 30 000 MRU</span></span>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--encre-3)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 6l6 6-6 6"></path></svg>
+    </a>
+    <section aria-label="Enveloppes" style="display: flex; flex-direction: column;">
+      <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px;"><h2 style="margin: 0; font-size: 18px; line-height: 24px; font-weight: 600;">Enveloppes</h2><a href="BudgetPaie.dc.html" aria-label="Répartir" style="font-size: 14px; color: var(--encre-3); text-decoration: none; display: inline-flex; cursor: pointer;">Non réparti : 43 000 MRU</a></div>
+      <sc-for list="{{enveloppes}}" as="e" hint-placeholder-count="5">
+        <a href="BudgetEnveloppe.dc.html" aria-label="Ouvrir l'enveloppe" style="display: flex; flex-direction: column; gap: 8px; padding: 12px 0; border-bottom: 1px solid var(--ligne); text-decoration: none; color: inherit; cursor: pointer;">
+          <div style="display: flex; justify-content: space-between; font-size: 16px; line-height: 24px;"><span style="font-weight: 600;">{{e.nom}}</span><span style="color: var(--encre-2); font-variant-numeric: tabular-nums; white-space: nowrap;">{{e.montants}}</span></div>
+          <span style="height: 4px; border-radius: 999px; background: var(--surface-creux); display: block;"><span style="display: block; height: 4px; border-radius: 999px; width: {{e.pct}}; background: {{e.couleur}};"></span></span>
+        </a>
+      </sc-for>
+    </section>
+  </div>
+  <a href="BudgetAjout.dc.html" style="position: absolute; right: 20px; bottom: 100px; height: 52px; padding: 0 20px; border-radius: 999px; display: flex; align-items: center; gap: 8px; background: var(--emeraude); color: var(--fond); font-size: 16px; font-weight: 600; text-decoration: none; box-shadow: var(--ombre-1);"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Dépense</a>
+  <dc-import name="TabBar" actif="budget" hint-size="390px,84px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const E = [
+      { nom: 'Dépense quotidienne', dep: 62000, bud: 120000 },
+      { nom: 'Loyer', dep: 75000, bud: 75000 },
+      { nom: 'Électricité et eau', dep: 18000, bud: 25000 },
+      { nom: 'Transport', dep: 12500, bud: 20000 },
+      { nom: 'Famille et entraide', dep: 5000, bud: 20000 },
+      { nom: 'Sadaqa', dep: 0, bud: 7000 }
+    ];
+    const f = (n) => n.toLocaleString('fr-FR').replace(/ | /g, ' ');
+    return {
+      enveloppes: E.map((e) => {
+        const p = e.bud ? Math.min(e.dep / e.bud, 1) : 0;
+        return { nom: e.nom, montants: f(e.dep) + ' / ' + f(e.bud) + ' F', pct: Math.round(p * 100) + '%', couleur: p >= 1 ? 'var(--encre-2)' : (p >= 0.85 ? 'var(--alerte)' : 'var(--emeraude)') };
+      })
+    };
+  }
+}
+</script>
+</body>
+</html>

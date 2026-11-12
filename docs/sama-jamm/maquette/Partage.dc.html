@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Partager un verset</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/samajamm/tokens.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&amp;family=Cormorant+Garamond:wght@600&amp;family=Source+Sans+3:wght@400;600&amp;family=Source+Serif+4:ital,wght@0,400;1,400&amp;display=swap">
+<style>
+body{margin:0}
+a{color:var(--emeraude)}
+</style>
+</helmet>
+<div style="position: relative; width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; overflow: hidden; background: var(--fond); color: var(--encre); font-family: var(--font-ui);">
+  <div style="flex: none; padding: 52px 12px 4px; display: flex; align-items: center; gap: 4px;"><a href="Lecteur.dc.html" aria-label="Fermer" style="width: 44px; height: 44px; border-radius: 999px; flex: none; display: flex; align-items: center; justify-content: center; color: var(--encre);"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></a><span style="flex-grow: 1; text-align: center; font-family: var(--font-display); font-weight: 600; font-size: 24px; line-height: 28px; color: var(--emeraude);">Partager un verset</span><span style="width: 44px;"></span></div>
+  <div style="flex-grow: 1; min-height: 0; padding: 8px 24px 0; display: flex; align-items: center; justify-content: center;">
+    <div role="img" aria-label="Image du verset Ar-Raʿd 13:28" style="width: {{carte.w}}; height: {{carte.h}}; box-sizing: border-box; padding: 22px; border-radius: 22px; background: {{carte.bg}}; color: {{carte.fg}}; box-shadow: var(--ombre-1); border: {{carte.bord}}; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; text-align: center;">
+      <svg width="26" height="26" viewBox="0 0 36 36" aria-hidden="true"><polygon points="18,2 22.68,6.69 29.31,6.69 29.31,13.32 34,18 29.31,22.68 29.31,29.31 22.68,29.31 18,34 13.32,29.31 6.69,29.31 6.69,22.68 2,18 6.69,13.32 6.69,6.69 13.32,6.69" fill="none" stroke="{{carte.or}}" stroke-width="1.6"></polygon></svg>
+      <p lang="ar" dir="rtl" style="margin: 0; font-family: var(--font-coran); font-size: 21px; line-height: 40px; color: {{carte.ar}};">ٱلَّذِينَ ءَامَنُوا۟ وَتَطْمَئِنُّ قُلُوبُهُم بِذِكْرِ ٱللَّهِ ۗ أَلَا بِذِكْرِ ٱللَّهِ تَطْمَئِنُّ ٱلْقُلُوبُ</p>
+      <sc-if value="{{trad}}" hint-placeholder-val="{{ true }}"><p style="margin: 0; font-family: var(--font-lecture); font-style: italic; font-size: 13px; line-height: 19px;">Alladhīna āmanū wa taṭmaʾinnu qulūbuhum bi-dhikri llāh, alā bi-dhikri llāhi taṭmaʾinnu l-qulūb.</p></sc-if>
+      <span style="font-size: 11px; line-height: 14px; letter-spacing: 0.08em; text-transform: uppercase; color: {{carte.or}};">Ar-Raʿd · 13:28 · Sama Jàmm</span>
+    </div>
+  </div>
+  <div style="flex: none; padding: 16px 20px 28px; display: flex; flex-direction: column; gap: 14px;">
+    <div role="radiogroup" aria-label="Style de l'image" style="display: flex; justify-content: center; gap: 16px;">
+      <sc-for list="{{styles}}" as="st" hint-placeholder-count="3"><button type="button" role="radio" aria-checked="{{st.on}}" onClick="{{st.pick}}" style="display: flex; flex-direction: column; align-items: center; gap: 6px; border: 0; background: transparent; cursor: pointer; font-family: inherit; font-size: 12px; color: var(--encre-2);"><span style="width: 40px; height: 40px; border-radius: 999px; box-sizing: border-box; background: {{st.bg}}; border: {{st.ring}};"></span>{{st.label}}</button></sc-for>
+    </div>
+    <div style="display: flex; gap: 12px; align-items: center;">
+      <div role="radiogroup" aria-label="Format" style="flex-grow: 1; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 3px; border-radius: 999px; background: var(--surface-creux);">
+        <sc-for list="{{formats}}" as="f" hint-placeholder-count="2"><button type="button" role="radio" aria-checked="{{f.on}}" onClick="{{f.pick}}" style="height: 36px; border: 0; border-radius: 999px; cursor: pointer; font-family: inherit; font-size: 14px; font-weight: 600; background: {{f.bg}}; color: {{f.fg}};">{{f.label}}</button></sc-for>
+      </div>
+      <button type="button" aria-pressed="{{tradOn}}" onClick="{{basculer}}" style="height: 42px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--ligne-forte); background: {{tradBg}}; color: var(--encre); cursor: pointer; font-family: inherit; font-size: 14px; font-weight: 600;">Translittération</button>
+    </div>
+    <button type="button" style="height: 52px; border: 0; border-radius: 14px; background: var(--emeraude-aplat); color: var(--sur-emeraude); display: flex; align-items: center; justify-content: center; gap: 8px; font-family: inherit; font-size: 16px; font-weight: 600; cursor: pointer;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M8 8l4-4 4 4M5 13v5.5h14V13"></path></svg>Partager l'image</button>
+    <button type="button" style="height: 44px; margin-top: -6px; border: 0; background: transparent; color: var(--emeraude); display: flex; align-items: center; justify-content: center; gap: 8px; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 8.5h10v10h-10zM5.5 15.5v-10h10"></path></svg>Copier le texte et le lien</button>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { style: 'emeraude', format: 'carre', trad: false }; }
+  renderVals() {
+    const s = this.state;
+    const S = {
+      ivoire: { bg: 'var(--or-doux)', fg: 'var(--encre-2)', ar: 'var(--encre)', or: 'var(--or-texte)', bord: '1px solid var(--or)' },
+      emeraude: { bg: 'var(--emeraude-aplat)', fg: 'var(--sur-emeraude-2)', ar: 'var(--sur-emeraude)', or: 'var(--or-sur-emeraude)', bord: '0' },
+      nuit: { bg: 'var(--marque-nuit)', fg: 'var(--sur-emeraude-2)', ar: 'var(--marque-ivoire)', or: 'var(--marque-or)', bord: '0' }
+    };
+    const carte = Object.assign({}, S[s.style], s.format === 'carre' ? { w: '300px', h: '300px' } : { w: '228px', h: '400px' });
+    const seg = (on) => ({ on: on ? 'true' : 'false', bg: on ? 'var(--surface)' : 'transparent', fg: on ? 'var(--emeraude)' : 'var(--encre-2)' });
+    return {
+      carte: carte,
+      trad: s.trad,
+      tradOn: s.trad ? 'true' : 'false',
+      tradBg: s.trad ? 'var(--emeraude-doux)' : 'transparent',
+      basculer: () => this.setState({ trad: !s.trad }),
+      styles: [['ivoire', 'Ivoire', 'var(--or-doux)'], ['emeraude', 'Émeraude', 'var(--emeraude-aplat)'], ['nuit', 'Nuit', 'var(--marque-nuit)']].map((x) => ({
+        label: x[1], bg: x[2], on: s.style === x[0] ? 'true' : 'false',
+        ring: s.style === x[0] ? '3px solid var(--or)' : '1px solid var(--ligne-forte)',
+        pick: () => this.setState({ style: x[0] })
+      })),
+      formats: [['carre', 'Carré'], ['story', 'Story']].map((f) => Object.assign({ label: f[1], pick: () => this.setState({ format: f[0] }) }, seg(s.format === f[0])))
+    };
+  }
+}
+</script>
+</body>
+</html>

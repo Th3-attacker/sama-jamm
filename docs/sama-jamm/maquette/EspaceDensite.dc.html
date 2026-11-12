@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Espace · densité et défilement</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/samajamm/tokens.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri&amp;family=Cormorant+Garamond:wght@600&amp;family=Source+Sans+3:wght@400;600;700&amp;display=swap">
+<style>
+body{margin:0}
+
+.b{box-sizing:border-box;font-family:var(--font-ui);color:var(--encre);background:var(--fond)}
+.b h1{margin:0;font-family:var(--font-display);font-weight:600;font-size:40px;line-height:44px;color:var(--emeraude)}
+.b h2{margin:0;font-size:18px;line-height:24px;font-weight:600}
+.b p{margin:0;font-size:14px;line-height:20px;color:var(--encre-2)}
+.b table{border-collapse:collapse;width:100%;font-size:14px;line-height:20px}
+.b th{text-align:left;font-weight:600;color:var(--encre-2);padding:8px 12px;border-bottom:1px solid var(--ligne-forte);background:var(--surface-creux)}
+.b td{padding:8px 12px;border-bottom:1px solid var(--ligne);vertical-align:top}
+.b td.n,.b th.n{text-align:right;font-variant-numeric:tabular-nums}
+.b code{font-family:ui-monospace,Menlo,monospace;font-size:12px;background:var(--surface-creux);padding:1px 4px;border-radius:4px}
+
+</style>
+</helmet>
+<div class="b" style="width:1480px;padding: 48px 56px;display:flex;flex-direction:column;gap: 24px">
+<div><h1>Densité et défilement</h1><p style="margin-top: 8px;max-width:1000px">Marges, écarts et hauteurs de ligne qui rendent l'app posée sur un petit comme sur un grand écran, et ce qui reste fixe, défile ou se masque.</p></div>
+<div style="display:flex;gap: 48px;align-items:flex-start">
+<div style="width:322px;height:689px;flex:none"><div style="position:relative;width:393px;height:852px;border-radius:44px;border:1px solid var(--ligne-forte);overflow:hidden;background:var(--fond);transform:scale(0.8);transform-origin:0 0;font-family:var(--font-ui)">
+<div style="position:absolute;left:0;right:0;top:0px;height:59px;background:var(--surface-creux);color:var(--encre);display:flex;align-items:center;padding: 0px 24px 0"><div><div style="font-size: 16px;font-weight:700">Zone système</div><div style="font-size: 12px;line-height: 16px;opacity:.85">haut : useSafeAreaInsets</div></div></div>
+<div style="position:absolute;left:0;right:0;top:59px;height:56px;background:var(--emeraude-doux);color:var(--encre);display:flex;align-items:center;padding: 0px 24px 0"><div><div style="font-size: 16px;font-weight:700">Barre du haut · FIXE</div><div style="font-size: 12px;line-height: 16px;opacity:.85">56 · titre réduit au défilement</div></div></div>
+<div style="position:absolute;left:0;right:0;top:115px;height:64px;background:var(--or-doux);color:var(--encre);display:flex;align-items:center;padding: 0px 24px 0"><div><div style="font-size: 16px;font-weight:700">Grand titre · SE MASQUE</div><div style="font-size: 12px;line-height: 16px;opacity:.85">36 pt, devient titre de 17 au défilement</div></div></div>
+<div style="position:absolute;left:0;right:0;top:179px;height:470px;background:var(--surface);color:var(--encre);display:flex;align-items:flex-start;padding: 12px 24px 0"><div><div style="font-size: 16px;font-weight:700">Contenu · DÉFILE</div><div style="font-size: 12px;line-height: 16px;opacity:.85">marges 24 · 24 entre blocs · lignes ≥ 56</div></div></div>
+<div style="position:absolute;left:24px;right:24px;top:260px;height:60px;border:1px solid var(--ligne);border-radius:12px"></div><div style="position:absolute;left:24px;right:24px;top:332px;height:60px;border:1px solid var(--ligne);border-radius:12px"></div>
+<div style="position:absolute;left:0;right:0;top:620px;border-top:2px dashed var(--or-texte)"></div>
+<div style="position:absolute;left:0;right:0;top:649px;height:72px;background:var(--emeraude);color:var(--sur-emeraude);display:flex;align-items:center;padding: 0px 24px 0"><div><div style="font-size: 16px;font-weight:700">Compteur · FIXE</div><div style="font-size: 12px;line-height: 16px;opacity:.85">72 · seulement Dhikr, Invocations</div></div></div>
+<div style="position:absolute;left:0;right:0;top:721px;height:48px;background:var(--emeraude-doux);color:var(--encre);display:flex;align-items:center;padding: 0px 24px 0"><div><div style="font-size: 16px;font-weight:700">Mini-lecteur · FIXE</div><div style="font-size: 12px;line-height: 16px;opacity:.85">56 (40 avec compteur)</div></div></div>
+<div style="position:absolute;left:0;right:0;top:769px;height:83px;background:var(--surface-creux);color:var(--encre);display:flex;align-items:center;padding: 0px 24px 0"><div><div style="font-size: 16px;font-weight:700">Barre d'onglets · FIXE</div><div style="font-size: 12px;line-height: 16px;opacity:.85">83 · jamais masquée ; se réduit au défilement</div></div></div>
+</div></div>
+<div style="flex:1;display:flex;flex-direction:column;gap: 24px">
+<div><h2 style="margin-bottom: 8px">Marges et écarts</h2><table><tr><th>Valeur</th><th>Compacte</th><th>Moyenne</th><th>Étendue</th><th>Jeton</th></tr>
+<tr><td>Marge latérale de l'écran</td><td class="n">24</td><td class="n">32</td><td class="n">48</td><td><code>espace-6</code> · <code>espace-8</code> · <code>espace-12</code></td></tr>
+<tr><td>Entre deux blocs</td><td class="n">24</td><td class="n">24</td><td class="n">32</td><td><code>espace-6</code> · <code>espace-8</code></td></tr>
+<tr><td>Avant un titre de section</td><td class="n">32</td><td class="n">32</td><td class="n">48</td><td><code>espace-8</code> · <code>espace-12</code></td></tr>
+<tr><td>Marge intérieure d'une carte</td><td class="n">16</td><td class="n">16</td><td class="n">20</td><td><code>espace-4</code> · <code>espace-5</code></td></tr>
+<tr><td>Entre deux cartes d'une grille</td><td class="n">12</td><td class="n">16</td><td class="n">16</td><td><code>espace-3</code> · <code>espace-4</code></td></tr>
+<tr><td>Volet liste (Lire)</td><td class="n">–</td><td class="n">–</td><td class="n">360</td><td><code>panneau-liste</code></td></tr></table></div>
+<div><h2 style="margin-bottom: 8px">Hauteurs minimales</h2><table><tr><th>Élément</th><th class="n">iOS</th><th class="n">Android</th><th>Remarque</th></tr>
+<tr><td>Zone tactile</td><td class="n">44</td><td class="n">48</td><td><code>cible-ios</code> · <code>cible-android</code> ; l'icône peut être plus petite, la zone non</td></tr>
+<tr><td>Ligne de liste (une ligne de texte)</td><td class="n">56</td><td class="n">56</td><td>au-dessus du minimum de la cible ; grandit avec le texte</td></tr>
+<tr><td>Bouton plein</td><td class="n">48</td><td class="n">48</td><td>rayon <code>rayon-carte</code></td></tr>
+<tr><td>Barre du haut</td><td class="n">56</td><td class="n">56</td><td>sous la marge de sécurité du haut</td></tr>
+<tr><td>Écart minimal entre deux cibles</td><td class="n">8</td><td class="n">8</td><td><code>espace-2</code></td></tr></table></div>
+<div><h2 style="margin-bottom: 8px">Défilement</h2><table><tr><th>Reste fixe</th><th>Défile</th><th>Se masque</th></tr>
+<tr><td>Barre du haut ; compteur (Dhikr, Invocations) ; mini-lecteur ; barre d'onglets ; pilule d'outils du lecteur</td><td>Tout le contenu, y compris le verset en cours ; grand titre jusqu'à la barre du haut</td><td>Grand titre (devient titre réduit) ; barre d'onglets : elle se réduit au défilement vers le bas et revient en remontant (jamais masquée, guide Apple) ; pilule d'outils après 3 s sans toucher, revient au moindre défilement</td></tr></table>
+<p style="margin-top: 8px">Le défilement va jusque derrière la barre d'onglets (verre iOS 26) ; le dernier élément s'arrête à la marge basse (pile visible + 16). Aucun texte sacré n'est jamais masqué par un élément fixe : si la pile dépasse 35 % de la hauteur, le mini-lecteur se range.</p></div>
+</div></div></div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1592,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

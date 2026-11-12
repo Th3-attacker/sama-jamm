@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Historique du budget</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/samajamm/tokens.css">
+<link rel="stylesheet" href="ds/samajamm/components/bundle.css">
+<script src="ds/samajamm/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&amp;family=Source+Sans+3:wght@400;600&amp;family=Source+Serif+4:ital,wght@0,400;1,400&amp;display=swap">
+<style>
+body{margin:0}
+a{color:var(--emeraude)}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: var(--fond); color: var(--encre); font-family: var(--font-ui);">
+  <div style="flex-grow: 1; padding: 56px 20px 0; display: flex; flex-direction: column; gap: 16px; overflow: hidden;">
+    <div style="display: flex; flex-direction: column; gap: 4px;">
+      <div style="display: flex; align-items: center; gap: 4px;">
+        <a href="Budget.dc.html" aria-label="Retour au budget" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: var(--encre); margin-left: -12px;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"></path><path d="M11 6l-6 6 6 6"></path></svg></a>
+        <h1 style="margin: 0; font-family: var(--font-display); font-weight: 600; font-size: 30px; line-height: 36px; color: var(--emeraude);">Historique</h1>
+      </div>
+      <p style="margin: 0; font-family: var(--font-lecture); font-style: italic; font-size: 16px; line-height: 24px; color: var(--encre-2);">Du 25 octobre au 24 novembre.</p>
+    </div>
+    <div role="group" aria-label="Filtrer" style="display: flex; gap: 8px; overflow: hidden; margin-right: -20px;">
+      <x-import component-from-global-scope="SamaJamm.Chip" selectionne="{{oui}}" style="flex: none;">Tout</x-import>
+      <x-import component-from-global-scope="SamaJamm.Chip" style="flex: none;">Dépenses</x-import>
+      <x-import component-from-global-scope="SamaJamm.Chip" style="flex: none;">Revenus</x-import>
+      <x-import component-from-global-scope="SamaJamm.Chip" style="flex: none;">Épargne</x-import>
+      <x-import component-from-global-scope="SamaJamm.Chip" style="flex: none;">Par enveloppe</x-import>
+    </div>
+    <sc-for list="{{jours}}" as="j" hint-placeholder-count="3">
+      <section style="display: flex; flex-direction: column; gap: 8px;">
+        <div style="display: flex; align-items: baseline; justify-content: space-between; padding: 0 4px;">
+          <h2 style="margin: 0; font-size: 14px; line-height: 20px; font-weight: 600; color: var(--encre-2);">{{j.jour}}</h2>
+          <span style="font-size: 14px; line-height: 20px; color: var(--encre-3); font-variant-numeric: tabular-nums;">{{j.total}}</span>
+        </div>
+        <div style="background: var(--surface); border: 1px solid var(--ligne); border-radius: 12px; overflow: hidden;">
+          <sc-for list="{{j.ops}}" as="o" hint-placeholder-count="2">
+            <div style="position: relative; border-top: {{o.filet}};">
+              <x-import component-from-global-scope="SamaJamm.ListItem" icone="{{o.icone}}" ton="{{o.ton}}" titre="{{o.note}}" sous-titre="{{o.detail}}" valeur="{{o.montant}}"></x-import><a href="BudgetOperation.dc.html" aria-label="Modifier l'opération" style="position: absolute; inset: 0;"></a>
+            </div>
+          </sc-for>
+        </div>
+      </section>
+    </sc-for>
+  </div>
+  <dc-import name="TabBar" actif="budget" hint-size="390px,84px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const J = [
+      { jour: "Aujourd'hui · jeudi 29 octobre", total: '− 4 500 MRU', ops: [
+        { icone: 'cart', ton: 'neutre', note: 'Marché', detail: 'Dépense quotidienne · espèces', montant: '− 2 500 MRU' },
+        { icone: 'car', ton: 'neutre', note: 'Taxi', detail: 'Transport · mobile money', montant: '− 2 000 MRU' }
+      ] },
+      { jour: 'Mercredi 28 octobre', total: '− 11 000 MRU', ops: [
+        { icone: 'bolt', ton: 'neutre', note: "Facture d'eau", detail: 'Électricité et eau · mobile money', montant: '− 6 000 MRU' },
+        { icone: 'users', ton: 'neutre', note: 'Pour la famille', detail: 'Famille et entraide · espèces', montant: '− 5 000 MRU' }
+      ] },
+      { jour: 'Dimanche 25 octobre · jour de paie', total: '+ 350 000 MRU', ops: [
+        { icone: 'arrow-down', ton: 'emeraude', note: 'Salaire', detail: 'Revenu · banque', montant: '+ 350 000 MRU' },
+        { icone: 'target', ton: 'or', note: 'Vers Tabaski et Urgence', detail: 'Épargne · mise de côté', montant: '40 000 MRU' }
+      ] }
+    ];
+    return {
+      oui: true,
+      jours: J.map((j) => Object.assign({}, j, { ops: j.ops.map((o, i) => Object.assign({}, o, { filet: i === 0 ? '0' : '1px solid var(--ligne)' })) }))
+    };
+  }
+}
+</script>
+</body>
+</html>

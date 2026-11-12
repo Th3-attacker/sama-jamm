@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Lire · lecteur</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/samajamm/tokens.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&amp;family=Cormorant+Garamond:wght@600&amp;family=Source+Sans+3:wght@400;600&amp;family=Source+Serif+4:ital,wght@0,400;1,400&amp;display=swap">
+<style>
+body{margin:0}
+a{color:var(--emeraude)}
+</style>
+</helmet>
+<div style="position: relative; width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; overflow: hidden; background: var(--fond); color: var(--encre); font-family: var(--font-ui);">
+  <div style="flex: none; padding: 52px 12px 8px; display: flex; align-items: center; gap: 8px;">
+    <a href="Bibliotheque.dc.html" aria-label="Retour à la bibliothèque" style="width: 44px; height: 44px; border-radius: 999px; display: flex; align-items: center; justify-content: center; color: var(--encre); flex: none;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"></path></svg></a>
+    <div style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; text-align: center;"><span style="font-family: var(--font-display); font-weight: 600; font-size: 24px; line-height: 28px; color: var(--emeraude);">Al-Kahf</span><span style="font-size: 12px; line-height: 16px; color: var(--encre-3);">La caverne · juz 15</span></div>
+    <a href="ReglagesLecture.dc.html" aria-label="Réglages de lecture" style="width: 44px; height: 44px; border-radius: 999px; display: flex; align-items: center; justify-content: center; color: var(--encre); flex: none;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 18l4.5-12L13 18M5.7 14h5.6M15 18l3-8 3 8M15.9 15.5h4.2"></path></svg></a>
+  </div>
+  <div aria-label="Verset 10 sur 110" style="flex: none; height: 2px; margin: 0 16px; border-radius: 2px; background: var(--ligne); overflow: hidden;"><span style="display: block; width: 9%; height: 2px; background: var(--or);"></span></div>
+  <div style="flex-grow: 1; min-height: 0; overflow: hidden; display: flex; flex-direction: column;">
+    <article style="padding: 18px 24px; display: flex; flex-direction: column; gap: 8px; border-bottom: 1px solid var(--ligne);">
+      <div style="display: flex; align-items: center; justify-content: space-between;"><span style="position: relative; width: 30px; height: 30px; flex: none; display: inline-flex; align-items: center; justify-content: center; vertical-align: middle;"><svg width="30" height="30" viewBox="0 0 36 36" aria-hidden="true" style="position: absolute; left: 0; top: 0;"><polygon points="18,2 22.68,6.69 29.31,6.69 29.31,13.32 34,18 29.31,22.68 29.31,29.31 22.68,29.31 18,34 13.32,29.31 6.69,29.31 6.69,22.68 2,18 6.69,13.32 6.69,6.69 13.32,6.69" fill="var(--or-doux)" stroke="var(--or)" stroke-width="1.3"></polygon></svg><span style="position: relative; font-family: var(--font-arabe); font-size: 12px; line-height: 1; color: var(--or-texte);">١٠</span></span><span style="font-size: 12px; line-height: 16px; letter-spacing: 0.04em; color: var(--encre-3);">18:10</span></div>
+      <p lang="ar" dir="rtl" style="margin: 0; font-family: var(--font-coran); font-size: 26px; line-height: 52px; text-align: right;">إِذْ أَوَى ٱلْفِتْيَةُ إِلَى ٱلْكَهْفِ فَقَالُوا۟ رَبَّنَآ ءَاتِنَا مِن لَّدُنكَ رَحْمَةً وَهَيِّئْ لَنَا مِنْ أَمْرِنَا رَشَدًا</p>
+      <sc-if value="{{translit}}" hint-placeholder-val="{{ false }}"><p style="margin: 0; font-family: var(--font-lecture); font-style: italic; font-size: 14px; line-height: 20px; color: var(--encre-3);">Idh awā l-fityatu ilā l-kahfi fa-qālū rabbanā ātinā min ladunka raḥmatan wa hayyiʾ lanā min amrinā rashadā.</p></sc-if>
+    </article>
+    <article style="padding: 18px 24px; display: flex; flex-direction: column; gap: 8px; border-bottom: 1px solid var(--ligne);">
+      <div style="display: flex; align-items: center; justify-content: space-between;"><span style="position: relative; width: 30px; height: 30px; flex: none; display: inline-flex; align-items: center; justify-content: center; vertical-align: middle;"><svg width="30" height="30" viewBox="0 0 36 36" aria-hidden="true" style="position: absolute; left: 0; top: 0;"><polygon points="18,2 22.68,6.69 29.31,6.69 29.31,13.32 34,18 29.31,22.68 29.31,29.31 22.68,29.31 18,34 13.32,29.31 6.69,29.31 6.69,22.68 2,18 6.69,13.32 6.69,6.69 13.32,6.69" fill="var(--or-doux)" stroke="var(--or)" stroke-width="1.3"></polygon></svg><span style="position: relative; font-family: var(--font-arabe); font-size: 12px; line-height: 1; color: var(--or-texte);">١١</span></span><span style="font-size: 12px; line-height: 16px; letter-spacing: 0.04em; color: var(--encre-3);">18:11</span></div>
+      <p lang="ar" dir="rtl" style="margin: 0; font-family: var(--font-coran); font-size: 26px; line-height: 52px; text-align: right;">فَضَرَبْنَا عَلَىٰٓ ءَاذَانِهِمْ فِى ٱلْكَهْفِ سِنِينَ عَدَدًا</p>
+      <sc-if value="{{translit}}" hint-placeholder-val="{{ false }}"><p style="margin: 0; font-family: var(--font-lecture); font-style: italic; font-size: 14px; line-height: 20px; color: var(--encre-3);">Fa-ḍarabnā ʿalā ādhānihim fi l-kahfi sinīna ʿadadā.</p></sc-if>
+    </article>
+  </div>
+  <div role="toolbar" aria-label="Outils de lecture" style="position: absolute; left: 50%; bottom: 100px; margin-left: -110px; width: 220px; box-sizing: border-box; padding: 6px; display: flex; justify-content: space-between; border-radius: 999px; background: var(--surface); border: 1px solid var(--ligne); box-shadow: var(--ombre-1);">
+    <a href="LecteurRecitation.dc.html" aria-label="Écouter la récitation" style="width: 44px; height: 44px; border-radius: 999px; display: flex; align-items: center; justify-content: center; color: var(--sur-emeraude); flex: none; background: var(--emeraude-aplat);"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z" fill="currentColor"></path></svg></a>
+    <a href="Favoris.dc.html" aria-label="Ajouter un marque-page" style="width: 44px; height: 44px; border-radius: 999px; display: flex; align-items: center; justify-content: center; color: var(--encre-2); flex: none;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4.5h10v15l-5-3.5-5 3.5z"></path></svg></a>
+    <a href="Partage.dc.html" aria-label="Partager le verset" style="width: 44px; height: 44px; border-radius: 999px; display: flex; align-items: center; justify-content: center; color: var(--encre-2); flex: none;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M8 8l4-4 4 4M5 13v5.5h14V13"></path></svg></a>
+    <a href="LecteurPage.dc.html" aria-label="Passer en mode page" style="width: 44px; height: 44px; border-radius: 999px; display: flex; align-items: center; justify-content: center; color: var(--encre-2); flex: none;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 4.5h12v15H6zM9 9h6M9 12h6M9 15h4"></path></svg></a>
+  </div>
+  <dc-import name="TabBar" actif="lire" hint-size="390px,84px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"translitteration":{"editor":"boolean","default":false},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return { translit: this.props.translitteration ?? false }; }
+}
+</script>
+</body>
+</html>

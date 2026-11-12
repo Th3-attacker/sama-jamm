@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Téléchargements</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/samajamm/tokens.css">
+<link rel="stylesheet" href="ds/samajamm/components/bundle.css">
+<script src="ds/samajamm/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&amp;family=Source+Sans+3:wght@400;600&amp;family=Source+Serif+4:ital,wght@0,400;1,400&amp;display=swap">
+<style>
+body{margin:0}
+a{color:var(--emeraude)}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: var(--fond); color: var(--encre); font-family: var(--font-ui);">
+  <div style="flex-grow: 1; padding: 56px 20px 0; display: flex; flex-direction: column; gap: 16px; overflow: hidden;">
+    <div style="display: flex; flex-direction: column; gap: 4px;">
+      <div style="display: flex; align-items: center; gap: 4px;">
+        <a href="Accueil.dc.html" aria-label="Retour" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: var(--encre); margin-left: -12px;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"></path><path d="M11 6l-6 6 6 6"></path></svg></a>
+        <h1 style="margin: 0; font-family: var(--font-display); font-weight: 600; font-size: 30px; line-height: 36px; color: var(--emeraude);">Téléchargements</h1>
+      </div>
+      <p style="margin: 0; font-family: var(--font-lecture); font-style: italic; font-size: 16px; line-height: 24px; color: var(--encre-2);">Pour écouter sans réseau.</p>
+    </div>
+    <div style="padding: 16px; background: var(--surface); border: 1px solid var(--ligne); border-radius: 12px; display: flex; flex-direction: column; gap: 12px;">
+      <x-import component-from-global-scope="SamaJamm.ProgressBar" label="Place utilisée par Sama Jàmm" detail="1,2 Go · 17,8 Go libres" valeur="{{place}}"></x-import>
+      <div style="display: flex; align-items: center; gap: 12px; padding-top: 12px; border-top: 1px solid var(--ligne);">
+        <span id="wifi" style="flex-grow: 1; display: flex; flex-direction: column;"><span style="font-size: 16px; line-height: 24px;">Seulement en Wi-Fi</span><span style="font-size: 14px; line-height: 20px; color: var(--encre-3);">Pour ne pas consommer vos données mobiles</span></span>
+        <x-import component-from-global-scope="SamaJamm.Switch" active="{{oui}}" label="Télécharger seulement en Wi-Fi"></x-import>
+      </div>
+    </div>
+    <x-import component-from-global-scope="SamaJamm.ListGroup" titre="En cours">
+      <x-import component-from-global-scope="SamaJamm.ListItem" icone="download" titre="Yā-Sīn · Mishary Alafasy" sous-titre="38 Mo sur 120 Mo · reprend si le réseau coupe">
+        <x-import component-from-global-scope="SamaJamm.Badge" ton="emeraude">32 %</x-import>
+      </x-import>
+    </x-import>
+    <x-import component-from-global-scope="SamaJamm.ListGroup" titre="Sur ce téléphone" note="Supprimer un téléchargement ne retire ni vos favoris ni votre progression.">
+      <x-import component-from-global-scope="SamaJamm.ListItem" icone="headphones" titre="Al-Kahf · Mishary Alafasy" sous-titre="62 Mo">
+        <x-import component-from-global-scope="SamaJamm.IconButton" icone="trash" label="Supprimer Al-Kahf"></x-import>
+      </x-import>
+      <x-import component-from-global-scope="SamaJamm.ListItem" icone="headphones" titre="Juz ʿAmma · Al-Husary" sous-titre="210 Mo">
+        <x-import component-from-global-scope="SamaJamm.IconButton" icone="trash" label="Supprimer Juz ʿAmma"></x-import>
+      </x-import>
+      <x-import component-from-global-scope="SamaJamm.ListItem" icone="headphones" ton="or" titre="Matlabul Fawzayni" sous-titre="[Kurel] · [taille]">
+        <x-import component-from-global-scope="SamaJamm.IconButton" icone="trash" label="Supprimer Matlabul Fawzayni"></x-import>
+      </x-import>
+    </x-import>
+  </div>
+  <dc-import name="TabBar" actif="ecouter" hint-size="390px,84px"></dc-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return { oui: true, place: 1.2 / 19 }; }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Barre d'onglets</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/samajamm/tokens.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<nav aria-label="Navigation principale" style="width: 390px; height: 84px; box-sizing: border-box; padding: 8px 8px 24px; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); background: var(--surface); border-top: 1px solid var(--ligne); font-family: var(--font-ui);">
+  <sc-for list="{{onglets}}" as="o" hint-placeholder-count="5">
+    <a href="{{o.href}}" aria-current="{{o.current}}" style="position: relative; display: flex; flex-direction: column; align-items: center; gap: 4px; text-decoration: none; color: {{o.color}};">
+      <span style="width: 56px; height: 30px; border-radius: 999px; display: flex; align-items: center; justify-content: center; background: {{o.pill}};"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{o.d}}"></path></svg></span>
+      <span style="font-size: 12px; line-height: 16px; font-weight: {{o.weight}};">{{o.label}}</span>
+      <span aria-label="1 khatm en cours" style="position: absolute; top: 0; left: calc(50% + 8px); min-width: 16px; height: 16px; padding: 0 4px; box-sizing: border-box; border-radius: 999px; background: var(--or); color: var(--sur-or); font-size: 11px; line-height: 16px; font-weight: 700; text-align: center; display: {{o.badge}};">1</span>
+    </a>
+  </sc-for>
+</nav>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"actif":{"editor":"enum","options":["accueil","lire","priere","budget","plus"],"default":"accueil"},"$preview":{"width":390,"height":84}}'>
+class Component extends DCLogic {
+  renderVals() {
+    // Cinq onglets natifs : Accueil, Lire (avec Lire | Écouter), Prière, Budget, Plus.
+    // « ecouter » reste accepté pour les anciennes planches : il allume Lire.
+    let actif = this.props.actif ?? 'accueil';
+    if (actif === 'ecouter') actif = 'lire';
+    const T = [
+      ['accueil', 'Accueil', 'Accueil.dc.html', 'M4 11l8-7 8 7v8a1 1 0 0 1-1 1h-4v-6h-6v6H5a1 1 0 0 1-1-1z'],
+      ['lire', 'Lire', 'Bibliotheque.dc.html', 'M12 6.5c-2-1.5-5-2-8-1.5v14c3-.5 6 0 8 1.5 2-1.5 5-2 8-1.5V5c-3-.5-6 0-8 1.5zM12 6.5v14'],
+      ['priere', 'Prière', 'Priere.dc.html', 'M12 3.5a8.5 8.5 0 1 0 0 17a8.5 8.5 0 1 0 0-17zM12 7.5V12l3 2'],
+      ['budget', 'Budget', 'Budget.dc.html', 'M5.5 6.5h13a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2zM3.5 10h17M15.5 14.5a1 1 0 1 0 2 0a1 1 0 1 0-2 0'],
+      ['plus', 'Plus', 'PlusHub.dc.html', 'M6 5h4a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zM14 5h4a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zM6 13h4a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-4a1 1 0 0 1 1-1zM14 13h4a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1v-4a1 1 0 0 1 1-1z']
+    ];
+    return {
+      onglets: T.map((t) => {
+        const on = t[0] === actif;
+        return { label: t[1], href: t[2], d: t[3], color: on ? 'var(--emeraude)' : 'var(--encre-2)', pill: on ? 'var(--emeraude-doux)' : 'transparent', weight: on ? 600 : 400, current: on ? 'page' : 'false', badge: 'none' };
+      })
+    };
+  }
+}
+</script>
+</body>
+</html>
