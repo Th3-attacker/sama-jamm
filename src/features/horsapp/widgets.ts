@@ -1,5 +1,6 @@
-// Pont vers les widgets iPhone : l'app calcule les horaires et passe aux widgets une frise d'entrées (une par prière
-// à venir) ; les widgets ne calculent rien. Android reste à faire (`updateSnapshot`, « Asr 16:35 »).
+// Pont vers les widgets : l'app calcule les horaires et les passe aux widgets, qui ne calculent rien.
+// iPhone : une frise d'entrées (une par prière à venir). Android : un seul état (`updateSnapshot`, « Asr 16:35 »),
+// rafraîchi à chaque replanification. Chaque widget a un fichier par plateforme (`X.tsx`, `X.android.tsx`).
 // Rien du budget ici, jamais.
 import { Platform } from 'react-native';
 
@@ -23,7 +24,6 @@ const ORDRE: readonly NomPriere[] = ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha'];
  * replanification des notifications. Sans lieu choisi, rien n'est écrit : les widgets gardent leur état d'attente.
  */
 export async function mettreAJourWidgets(): Promise<void> {
-  if (Platform.OS !== 'ios') return;
   const { lieu, methode, ecoleAsr, ajustements } = useReglages.getState();
   if (!lieu) return;
   const options = { methode, ecoleAsr, ajustements };
@@ -51,13 +51,18 @@ export async function mettreAJourWidgets(): Promise<void> {
     // L'entrée suivante prend effet une seconde après l'heure de cette prière.
     instant = new Date(prochaine.heure.getTime() + 1000);
   }
-  ProchainePriere.updateTimeline(prochaines);
-  CinqPrieres.updateTimeline(cinq);
+  if (Platform.OS === 'ios') {
+    ProchainePriere.updateTimeline(prochaines);
+    CinqPrieres.updateTimeline(cinq);
+  } else {
+    // Android : l'état de maintenant seulement ; il est refait à chaque replanification (ouverture, retour, fond).
+    ProchainePriere.updateSnapshot(prochaines[0].props);
+    CinqPrieres.updateSnapshot(cinq[0].props);
+  }
 }
 
 /** Met à jour le widget « Reprendre » : sourate et verset de la dernière lecture (Al-Fâtiha sans lecture). */
 export function mettreAJourReprendre(): void {
-  if (Platform.OS !== 'ios') return;
   const t = i18n.t.bind(i18n);
   const position = useLecture.getState().position;
   const meta = sourate(position?.sourate ?? 1);
