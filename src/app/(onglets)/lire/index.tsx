@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { ListeCategories } from '@/features/invocations/ListeCategories';
-import { FiletProgres } from '@/features/accueil/FiletProgres';
 import { usePremierKhatm } from '@/features/khatm/premier';
 import { CarteSourate } from '@/features/lire/CarteSourate';
 import { sourate, sourates, type Sourate } from '@/features/lire/coran';

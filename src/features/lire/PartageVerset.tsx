@@ -37,7 +37,7 @@ export const lienVerset = (sourate: number, verset: number) => `https://quran.co
 
 export function PartageVerset({ verset, onFermer }: { verset: VersetAPartager | null; onFermer: () => void }) {
   const { t } = useTranslation();
-  const { couleurs, espace, latin, rayon, typographie } = useTheme();
+  const { couleurs, espace, rayon, typographie } = useTheme();
   const { afficher } = useToast();
   const carte = useRef<ComponentRef<typeof View>>(null);
   const [fond, setFond] = useState<Fond>('emeraude');
