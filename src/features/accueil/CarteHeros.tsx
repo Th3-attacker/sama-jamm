@@ -5,7 +5,7 @@ import Svg, { Circle, Line } from 'react-native-svg';
 
 import { echelleMax } from '@/theme/typographie';
 
-import { fractionFrise, fractionMaintenant } from './positionsFrise';
+import { segmentMaintenant } from './positionsFrise';
 import { useTheme } from '@/theme/useTheme';
 import type { PriereArc } from '@/ui/DayArc';
 
@@ -22,10 +22,11 @@ type Props = {
   maintenant?: number;
 };
 
-// Frise de la planche : 314 × 20, premier point à 12, dernier à 302, trait pointillé de 4 à 310.
+// Frise : 314 × 20. Les cinq points sont répartis régulièrement, chacun juste au-dessus du nom de sa prière
+// (cinq colonnes égales) ; le petit cercle « maintenant » se place entre deux points selon l'heure.
 const LARGEUR = 314;
-const X_DEBUT = 12;
-const X_FIN = 302;
+const COLONNE = LARGEUR / 5;
+const xPriere = (i: number) => (i + 0.5) * COLONNE;
 
 /** « 42 min » → chiffre et unité séparés, comme sur la planche ; « 1 h 05 » reste d'un bloc. */
 function separerDelai(dans: string): { valeur: string; unite: string | null } {
@@ -40,13 +41,11 @@ export function CarteHeros({ nom, heure, dans, prieres, maintenant }: Props) {
   const surEmeraude = couleurs.surEmeraude;
   const { valeur, unite } = separerDelai(dans);
 
-  const premiere = prieres[0]?.minutes ?? 0;
-  const derniere = prieres[prieres.length - 1]?.minutes ?? 1;
-  const x = (m: number) => X_DEBUT + (X_FIN - X_DEBUT) * fractionFrise(m, premiere, derniere);
-  const fm = maintenant === undefined ? null : fractionMaintenant(maintenant, premiere, derniere);
-  const suivante = prieres.find((p) => p.etat === 'prochaine');
-  // Trait plein jusqu'à la prochaine prière ; toutes passées : jusqu'au bout.
-  const finTrait = suivante ? x(suivante.minutes) : LARGEUR - 4;
+  const indiceSuivante = prieres.findIndex((p) => p.etat === 'prochaine');
+  // Trait plein jusqu'à la prochaine prière ; toutes passées : jusqu'au dernier point.
+  const finTrait = indiceSuivante >= 0 ? xPriere(indiceSuivante) : xPriere(prieres.length - 1);
+  const segment = maintenant === undefined ? null : segmentMaintenant(maintenant, prieres.map((p) => p.minutes));
+  const xMaintenant = segment ? xPriere(segment.indice) + (xPriere(segment.indice + 1) - xPriere(segment.indice)) * segment.fraction : null;
 
   return (
     <Pressable
@@ -72,18 +71,18 @@ export function CarteHeros({ nom, heure, dans, prieres, maintenant }: Props) {
       </View>
       <View importantForAccessibility="no-hide-descendants" accessibilityElementsHidden style={I18nManager.isRTL ? styles.miroir : undefined}>
         <Svg width="100%" height={20} viewBox={`0 0 ${LARGEUR} 20`}>
-          <Line x1={4} y1={10} x2={LARGEUR - 4} y2={10} stroke={surEmeraude} strokeWidth={1.5} strokeDasharray="2 5" />
-          <Line x1={4} y1={10} x2={finTrait} y2={10} stroke={surEmeraude} strokeWidth={2.5} strokeLinecap="round" />
-          {prieres.map((p) => {
-            const cx = x(p.minutes);
+          <Line x1={xPriere(0)} y1={10} x2={xPriere(4)} y2={10} stroke={surEmeraude} strokeWidth={1.5} strokeDasharray="2 5" />
+          <Line x1={xPriere(0)} y1={10} x2={finTrait} y2={10} stroke={surEmeraude} strokeWidth={2.5} strokeLinecap="round" />
+          {prieres.map((p, i) => {
+            const cx = xPriere(i);
             // Fond de la carte = émeraude : le remplissage doit être clair (surEmeraude) pour que les points restent visibles.
             if (p.etat === 'prochaine')
               return <Circle key={p.nom} cx={cx} cy={10} r={7} fill={surEmeraude} stroke={surEmeraude} strokeWidth={2.5} />;
             if (p.etat === 'passee') return <Circle key={p.nom} cx={cx} cy={10} r={4.5} fill={surEmeraude} />;
             return <Circle key={p.nom} cx={cx} cy={10} r={4.5} fill={couleurs.emeraudeAplat} stroke={surEmeraude} strokeWidth={1.5} />;
           })}
-          {fm !== null ? (
-            <Circle cx={X_DEBUT + (X_FIN - X_DEBUT) * fm} cy={10} r={3} fill={couleurs.orSurEmeraude} stroke={couleurs.emeraudeAplat} strokeWidth={1.5} />
+          {xMaintenant !== null ? (
+            <Circle cx={xMaintenant} cy={10} r={3} fill={couleurs.orSurEmeraude} stroke={couleurs.emeraudeAplat} strokeWidth={1.5} />
           ) : null}
         </Svg>
       </View>

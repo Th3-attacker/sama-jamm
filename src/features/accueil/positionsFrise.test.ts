@@ -2,7 +2,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { fractionFrise, fractionMaintenant } from './positionsFrise.ts';
+import { fractionFrise, fractionMaintenant, segmentMaintenant } from './positionsFrise.ts';
 
 const minutes = (h: number, m: number) => h * 60 + m;
 
@@ -49,4 +49,13 @@ test('maintenant : entre Dhuhr et Asr, le cercle tombe entre les deux points', (
 test('maintenant : avant Fajr ou après Isha, pas de cercle', () => {
   assert.equal(fractionMaintenant(4 * 60, 6 * 60 + 5, 20 * 60 + 25), null);
   assert.equal(fractionMaintenant(22 * 60, 6 * 60 + 5, 20 * 60 + 25), null);
+});
+
+test('segment : entre Dhuhr (indice 1) et Asr, à mi-chemin', () => {
+  const m = [6 * 60 + 5, 13 * 60 + 20, 16 * 60 + 35, 19 * 60 + 10, 20 * 60 + 25];
+  const milieu = (13 * 60 + 20 + 16 * 60 + 35) / 2;
+  assert.deepEqual(segmentMaintenant(Math.round(milieu), m)?.indice, 1);
+  assert.ok(Math.abs((segmentMaintenant(Math.round(milieu), m)?.fraction ?? 0) - 0.5) < 0.01);
+  assert.equal(segmentMaintenant(5 * 60, m), null);
+  assert.equal(segmentMaintenant(22 * 60, m), null);
 });
