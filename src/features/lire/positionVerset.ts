@@ -5,6 +5,8 @@
 export const ESSAIS_MAX = 8;
 /** Délai entre deux essais, en ms : le temps que la liste mesure les versets rendus. */
 export const DELAI_ESSAI_MS = 60;
+/** Durée maximale du chargement, en ms : au-delà, la liste s'affiche là où elle est, jamais de blocage. */
+export const DUREE_MAX_MS = 1200;
 /** Délai sans échec signalé après lequel le positionnement est considéré réussi, en ms. */
 export const DELAI_SUCCES_MS = 150;
 

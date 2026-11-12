@@ -258,7 +258,9 @@
     "pageSurTotal": "صفحة {{n}} من {{total}}",
     "page": "الصفحة",
     "affichageOutil": "العرض",
-    "chercher": "بحث"
+    "chercher": "بحث",
+    "ouvertureVerset": "{{sourate}} · الآية {{n}}",
+    "chargementVerset": "جارٍ الفتح عند الآية {{n}}"
   },
   "khatm": {
     "titre": "ختمة جماعية",

@@ -238,7 +238,9 @@
     "pageSurTotal": "Page {{n}} sur {{total}}",
     "page": "Page",
     "affichageOutil": "Affichage",
-    "chercher": "Chercher"
+    "chercher": "Chercher",
+    "ouvertureVerset": "{{sourate}} · verset {{n}}",
+    "chargementVerset": "Ouverture au verset {{n}}"
   },
   "khatm": {
     "titre": "Khatm collectif",

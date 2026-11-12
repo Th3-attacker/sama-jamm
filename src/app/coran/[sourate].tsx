@@ -1,7 +1,7 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FlatList, I18nManager, Pressable, StyleSheet, Text, View, type LayoutRectangle } from 'react-native';
+import { Animated, FlatList, I18nManager, Pressable, StyleSheet, Text, View, type LayoutRectangle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { BasculeMode } from '@/features/lire/BasculeMode';
@@ -32,7 +32,7 @@ import { Reglette } from '@/ui/Reglette';
 import type { IconName } from '@/ui/types';
 import { Medaillon } from '@/ui/Medaillon';
 import { TranslitVerset } from '@/features/lire/TranslitVerset';
-import { apresEchec, DELAI_SUCCES_MS, decalageEstime } from '@/features/lire/positionVerset';
+import { apresEchec, DELAI_SUCCES_MS, decalageEstime, DUREE_MAX_MS } from '@/features/lire/positionVerset';
 import { cleVerset, useFavoris } from '@/stores/favoris';
 import { usePleinEcran } from '@/stores/pleinEcran';
 import { useLecture, type ModeLecture } from '@/stores/lecture';
@@ -40,6 +40,7 @@ import { useReglages } from '@/stores/reglages';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { Banner } from '@/ui/Banner';
+import { Skeleton } from '@/ui/Skeleton';
 import { IconButton } from '@/ui/IconButton';
 import { Icon } from '@/ui/Icon';
 import { useToast } from '@/ui/Toast';
@@ -212,6 +213,13 @@ function LectureSourate({
     positionne.current = true;
     setPret(true);
   }, []);
+  // Chargement visible : il couvre la liste dès la première image, puis s'efface en fondu quand elle est prête.
+  const [chargement, setChargement] = useState(!(modeInitial === 'page' || versetInitial <= 1));
+  const [fondu] = useState(() => new Animated.Value(1));
+  useEffect(() => {
+    if (!pret) return;
+    Animated.timing(fondu, { toValue: 0, duration: 180, useNativeDriver: true }).start(() => setChargement(false));
+  }, [pret, fondu]);
   const essayerDeSePlacer = useCallback(() => {
     essai.current += 1;
     echec.current = false;
@@ -225,11 +233,14 @@ function LectureSourate({
   useEffect(() => {
     if (positionne.current) return;
     const depart = setTimeout(essayerDeSePlacer, 0);
+    // Jamais de blocage : passé ce délai, la liste s'affiche là où elle est.
+    const limite = setTimeout(terminerPositionnement, DUREE_MAX_MS);
     return () => {
       clearTimeout(depart);
+      clearTimeout(limite);
       clearTimeout(succes.current);
     };
-  }, [essayerDeSePlacer]);
+  }, [essayerDeSePlacer, terminerPositionnement]);
   const legende = [typographie.legende, { color: couleurs.encre3, textAlign: 'center' as const }];
 
   const basculerMode = () => {
@@ -390,129 +401,144 @@ function LectureSourate({
         style={[styles.fil, { marginHorizontal: espace.espace4, backgroundColor: couleurs.ligne }]}>
         <View style={{ height: espace.espace1 / 2, width: `${Math.round((versetHaut / s.versets) * 100)}%`, backgroundColor: couleurs.or }} />
       </View>
-      <FlatList
-        key={String(s.n)}
-        ref={liste}
-        data={versets}
-        viewabilityConfig={CONFIG_VISIBILITE}
-        onViewableItemsChanged={surVisibles}
-        onScrollEndDrag={enregistrerVerset}
-        onMomentumScrollEnd={enregistrerVerset}
-        onScrollToIndexFailed={({ averageItemLength, index }) => {
-          // Verset pas encore mesuré : on s'en approche, puis on réessaie (jusqu'à ESSAIS_MAX fois).
-          echec.current = true;
-          liste.current?.scrollToOffset({ offset: decalageEstime(index, averageItemLength), animated: false });
-          const suite = apresEchec(essai.current);
-          clearTimeout(reessai.current);
-          if (suite.reessayer) reessai.current = setTimeout(essayerDeSePlacer, suite.delai);
-          else terminerPositionnement();
-        }}
-        style={{ opacity: pret ? 1 : 0 }}
-        keyExtractor={(v) => String(v.n)}
-        ListHeaderComponent={<Entete sourate={s.n} />}
-        renderItem={({ item }) => {
-          const repere = reperes().repereDe(s.n, item.n);
-          const sajda = reperes().sajdaDe(s.n, item.n);
-          return (
-          <View style={{ gap: espace.espace2 }}>
-            {repere ? (
-              <Text
-                maxFontSizeMultiplier={echelleMax.courant}
-                style={[typographie.libelle, styles.repere, { color: couleurs.orTexte }]}>
-                {repere.type === 'juz'
-                  ? `۞ ${t('lire.juz', { n: repere.juz })}`
-                  : `۞ ${t(`lire.quartsHizb.${repere.quart}`, { n: repere.hizb })}`}
-              </Text>
-            ) : null}
-          <View
-            style={[
-              styles.verset,
-              // Planche : chaque verset est une carte de 12 de rayon, 12 / 8 de marge, sans filet.
-              { gap: espace.espace3, borderRadius: rayon.rayonCarte, paddingHorizontal: espace.espace3, paddingVertical: espace.espace2 },
-              // Planche « Pendant la récitation » : le verset récité s'élève (surface, rayon 20), les autres s'estompent.
-              versetEcoute === item.n
-                ? { backgroundColor: couleurs.surface, borderColor: couleurs.ligne, borderWidth: 1, borderRadius: rayon.rayonFeuille, paddingVertical: espace.espace4 }
-                : versetEcoute !== null
-                  ? { opacity: 0.42 }
-                  : null,
-            ]}>
-            <Medaillon
-              numero={item.n}
-              prefixe={t('lire.verset')}
-              taille={30}
-              actif={versetEcoute === item.n}
-              affiche={chiffresArabes ? enChiffresArabes(item.n) : undefined}
-            />
-            <View style={styles.textes}>
-              <Text
-                accessibilityLanguage="ar"
-                maxFontSizeMultiplier={echelleMax.grand}
-                style={[
-                  typographie.coran,
-                  tailleArabe,
-                  styles.arabe,
-                  { color: couleurs.encre },
-                ]}>
-                {item.texte}
-              </Text>
-              {translits[item.n - 1] ? <TranslitVerset texte={translits[item.n - 1] ?? ''} taille={tailleTrad} /> : null}
-              {versetEcoute === item.n ? (
-                <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, styles.etiquette, { color: couleurs.emeraude }]}>
-                  {t('lire.recitationEnCours')}
+      <View style={{ flex: 1 }}>
+        <FlatList
+          key={String(s.n)}
+          ref={liste}
+          data={versets}
+          viewabilityConfig={CONFIG_VISIBILITE}
+          onViewableItemsChanged={surVisibles}
+          onScrollEndDrag={enregistrerVerset}
+          onMomentumScrollEnd={enregistrerVerset}
+          onScrollToIndexFailed={({ averageItemLength, index }) => {
+            // Verset pas encore mesuré : on s'en approche, puis on réessaie (jusqu'à ESSAIS_MAX fois).
+            echec.current = true;
+            liste.current?.scrollToOffset({ offset: decalageEstime(index, averageItemLength), animated: false });
+            const suite = apresEchec(essai.current);
+            clearTimeout(reessai.current);
+            if (suite.reessayer) reessai.current = setTimeout(essayerDeSePlacer, suite.delai);
+            else terminerPositionnement();
+          }}
+          style={{ opacity: pret ? 1 : 0 }}
+          keyExtractor={(v) => String(v.n)}
+          ListHeaderComponent={<Entete sourate={s.n} />}
+          renderItem={({ item }) => {
+            const repere = reperes().repereDe(s.n, item.n);
+            const sajda = reperes().sajdaDe(s.n, item.n);
+            return (
+            <View style={{ gap: espace.espace2 }}>
+              {repere ? (
+                <Text
+                  maxFontSizeMultiplier={echelleMax.courant}
+                  style={[typographie.libelle, styles.repere, { color: couleurs.orTexte }]}>
+                  {repere.type === 'juz'
+                    ? `۞ ${t('lire.juz', { n: repere.juz })}`
+                    : `۞ ${t(`lire.quartsHizb.${repere.quart}`, { n: repere.hizb })}`}
                 </Text>
               ) : null}
-              {sajda ? (
-                <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.orTexte }]}>
-                  {`۩ ${t(sajda === 'obligatoire' ? 'lire.sajdaObligatoire' : 'lire.sajda')}`}
+            <View
+              style={[
+                styles.verset,
+                // Planche : chaque verset est une carte de 12 de rayon, 12 / 8 de marge, sans filet.
+                { gap: espace.espace3, borderRadius: rayon.rayonCarte, paddingHorizontal: espace.espace3, paddingVertical: espace.espace2 },
+                // Planche « Pendant la récitation » : le verset récité s'élève (surface, rayon 20), les autres s'estompent.
+                versetEcoute === item.n
+                  ? { backgroundColor: couleurs.surface, borderColor: couleurs.ligne, borderWidth: 1, borderRadius: rayon.rayonFeuille, paddingVertical: espace.espace4 }
+                  : versetEcoute !== null
+                    ? { opacity: 0.42 }
+                    : null,
+              ]}>
+              <Medaillon
+                numero={item.n}
+                prefixe={t('lire.verset')}
+                taille={30}
+                actif={versetEcoute === item.n}
+                affiche={chiffresArabes ? enChiffresArabes(item.n) : undefined}
+              />
+              <View style={styles.textes}>
+                <Text
+                  accessibilityLanguage="ar"
+                  maxFontSizeMultiplier={echelleMax.grand}
+                  style={[
+                    typographie.coran,
+                    tailleArabe,
+                    styles.arabe,
+                    { color: couleurs.encre },
+                  ]}>
+                  {item.texte}
                 </Text>
+                {translits[item.n - 1] ? <TranslitVerset texte={translits[item.n - 1] ?? ''} taille={tailleTrad} /> : null}
+                {versetEcoute === item.n ? (
+                  <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, styles.etiquette, { color: couleurs.emeraude }]}>
+                    {t('lire.recitationEnCours')}
+                  </Text>
+                ) : null}
+                {sajda ? (
+                  <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.orTexte }]}>
+                    {`۩ ${t(sajda === 'obligatoire' ? 'lire.sajdaObligatoire' : 'lire.sajda')}`}
+                  </Text>
+                ) : null}
+              </View>
+            </View>
+            </View>
+            );
+          }}
+          extraData={[translits, versetEcoute, chiffresArabes]}
+          contentContainerStyle={{
+            paddingHorizontal: espace.espace5,
+            paddingBottom: espace.espace8,
+            // Planche : 4 entre deux versets.
+            gap: espace.espace1,
+          }}
+          initialNumToRender={8}
+          ListFooterComponent={
+            <View style={{ gap: espace.espace4, paddingTop: espace.espace5 }}>
+              <Text maxFontSizeMultiplier={echelleMax.courant} style={legende}>
+                {t('lire.finSourate')}
+              </Text>
+              {sourates[s.n] ? (
+                <Button
+                  variant="secondaire"
+                  pleineLargeur
+                  onPress={() =>
+                    router.replace({
+                      pathname: '/coran/[sourate]',
+                      params: { sourate: sourates[s.n].n },
+                    })
+                  }>
+                  {`${t('lire.souratesuivante')} · ${sourates[s.n].nom}`}
+                </Button>
+              ) : null}
+              {s.n > 1 ? (
+                <Button
+                  variant="secondaire"
+                  pleineLargeur
+                  onPress={() =>
+                    router.replace({
+                      pathname: '/coran/[sourate]',
+                      params: { sourate: s.n - 1 },
+                    })
+                  }>
+                  {`${t('lire.souratePrecedente')} · ${sourates[s.n - 2].nom}`}
+                </Button>
               ) : null}
             </View>
-          </View>
-          </View>
-          );
-        }}
-        extraData={[translits, versetEcoute, chiffresArabes]}
-        contentContainerStyle={{
-          paddingHorizontal: espace.espace5,
-          paddingBottom: espace.espace8,
-          // Planche : 4 entre deux versets.
-          gap: espace.espace1,
-        }}
-        initialNumToRender={8}
-        ListFooterComponent={
-          <View style={{ gap: espace.espace4, paddingTop: espace.espace5 }}>
-            <Text maxFontSizeMultiplier={echelleMax.courant} style={legende}>
-              {t('lire.finSourate')}
+          }
+        />
+        {chargement ? (
+          <Animated.View
+            pointerEvents={pret ? 'none' : 'auto'}
+            style={[StyleSheet.absoluteFill, { opacity: fondu, backgroundColor: couleurs.fond, paddingHorizontal: espace.espace5, paddingTop: espace.espace5, gap: espace.espace4 }]}>
+            <Text
+              accessibilityRole="header"
+              maxFontSizeMultiplier={echelleMax.grand}
+              style={[typographie.titre3, { color: couleurs.emeraude }]}>
+              {t('lire.ouvertureVerset', { sourate: s.nom, n: versetInitial })}
             </Text>
-            {sourates[s.n] ? (
-              <Button
-                variant="secondaire"
-                pleineLargeur
-                onPress={() =>
-                  router.replace({
-                    pathname: '/coran/[sourate]',
-                    params: { sourate: sourates[s.n].n },
-                  })
-                }>
-                {`${t('lire.souratesuivante')} · ${sourates[s.n].nom}`}
-              </Button>
-            ) : null}
-            {s.n > 1 ? (
-              <Button
-                variant="secondaire"
-                pleineLargeur
-                onPress={() =>
-                  router.replace({
-                    pathname: '/coran/[sourate]',
-                    params: { sourate: s.n - 1 },
-                  })
-                }>
-                {`${t('lire.souratePrecedente')} · ${sourates[s.n - 2].nom}`}
-              </Button>
-            ) : null}
-          </View>
-        }
-      />
+            <Skeleton forme="liste" lignes={5} label={t('lire.chargementVerset', { n: versetInitial })} />
+          </Animated.View>
+        ) : null}
+      </View>
       {/* Outils de lecture : une pilule flottante (mode, écouter, favori, partage) sur le verset en haut de l'écran. */}
       <View
         onLayout={(e) => usePlaceBas.setState({ hauteurOutil: Math.round(e.nativeEvent.layout.height) })}
