@@ -56,8 +56,19 @@ export const PageMushaf = memo(function PageMushaf({ page, largeur, hauteur, hau
   const hCadre = useRef(0);
   const hTexte = useRef(0);
 
-  const nomPage = segments[0] ? (sourate(segments[0].sourate)?.nom ?? '') : '';
-  const juz = segments[0] ? reperes().juzDe(segments[0].sourate, segments[0].versets[0]?.verset ?? 1) : null;
+  // Une page peut porter deux sourates et deux juz : l'en-tête les affiche tous les deux.
+  const nomsPage = [...new Set(segments.map((s) => sourate(s.sourate)?.nom ?? '').filter(Boolean))].join(' · ');
+  const dernierSegment = segments[segments.length - 1];
+  const juzDebut = segments[0] ? reperes().juzDe(segments[0].sourate, segments[0].versets[0]?.verset ?? 1) : null;
+  const juzFin = dernierSegment
+    ? reperes().juzDe(dernierSegment.sourate, dernierSegment.versets[dernierSegment.versets.length - 1]?.verset ?? 1)
+    : null;
+  const libelleJuz =
+    juzDebut === null
+      ? ''
+      : juzFin !== null && juzFin !== juzDebut
+        ? `${t('lire.juz', { n: juzDebut })} · ${t('lire.juz', { n: juzFin })}`
+        : t('lire.juz', { n: juzDebut });
   const enTete = espace.espace6;
 
   const mesurerCadre = (e: LayoutChangeEvent) => {
@@ -120,14 +131,14 @@ export const PageMushaf = memo(function PageMushaf({ page, largeur, hauteur, hau
       }}>
       {/* En-tête : juz à gauche, numéro de page au centre, sourate à droite. */}
       <View style={[styles.ligne, { height: enTete, paddingHorizontal: espace.espace2 }]}>
-        <Text allowFontScaling={false} style={[typographie.legende, styles.cote, { color: couleurs.encre3 }]}>
-          {juz !== null ? t('lire.juz', { n: juz }) : ''}
+        <Text numberOfLines={1} allowFontScaling={false} style={[typographie.legende, styles.cote, { color: couleurs.encre3 }]}>
+          {libelleJuz}
         </Text>
         <Text allowFontScaling={false} style={[typographie.libelle, styles.numeroPage, { color: couleurs.emeraude }]}>
           {page}
         </Text>
-        <Text allowFontScaling={false} style={[typographie.legende, styles.cote, styles.droite, { color: couleurs.encre3 }]}>
-          {nomPage}
+        <Text numberOfLines={1} allowFontScaling={false} style={[typographie.legende, styles.cote, styles.droite, { color: couleurs.encre3 }]}>
+          {nomsPage}
         </Text>
       </View>
       {/* Cadre à double filet, comme une page de mushaf ; le numéro de page en chiffres arabes en bas. */}

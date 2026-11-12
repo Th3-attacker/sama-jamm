@@ -4,7 +4,7 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 
 import { stockage } from './stockage';
 
-export type ModeLecture = 'page' | 'verset';
+export type ModeLecture = 'sourate' | 'page' | 'verset';
 export type Position = { sourate: number; verset: number; mode: ModeLecture };
 
 /** Jours gardés : de quoi remplir le mois en cours et le précédent, sans croissance sans fin. */
