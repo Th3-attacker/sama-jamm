@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Image, StyleSheet, Text, View } from 'react-native';
 
 import { decisionNotifications } from '@/features/bienvenue/autorisations';
+import { Dedicace } from '@/features/bienvenue/Dedicace';
 import { etapeRappels } from '@/features/bienvenue/etapes';
 import { LigneReglage } from '@/features/bienvenue/LigneReglage';
 import { MiseEnPage } from '@/features/bienvenue/MiseEnPage';
@@ -120,6 +121,10 @@ export default function Rappels() {
             active={prieres.every((p) => rappelAvant[p] === 10)}
             onChange={(actif) => prieres.forEach((p) => definirRappelAvant(p, actif ? 10 : null))}
           />
+        </View>
+        {/* Dédicace : sous les réglages, avant le bouton Commencer. */}
+        <View style={{ marginTop: espace.espace6 }}>
+          <Dedicace variante="bloc" />
         </View>
       </View>
     </MiseEnPage>

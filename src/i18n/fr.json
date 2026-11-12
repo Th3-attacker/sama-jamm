@@ -687,6 +687,13 @@
     "pied": "Sans compte, sans publicité."
   },
   "aPropos": {
+    "dedicaceTitre": "Dédicace",
+    "dedicaceDebut": "Cette application est dédiée à la mémoire de",
+    "dedicaceNom1": "Hawa Abdoulaye Fall",
+    "dedicaceLiaison": "et de",
+    "dedicaceNom2": "Ramatoulaye Gueye",
+    "dedicaceFin": "Une dua pour elles, et que la paix soit sur vous.",
+    "dedicaceInvocation": "رحمهما الله",
     "titre": "À propos",
     "texte": "Sama Jàmm est une app gratuite, sans publicité, pour lire, écouter, prier et tenir le budget du foyer.",
     "sources": "Sources",

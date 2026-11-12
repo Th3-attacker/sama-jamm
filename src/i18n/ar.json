@@ -735,6 +735,13 @@
     "pied": "بدون حساب، بدون إعلانات."
   },
   "aPropos": {
+    "dedicaceTitre": "إهداء",
+    "dedicaceDebut": "هذا التطبيق مُهدى إلى روح",
+    "dedicaceNom1": "Hawa Abdoulaye Fall",
+    "dedicaceLiaison": "و",
+    "dedicaceNom2": "Ramatoulaye Gueye",
+    "dedicaceFin": "دعاء لهما، والسلام عليكم.",
+    "dedicaceInvocation": "رحمهما الله",
     "titre": "حول التطبيق",
     "texte": "سما جام تطبيق مجاني دون إعلانات، للقراءة والاستماع والصلاة وتدبير ميزانية البيت.",
     "sources": "المصادر",

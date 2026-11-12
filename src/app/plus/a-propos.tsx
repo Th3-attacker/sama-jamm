@@ -11,6 +11,7 @@ import {
   URL_STORE_ANDROID,
   URL_STORE_IOS,
 } from '@/constants/liens';
+import { Dedicace } from '@/features/bienvenue/Dedicace';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { BottomSheet } from '@/ui/BottomSheet';
@@ -66,6 +67,7 @@ export default function APropos() {
             </Text>
           </View>
         </View>
+        <Dedicace variante="carte" />
         <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, { color: couleurs.encre2 }]}>
           {t('aPropos.texte')}
         </Text>
