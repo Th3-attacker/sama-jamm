@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, Share, StyleSheet, Text, View } from 'react-native';
 
-import { debutDe, estCategorie, invocationsDe, type CategorieId, type Invocation } from '@/features/invocations/donnees';
+import { estCategorie, invocationsDe, type CategorieId, type Invocation } from '@/features/invocations/donnees';
 import { BarreCompteur } from '@/features/invocations/BarreCompteur';
 import { CarteInvocation } from '@/features/invocations/CarteInvocation';
 import { useParametre } from '@/hooks/useParametre';
@@ -66,7 +66,6 @@ function Lecture({ inv, categorie, liste }: { inv: Invocation; categorie: Catego
   const definir = useInvocationsJour((s) => s.definir);
 
   const n = comptes[inv.id] ?? 0;
-  const libelle = debutDe(inv.arabe, 3);
 
   // Un toucher compte une lecture ; la dernière passe à l'invocation suivante, un toucher de plus recommence.
   const compter = () => {
@@ -150,7 +149,7 @@ function Lecture({ inv, categorie, liste }: { inv: Invocation; categorie: Catego
         />
       </ScrollView>
       <BarreCompteur
-        titre={libelle}
+        titre={inv.titre}
         n={n}
         total={inv.repetitions}
         onCompter={compter}

@@ -13,7 +13,7 @@ import { useTheme } from '@/theme/useTheme';
 import { Icon } from '@/ui/Icon';
 
 type Props = {
-  /** Début de l'invocation en cours. */
+  /** Titre (français) de l'invocation en cours : le texte arabe n'est jamais abrégé ici. */
   titre: string;
   /** Écriture du titre : en arabe, il se lit de droite à gauche. */
   arabe?: boolean;
@@ -108,7 +108,7 @@ export function BarreCompteur({ titre, arabe = false, n, total, onCompter, onPre
           accessibilityLanguage={arabe ? 'ar' : undefined}
           maxFontSizeMultiplier={echelleMax.courant}
           style={[typographie.titre3, { color: couleurs.encre, textAlign: arabe ? 'right' : 'left', writingDirection: arabe ? 'rtl' : 'ltr' }]}>
-          {`${titre}…`}
+          {titre}
         </Text>
         <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre3 }]}>
           {t('invocations.compterAide')}

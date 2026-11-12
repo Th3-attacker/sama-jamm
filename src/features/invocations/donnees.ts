@@ -55,8 +55,3 @@ export const invocations = (): readonly Invocation[] => donnees().duas;
 export const estCategorie = (valeur: string): valeur is CategorieId => CATEGORIES_IDS.some((c) => c === valeur);
 
 export const invocationsDe = (categorie: CategorieId): Invocation[] => invocations().filter((i) => i.categorie === categorie);
-
-/** Les premiers mots d'une phrase, pour le titre court du compteur. */
-export function debutDe(texte: string, mots = 3): string {
-  return texte.replace(/[()[\]﴿﴾]/g, ' ').split(/\s+/).filter(Boolean).slice(0, mots).join(' ');
-}

@@ -50,7 +50,6 @@
     "plus": "المزيد"
   },
   "menuPlus": {
-    "titre": "المزيد",
     "rechercher": "بحث",
     "enCours_zero": "قيد التنزيل: {{count}}",
     "enCours_one": "قيد التنزيل: {{count}}",
@@ -84,7 +83,6 @@
     "langueQuestion": "بأي لغة تريد التطبيق؟",
     "langueChoisir": "اختر لغتك",
     "langueChoisie": "مختارة",
-    "langueRedemarrage": "الواجهة العربية تُقرأ من اليمين إلى اليسار: سيُعاد تشغيل التطبيق.",
     "positionTitre": "مواقيتك تُحسب هنا.",
     "positionTexte": "يستخدم سما جام موقعك مرة واحدة لحساب الصلوات الخمس والقبلة على الهاتف.",
     "positionAutoriser": "السماح بالموقع",
@@ -96,9 +94,6 @@
     "commencer": "ابدأ",
     "positionIntrouvable": "تعذّر تحديد الموقع. اختر مدينتك لحساب المواقيت.",
     "notificationsRefusees": "تم رفض الإشعارات. يمكنك السماح بها لاحقًا من إعدادات الهاتف.",
-    "langueRedemarrageLtr": "ستعود الواجهة من اليسار إلى اليمين: سيُعاد تشغيل التطبيق.",
-    "redemarrer": "إعادة التشغيل",
-    "redemarrerManuel": "أغلق سما جام ثم أعد فتحه لإتمام تغيير اللغة.",
     "sensProchaineOuverture": "تغيّرت اللغة فورًا. سيُطبَّق تخطيط الواجهة العربية (من اليمين إلى اليسار) عند فتح سما جام في المرة القادمة.",
     "positionTexte2": "لا يُرسل إلى أي خادم. وبدون اتصال تبقى المواقيت صحيحة.",
     "arcExemple": "قوس اليوم: الصلوات على مسار الشمس.",
@@ -161,7 +156,6 @@
     "versetSur": "الآية {{n}} من {{total}}",
     "premierJour": "ابدأ بالفاتحة",
     "sagesse": "Wax ju rafet",
-    "fil": "خيط المواظبة",
     "filResume_zero": "لا أيام قراءة في {{mois}}",
     "filResume_one": "يوم قراءة واحد في {{mois}}",
     "filResume_two": "يوما قراءة في {{mois}}",
@@ -226,13 +220,6 @@
     "vers_other": "{{count}} بيت",
     "auteur": "المؤلف",
     "invocationsSousTitre": "لكل وقت من اليوم.",
-    "moments": {
-      "matin": "الصباح",
-      "soir": "المساء",
-      "dormir": "قبل النوم",
-      "voyage": "السفر",
-      "repas": "الطعام"
-    },
     "compterRepetition": "المس للعدّ",
     "repetitions": "{{n}} / {{total}}",
     "toucherPage": "المس الصفحة لإظهار الشريط أو إخفائه",
@@ -410,7 +397,6 @@
     "minutes_other": "{{count}} دقيقة",
     "reduire": "تصغير المشغّل",
     "telechargerHorsLigne": "تنزيل للاستماع دون اتصال",
-    "vitesseLecture": "سرعة التلاوة",
     "repeterLeVerset": "تكرار الآية",
     "chercherSourate": "البحث عن سورة",
     "titreFeuille": "الاستماع",
@@ -460,7 +446,6 @@
   },
   "priere": {
     "titre": "الصلاة",
-    "sousTitre": "مواقيتك تُحسب على هذا الهاتف.",
     "noms": {
       "fajr": "الفجر",
       "sunrise": "الشروق",

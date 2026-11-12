@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 
-import { CATEGORIES_IDS, debutDe, estCategorie, type Categorie, type Invocation } from './donnees.ts';
+import { CATEGORIES_IDS, estCategorie, type Categorie, type Invocation } from './donnees.ts';
 
 const { categories, duas }: { categories: Categorie[]; duas: Invocation[] } = JSON.parse(
   readFileSync(new URL('../../data/invocations/duas.json', import.meta.url), 'utf8'),
@@ -34,10 +34,6 @@ test('le Coran n’a pas de traduction : sens absent pour les textes coraniques,
     if (CORANIQUES.includes(d.id)) assert.equal(d.sens, null, `traduction du Coran : ${d.id}`);
     else assert.ok(d.sens && d.sens.trim() !== '', `sens manquant : ${d.id}`);
   }
-});
-
-test('debutDe garde les premiers mots sans parenthèses', () => {
-  assert.equal(debutDe('(بِسْمِ اللَّهِ) الرَّحْمَٰنِ الرَّحِيمِ ثم', 3), 'بِسْمِ اللَّهِ الرَّحْمَٰنِ');
 });
 
 test('la liste des catégories du code suit celle des données, dans le même ordre', () => {
