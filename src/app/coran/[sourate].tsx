@@ -377,6 +377,8 @@ function LectureSourate({
               // Planche : fond surface, filet en bas, 8 sous la rangée.
               { backgroundColor: couleurs.surface, borderBottomColor: couleurs.ligne, paddingBottom: espace.espace2 },
             ]}>{barre}</View> : null}
+        {/* La feuille « Lecture » doit aussi être montée en mode page : l'outil Affichage l'ouvre. */}
+        <ReglagesLecture ouvert={reglagesOuverts} onFermer={() => setReglagesOuverts(false)} />
       </View>
     );
   }
