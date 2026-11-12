@@ -73,7 +73,16 @@ export function RaisonsAutorisation({ type }: { type: TypeAutorisation }) {
 }
 
 /** Contenu de l'explication : titre wolof, trois raisons, phrase sur la demande du téléphone, « Continuer ». */
-export function AvantAutorisation({ type, onContinuer }: { type: TypeAutorisation; onContinuer: () => void }) {
+export function AvantAutorisation({
+  type,
+  onContinuer,
+  bouton = true,
+}: {
+  type: TypeAutorisation;
+  onContinuer: () => void;
+  /** Faux dans un écran entier : le bouton « Continuer » est alors posé en bas par l'écran. */
+  bouton?: boolean;
+}) {
   const { t } = useTranslation();
   const { couleurs, espace, typographie } = useTheme();
   return (
@@ -90,9 +99,11 @@ export function AvantAutorisation({ type, onContinuer }: { type: TypeAutorisatio
         style={[typographie.corps, { color: couleurs.encre3, textAlign: 'center' }, styles.demande]}>
         {t(`autorisations.avant.${type}.demande`)}
       </Text>
-      <Button pleineLargeur onPress={onContinuer}>
-        {t('commun.continuer')}
-      </Button>
+      {bouton ? (
+        <Button pleineLargeur onPress={onContinuer}>
+          {t('commun.continuer')}
+        </Button>
+      ) : null}
     </View>
   );
 }

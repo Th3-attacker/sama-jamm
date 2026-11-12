@@ -9,7 +9,7 @@
 - **Texte sacré** : le compteur d'invocation abrégeait l'arabe (3 mots et « … ») : il affiche maintenant le titre français.
 
 ### 65 textes du design system sans équivalent dans l'app (à décider)
-- Écrans d'autorisation (`autorisations.*` : position, notifications, « Pas maintenant »), « Position approximative », « Lien envoyé » (l'app envoie un code), dernière synchronisation du compte, récurrences du budget (jamais, chaque semaine, chaque mois), année lunaire (hawl) de la zakat, projection de l'épargne, état « service en maintenance », « Pas assez de place », libellés communs (`commun.valider`, `copier`, `oui`…), « Taille du texte » dans les réglages, texte de la qibla sans boussole.
+- « Position approximative », « Lien envoyé » (l'app envoie un code), dernière synchronisation du compte, récurrences du budget (jamais, chaque semaine, chaque mois), année lunaire (hawl) de la zakat, projection de l'épargne, état « service en maintenance », « Pas assez de place », libellés communs (`commun.valider`, `copier`, `oui`…), « Taille du texte » dans les réglages, texte de la qibla sans boussole.
 - Ce sont soit des fonctions pas encore faites, soit des textes que l'app écrit autrement. Aucun n'a été ajouté sans écran qui l'utilise.
 
 ## Composants
@@ -20,3 +20,6 @@
 ## Vérifications `AGENTS.md` §6
 `tsc` propre ; lint : 0 erreur, 185 avertissements ; 288 tests verts ; thème régénéré sans écart ; `expo install --check` : 27 paquets en retard de correctif (non touchés) ; `expo-doctor` : 18 contrôles sur 20, deux échecs : paquets en retard (les mêmes 27) et **`@expo/ui` en double** (58.0.27 à la racine, 58.0.28 sous `expo-widgets`). Cause : `expo-widgets` est installé mais aucun widget n'est écrit. À régler en alignant les versions ou en retirant `expo-widgets` tant qu'il ne sert pas, avec accord.
 - Non vérifiable ici : rendu des écrans, thème nuit, arabe, texte à 200 %, audio, SQLCipher (appareil requis).
+
+## Correction (écrans d'autorisation)
+L'explication « avant la demande du téléphone » existait déjà, sous forme de feuille (`features/autorisation/AvantAutorisation.tsx`, clés `autorisations.avant.*`), utilisée par la qibla et la zakat. Seul le parcours de bienvenue la sautait. Il utilise maintenant les mêmes textes dans deux écrans entiers (`autorisation-position`, `autorisation-notifications`), comme les planches.

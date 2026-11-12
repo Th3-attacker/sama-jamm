@@ -1,38 +1,21 @@
-import * as Notifications from 'expo-notifications';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Image, Linking, StyleSheet, Text, View } from 'react-native';
+import { Image, StyleSheet, Text, View } from 'react-native';
 
+import { decisionNotifications } from '@/features/bienvenue/autorisations';
+import { etapeRappels } from '@/features/bienvenue/etapes';
 import { LigneReglage } from '@/features/bienvenue/LigneReglage';
 import { MiseEnPage } from '@/features/bienvenue/MiseEnPage';
-import { creerCanaux, replanifier } from '@/features/priere/notifications';
+import { replanifier } from '@/features/priere/notifications';
 import { prieres, useReglages } from '@/stores/reglages';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
-import { Banner } from '@/ui/Banner';
 import { Button } from '@/ui/Button';
 
 import iconeApp from '../../../assets/images/icon.png';
 
 import { interlignes, tailles } from '@/theme/tokens.generated';
-function ouvrirReglagesTelephone() {
-  Linking.openSettings().catch((erreur: unknown) => {
-    console.warn('Réglages du téléphone inaccessibles', erreur);
-  });
-}
-
-async function demanderAutorisation(): Promise<boolean> {
-  // Android 13+ : les canaux doivent exister avant la demande d'autorisation.
-  await creerCanaux();
-  const actuel = await Notifications.getPermissionsAsync();
-  if (actuel.granted) return true;
-  // Jamais de nouvelle demande système si l'utilisateur a déjà refusé.
-  if (!actuel.canAskAgain) return false;
-  const reponse = await Notifications.requestPermissionsAsync();
-  return reponse.granted;
-}
-
 export default function Rappels() {
   const { t } = useTranslation();
   const { couleurs, espace, ombres, typographie, latin } = useTheme();
@@ -43,7 +26,6 @@ export default function Rappels() {
   const definirRappelAvant = useReglages((s) => s.definirRappelAvant);
   const definirVeilleAuto = useReglages((s) => s.definirVeilleAuto);
   const terminerBienvenue = useReglages((s) => s.terminerBienvenue);
-  const [refusees, setRefusees] = useState(false);
   const [enCours, setEnCours] = useState(false);
 
   const terminer = () => {
@@ -52,20 +34,19 @@ export default function Rappels() {
   };
 
   const commencer = async () => {
-    // Après un refus affiché, « Commencer » termine sans redemander.
-    if (refusees || !prieres.some((p) => rappels[p])) {
-      terminer();
-      return;
-    }
     setEnCours(true);
     try {
-      if (await demanderAutorisation()) {
-        replanifier().catch((erreur: unknown) => console.error('Programmation des notifications impossible', erreur));
-        terminer();
-      } else setRefusees(true);
-    } catch (erreur: unknown) {
-      console.warn('Autorisation des notifications impossible', erreur);
-      setRefusees(true);
+      const actifs = prieres.some((p) => rappels[p]);
+      const decision = await decisionNotifications();
+      const etape = etapeRappels(actifs, decision);
+      if (etape === 'expliquer') {
+        // Explication avant la demande du téléphone ; l'écran suivant termine la bienvenue.
+        router.push('/autorisation-notifications');
+        return;
+      }
+      if (etape === 'desactiver-puis-terminer') prieres.forEach((p) => definirRappel(p, false));
+      else if (actifs) replanifier().catch((erreur: unknown) => console.error('Programmation des notifications impossible', erreur));
+      terminer();
     } finally {
       setEnCours(false);
     }
@@ -128,13 +109,6 @@ export default function Rappels() {
           style={[typographie.translitteration, { color: couleurs.encre2, fontSize: tailles.t18, marginTop: espace.espace2 }]}>
           {t('bienvenue.rappelsSousTitre')}
         </Text>
-        {refusees ? (
-          <View style={{ marginTop: espace.espace4 }}>
-            <Banner ton="attention" action={{ label: t('autorisations.ouvrirReglages'), onPress: ouvrirReglagesTelephone }}>
-              {t('bienvenue.notificationsRefusees')}
-            </Banner>
-          </View>
-        ) : null}
         <View style={{ marginTop: espace.espace6, borderTopWidth: 1, borderTopColor: couleurs.ligne }}>
           <LigneReglage
             titre={t('bienvenue.appelTitre')}

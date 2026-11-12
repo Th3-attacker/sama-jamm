@@ -1,13 +1,15 @@
-import * as Location from 'expo-location';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
 import { ArcIllustration } from '@/features/bienvenue/ArcIllustration';
+import { decisionPosition, obtenirPosition } from '@/features/bienvenue/autorisations';
+import { etapePosition } from '@/features/bienvenue/etapes';
 import { MiseEnPage } from '@/features/bienvenue/MiseEnPage';
 import { ChoixVille } from '@/features/priere/ChoixVille';
 import type { Ville } from '@/features/priere/villes';
+import { useParametre } from '@/hooks/useParametre';
 import { useReglages } from '@/stores/reglages';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
@@ -23,23 +25,30 @@ export default function Position() {
   const definirLieu = useReglages((s) => s.definirLieu);
   const [etat, setEtat] = useState<Etat>({ mode: 'explication' });
   const [enCours, setEnCours] = useState(false);
+  // Retour de l'écran « Avant la demande de position » après un refus : on s'ouvre sur le choix d'une ville.
+  const raison = useParametre('raison');
+  if (raison !== '' && etat.mode === 'explication') setEtat({ mode: 'ville', raison: raison === 'introuvable' ? 'introuvable' : 'refus' });
 
   const suivant = () => router.push('/rappels');
 
   const utiliserPosition = async () => {
     setEnCours(true);
     try {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
+      const etape = etapePosition(await decisionPosition());
+      if (etape === 'expliquer') {
+        router.push('/autorisation-position');
+        return;
+      }
+      if (etape === 'ville') {
         setEtat({ mode: 'ville', raison: 'refus' });
         return;
       }
-      const position = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced });
-      definirLieu({ type: 'position', latitude: position.coords.latitude, longitude: position.coords.longitude });
-      suivant();
-    } catch (erreur: unknown) {
-      console.warn('Position indisponible', erreur);
-      setEtat({ mode: 'ville', raison: 'introuvable' });
+      // Déjà accordée : on lit la position sans rien redemander.
+      const resultat = await obtenirPosition();
+      if (resultat.ok) {
+        definirLieu({ type: 'position', latitude: resultat.latitude, longitude: resultat.longitude });
+        suivant();
+      } else setEtat({ mode: 'ville', raison: resultat.raison });
     } finally {
       setEnCours(false);
     }
