@@ -1,7 +1,10 @@
+import { useState } from 'react';
 import { Platform, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
+
+import { Icon } from './Icon';
 import { espace } from '@/theme/tokens.generated';
 
 export type TextFieldProps = {
@@ -38,6 +41,7 @@ export function TextField({
   majuscules = false,
 }: TextFieldProps) {
   const { couleurs, espace, rayon, cible, typographie } = useTheme();
+  const [focus, setFocus] = useState(false);
 
   return (
     <View style={{ gap: espace.espace1 }}>
@@ -49,17 +53,21 @@ export function TextField({
           styles.champ,
           {
             minHeight: cible.cibleAndroid,
-            paddingHorizontal: espace.espace4,
+            // Au focus : bordure émeraude de 2 px (planche) ; le retrait de 1 px garde le texte en place.
+            paddingHorizontal: espace.espace4 - (focus ? 1 : 0),
             gap: espace.espace2,
             borderRadius: rayon.rayonCarte,
-            backgroundColor: couleurs.surfaceCreux,
-            borderColor: erreur ? couleurs.erreur : couleurs.ligneForte,
+            backgroundColor: couleurs.surface,
+            borderWidth: focus ? 2 : 1,
+            borderColor: erreur ? couleurs.erreur : focus ? couleurs.emeraude : couleurs.ligneForte,
           },
         ]}>
         <TextInput
           accessibilityLabel={label}
           accessibilityHint={erreur ?? aide}
           value={valeur}
+          onFocus={() => setFocus(true)}
+          onBlur={() => setFocus(false)}
           onChangeText={onChange}
           placeholder={placeholder}
           placeholderTextColor={couleurs.encre3}
@@ -82,19 +90,24 @@ export function TextField({
         ) : null}
       </View>
       {erreur || aide ? (
-        <Text
-          accessibilityLiveRegion={erreur ? 'polite' : 'none'}
-          maxFontSizeMultiplier={echelleMax.courant}
-          style={[typographie.legende, { color: erreur ? couleurs.erreur : couleurs.encre3 }]}>
-          {erreur ?? aide}
-        </Text>
+        <View style={[styles.message, { gap: espace.espace1 }]}>
+          {erreur ? <Icon name="alert" size={16} color={couleurs.erreur} /> : null}
+          <Text
+            accessibilityLiveRegion={erreur ? 'polite' : 'none'}
+            maxFontSizeMultiplier={echelleMax.courant}
+            style={[typographie.legende, styles.texteMessage, { color: erreur ? couleurs.erreur : couleurs.encre3 }]}>
+            {erreur ?? aide}
+          </Text>
+        </View>
       ) : null}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  champ: { flexDirection: 'row', alignItems: 'center', borderWidth: 1 },
+  champ: { flexDirection: 'row', alignItems: 'center' },
+  message: { flexDirection: 'row', alignItems: 'flex-start' },
+  texteMessage: { flex: 1 },
   saisie: {
     flex: 1,
     paddingVertical: espace.espace2,

@@ -54,6 +54,7 @@ function ContenuAjout() {
   const [enveloppeId, setEnveloppeId] = useState<string | null>(null);
   const [compteId, setCompteId] = useState<string | null>(null);
   const [note, setNote] = useState('');
+  const [focusNote, setFocusNote] = useState(false);
   const [envoi, setEnvoi] = useState(false);
   const [echec, setEchec] = useState(false);
   const fermer = () => router.back();
@@ -182,6 +183,8 @@ function ContenuAjout() {
           value={note}
           onChangeText={setNote}
           maxLength={120}
+          onFocus={() => setFocusNote(true)}
+          onBlur={() => setFocusNote(false)}
           placeholder={t('budget.noteExemple')}
           placeholderTextColor={couleurs.encre3}
           maxFontSizeMultiplier={echelleMax.courant}
@@ -191,7 +194,8 @@ function ContenuAjout() {
             {
               paddingHorizontal: espace.espace4,
               borderRadius: rayon.rayonCarte,
-              borderColor: couleurs.ligneForte,
+              borderWidth: focusNote ? 2 : 1,
+              borderColor: focusNote ? couleurs.emeraude : couleurs.ligneForte,
               backgroundColor: couleurs.surface,
               color: couleurs.encre,
             },

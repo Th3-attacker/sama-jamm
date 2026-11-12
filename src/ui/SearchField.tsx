@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Platform, StyleSheet, TextInput, View } from 'react-native';
 
@@ -20,6 +21,7 @@ export type SearchFieldProps = {
 export function SearchField({ label, placeholder, valeur, onChange, autoFocus }: SearchFieldProps) {
   const { t } = useTranslation();
   const { couleurs, espace, rayon, cible, typographie } = useTheme();
+  const [focus, setFocus] = useState(false);
 
   return (
     <View
@@ -28,10 +30,11 @@ export function SearchField({ label, placeholder, valeur, onChange, autoFocus }:
         {
           minHeight: cible.cibleAndroid,
           gap: espace.espace2,
-          paddingStart: espace.espace4,
+          paddingStart: espace.espace4 - (focus ? 1 : 0),
           borderRadius: rayon.rayonCarte,
           backgroundColor: couleurs.surfaceCreux,
-          borderColor: couleurs.ligneForte,
+          borderWidth: focus ? 2 : 1,
+          borderColor: focus ? couleurs.emeraude : couleurs.ligneForte,
         },
       ]}>
       <Icon name="search" size={20} color={couleurs.encre3} />
@@ -43,6 +46,8 @@ export function SearchField({ label, placeholder, valeur, onChange, autoFocus }:
         selectionColor={couleurs.emeraude}
         underlineColorAndroid="transparent"
         value={valeur}
+        onFocus={() => setFocus(true)}
+        onBlur={() => setFocus(false)}
         onChangeText={onChange}
         autoFocus={autoFocus}
         autoCorrect={false}
@@ -60,7 +65,7 @@ export function SearchField({ label, placeholder, valeur, onChange, autoFocus }:
 }
 
 const styles = StyleSheet.create({
-  champ: { flexDirection: 'row', alignItems: 'center', borderWidth: 1 },
+  champ: { flexDirection: 'row', alignItems: 'center' },
   saisie: {
     flex: 1,
     paddingVertical: espace.espace2,

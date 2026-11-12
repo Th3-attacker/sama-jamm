@@ -24,6 +24,7 @@ const JOURNAL_MAX_MAIL = 1500;
 export default function Aide() {
   const { t } = useTranslation();
   const { couleurs, espace, rayon, typographie, latin } = useTheme();
+  const [focus, setFocus] = useState(false);
   const { afficher } = useToast();
   const [type, setType] = useState<TypeProbleme | null>(null);
   const [texte, setTexte] = useState('');
@@ -98,13 +99,21 @@ export default function Aide() {
             value={texte}
             onChangeText={setTexte}
             multiline
+            onFocus={() => setFocus(true)}
+            onBlur={() => setFocus(false)}
             placeholder={t('aide.descriptionAide')}
             placeholderTextColor={couleurs.encre3}
             maxFontSizeMultiplier={echelleMax.courant}
             style={[
               typographie.corps,
               styles.zone,
-              { borderRadius: rayon.rayonCarte, borderColor: couleurs.ligneForte, backgroundColor: couleurs.surface, color: couleurs.encre },
+              {
+                borderRadius: rayon.rayonCarte,
+                borderWidth: focus ? 2 : 1,
+                borderColor: focus ? couleurs.emeraude : couleurs.ligneForte,
+                backgroundColor: couleurs.surface,
+                color: couleurs.encre,
+              },
             ]}
           />
           <Button pleineLargeur disabled={texte.trim().length === 0 || envoi} onPress={envoyer}>
