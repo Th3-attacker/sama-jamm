@@ -88,7 +88,6 @@ function LecteurCoran() {
   const s = position ? sourate(position.sourate) : undefined;
   const arabes = position ? versetsDe(position.sourate) : [];
   const texte = position ? arabes[position.verset - 1] : undefined;
-  const avant = position ? arabes[position.verset - 2] : undefined;
   const apres = position ? arabes[position.verset] : undefined;
 
   // Pochette : plus petite sur un écran bas.
@@ -198,36 +197,7 @@ function LecteurCoran() {
                 </Banner>
               ) : null}
 
-              {/* Le verset en cours, entouré du précédent et du suivant. */}
-              {avant ? (
-                <Text
-                  accessibilityLanguage="ar"
-                  numberOfLines={1}
-                  maxFontSizeMultiplier={echelleMax.grand}
-                  style={[typographie.arabe, styles.arabe, { color: couleurs.encre3 }]}>
-                  {avant}
-                </Text>
-              ) : null}
-              {texte ? (
-                <Text
-                  accessibilityLanguage="ar"
-                  maxFontSizeMultiplier={echelleMax.grand}
-                  style={[typographie.coran, styles.versetCourant, styles.arabe, { color: couleurs.encre }]}>
-                  {texte}
-                </Text>
-              ) : null}
-              {apres ? (
-                <Text
-                  accessibilityLanguage="ar"
-                  numberOfLines={1}
-                  maxFontSizeMultiplier={echelleMax.grand}
-                  style={[typographie.arabe, styles.arabe, { color: couleurs.encre3 }]}>
-                  {apres}
-                </Text>
-              ) : null}
-            </ScrollView>
-
-            <View style={{ paddingHorizontal: espace.espace6, gap: espace.espace2 }}>
+              <View style={{ gap: espace.espace2 }}>
               <View
                 accessibilityRole="progressbar"
                 accessibilityValue={{ min: 0, max: s.versets, now: position.verset }}
@@ -243,7 +213,7 @@ function LecteurCoran() {
               </Text>
             </View>
 
-            <View style={[styles.commandes, { paddingHorizontal: espace.espace6, marginTop: espace.espace4 }]}>
+            <View style={[styles.commandes, { marginTop: espace.espace4 }]}>
               <Pressable
                 accessibilityRole="button"
                 accessibilityLabel={t('ecouter.vitesseLecture')}
@@ -284,19 +254,48 @@ function LecteurCoran() {
               />
             </View>
 
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel={etiquetteMinuterie}
-              onPress={() => setFeuille(true)}
-              style={[
-                styles.minuterie,
-                { borderColor: couleurs.ligneForte, borderRadius: rayon.rayonPastille, gap: espace.espace2, marginTop: espace.espace4 },
-              ]}>
-              <Icon name="moon" size={18} color={couleurs.encre} />
-              <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.texteMinuterie, { color: couleurs.encre }]}>
-                {etiquetteMinuterie}
-              </Text>
-            </Pressable>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={etiquetteMinuterie}
+                onPress={() => setFeuille(true)}
+                style={[
+                  styles.minuterie,
+                  { borderColor: couleurs.ligneForte, borderRadius: rayon.rayonPastille, gap: espace.espace2, marginTop: espace.espace4 },
+                ]}>
+                <Icon name="moon" size={18} color={couleurs.encre} />
+                <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.texteMinuterie, { color: couleurs.encre }]}>
+                  {etiquetteMinuterie}
+                </Text>
+              </Pressable>
+              {/* Planche « Lecteur défilé » : sous les commandes, le verset en cours puis la suite. */}
+              <View style={{ alignSelf: 'stretch', gap: espace.espace2, marginTop: espace.espace6 }}>
+                <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, styles.surtitre, { color: couleurs.encre3 }]}>
+                  {t('ecouter.versetEnCours')}
+                </Text>
+              {texte ? (
+                <Text
+                  accessibilityLanguage="ar"
+                  maxFontSizeMultiplier={echelleMax.grand}
+                  style={[typographie.coran, styles.versetCourant, styles.arabe, { color: couleurs.encre }]}>
+                  {texte}
+                </Text>
+              ) : null}
+              {apres ? (
+                <>
+                  <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, styles.surtitre, { color: couleurs.encre3, marginTop: espace.espace4 }]}>
+                    {t('ecouter.aSuivre')}
+                  </Text>
+                  {/* Texte sacré : jamais tronqué. */}
+                  <Text
+                    accessibilityLanguage="ar"
+                    maxFontSizeMultiplier={echelleMax.grand}
+                    style={[typographie.arabe, styles.arabe, { color: couleurs.encre3 }]}>
+                    {apres}
+                  </Text>
+                </>
+              ) : null}
+              </View>
+            </ScrollView>
           </>
         ) : (
           <View style={{ padding: espace.espace5 }}>
@@ -305,36 +304,8 @@ function LecteurCoran() {
         )}
 
         <BottomSheet ouvert={feuille} titre={t('ecouter.titreFeuille')} onFermer={() => setFeuille(false)}>
-          <Slider
-            label={t('ecouter.vitesse')}
-            valeurs={VITESSES}
-            valeur={vitesse}
-            onChange={definirVitesse}
-            format={(v) => `${String(v).replace('.', ',')} ×`}
-          />
-          <SegmentedControl
-            label={t('ecouter.repeter')}
-            options={[
-              { id: 'non', label: t('ecouter.repetitionNon') },
-              { id: 'verset', label: t('ecouter.repeterVerset') },
-              ...(page === null ? [{ id: 'sourate', label: t('ecouter.repeterSourate') }] : []),
-            ]}
-            valeur={repetition}
-            onChange={(id) => {
-              if (id === 'non' || id === 'verset' || id === 'sourate') choisirRepetition(id);
-            }}
-          />
-          {repetition === 'verset' ? (
-            <View style={[styles.puces, { gap: espace.espace2 }]}>
-              {REPETITIONS_VERSET.filter((n) => n !== 1).map((n) => (
-                <Chip key={n} selectionne={repetitionVerset === n} onPress={() => definirRepetitionVerset(n)}>
-                  {n === 0 ? t('ecouter.sansFin') : t('ecouter.fois', { count: n })}
-                </Chip>
-              ))}
-            </View>
-          ) : null}
           <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, { color: couleurs.encre }]}>
-            {t('ecouter.minuterie')}
+            {t('ecouter.arreterLaLecture')}
           </Text>
           <View style={[styles.puces, { gap: espace.espace2 }]}>
             <Chip
@@ -372,6 +343,34 @@ function LecteurCoran() {
                 ? t('ecouter.minuterieResumeFinSourate')
                 : t('ecouter.minuterieResumeAucune')}
           </Text>
+          <SegmentedControl
+            label={t('ecouter.repeter')}
+            options={[
+              { id: 'non', label: t('ecouter.repetitionNon') },
+              { id: 'verset', label: t('ecouter.repeterVerset') },
+              ...(page === null ? [{ id: 'sourate', label: t('ecouter.repeterSourate') }] : []),
+            ]}
+            valeur={repetition}
+            onChange={(id) => {
+              if (id === 'non' || id === 'verset' || id === 'sourate') choisirRepetition(id);
+            }}
+          />
+          {repetition === 'verset' ? (
+            <View style={[styles.puces, { gap: espace.espace2 }]}>
+              {REPETITIONS_VERSET.filter((n) => n !== 1).map((n) => (
+                <Chip key={n} selectionne={repetitionVerset === n} onPress={() => definirRepetitionVerset(n)}>
+                  {n === 0 ? t('ecouter.sansFin') : t('ecouter.fois', { count: n })}
+                </Chip>
+              ))}
+            </View>
+          ) : null}
+          <Slider
+            label={t('ecouter.vitesse')}
+            valeurs={VITESSES}
+            valeur={vitesse}
+            onChange={definirVitesse}
+            format={(v) => `${String(v).replace('.', ',')} ×`}
+          />
           <Button
             variant="discret"
             pleineLargeur

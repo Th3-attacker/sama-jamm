@@ -15,6 +15,9 @@ export function ListeSources() {
   const { couleurs, espace, typographie } = useTheme();
   return (
     <View style={{ gap: espace.espace4 }}>
+      <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, { color: couleurs.encre2 }]}>
+        {t('xassaides.intro')}
+      </Text>
       <ListGroup titre={t('xassaides.sources')}>
         {SOURCES.map((s) => (
           <ListItem

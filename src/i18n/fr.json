@@ -379,7 +379,13 @@
     "minuterieSommeilDuree": "Minuterie de sommeil · {{duree}}",
     "resumeRecitateur_one": "Murattal · 114 sourates · {{count}} téléchargée",
     "resumeRecitateur_other": "Murattal · 114 sourates · {{count}} téléchargées",
-    "enLecture": "En lecture"
+    "enLecture": "En lecture",
+    "arreterLaLecture": "Arrêter la lecture",
+    "versetEnCours": "Verset en cours",
+    "aSuivre": "À suivre",
+    "votreVoix": "Votre voix",
+    "autresVoix": "Autres voix",
+    "styleRecitateur": "Hafs · murattal · 114 sourates"
   },
   "xassaides": {
     "titre": "Xassaïdes",
@@ -399,7 +405,8 @@
     "reculer": "Reculer de {{n}} secondes",
     "avancer": "Avancer de {{n}} secondes",
     "rechercheAide": "Tapez un titre ou un nom pour trouver un xassaïde.",
-    "barreTemps": "Position dans la piste"
+    "barreTemps": "Position dans la piste",
+    "intro": "Poèmes de louange et d’enseignement, en arabe et en wolofal."
   },
   "telechargements": {
     "titre": "Téléchargements",

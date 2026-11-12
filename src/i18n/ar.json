@@ -415,7 +415,13 @@
     "resumeRecitateur_few": "مرتل · 114 سورة · {{count}} سور منزّلة",
     "resumeRecitateur_many": "مرتل · 114 سورة · {{count}} سورة منزّلة",
     "resumeRecitateur_other": "مرتل · 114 سورة · {{count}} سورة منزّلة",
-    "enLecture": "قيد التشغيل"
+    "enLecture": "قيد التشغيل",
+    "arreterLaLecture": "إيقاف التشغيل",
+    "versetEnCours": "الآية الحالية",
+    "aSuivre": "التالي",
+    "votreVoix": "صوتك",
+    "autresVoix": "أصوات أخرى",
+    "styleRecitateur": "حفص · مرتّل · 114 سورة"
   },
   "xassaides": {
     "titre": "القصائد",
@@ -439,7 +445,8 @@
     "reculer": "الرجوع {{n}} ث",
     "avancer": "التقدّم {{n}} ث",
     "rechercheAide": "اكتب عنوانًا أو اسمًا للعثور على قصيدة.",
-    "barreTemps": "موضع التشغيل"
+    "barreTemps": "موضع التشغيل",
+    "intro": "قصائد المديح والتعليم، بالعربية والولوفال."
   },
   "telechargements": {
     "titre": "التنزيلات",
