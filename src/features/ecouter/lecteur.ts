@@ -26,7 +26,7 @@ type EtatLecteur = {
   derniere: Position | null;
   /** Xassaïde en cours d'écoute ; `position` vaut alors null. */
   piste: PisteEnCours | null;
-  /** Temps écoulé et durée de la piste en cours, en secondes entières (xassaïdes seulement). */
+  /** Temps écoulé dans la piste en cours, en secondes entières ; `duree` n'est mesurée que pour les xassaïdes. */
   temps: number;
   duree: number;
   recitateur: string;
@@ -166,16 +166,13 @@ function surStatut(statut: AudioPlaylistStatus): void {
     return;
   }
   if (statut.playing && !statut.isBuffering) relances = 0;
-  useLecteur.setState(
-    enFile?.mode === 'xassaides'
-      ? {
-          enLecture: statut.playing,
-          chargement: statut.isBuffering,
-          temps: Math.floor(statut.currentTime) || 0,
-          duree: Math.floor(statut.duration) || 0,
-        }
-      : { enLecture: statut.playing, chargement: statut.isBuffering },
-  );
+  // Le temps écoulé dans la piste sert aux xassaïdes (barre de temps) et au temps de la sourate (Coran).
+  useLecteur.setState({
+    enLecture: statut.playing,
+    chargement: statut.isBuffering,
+    temps: Math.floor(statut.currentTime) || 0,
+    ...(enFile?.mode === 'xassaides' ? { duree: Math.floor(statut.duration) || 0 } : {}),
+  });
   // iOS ne signale pas l'erreur : un chargement qui n'aboutit pas vaut aussi échec réseau.
   if (statut.playing || !lectureDemandee) {
     clearTimeout(attenteReseau);

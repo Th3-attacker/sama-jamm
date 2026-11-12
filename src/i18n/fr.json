@@ -357,6 +357,7 @@
     "precedent": "Précédent",
     "suivant": "Suivant",
     "versetN": "verset {{n}}",
+    "tempsSourate": "Écoulé {{ecoule}}, reste {{reste}}",
     "versetSur": "Verset {{n}} sur {{total}}",
     "murattal": "Murattal · verset par verset",
     "reseau": "L’écoute passe par Internet, sauf pour les sourates téléchargées.",

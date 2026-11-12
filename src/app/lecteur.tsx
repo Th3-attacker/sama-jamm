@@ -23,9 +23,12 @@ import {
   REPETITIONS_VERSET,
   resteMinuterie,
 } from '@/features/ecouter/minuterie';
+import { tempsSourate } from '@/features/ecouter/durees';
+import { dureesDe, VERSETS_PAR_SOURATE } from '@/features/ecouter/dureesDonnees';
 import { recitateur } from '@/features/ecouter/recitateurs';
 import { sourateTelechargee, telechargerSourate, useTelechargements, WifiRequis } from '@/features/ecouter/telechargements';
 import { reperes, sourate, versetsDe } from '@/features/lire/coran';
+import { formatTemps } from '@/features/xassaides/pistes';
 import { LecteurXassaide } from '@/features/xassaides/LecteurXassaide';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
@@ -60,6 +63,7 @@ function LecteurCoran() {
   const chargement = useLecteur((s) => s.chargement);
   const erreur = useLecteur((s) => s.erreur);
   const vitesse = useLecteur((s) => s.vitesse);
+  const tempsPiste = useLecteur((s) => (s.position ? s.temps : 0));
   const page = useLecteur((s) => s.page);
   const idRecitateur = useLecteur((s) => s.recitateur);
   const versionTelechargements = useTelechargements((s) => s.version);
@@ -92,7 +96,13 @@ function LecteurCoran() {
 
   // Pochette : plus petite sur un écran bas.
   const COTE_POCHETTE = height < 700 ? 170 : 260;
-  const avance = position && s ? position.verset / s.versets : 0;
+  // Temps de la sourate d'après la durée des versets du récitateur ; sans durées, on garde « Verset N sur M ».
+  const temps = useMemo(
+    () => (position ? tempsSourate(dureesDe(idRecitateur), VERSETS_PAR_SOURATE, position.sourate, position.verset, tempsPiste) : null),
+    [idRecitateur, position, tempsPiste],
+  );
+  const avance = temps ? Math.min(1, temps.ecoule / Math.max(1, temps.total)) : position && s ? position.verset / s.versets : 0;
+  const resteSourate = temps ? Math.max(0, Math.round((temps.total - temps.ecoule) / vitesse)) : 0;
 
   const repetition: Repetition = repeterSourate ? 'sourate' : repetitionVerset === 1 ? 'non' : 'verset';
   const choisirRepetition = (r: Repetition) => {
@@ -204,13 +214,28 @@ function LecteurCoran() {
                 style={[styles.piste, { backgroundColor: couleurs.surface }]}>
                 <View style={[styles.remplissage, { width: `${Math.round(avance * 100)}%`, backgroundColor: couleurs.or }]} />
               </View>
-              <Text
-                maxFontSizeMultiplier={echelleMax.courant}
-                style={[typographie.legende, styles.centre, { color: couleurs.encre3 }]}>
-                {page !== null
-                  ? `${t('lire.pageN', { n: page })} · ${t('ecouter.versetSur', { n: position.verset, total: s.versets })}`
-                  : t('ecouter.versetSur', { n: position.verset, total: s.versets })}
-              </Text>
+              {temps ? (
+                <View
+                  accessible
+                  accessibilityLabel={t('ecouter.tempsSourate', { ecoule: formatTemps(temps.ecoule), reste: formatTemps(resteSourate) })}
+                  style={styles.temps}>
+                  <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre3 }]}>
+                    {formatTemps(temps.ecoule)}
+                  </Text>
+                  <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre3 }]}>
+                    {`−${formatTemps(resteSourate)}`}
+                  </Text>
+                </View>
+              ) : (
+                // La planche n'a que les temps ; « Verset N sur M » reste seulement si les durées manquent.
+                <Text
+                  maxFontSizeMultiplier={echelleMax.courant}
+                  style={[typographie.legende, styles.centre, { color: couleurs.encre3 }]}>
+                  {page !== null
+                    ? `${t('lire.pageN', { n: page })} · ${t('ecouter.versetSur', { n: position.verset, total: s.versets })}`
+                    : t('ecouter.versetSur', { n: position.verset, total: s.versets })}
+                </Text>
+              )}
             </View>
 
             <View style={[styles.commandes, { marginTop: espace.espace4 }]}>
@@ -396,6 +421,7 @@ const styles = StyleSheet.create({
   titres: { flex: 1, alignItems: 'center' },
   centreScroll: { alignItems: 'center', flexGrow: 1, justifyContent: 'center' },
   centre: { textAlign: 'center' },
+  temps: { flexDirection: 'row', justifyContent: 'space-between' },
   // Planche : verset en cours 34/64, vitesse 16/24, minuterie 14/20.
   versetCourant: { fontSize: tailles.t34, lineHeight: interlignes.l64 },
   vitesse: { fontSize: tailles.t16, lineHeight: interlignes.l24 },

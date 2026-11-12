@@ -385,6 +385,7 @@
     "precedent": "السابق",
     "suivant": "التالي",
     "versetN": "الآية {{n}}",
+    "tempsSourate": "مضى {{ecoule}}، المتبقي {{reste}}",
     "versetSur": "الآية {{n}} من {{total}}",
     "murattal": "مرتل · آية آية",
     "reseau": "يتم الاستماع عبر الإنترنت، إلا للسور المنزّلة.",
