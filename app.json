@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Sama Jàmm",
+    "name": "Sama Jamm",
     "slug": "sama-jamm",
     "version": "1.0.0",
     "runtimeVersion": {
@@ -15,9 +15,11 @@
     "userInterfaceStyle": "automatic",
     "ios": {
       "bundleIdentifier": "com.samajamm.app",
+      "buildNumber": "1",
       "supportsTablet": false,
       "usesAppleSignIn": true,
       "infoPlist": {
+        "CFBundleDisplayName": "Sama Jàmm",
         "ITSAppUsesNonExemptEncryption": false
       },
       "entitlements": {
@@ -114,7 +116,62 @@
         }
       ],
       "expo-asset",
-      "expo-widgets"
+      [
+        "expo-widgets",
+        {
+          "widgets": [
+            {
+              "name": "ProchainePriere",
+              "displayName": "Prochaine prière",
+              "description": "Le nom et l'heure de la prochaine prière.",
+              "ios": {
+                "supportedFamilies": [
+                  "systemSmall",
+                  "accessoryCircular",
+                  "accessoryRectangular",
+                  "accessoryInline"
+                ]
+              },
+              "android": {
+                "targetCellWidth": 2,
+                "targetCellHeight": 1,
+                "resizeMode": "both"
+              }
+            },
+            {
+              "name": "CinqPrieres",
+              "displayName": "Les cinq prières",
+              "description": "Les heures des cinq prières du jour.",
+              "ios": {
+                "supportedFamilies": [
+                  "systemMedium"
+                ]
+              },
+              "android": {
+                "targetCellWidth": 4,
+                "targetCellHeight": 2,
+                "resizeMode": "both"
+              }
+            },
+            {
+              "name": "Reprendre",
+              "displayName": "Reprendre",
+              "description": "La sourate et le verset où la lecture s'est arrêtée.",
+              "ios": {
+                "supportedFamilies": [
+                  "systemSmall"
+                ]
+              },
+              "android": {
+                "targetCellWidth": 2,
+                "targetCellHeight": 1,
+                "resizeMode": "both"
+              }
+            }
+          ],
+          "enableAndroid": true
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,
