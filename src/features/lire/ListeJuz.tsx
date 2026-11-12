@@ -106,5 +106,5 @@ const styles = StyleSheet.create({
   fin: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', borderTopWidth: StyleSheet.hairlineWidth },
   suivant: { flexDirection: 'row', alignItems: 'center', minHeight: 44 },
   textes: { flex: 1 },
-  arabe: { fontFamily: 'Amiri_400Regular', fontSize: 20, lineHeight: 32, writingDirection: 'rtl' },
+  arabe: { fontFamily: 'Amiri_400Regular', fontSize: 20, lineHeight: 32, writingDirection: 'rtl', includeFontPadding: false, textAlignVertical: 'center' },
 });

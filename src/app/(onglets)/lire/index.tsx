@@ -243,7 +243,7 @@ const styles = StyleSheet.create({
   reprise: { flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderRadius: rayon.rayonFeuille, padding: espace.espace3 },
   repriseLien: { flex: 1, flexDirection: 'row', alignItems: 'center' },
   tuile: { width: 56, height: 56, alignItems: 'center', justifyContent: 'center' },
-  tuileNom: { fontFamily: 'Amiri_700Bold', fontSize: tailles.t18, lineHeight: interlignes.l24 },
+  tuileNom: { fontFamily: 'Amiri_700Bold', fontSize: tailles.t18, lineHeight: interlignes.l24, includeFontPadding: false, textAlignVertical: 'center' },
   repriseTexte: { flex: 1 },
   surtitre: { fontSize: tailles.t12, lineHeight: interlignes.l16, letterSpacing: 0.7, textTransform: 'uppercase' },
   progression: { flexDirection: 'row', alignItems: 'center' },

@@ -119,6 +119,6 @@ const styles = StyleSheet.create({
   pastille: { width: 36, height: 36, alignItems: 'center', justifyContent: 'center' },
   textes: { flex: 1, minWidth: 0 },
   droite: { flexShrink: 0 },
-  arabe: { fontFamily: 'Amiri_400Regular', fontSize: 20, lineHeight: interlignes.l36, writingDirection: 'rtl', textAlign: 'right' },
+  arabe: { fontFamily: 'Amiri_400Regular', fontSize: 20, lineHeight: interlignes.l36, writingDirection: 'rtl', textAlign: 'right', includeFontPadding: false, textAlignVertical: 'center' },
   valeur: { fontVariant: ['tabular-nums'] },
 });

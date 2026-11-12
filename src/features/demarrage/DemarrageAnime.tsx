@@ -107,5 +107,5 @@ const styles = StyleSheet.create({
   // Planche : Cormorant 600, 28 sur 32, centré.
   signature: { fontSize: tailles.t28, lineHeight: 32, textAlign: 'center' },
   // Interface en arabe : sous-titre en Amiri 17.
-  sousTitreAr: { fontFamily: 'Amiri_400Regular', fontSize: 17, lineHeight: 26, textAlign: 'center' },
+  sousTitreAr: { fontFamily: 'Amiri_400Regular', fontSize: 17, lineHeight: 26, textAlign: 'center', includeFontPadding: false, textAlignVertical: 'center' },
 });

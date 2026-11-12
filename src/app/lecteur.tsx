@@ -414,7 +414,7 @@ const styles = StyleSheet.create({
   entete: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   surtitre: { letterSpacing: 0.7, textTransform: 'uppercase' },
   pochette: { alignItems: 'center', justifyContent: 'center' },
-  nomPochette: { fontFamily: 'Amiri_700Bold', fontSize: 58, lineHeight: 80 },
+  nomPochette: { fontFamily: 'Amiri_700Bold', fontSize: 58, lineHeight: 80, includeFontPadding: false, textAlignVertical: 'center' },
   titreLigne: { alignSelf: 'stretch', flexDirection: 'row', alignItems: 'flex-start' },
   titres: { flex: 1, alignItems: 'flex-start' },
   centreScroll: { alignItems: 'center', flexGrow: 1, justifyContent: 'flex-start' },

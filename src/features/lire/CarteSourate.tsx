@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
   nomPlat: { fontSize: tailles.t16, lineHeight: interlignes.l24 },
   metaPlat: { fontSize: tailles.t14, lineHeight: interlignes.l20 },
   arabePlat: { lineHeight: interlignes.l30 },
-  titreArabe: { fontFamily: 'Amiri_700Bold', fontSize: tailles.t24, lineHeight: interlignes.l30, writingDirection: 'rtl' },
+  titreArabe: { fontFamily: 'Amiri_700Bold', fontSize: tailles.t24, lineHeight: interlignes.l30, writingDirection: 'rtl', includeFontPadding: false, textAlignVertical: 'center' },
   textes: { flex: 1 },
-  arabe: { fontFamily: 'Amiri_400Regular', fontSize: tailles.t24, lineHeight: interlignes.l40, writingDirection: 'rtl', textAlign: 'right' },
+  arabe: { fontFamily: 'Amiri_400Regular', fontSize: tailles.t24, lineHeight: interlignes.l40, writingDirection: 'rtl', textAlign: 'right', includeFontPadding: false, textAlignVertical: 'center' },
 });
