@@ -8,6 +8,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { captureRef } from 'react-native-view-shot';
 
 import { themes } from '@/theme/tokens.generated';
+import { echelleSuivante } from './echelleCarte';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { BottomSheet } from '@/ui/BottomSheet';
@@ -44,9 +45,30 @@ export function PartageVerset({ verset, onFermer }: { verset: VersetAPartager | 
   const [format, setFormat] = useState<Format>('carre');
   const [avecTranslit, setAvecTranslit] = useState(false);
   const [envoi, setEnvoi] = useState(false);
+  // Taille du texte : réduite tant qu'il ne tient pas dans la carte ; remise à 1 quand le contenu ou le format change.
+  const cleCarte = `${verset?.sourate}:${verset?.n}:${format}:${avecTranslit}`;
+  const [reglage, setReglage] = useState({ cle: cleCarte, echelle: 1 });
+  if (reglage.cle !== cleCarte) setReglage({ cle: cleCarte, echelle: 1 });
+  // Hauteurs mesurées de la carte et de son contenu, dans n'importe quel ordre d'arrivée.
+  const mesures = useRef({ carte: 0, contenu: 0 });
+  const ajuster = (carteH?: number, contenuH?: number) => {
+    if (carteH !== undefined) mesures.current.carte = carteH;
+    if (contenuH !== undefined) mesures.current.contenu = contenuH;
+    const place = mesures.current.carte - 2 * (espace.espace5 + 1);
+    setReglage((r) => {
+      const suivante = echelleSuivante(mesures.current.contenu, place, r.echelle);
+      return suivante === r.echelle ? r : { cle: r.cle, echelle: suivante };
+    });
+  };
+  const echelle = reglage.cle === cleCarte ? reglage.echelle : 1;
 
   const c = CARTE[fond];
   const translit = avecTranslit && verset?.translit ? verset.translit : null;
+  // Tailles du texte de la carte, réduites par l'échelle courante.
+  const taille = (base: { fontSize?: number; lineHeight?: number }) => ({
+    fontSize: (base.fontSize ?? 16) * echelle,
+    lineHeight: (base.lineHeight ?? 24) * echelle,
+  });
   const reference = verset ? `${verset.nomSourate} · ${verset.sourate}:${verset.n}` : '';
 
   const partagerImage = async () => {
@@ -93,6 +115,7 @@ export function PartageVerset({ verset, onFermer }: { verset: VersetAPartager | 
               accessible
               accessibilityRole="image"
               accessibilityLabel={reference}
+              onLayout={(e) => ajuster(e.nativeEvent.layout.height)}
               style={[
                 styles.carte,
                 {
@@ -105,20 +128,25 @@ export function PartageVerset({ verset, onFermer }: { verset: VersetAPartager | 
                   gap: espace.espace3,
                 },
               ]}>
+              {/* Contenu mesuré : s'il dépasse la place de la carte, le texte rétrécit (jamais coupé). */}
+              <View
+                onLayout={(e) => ajuster(undefined, e.nativeEvent.layout.height)}
+                style={[styles.contenu, { gap: espace.espace3 }]}>
               <Text
                 accessibilityLanguage="ar"
                 allowFontScaling={false}
-                style={[typographie.coran, styles.arabe, { color: c.texte }]}>
+                style={[typographie.coran, styles.arabe, taille(typographie.coran), { color: c.texte }]}>
                 {verset.texte}
               </Text>
               {translit ? (
-                <Text accessibilityLanguage="en" allowFontScaling={false} style={[typographie.translitteration, styles.translit, { color: c.texte }]}>
+                <Text accessibilityLanguage="en" allowFontScaling={false} style={[typographie.translitteration, styles.translit, taille(typographie.translitteration), { color: c.texte }]}>
                   {translit}
                 </Text>
               ) : null}
-              <Text allowFontScaling={false} style={[typographie.legende, styles.reference, { color: c.accent }]}>
+              <Text allowFontScaling={false} style={[typographie.legende, styles.reference, taille(typographie.legende), { color: c.accent }]}>
                 {`${reference} · ${t('partage.marque')}`}
               </Text>
+              </View>
             </View>
           </View>
 
@@ -184,6 +212,7 @@ export function PartageVerset({ verset, onFermer }: { verset: VersetAPartager | 
 
 const styles = StyleSheet.create({
   centre: { alignItems: 'center' },
+  contenu: { alignSelf: 'stretch', alignItems: 'center' },
   carte: { borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
   arabe: { textAlign: 'center', writingDirection: 'rtl' },
   translit: { textAlign: 'center' },
