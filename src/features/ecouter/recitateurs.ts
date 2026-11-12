@@ -11,6 +11,14 @@ export const RECITATEURS: readonly Recitateur[] = [
   { id: 'ar.abdulsamad', nom: 'Abdul Basit Abdul Samad', style: 'murattal' },
   { id: 'ar.hudhaify', nom: 'Ali Al-Hudhaify', style: 'murattal' },
   { id: 'ar.mahermuaiqly', nom: 'Maher Al-Muaiqly', style: 'murattal' },
+  { id: 'ar.abdurrahmaansudais', nom: 'Abderrahman As-Sudais', style: 'murattal' },
+  { id: 'ar.saoodshuraym', nom: 'Saud Ash-Shuraim', style: 'murattal' },
+  { id: 'ar.hanirifai', nom: 'Hani Ar-Rifai', style: 'murattal' },
+  { id: 'ar.ahmedajamy', nom: 'Ahmed Al-Ajmi', style: 'murattal' },
+  { id: 'ar.abdullahbasfar', nom: 'Abdullah Basfar', style: 'murattal' },
+  { id: 'ar.shaatree', nom: 'Abu Bakr Ash-Shatri', style: 'murattal' },
+  { id: 'ar.aymanswoaid', nom: 'Ayman Sowaid', style: 'murattal' },
+  { id: 'ar.husarymujawwad', nom: 'Mahmoud Khalil Al-Husary (tajwid)', style: 'mujawwad' },
 ];
 
 const DEBIT = 64;

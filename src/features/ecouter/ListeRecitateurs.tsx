@@ -24,7 +24,7 @@ export function ListeRecitateurs() {
           <ListItem
             icone="headphones"
             titre={choisi.nom}
-            sousTitre={t('ecouter.styleRecitateur')}
+            sousTitre={t(choisi.style === 'mujawwad' ? 'ecouter.styleRecitateurMujawwad' : 'ecouter.styleRecitateur')}
             fin="coche"
             onPress={() => ouvrir(choisi.id)}
           />
@@ -37,7 +37,7 @@ export function ListeRecitateurs() {
               key={r.id}
               icone="headphones"
               titre={r.nom}
-              sousTitre={t('ecouter.murattal')}
+              sousTitre={t(r.style === 'mujawwad' ? 'ecouter.mujawwad' : 'ecouter.murattal')}
               fin="chevron"
               onPress={() => ouvrir(r.id)}
             />

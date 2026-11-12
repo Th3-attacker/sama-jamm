@@ -11,7 +11,21 @@ const TOTAL = 6236;
 const PARALLELE = 12;
 const AGENT = 'sama-jamm-durees/1.0';
 const SORTIE = new URL('../src/data/coran/durees.json', import.meta.url);
-const RECITATEURS = ['ar.alafasy', 'ar.husary', 'ar.abdulsamad', 'ar.hudhaify', 'ar.mahermuaiqly'];
+const RECITATEURS = [
+  'ar.alafasy',
+  'ar.husary',
+  'ar.abdulsamad',
+  'ar.hudhaify',
+  'ar.mahermuaiqly',
+  'ar.abdurrahmaansudais',
+  'ar.saoodshuraym',
+  'ar.hanirifai',
+  'ar.ahmedajamy',
+  'ar.abdullahbasfar',
+  'ar.shaatree',
+  'ar.aymanswoaid',
+  'ar.husarymujawwad',
+];
 
 const resultat = existsSync(SORTIE) ? JSON.parse(readFileSync(SORTIE, 'utf8')) : {};
 
