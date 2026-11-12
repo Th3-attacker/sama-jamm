@@ -26,6 +26,9 @@ Tenu par l'agent de code (voir `AGENTS.md`, section 1). Un écart par ligne : da
 | 2026-11-12 | Liens profonds | `samajamm://lire/coran/18?verset=46`, `lire/xassaides/{recueil}/{chant}`, `budget/ajouter` sans route | Relais ajoutés : `(onglets)/lire/coran/[sourate]`, `(onglets)/lire/xassaides/[recitant]/[chant]` (le paramètre porte l'identifiant du recueil), `(onglets)/budget/ajouter` |
 | 2026-11-12 | Raccourcis d'icône (appui long) | Demandés par `04-structure-et-navigation.md` | Non faits : demandent un paquet communautaire (`expo-quick-actions`) et un build natif. À décider |
 | 2026-11-12 | Liens universels | Domaine de l'app non réservé | Pas de `associatedDomains` ni d'`intentFilters` ; seul le schéma `samajamm://` fonctionne |
+| 2026-11-12 | `features/budget/db.ts` | `PRAGMA cipher_version` jamais vérifié | `verifierChiffrement` (`chiffrement.ts`, testé) appelé avant `PRAGMA key` : sans SQLCipher, `ChiffrementIndisponible` est levée (écran d'erreur, jamais de proposition d'effacement). **À vérifier sur un build de développement** |
+| 2026-11-12 | `src/i18n/fr.json` ↔ `design-system/i18n/fr.json` | 115 libellés du design system n'existent pas à l'identique dans l'app (apostrophes normalisées). Environ 35 sont ceux de Soutenir/dons (non recréés) ; le reste est de la reformulation (ex. « Lire, écouter, prier dans la paix. » contre « en paix »), du texte de planches non reprises (Merci, Déclarer) ou de nouvelles chaînes (« Ajouter la translittération », « Écran adouci entre Isha et Fajr ») | Non réécrits en masse : comparer écran par écran avec la planche sur appareil avant de changer un texte. Liste obtenue par comparaison des deux fichiers |
+| 2026-11-12 | Écrans Accueil, Prière, Budget, Plus, États, arabe | Comparaison planche contre écran | **Non faite visuellement** (pas d'appareil ni de rendu des planches dans cet environnement). Seuls les écarts vérifiables par le code ont été traités |
 
 ## Dépendances
 
