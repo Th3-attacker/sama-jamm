@@ -10,16 +10,17 @@ type Props = {
   sourate: number;
   verset: number;
   texte: string;
-  trad?: string;
+  /** Translittération (sans balises), seulement si l'utilisateur l'a activée ou si elle a servi à trouver le verset. */
+  translit?: string;
   onPress: () => void;
   /** Ligne à plat de la recherche (planche) : filet en bas, sans carte. */
   plat?: boolean;
-  /** Requête dont les mots sont surlignés dans la traduction (avec `plat`). */
+  /** Requête dont les mots sont surlignés dans la translittération (avec `plat`). */
   surligner?: string;
 };
 
-/** Un verset hors de son contexte (résultat de recherche, favori) : référence, arabe, traduction. Jamais tronqué. */
-export function CarteVerset({ sourate, verset, texte, trad, onPress, plat = false, surligner: requete }: Props) {
+/** Un verset hors de son contexte (résultat de recherche, favori) : référence, arabe, translittération si elle est active. Jamais tronqué. */
+export function CarteVerset({ sourate, verset, texte, translit, onPress, plat = false, surligner: requete }: Props) {
   const { couleurs, espace, rayon, typographie } = useTheme();
   const reference = referenceVerset(sourate, verset);
 
@@ -40,9 +41,9 @@ export function CarteVerset({ sourate, verset, texte, trad, onPress, plat = fals
         <Text accessibilityLanguage="ar" maxFontSizeMultiplier={echelleMax.grand} style={[typographie.arabe, styles.arabe, { color: couleurs.encre }]}>
           {texte}
         </Text>
-        {trad ? (
-          <Text maxFontSizeMultiplier={echelleMax.grand} style={[typographie.lecture, styles.tradPlate, { color: couleurs.encre }]}>
-            {(requete ? surligner(trad, requete) : [{ texte: trad, trouve: false }]).map((m, i) =>
+        {translit ? (
+          <Text accessibilityLanguage="en" maxFontSizeMultiplier={echelleMax.grand} style={[typographie.translitteration, styles.translitPlate, { color: couleurs.encre }]}>
+            {(requete ? surligner(translit, requete) : [{ texte: translit, trouve: false }]).map((m, i) =>
               m.trouve ? (
                 <Text key={i} style={{ backgroundColor: couleurs.orDoux, color: couleurs.encre }}>
                   {m.texte}
@@ -84,9 +85,9 @@ export function CarteVerset({ sourate, verset, texte, trad, onPress, plat = fals
           {texte}
         </Text>
       </View>
-      {trad ? (
-        <Text maxFontSizeMultiplier={echelleMax.grand} style={[typographie.lecture, { color: couleurs.encre2 }]}>
-          {trad}
+      {translit ? (
+        <Text accessibilityLanguage="en" maxFontSizeMultiplier={echelleMax.grand} style={[typographie.translitteration, { color: couleurs.encre2 }]}>
+          {translit}
         </Text>
       ) : null}
     </Pressable>
@@ -96,6 +97,6 @@ export function CarteVerset({ sourate, verset, texte, trad, onPress, plat = fals
 const styles = StyleSheet.create({
   carte: { borderWidth: StyleSheet.hairlineWidth },
   ligne: { borderBottomWidth: 1 },
-  tradPlate: { fontSize: tailles.t16, lineHeight: interlignes.l24 },
+  translitPlate: { fontSize: tailles.t16, lineHeight: interlignes.l24 },
   arabe: { textAlign: 'right', writingDirection: 'rtl' },
 });

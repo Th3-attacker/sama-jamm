@@ -1,7 +1,7 @@
-// Recherche dans le Coran embarqué, sans réseau : arabe, traduction française et noms de sourates.
+// Recherche dans le Coran embarqué, sans réseau : arabe, translittération et noms de sourates (aucune traduction).
 // L'index (textes normalisés) est préparé par paquets à l'ouverture de l'écran (`preparerIndex`), sans figer la saisie ;
 // à défaut, il est construit d'un bloc à la première recherche. La correspondance elle-même vit dans `moteur.ts`.
-import { sourate, sourates, traductionDe, versetsDe } from '@/features/lire/coran';
+import { sourate, sourates, translitDe, versetsDe } from '@/features/lire/coran';
 
 import { parPaquets } from '@/lib/paquets';
 
@@ -12,10 +12,10 @@ export { LIMITE_VERSETS, VIDE, type ResultatVerset, type Resultats } from './mot
 let indexEnMemoire: Index | undefined;
 let preparation: Promise<void> | undefined;
 
-/** Une sourate de l'index : ses versets normalisés en arabe et en français. */
+/** Une sourate de l'index : ses versets normalisés en arabe et en translittération. */
 const sourateNormalisee = (i: number) => {
   const n = sourates[i]?.n ?? i + 1;
-  return versetsNormalises(versetsDe(n), traductionDe(n));
+  return versetsNormalises(versetsDe(n), translitDe(n));
 };
 
 function index(): Index {
@@ -24,7 +24,7 @@ function index(): Index {
     indexEnMemoire = {
       noms: sourates.map(nomNormalise),
       arabe: parSourate.map((x) => x.arabe),
-      trad: parSourate.map((x) => x.trad),
+      translit: parSourate.map((x) => x.translit),
     };
   }
   return indexEnMemoire;
@@ -43,7 +43,7 @@ export function preparerIndex(): Promise<void> {
       indexEnMemoire ??= {
         noms: sourates.map(nomNormalise),
         arabe: parSourate.map((x) => x.arabe),
-        trad: parSourate.map((x) => x.trad),
+        translit: parSourate.map((x) => x.translit),
       };
     })
     .finally(() => {
@@ -53,7 +53,7 @@ export function preparerIndex(): Promise<void> {
 }
 
 export function rechercher(requete: string): Resultats {
-  return chercher(index(), requete, { versetsDe, traductionDe });
+  return chercher(index(), requete, { versetsDe, translitDe });
 }
 
 /** Nom de la sourate d'un résultat, pour l'en-tête « Al-Kahf · 18:46 ». */

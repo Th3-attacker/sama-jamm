@@ -30,7 +30,6 @@ export default function EcranLangue() {
   const { couleurs, espace, rayon, typographie, latin } = useTheme();
   const langueEnregistree = useReglages((s) => s.langue);
   const definirLangue = useReglages((s) => s.definirLangue);
-  const definirTraduction = useReglages((s) => s.definirTraduction);
   // Vrai après un changement de sens de lecture : la mise en page s'applique à la prochaine ouverture.
   const [sensDiffere, setSensDiffere] = useState(false);
 
@@ -43,8 +42,6 @@ export default function EcranLangue() {
 
   const choisir = (langue: Langue) => {
     definirLangue(langue);
-    // La traduction du Coran suit la langue ; en interface arabe, le français par défaut.
-    definirTraduction(langue === "ar" ? "fr" : langue);
     // Le sens de lecture est enregistré pour la prochaine ouverture ; la langue, elle, change tout de suite.
     appliquerSensLecture(langue);
     setSensDiffere(sensChange(langue));

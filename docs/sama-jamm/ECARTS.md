@@ -14,6 +14,10 @@ Tenu par l'agent de code (voir `AGENTS.md`, section 1). Un écart par ligne : da
 | 2026-11-12 | Dons (`Soutenir`, `DonDeclarer`, `DonMerci`) | Planches présentes, écrans retirés du dépôt (`004_retrait_dons.sql`) | Non recréés (défaut). À valider |
 | 2026-11-12 | Routes | Chemins du dépôt ≠ inventaire (`coran/[sourate]`, `plus/khatm/[id]`, `budget/devise`…) | Routes existantes conservées |
 | 2026-11-12 | Bases | Pas de `utilisateur.db` ni `contenu.db` (stockage clé-valeur + JSON) | Conservé (défaut), migrations des réglages via `migrate` de zustand |
+| 2026-11-12 | `src/stores/reglages.ts` | Réglages `traduction` et `affichage` supprimés | Version 7 → 8 : `retirerTraduction` (`traductionMigration.ts`, testé) efface les deux clés enregistrées ; la translittération reste telle que choisie (désactivée par défaut) |
+| 2026-11-12 | `src/data/coran/fr.json` | Traduction Hamidullah embarquée | Fichier supprimé du dépôt (le texte arabe et la translittération restent) ; crédit retiré de À propos |
+| 2026-11-12 | `features/recherche` | La recherche portait sur la traduction française | Elle porte sur l'arabe et la translittération sans balises ; les résultats montrent la translittération surlignée quand la requête est en lettres latines |
+| 2026-11-12 | Écran Partage | Option « Ajouter la traduction » | Clés retirées ; l'option de translittération viendra avec l'écran recréé (phase 4) |
 
 ## Dépendances
 

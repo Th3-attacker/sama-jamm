@@ -1,18 +1,16 @@
-// Feuille « Lecture » (bouton Aa du lecteur, maquette « Réglages de lecture ») : aperçu, taille, affichage,
-// translittération, chiffres arabes, récitateur par défaut.
+// Feuille « Lecture » (bouton Aa du lecteur, maquette « Réglages de lecture ») : aperçu, taille,
+// translittération (désactivée par défaut), chiffres arabes, récitateur par défaut. Aucune traduction : le Coran est en arabe seul.
 import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { useLecteur } from '@/features/ecouter/lecteur';
 import { RECITATEURS, recitateur } from '@/features/ecouter/recitateurs';
-import { affichagesLecture, useReglages } from '@/stores/reglages';
-import type { Langue } from '@/i18n/langues';
+import { useReglages } from '@/stores/reglages';
 import { useTheme } from '@/theme/useTheme';
 import { BottomSheet } from '@/ui/BottomSheet';
 import { ListGroup } from '@/ui/ListGroup';
 import { ListItem } from '@/ui/ListItem';
-import { SegmentedControl } from '@/ui/SegmentedControl';
 import { Switch } from '@/ui/Switch';
 
 import { ReglageTaille, useTaillesLecture } from './BarreTaille';
@@ -22,8 +20,6 @@ export function ReglagesLecture({ ouvert, onFermer }: { ouvert: boolean; onFerme
   const { t } = useTranslation();
   const { couleurs, espace, rayon, typographie } = useTheme();
   const { tailleArabe } = useTaillesLecture();
-  const affichage = useReglages((s) => s.affichage);
-  const definirAffichage = useReglages((s) => s.definirAffichage);
   const translit = useReglages((s) => s.translitLecture);
   const definirTranslit = useReglages((s) => s.definirTranslitLecture);
   const chiffres = useReglages((s) => s.chiffresArabes);
@@ -31,10 +27,6 @@ export function ReglagesLecture({ ouvert, onFermer }: { ouvert: boolean; onFerme
   const idRecitateur = useLecteur((s) => s.recitateur);
   const actuel = recitateur(idRecitateur);
   const [recitateursOuverts, setRecitateursOuverts] = useState(false);
-  const traduction = useReglages((s) => s.traduction);
-  const definirTraduction = useReglages((s) => s.definirTraduction);
-  // « Aucune » = arabe seul ; sinon la traduction choisie.
-  const choixTraduction = affichage === 'arabeSeul' ? 'aucune' : traduction;
 
   return (
     <BottomSheet ouvert={ouvert} titre={t('lire.reglagesLecture')} onFermer={onFermer}>
@@ -54,51 +46,15 @@ export function ReglagesLecture({ ouvert, onFermer }: { ouvert: boolean; onFerme
           style={[typographie.coran, tailleArabe, { color: couleurs.encre, textAlign: 'right', writingDirection: 'rtl' }]}>
           {`إِنَّ مَعَ ٱلْعُسْرِ يُسْرًا ${chiffres ? '﴿٦﴾' : '﴿6﴾'}`}
         </Text>
-        {translit && affichage !== 'tradSeule' ? (
+        {translit ? (
           <Text style={[typographie.translitteration, styles.translit, { color: couleurs.encre2 }]}>
             Inna maʿa l-ʿusri yusrā
-          </Text>
-        ) : null}
-        {affichage !== 'arabeSeul' ? (
-          <Text style={[typographie.lecture, styles.traduction, { color: couleurs.encre }]}>
-            {`${t('lire.apercuTraduction')} (94:6)`}
           </Text>
         ) : null}
       </View>
       <ListGroup>
         <ReglageTaille />
       </ListGroup>
-      <SegmentedControl
-        label={t('reglages.traduction')}
-        options={[
-          { id: 'fr', label: 'Français' },
-          { id: 'aucune', label: t('reglages.traductionAucune') },
-        ]}
-        valeur={choixTraduction}
-        onChange={(id) => {
-          if (id === 'aucune') {
-            definirAffichage('arabeSeul');
-            return;
-          }
-          if (id === 'fr') {
-            definirTraduction(id satisfies Langue);
-            if (affichage === 'arabeSeul') definirAffichage('arabeTrad');
-          }
-        }}
-      />
-      <SegmentedControl
-        label={t('lire.affichage')}
-        options={[
-          { id: 'arabeSeul', label: t('lire.arabeSeul') },
-          { id: 'arabeTrad', label: t('lire.arabeTrad') },
-          { id: 'tradSeule', label: t('lire.tradSeule') },
-        ]}
-        valeur={affichage}
-        onChange={(id) => {
-          const choix = affichagesLecture.find((x) => x === id);
-          if (choix) definirAffichage(choix);
-        }}
-      />
       <ListGroup>
         <ListItem
           titre={t('reglages.translit')}
@@ -136,5 +92,4 @@ export function ReglagesLecture({ ouvert, onFermer }: { ouvert: boolean; onFerme
 
 const styles = StyleSheet.create({
   translit: { fontSize: tailles.t14, lineHeight: interlignes.l20 },
-  traduction: { fontSize: tailles.t16, lineHeight: interlignes.l24 },
 });

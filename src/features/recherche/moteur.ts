@@ -4,7 +4,8 @@ import type { Sourate } from '@/features/lire/coran';
 
 import { contientArabe, normaliserArabe, normaliserLatin } from './normaliser.ts';
 
-export type ResultatVerset = { sourate: number; verset: number; texte: string; trad: string };
+/** `translit` : translittération sans balises, vide si la sourate n'en a pas. */
+export type ResultatVerset = { sourate: number; verset: number; texte: string; translit: string };
 export type Resultats = {
   sourates: Sourate[];
   versets: ResultatVerset[];
@@ -16,13 +17,13 @@ export type Index = {
   noms: { sourate: Sourate; nom: string; sansEspaces: string; arabe: string }[];
   /** Versets normalisés, par sourate (indice 0 = sourate 1). */
   arabe: string[][];
-  trad: string[][];
+  translit: string[][];
 };
 
 /** Textes d'origine, pour afficher un résultat. */
 export type Textes = {
   versetsDe: (n: number) => readonly string[];
-  traductionDe: (n: number) => readonly string[];
+  translitDe: (n: number) => readonly string[];
 };
 
 export const LIMITE_VERSETS = 100;
@@ -36,10 +37,10 @@ export const nomNormalise = (s: Sourate): Index['noms'][number] => {
   return { sourate: s, nom, sansEspaces: nom.replace(/ /g, ''), arabe: normaliserArabe(s.arabe) };
 };
 
-/** Versets d'une sourate, normalisés en arabe et en français. */
-export const versetsNormalises = (arabe: readonly string[], trad: readonly string[]) => ({
+/** Versets d'une sourate, normalisés en arabe et en translittération (sans balises, sans accents). */
+export const versetsNormalises = (arabe: readonly string[], translit: readonly string[]) => ({
   arabe: arabe.map(normaliserArabe),
-  trad: trad.map(normaliserLatin),
+  translit: translit.map((t) => normaliserLatin(t.replace(/<\/?[a-z]+>/gi, ''))),
 });
 
 /** Tous les mots de la requête doivent se trouver dans le texte. */
@@ -59,7 +60,7 @@ export function chercher(idx: Index, requete: string, textes: Textes): Resultats
     .slice(0, LIMITE_SOURATES)
     .map((n) => n.sourate);
 
-  const source = arabe ? idx.arabe : idx.trad;
+  const source = arabe ? idx.arabe : idx.translit;
   const versets: ResultatVerset[] = [];
   let total = 0;
   source.forEach((liste, i) => {
@@ -72,7 +73,7 @@ export function chercher(idx: Index, requete: string, textes: Textes): Resultats
         sourate: n,
         verset: j + 1,
         texte: textes.versetsDe(n)[j] ?? '',
-        trad: textes.traductionDe(n)[j] ?? '',
+        translit: (textes.translitDe(n)[j] ?? '').replace(/<\/?[a-z]+>/gi, ''),
       });
     });
   });

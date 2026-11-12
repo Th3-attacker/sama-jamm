@@ -2,6 +2,7 @@
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import { migrerSonsAnciens } from './sonsMigration';
+import { retirerTraduction } from './traductionMigration';
 
 import type { Langue } from '@/i18n/langues';
 import type { ChoixTheme } from '@/theme/veille';
@@ -18,9 +19,6 @@ export type EcoleAsr = 'standard' | 'hanafite';
 export const sons = ['complet', 'court', 'doux', 'vibration', 'silencieux'] as const;
 export type Son = (typeof sons)[number];
 
-export const affichagesLecture = ['arabeSeul', 'arabeTrad', 'tradSeule'] as const;
-export type AffichageLecture = (typeof affichagesLecture)[number];
-
 export type Lieu =
   | { type: 'position'; latitude: number; longitude: number }
   | { type: 'ville'; id: string; nom: string; latitude: number; longitude: number };
@@ -30,7 +28,6 @@ type ParPriere<T> = Record<NomPriere, T>;
 type Donnees = {
   /** null tant que la bienvenue n'a pas été faite : la langue du téléphone s'applique. */
   langue: Langue | null;
-  traduction: Langue;
   lieu: Lieu | null;
   /** Notification à l'heure de la prière. */
   rappels: ParPriere<boolean>;
@@ -52,9 +49,7 @@ type Donnees = {
   bienvenueTerminee: boolean;
   /** Échelon de taille du texte de lecture, de 0 à 6 (voir `features/lire/BarreTaille`). */
   tailleLecture: number;
-  /** Ce que la lecture affiche : arabe seul, arabe et traduction, ou traduction seule. */
-  affichage: AffichageLecture;
-  /** Translittération sous le texte arabe (Tanzil, en caractères latins). */
+  /** Translittération sous le texte arabe (Tanzil, en caractères latins). Désactivée par défaut. */
   translitLecture: boolean;
   /** Numéros de verset en chiffres arabes (١٢٣) au lieu de 123. */
   chiffresArabes: boolean;
@@ -66,7 +61,6 @@ type Donnees = {
 
 type Actions = {
   definirLangue: (langue: Langue) => void;
-  definirTraduction: (langue: Langue) => void;
   definirLieu: (lieu: Lieu) => void;
   definirRappel: (priere: NomPriere, actif: boolean) => void;
   definirSon: (priere: NomPriere, son: Son) => void;
@@ -80,7 +74,6 @@ type Actions = {
   definirTheme: (theme: ChoixTheme) => void;
   terminerBienvenue: () => void;
   definirTailleLecture: (echelon: number) => void;
-  definirAffichage: (affichage: AffichageLecture) => void;
   definirTranslitLecture: (actif: boolean) => void;
   definirChiffresArabes: (actif: boolean) => void;
   definirWifiSeulement: (actif: boolean) => void;
@@ -94,7 +87,6 @@ const tout = <T,>(valeur: T): ParPriere<T> => ({ fajr: valeur, dhuhr: valeur, as
 
 const parDefaut: Donnees = {
   langue: null,
-  traduction: 'fr',
   lieu: null,
   rappels: tout(true),
   sons: tout<Son>('court'),
@@ -109,7 +101,6 @@ const parDefaut: Donnees = {
   theme: 'auto',
   bienvenueTerminee: false,
   tailleLecture: 1,
-  affichage: 'arabeTrad',
   translitLecture: false,
   chiffresArabes: false,
   verrouBudget: false,
@@ -121,7 +112,6 @@ export const useReglages = create<Donnees & Actions>()(
     (set) => ({
       ...parDefaut,
       definirLangue: (langue) => set({ langue }),
-      definirTraduction: (traduction) => set({ traduction }),
       definirLieu: (lieu) => set({ lieu }),
       definirRappel: (priere, actif) => set((s) => ({ rappels: { ...s.rappels, [priere]: actif } })),
       definirSon: (priere, son) => set((s) => ({ sons: { ...s.sons, [priere]: son } })),
@@ -142,7 +132,6 @@ export const useReglages = create<Donnees & Actions>()(
       definirTheme: (theme) => set({ theme }),
       terminerBienvenue: () => set({ bienvenueTerminee: true }),
       definirTailleLecture: (echelon) => set({ tailleLecture: Math.max(0, Math.min(6, Math.round(echelon))) }),
-      definirAffichage: (affichage) => set({ affichage }),
       definirTranslitLecture: (translitLecture) => set({ translitLecture }),
       definirChiffresArabes: (chiffresArabes) => set({ chiffresArabes }),
       definirVerrouBudget: (verrouBudget) => set({ verrouBudget }),
@@ -150,26 +139,26 @@ export const useReglages = create<Donnees & Actions>()(
     }),
     {
       name: 'reglages',
-      version: 7,
+      version: 8,
       storage: createJSONStorage(() => stockage),
       // v1 → v2 : réglages de prière ; v2 → v3 : vibrations. Valeurs par défaut pour les clés absentes.
       // v3 → v4 : la taille de lecture par défaut passe du 3e au 2e cran ; une autre taille choisie est gardée.
       // v4 → v5 : translittération (absente des anciens réglages : la valeur par défaut, désactivée, s'applique).
-      // v5 → v6 : le wolof n'est plus proposé (interface et traduction) ; un ancien choix repasse au français.
+      // v5 → v6 : le wolof n'est plus proposé pour l'interface ; un ancien choix repasse au français.
       migrate: (etat, version) => {
         if (!etat || typeof etat !== 'object') return etat;
         const migre: Record<string, unknown> = version < 3 ? { ...parDefaut, ...etat } : { ...etat };
         if (version < 4 && migre.tailleLecture === 2) migre.tailleLecture = 1;
         if (version < 6) {
           if (migre.langue === 'wo') migre.langue = 'fr';
-          if (migre.traduction === 'wo') migre.traduction = 'fr';
         }
         if (version < 7) migre.sons = migrerSonsAnciens(migre.sons);
+        // v7 → v8 : le Coran est en arabe seul ; la traduction et le choix d'affichage enregistrés sont effacés.
+        if (version < 8) retirerTraduction(migre);
         return migre;
       },
       partialize: (s) => ({
         langue: s.langue,
-        traduction: s.traduction,
         lieu: s.lieu,
         rappels: s.rappels,
         sons: s.sons,
@@ -186,7 +175,6 @@ export const useReglages = create<Donnees & Actions>()(
         theme: s.theme,
         bienvenueTerminee: s.bienvenueTerminee,
         tailleLecture: s.tailleLecture,
-        affichage: s.affichage,
         translitLecture: s.translitLecture,
         chiffresArabes: s.chiffresArabes,
       }),

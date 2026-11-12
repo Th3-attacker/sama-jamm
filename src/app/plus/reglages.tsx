@@ -53,13 +53,11 @@ export default function Reglages() {
   const definirVeilleAuto = useReglages((s) => s.definirVeilleAuto);
   const definirHaptique = useReglages((s) => s.definirHaptique);
   const definirLangue = useReglages((s) => s.definirLangue);
-  const definirTraduction = useReglages((s) => s.definirTraduction);
   const verrouBudget = useReglages((s) => s.verrouBudget);
   const masquerMontants = useReglages((s) => s.masquerMontants);
   const definirVerrouBudget = useReglages((s) => s.definirVerrouBudget);
   const definirMasquerMontants = useReglages((s) => s.definirMasquerMontants);
   const [verrouImpossible, setVerrouImpossible] = useState(false);
-  const traduction = useReglages((s) => s.traduction);
   const connecte = useSession((s) => s.session !== null);
   // Devise du budget, si un budget existe : « Ouguiya · MRU ».
   const [devise, setDevise] = useState<string | null>(null);
@@ -104,8 +102,6 @@ export default function Reglages() {
 
   const appliquerLangue = (choix: Langue) => {
     definirLangue(choix);
-    // La traduction du Coran suit la langue ; en interface arabe, le français par défaut.
-    definirTraduction(choix === "ar" ? "fr" : choix);
   };
 
   const choisirLangue = (id: string) => {
@@ -216,12 +212,6 @@ export default function Reglages() {
             titre={t("reglages.langueApp")}
             valeur={NOMS_LANGUES[langue]}
             onPress={() => setFeuilleLangue(true)}
-          />
-          <ListItem
-            icone="globe"
-            titre={t("reglages.traduction")}
-            valeur={NOMS_LANGUES[traduction]}
-            onPress={() => setFeuilleLecture(true)}
           />
           <ListItem
             icone="type"

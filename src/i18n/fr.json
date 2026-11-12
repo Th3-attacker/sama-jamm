@@ -194,10 +194,6 @@
     "sajda": "Prosternation",
     "modeVerset": "Verset par verset",
     "modePage": "Page",
-    "affichage": "Affichage",
-    "arabeSeul": "Arabe",
-    "arabeTrad": "Arabe + trad.",
-    "tradSeule": "Traduction",
     "translitteration": "Translittération",
     "tailleArabe": "Taille du texte arabe",
     "reduireTexte": "Réduire le texte",
@@ -246,7 +242,6 @@
     "khatmRepris": "repris à {{sourate}}, verset {{verset}}",
     "invocationsAVenir": "Les invocations pour chaque moment de la journée arrivent bientôt.",
     "reglagesLecture": "Lecture",
-    "apercuTraduction": "À côté de la difficulté est, certes, une facilité !",
     "chiffresArabes": "Chiffres arabes orientaux",
     "chiffresArabesAide": "Numéros de verset en ١٢٣ plutôt qu’en 123",
     "recitateurDefaut": "Récitateur par défaut",
@@ -662,13 +657,10 @@
     "fond": "Fond de l’image",
     "emeraude": "Émeraude",
     "nuit": "Nuit",
-    "ajouterTraduction": "Ajouter la traduction",
-    "ajouterTraductionDetail": "En français, sous le texte arabe",
     "partagerImage": "Partager l’image",
     "copierTexte": "Copier le texte et le lien",
     "titreFeuille": "Partager un verset",
     "reference": "{{sourate}} · verset {{verset}}",
-    "source": "Traduction de Muhammad Hamidullah · Sama Jàmm",
     "marque": "Sama Jàmm",
     "copie": "Verset copié"
   },
@@ -687,7 +679,6 @@
     "veilleJusqua": "Veille jusqu’à Fajr, {{heure}} · lumière atténuée",
     "lecture": "Lecture",
     "langueApp": "Langue de l’app",
-    "traduction": "Traduction",
     "priere": "Prière",
     "budget": "Budget",
     "devise": "Devise",
@@ -703,7 +694,6 @@
     "tailleEcriture": "Taille de l’écriture",
     "tailleNote": "Pour la lecture verset par verset. En mode page, l’écriture s’ajuste pour que la page tienne dans l’écran.",
     "translit": "Translittération",
-    "traductionAucune": "Aucune",
     "translitAideCourte": "Lecture en lettres latines",
     "translitAide": "Sous le texte arabe, en caractères latins (Tanzil, en anglais)",
     "deviseDetail": "Changer la devise du budget, ou ajouter la vôtre",
@@ -735,7 +725,6 @@
     "texte": "Sama Jàmm est une app gratuite, sans publicité, pour lire, écouter, prier et tenir le budget du foyer.",
     "sources": "Sources et licences",
     "sourceCoran": "Texte du Coran : édition uthmani obtenue via alquran.cloud (api.alquran.cloud), reproduite sans modification.",
-    "sourceTraduction": "Traduction française : Muhammad Hamidullah, obtenue via alquran.cloud (api.alquran.cloud).",
     "sourceAdhan": "Appels à la prière : deux enregistrements (Fajr, puis de Dhuhr à Isha), gratuits, fournis pour Sama Jàmm.",
     "polices": "Polices : Cormorant Garamond, Source Serif 4, Source Sans 3, Amiri, Amiri Quran, Noto Sans Arabic (SIL Open Font License). Icônes : Lucide (licence ISC).",
     "remerciements": "Remerciements",
@@ -757,10 +746,6 @@
       "coran": {
         "titre": "Texte du Coran",
         "resume": "Édition uthmani · repères Tanzil, CC BY 3.0"
-      },
-      "traductions": {
-        "titre": "Traductions",
-        "resume": "Muhammad Hamidullah (français)"
       },
       "recitations": {
         "titre": "Récitations et appel à la prière",

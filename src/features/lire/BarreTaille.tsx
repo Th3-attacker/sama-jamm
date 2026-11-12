@@ -10,7 +10,7 @@ import { interlignes, tailles } from '@/theme/tokens.generated';
 export const ECHELONS_TAILLE = [0.8, 0.9, 1, 1.15, 1.3, 1.5, 1.75] as const;
 const MAX = ECHELONS_TAILLE.length - 1;
 
-/** Styles de taille (arabe et traduction) selon l'échelon choisi, à ajouter après la typographie de base. */
+/** Styles de taille (arabe et translittération) selon l'échelon choisi, à ajouter après la typographie de base. */
 export function useTaillesLecture() {
   const { typographie } = useTheme();
   const echelon = useReglages((s) => s.tailleLecture);

@@ -17,25 +17,25 @@ const ARABE = [
   ['أَصْحَٰبَ ٱلْكَهْفِ', 'رَحْمَةً'],
   ['يسٓ'],
 ];
-const TRAD = [
-  ['Au nom d’Allah, le Tout Miséricordieux', 'Louange à Allah'],
-  ['Les gens de la Caverne', 'Une miséricorde de Ta part'],
-  ['Yâ-Sîn'],
+const TRANSLIT = [
+  ['Bis<u>mi</u> <b>a</b>llahi <u>a</u>rrahmani arrahimi', 'Alhamdu lillahi'],
+  ['Ashabi alkahfi', 'Rahmatan'],
+  ['Ya-Sin'],
 ];
 const textes: Textes = {
   versetsDe: (n) => ARABE[n - 1] ?? [],
-  traductionDe: (n) => TRAD[n - 1] ?? [],
+  translitDe: (n) => TRANSLIT[n - 1] ?? [],
 };
 
-function indexDe(arabe: string[][], trad: string[][], sourates = SOURATES): Index {
-  const parSourate = arabe.map((a, i) => versetsNormalises(a, trad[i] ?? []));
+function indexDe(arabe: string[][], translit: string[][], sourates = SOURATES): Index {
+  const parSourate = arabe.map((a, i) => versetsNormalises(a, translit[i] ?? []));
   return {
     noms: sourates.map(nomNormalise),
     arabe: parSourate.map((x) => x.arabe),
-    trad: parSourate.map((x) => x.trad),
+    translit: parSourate.map((x) => x.translit),
   };
 }
-const IDX = indexDe(ARABE, TRAD);
+const IDX = indexDe(ARABE, TRANSLIT);
 
 test('requête trop courte : aucun résultat', () => {
   assert.equal(chercher(IDX, 'a', textes), VIDE);
@@ -53,12 +53,22 @@ test('noms de sourates : « kahf » trouve Al-Kahf, « yasin » trouve Yâ-Sîn'
   );
 });
 
-test('français : sans accents, tous les mots doivent être présents', () => {
-  const r = chercher(IDX, 'misericordieux allah', textes);
+test('translittération : sans balises ni accents, tous les mots doivent être présents', () => {
+  const r = chercher(IDX, 'bismi allahi', textes);
   assert.equal(r.totalVersets, 1);
-  assert.deepEqual(r.versets[0], { sourate: 1, verset: 1, texte: ARABE[0]![0], trad: TRAD[0]![0] });
-  assert.equal(chercher(IDX, 'misericord', textes).totalVersets, 2);
-  assert.equal(chercher(IDX, 'louange caverne', textes).totalVersets, 0);
+  assert.deepEqual(r.versets[0], {
+    sourate: 1,
+    verset: 1,
+    texte: ARABE[0]![0],
+    translit: 'Bismi allahi arrahmani arrahimi',
+  });
+  assert.equal(chercher(IDX, 'rahm', textes).totalVersets, 2);
+  assert.equal(chercher(IDX, 'alhamdu kahfi', textes).totalVersets, 0);
+});
+
+test('aucune traduction : un mot français ne trouve rien', () => {
+  assert.equal(chercher(IDX, 'miséricordieux', textes).totalVersets, 0);
+  assert.equal(chercher(IDX, 'louange', textes).totalVersets, 0);
 });
 
 test('arabe : sans voyelles, ة et alifs unifiés', () => {
@@ -76,10 +86,10 @@ test('arabe : sans voyelles, ة et alifs unifiés', () => {
 test('liste coupée à LIMITE_VERSETS, mais le total compte tous les versets', () => {
   const nombre = LIMITE_VERSETS + 20;
   const arabe = [Array.from({ length: nombre }, () => 'نور')];
-  const trad = [Array.from({ length: nombre }, () => 'lumière')];
-  const r = chercher(indexDe(arabe, trad, SOURATES.slice(0, 1)), 'lumiere', {
+  const translit = [Array.from({ length: nombre }, () => 'nur')];
+  const r = chercher(indexDe(arabe, translit, SOURATES.slice(0, 1)), 'nur', {
     versetsDe: () => arabe[0] ?? [],
-    traductionDe: () => trad[0] ?? [],
+    translitDe: () => translit[0] ?? [],
   });
   assert.equal(r.versets.length, LIMITE_VERSETS);
   assert.equal(r.totalVersets, nombre);
