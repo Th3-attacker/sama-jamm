@@ -4,18 +4,26 @@ import type { Couleurs } from '@/theme/tokens.generated';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 
-export type TonBadge = 'neutre' | 'succes' | 'alerte' | 'erreur';
+import { Icon } from './Icon';
+import type { IconName } from './types';
+
+/** Tons du contrat : emeraude = disponible, téléchargé ; or = nouveau ; alerte = bientôt atteint ; erreur = dépassé. */
+export type TonBadge = 'neutre' | 'emeraude' | 'or' | 'alerte' | 'erreur';
 
 export type BadgeProps = {
-  /** Deux ou trois mots : « En attente de vérification ». */
+  /** Un ou deux mots : le sens est porté par le mot, jamais par la couleur seule. */
   children: string;
   ton?: TonBadge;
+  /** Icône de 14, avant le mot. */
+  icone?: IconName;
 };
 
 function teintes(ton: TonBadge, c: Couleurs) {
   switch (ton) {
-    case 'succes':
-      return { fond: c.emeraudeDoux, texte: c.succes };
+    case 'emeraude':
+      return { fond: c.emeraudeDoux, texte: c.surEmeraudeDoux };
+    case 'or':
+      return { fond: c.orDoux, texte: c.orTexte };
     case 'alerte':
       return { fond: c.orDoux, texte: c.alerte };
     case 'erreur':
@@ -25,8 +33,8 @@ function teintes(ton: TonBadge, c: Couleurs) {
   }
 }
 
-/** Étiquette d'état, non interactive (statut d'un don, d'un téléchargement). */
-export function Badge({ children, ton = 'neutre' }: BadgeProps) {
+/** Étiquette d'état, non interactive (téléchargé, nouveau, bientôt atteint, dépassé). */
+export function Badge({ children, ton = 'neutre', icone }: BadgeProps) {
   const { couleurs, espace, rayon, typographie } = useTheme();
   const t = teintes(ton, couleurs);
   return (
@@ -38,8 +46,10 @@ export function Badge({ children, ton = 'neutre' }: BadgeProps) {
           borderColor: ton === 'erreur' ? couleurs.erreur : t.fond,
           borderRadius: rayon.rayonPuce,
           paddingHorizontal: espace.espace2,
+          gap: espace.espace1,
         },
       ]}>
+      {icone ? <Icon name={icone} size={14} color={t.texte} /> : null}
       <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, styles.texte, { color: t.texte }]}>
         {children}
       </Text>
@@ -48,6 +58,6 @@ export function Badge({ children, ton = 'neutre' }: BadgeProps) {
 }
 
 const styles = StyleSheet.create({
-  badge: { alignSelf: 'flex-start', borderWidth: 1, paddingVertical: 2 },
+  badge: { alignSelf: 'flex-start', flexDirection: 'row', alignItems: 'center', borderWidth: 1, paddingVertical: 2 },
   texte: { fontWeight: '600' },
 });

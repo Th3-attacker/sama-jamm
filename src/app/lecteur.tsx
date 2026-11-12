@@ -387,7 +387,9 @@ export default function LecteurPleinEcran() {
           ) : null}
           <Slider
             label={t('ecouter.vitesse')}
-            valeurs={VITESSES}
+            min={VITESSES[0]}
+            max={VITESSES[VITESSES.length - 1] ?? 1.5}
+            pas={0.25}
             valeur={vitesse}
             onChange={definirVitesse}
             format={(v) => `${String(v).replace('.', ',')} ×`}

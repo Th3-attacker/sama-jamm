@@ -137,7 +137,7 @@ export function ContenuEcouter({ onToutVoir }: { onToutVoir: () => void }) {
               prefixe={t('lire.sourate')}
               titre={sourate(x.sourate)?.nom ?? String(x.sourate)}
               sousTitre={recitateur(x.recitateur)?.nom}
-              droite={<Badge ton="succes">{t('ecouter.badgeHorsLigne')}</Badge>}
+              droite={<Badge ton="emeraude" icone="check">{t('ecouter.badgeHorsLigne')}</Badge>}
               onPress={() => {
                 ecouter({ sourate: x.sourate, verset: 1 }, x.recitateur);
                 router.navigate('/lecteur');

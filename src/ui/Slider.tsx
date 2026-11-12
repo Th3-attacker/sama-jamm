@@ -1,23 +1,32 @@
+import type { ReactNode } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 
+import { cransDe } from './slider';
+
 import { interlignes, tailles } from '@/theme/tokens.generated';
 export type SliderProps = {
   /** Lu par les lecteurs d'écran. */
   label: string;
-  /** Valeurs possibles, dans l'ordre croissant. */
-  valeurs: readonly number[];
+  /** Bornes et pas du contrat du design system : un cran par pas, de `min` à `max`. */
+  min: number;
+  max: number;
+  pas: number;
   valeur: number;
   onChange: (valeur: number) => void;
   /** Valeur affichée à droite du libellé : « 1 × ». */
   format: (valeur: number) => string;
+  /** Repères aux extrémités (petit A, grand A). */
+  gauche?: ReactNode;
+  droite?: ReactNode;
 };
 
 /** Curseur à crans (planche « Minuterie et répétition ») : libellé, valeur, piste à crans réglable au doigt et par gestes. */
-export function Slider({ label, valeurs, valeur, onChange, format }: SliderProps) {
+export function Slider({ label, min, max, pas, valeur, onChange, format, gauche, droite }: SliderProps) {
   const { couleurs, espace, rayon, typographie } = useTheme();
+  const valeurs = cransDe(min, max, pas);
   const index = Math.max(0, valeurs.indexOf(valeur));
   const aller = (i: number) => {
     const v = valeurs[Math.max(0, Math.min(valeurs.length - 1, i))];
@@ -41,6 +50,7 @@ export function Slider({ label, valeurs, valeur, onChange, format }: SliderProps
         </Text>
       </View>
       <View style={styles.piste}>
+        {gauche}
         {valeurs.map((v, i) => (
           <Pressable key={v} accessible={false} onPress={() => aller(i)} style={styles.cran}>
             <View
@@ -53,6 +63,7 @@ export function Slider({ label, valeurs, valeur, onChange, format }: SliderProps
             />
           </Pressable>
         ))}
+        {droite}
       </View>
     </View>
   );
