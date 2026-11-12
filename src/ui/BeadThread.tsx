@@ -28,7 +28,7 @@ export function BeadThread({ titre, jours, resume }: BeadThreadProps) {
           </Text>
         ) : null}
       </View>
-      <View accessible accessibilityRole="image" accessibilityLabel={resume ?? titre} style={[styles.fil, { gap: 3 }]}>
+      <View accessible accessibilityRole="image" accessibilityLabel={resume ?? titre} style={[styles.fil, { gap: espace.espace1 }]}>
         {jours.map((j, i) => (
           <View
             key={i}

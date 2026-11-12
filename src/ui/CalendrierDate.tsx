@@ -9,6 +9,7 @@ import { useTheme } from '@/theme/useTheme';
 import { BottomSheet } from './BottomSheet';
 import { Button } from './Button';
 import { Icon } from './Icon';
+import { espace } from '@/theme/tokens.generated';
 
 export type CalendrierDateProps = {
   label: string;
@@ -208,7 +209,7 @@ export function CalendrierDate({ label, valeur, onChange, placeholder, erreur }:
 
 const styles = StyleSheet.create({
   champ: { flexDirection: 'row', alignItems: 'center', borderWidth: 1 },
-  texte: { flex: 1, paddingVertical: 10 },
+  texte: { flex: 1, paddingVertical: espace.espace2 },
   entete: { flexDirection: 'row', alignItems: 'center' },
   fleche: { alignItems: 'center', justifyContent: 'center' },
   mois: { flex: 1, textAlign: 'center' },

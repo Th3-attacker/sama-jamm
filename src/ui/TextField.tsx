@@ -2,6 +2,7 @@ import { Platform, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
+import { espace } from '@/theme/tokens.generated';
 
 export type TextFieldProps = {
   label: string;
@@ -96,7 +97,7 @@ const styles = StyleSheet.create({
   champ: { flexDirection: 'row', alignItems: 'center', borderWidth: 1 },
   saisie: {
     flex: 1,
-    paddingVertical: 10,
+    paddingVertical: espace.espace2,
     // iPhone seulement : sans lineHeight, le texte d'un champ d'une ligne reste centré (surtout en arabe).
     // Sur Android, un lineHeight forcé à undefined fait disparaître le texte tapé.
     ...Platform.select({ ios: { lineHeight: undefined } }),

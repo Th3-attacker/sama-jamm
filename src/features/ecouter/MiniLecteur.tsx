@@ -13,6 +13,7 @@ import { Logo } from '@/ui/Logo';
 
 import { arreter, basculer, useLecteur } from './lecteur';
 import { recitateur } from './recitateurs';
+import { espace } from '@/theme/tokens.generated';
 
 /** Barre au-dessus des onglets pendant une écoute : sourate et verset, lecture ou pause, arrêt. */
 export function MiniLecteur() {
@@ -80,5 +81,5 @@ export function MiniLecteur() {
 
 const styles = StyleSheet.create({
   barre: { flexDirection: 'row', alignItems: 'center', borderTopWidth: StyleSheet.hairlineWidth, paddingVertical: 6 },
-  texte: { flex: 1, marginStart: 10 },
+  texte: { flex: 1, marginStart: espace.espace2 },
 });

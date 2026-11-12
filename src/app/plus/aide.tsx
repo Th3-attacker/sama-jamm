@@ -123,6 +123,6 @@ export default function Aide() {
 const styles = StyleSheet.create({
   ecran: { flex: 1 },
   puces: { flexDirection: 'row', flexWrap: 'wrap' },
-  zone: { minHeight: 120, borderWidth: 1, paddingHorizontal: 14, paddingVertical: espace.espace3, textAlignVertical: 'top' },
+  zone: { minHeight: 120, borderWidth: 1, paddingHorizontal: espace.espace4, paddingVertical: espace.espace3, textAlignVertical: 'top' },
   pied: { textAlign: 'center' },
 });

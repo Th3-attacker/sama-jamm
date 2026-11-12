@@ -13,7 +13,7 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { echelleMax } from '@/theme/typographie';
-import { tailles, themes } from '@/theme/tokens.generated';
+import { espace, tailles, themes } from '@/theme/tokens.generated';
 import { useTheme } from '@/theme/useTheme';
 import { Logo } from '@/ui/Logo';
 
@@ -77,7 +77,7 @@ export function DemarrageAnime({ onFin }: { onFin: () => void }) {
       <Animated.View style={styleMarque}>
         <Logo taille={LARGEUR_IMAGE} selon="telephone" />
       </Animated.View>
-      <Animated.View style={[styles.bas, { gap: 10 }, styleSignature]}>
+      <Animated.View style={[styles.bas, { gap: espace.espace2 }, styleSignature]}>
         <Animated.View style={[styles.filet, { backgroundColor: couleurs.or }, styleFilet]} />
         <Text
           accessibilityLanguage="wo"
@@ -102,7 +102,7 @@ export function DemarrageAnime({ onFin }: { onFin: () => void }) {
 const styles = StyleSheet.create({
   centre: { alignItems: 'center', justifyContent: 'center' },
   // La signature prend la place laissée par la marque qui monte.
-  bas: { position: 'absolute', top: '50%', marginTop: 10, alignItems: 'center' },
+  bas: { position: 'absolute', top: '50%', marginTop: espace.espace2, alignItems: 'center' },
   filet: { height: 1.5, borderRadius: 1 },
   // Planche : Cormorant 600, 28 sur 32, centré.
   signature: { fontSize: tailles.t28, lineHeight: 32, textAlign: 'center' },
