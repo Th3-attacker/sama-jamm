@@ -4,6 +4,8 @@ import Svg, { Circle, Line, Path, Polygon } from 'react-native-svg';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 
+import { CX, HAUTEUR_VUE, HZ, LARGEUR_MAX, NUIT_Y, RX, RY, W, X0, X1 } from './arcGeometrie';
+
 export type PriereArc = {
   nom: string;
   /** « 16:35 ». */
@@ -29,16 +31,6 @@ export type DayArcProps = {
   /** L'arc seul, sans l'en-tête « dans 42 min » ni la rangée des noms (écran Prière). */
   simple?: boolean;
 };
-
-// Géométrie du design system (bundle.js).
-const W = 342;
-const HZ = 104;
-const X0 = 24;
-const X1 = 318;
-const CX = 171;
-const RX = 147;
-const RY = 84;
-const NUIT_Y = 146;
 
 function etoile(cx: number, cy: number, R: number): string {
   const r = (R * Math.cos(Math.PI / 4)) / Math.cos(Math.PI / 8);
@@ -84,8 +76,13 @@ export function DayArc({ lever, coucher, maintenant, prieres, dans, avant, a, de
       )}
 
       {/* En interface arabe, l'arc se retourne : Fajr à droite. */}
-      <View accessible accessibilityRole="image" accessibilityLabel={description} style={I18nManager.isRTL ? styles.miroir : undefined}>
-        <Svg width="100%" height={124} viewBox={`0 0 ${W} 124`}>
+      {/* Conteneur à proportions fixes : l'arc garde son format et ne déborde jamais, quelle que soit la largeur de l'écran. */}
+      <View
+        accessible
+        accessibilityRole="image"
+        accessibilityLabel={description}
+        style={[styles.conteneur, I18nManager.isRTL ? styles.miroir : undefined]}>
+        <Svg width="100%" height="100%" viewBox={`0 0 ${W} ${HAUTEUR_VUE}`}>
           <Line x1={0} y1={HZ} x2={W} y2={HZ} stroke={couleurs.ligne} strokeWidth={1.5} />
           <Path d={`M ${X0} ${HZ} A ${RX} ${RY} 0 0 1 ${X1} ${HZ}`} fill="none" stroke={couleurs.ligne} strokeWidth={2} />
           {jour ? (
@@ -133,6 +130,7 @@ export function DayArc({ lever, coucher, maintenant, prieres, dans, avant, a, de
 }
 
 const styles = StyleSheet.create({
+  conteneur: { width: '100%', maxWidth: LARGEUR_MAX, alignSelf: 'center', aspectRatio: W / HAUTEUR_VUE, overflow: 'hidden' },
   tete: { flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between' },
   prochaine: { alignItems: 'flex-end' },
   miroir: { transform: [{ scaleX: -1 }] },
