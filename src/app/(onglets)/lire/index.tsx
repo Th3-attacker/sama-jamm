@@ -12,6 +12,7 @@ import { ContenuEcouter } from '@/features/ecouter/ContenuEcouter';
 import { juzParSourate } from '@/features/lire/decoupageJuz';
 import { ListeJuz } from '@/features/lire/ListeJuz';
 import { InterrupteurLireEcouter, type ModeLire } from '@/features/lire/InterrupteurLireEcouter';
+import { ongletPourMode, type OngletBibliotheque } from '@/features/lire/ongletMode';
 import { useParametre } from '@/hooks/useParametre';
 import { useLecture } from '@/stores/lecture';
 import { echelleMax } from '@/theme/typographie';
@@ -39,9 +40,14 @@ export default function Lire() {
   const rubrique = useParametre('rubrique');
   const [mode, setMode] = useState<ModeLire>('lire');
   const [vueCoran, setVueCoran] = useState<'sourates' | 'juz'>('sourates');
-  type Onglet = 'coran' | 'recitateurs' | 'invocations';
+  type Onglet = OngletBibliotheque;
   const ouverture = (r: string | undefined): Onglet => (r === 'recitateurs' || r === 'invocations' ? r : 'coran');
   const [onglet, setOnglet] = useState<Onglet>(ouverture(rubrique));
+  // Un onglet qui n'existe pas dans l'autre mode (Récitateurs en Lire, Invocations en Écouter) revient au Coran.
+  const changerMode = (m: ModeLire) => {
+    setMode(m);
+    setOnglet((o) => ongletPourMode(m, o));
+  };
   // Écran déjà monté (onglet gardé en mémoire) : une nouvelle rubrique demandée depuis Plus doit être appliquée.
   const [rubriqueVue, setRubriqueVue] = useState(rubrique);
   if (rubrique !== rubriqueVue) {
@@ -70,7 +76,7 @@ export default function Lire() {
 
       {/* Barre fixe : l'interrupteur Lire | Écouter, et Coran | Invocations tant qu'on est sur Lire. */}
       <View style={[colonne, { gap: espace.espace3, paddingBottom: espace.espace3, backgroundColor: couleurs.fond }]}>
-        <InterrupteurLireEcouter mode={mode} onChange={setMode} />
+        <InterrupteurLireEcouter mode={mode} onChange={changerMode} />
         {mode === 'lire' ? (
           <SegmentedControl
             label={t('lire.bibliotheque')}
