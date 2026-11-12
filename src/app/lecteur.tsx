@@ -28,6 +28,7 @@ import { dureesDe, VERSETS_PAR_SOURATE } from '@/features/ecouter/dureesDonnees'
 import { recitateur } from '@/features/ecouter/recitateurs';
 import { sourateTelechargee, telechargerSourate, useTelechargements, WifiRequis } from '@/features/ecouter/telechargements';
 import { reperes, sourate, versetsDe } from '@/features/lire/coran';
+import { cleVerset, useFavoris } from '@/stores/favoris';
 import { formatTemps } from '@/features/xassaides/pistes';
 import { LecteurXassaide } from '@/features/xassaides/LecteurXassaide';
 import { echelleMax } from '@/theme/typographie';
@@ -63,6 +64,8 @@ function LecteurCoran() {
   const chargement = useLecteur((s) => s.chargement);
   const erreur = useLecteur((s) => s.erreur);
   const vitesse = useLecteur((s) => s.vitesse);
+  const favoris = useFavoris((st) => st.versets);
+  const basculerFavori = useFavoris((st) => st.basculer);
   const tempsPiste = useLecteur((s) => (s.position ? s.temps : 0));
   const page = useLecteur((s) => s.page);
   const idRecitateur = useLecteur((s) => s.recitateur);
@@ -170,7 +173,7 @@ function LecteurCoran() {
         {position && s ? (
           <>
             <ScrollView
-              contentContainerStyle={[styles.centreScroll, { paddingHorizontal: espace.espace6, gap: espace.espace2 }]}>
+              contentContainerStyle={[styles.centreScroll, { paddingHorizontal: espace.espace6, paddingTop: espace.espace2 }]}>
               {/* Planche « Lecteur audio » : pochette en vert plein avec le nom arabe, puis titre et récitateur. */}
               <View
                 accessible={false}
@@ -185,16 +188,28 @@ function LecteurCoran() {
                   {s.arabe}
                 </Text>
               </View>
-              <View style={[styles.titreLigne, { gap: espace.espace2, marginTop: espace.espace3 }]}>
-                <Text maxFontSizeMultiplier={echelleMax.grand} style={[typographie.titre1, { color: couleurs.encre }]}>
-                  {s.nom}
-                </Text>
-                <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, { color: couleurs.encre2 }]}>
-                  {recitateur(idRecitateur)?.nom}
-                </Text>
+              {/* Planche : titre et récitateur à gauche, marque-page à droite (favori du verset en cours). */}
+              <View style={[styles.titreLigne, { marginTop: espace.espace6 }]}>
+                <View style={styles.titres}>
+                  <Text maxFontSizeMultiplier={echelleMax.grand} style={[typographie.titre1, { color: couleurs.encre }]}>
+                    {s.nom}
+                  </Text>
+                  <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, { color: couleurs.encre2 }]}>
+                    {recitateur(idRecitateur)?.nom}
+                  </Text>
+                </View>
+                <IconButton
+                  icone="bookmark"
+                  actif={favoris.includes(cleVerset(position.sourate, position.verset))}
+                  label={t(favoris.includes(cleVerset(position.sourate, position.verset)) ? 'lire.favoriRetirer' : 'lire.favoriAjouter')}
+                  onPress={() => {
+                    if (basculerFavori(position.sourate, position.verset)) afficher({ texte: t('lire.favoriAjoute'), icone: 'check' });
+                  }}
+                />
               </View>
 
               {erreur ? (
+                <View style={[styles.blocBarre, { marginTop: espace.espace4 }]}>
                 <Banner
                   ton="attention"
                   icone="offline"
@@ -205,14 +220,22 @@ function LecteurCoran() {
                   }}>
                   {t('etats.horsLigneEcouter')}
                 </Banner>
+                </View>
               ) : null}
 
-              <View style={{ gap: espace.espace2 }}>
+              <View style={[styles.blocBarre, { marginTop: espace.espace6, gap: espace.espace2 }]}>
               <View
                 accessibilityRole="progressbar"
                 accessibilityValue={{ min: 0, max: s.versets, now: position.verset }}
-                style={[styles.piste, { backgroundColor: couleurs.surface }]}>
-                <View style={[styles.remplissage, { width: `${Math.round(avance * 100)}%`, backgroundColor: couleurs.or }]} />
+                style={styles.zoneBarre}>
+                <View style={[styles.piste, { backgroundColor: couleurs.ligneForte }]} />
+                <View style={[styles.piste, styles.remplissage, { width: `${Math.round(avance * 100)}%`, backgroundColor: couleurs.emeraude }]} />
+                <View
+                  style={[
+                    styles.curseur,
+                    { start: `${Math.round(avance * 100)}%`, backgroundColor: couleurs.emeraude, borderRadius: rayon.rayonPastille },
+                  ]}
+                />
               </View>
               {temps ? (
                 <View
@@ -238,16 +261,14 @@ function LecteurCoran() {
               )}
             </View>
 
-            <View style={[styles.commandes, { marginTop: espace.espace4 }]}>
-              <Pressable
-                accessibilityRole="button"
-                accessibilityLabel={t('ecouter.vitesseLecture')}
+            <View style={[styles.commandes, { marginTop: espace.espace3 }]}>
+              <IconButton
+                icone="reset"
+                label={t('ecouter.repeterLeVerset')}
+                taille={24}
+                couleur={repetition === 'non' ? couleurs.encre2 : couleurs.emeraude}
                 onPress={() => setFeuille(true)}
-                style={styles.commandeSimple}>
-                <Text maxFontSizeMultiplier={echelleMax.onglets} style={[typographie.libelle, styles.vitesse, { color: couleurs.encre }]}>
-                  {`${String(vitesse).replace('.', ',')}×`}
-                </Text>
-              </Pressable>
+              />
               <IconButton icone="skip-back" label={t('ecouter.precedent')} taille={26} couleur={couleurs.encre} onPress={precedent} />
               <Pressable
                 accessibilityRole="button"
@@ -270,28 +291,20 @@ function LecteurCoran() {
                 )}
               </Pressable>
               <IconButton icone="skip-forward" label={t('ecouter.suivant')} taille={26} couleur={couleurs.encre} onPress={suivant} />
-              <IconButton
-                icone="reset"
-                label={t('ecouter.repeterLeVerset')}
-                taille={24}
-                couleur={repetition === 'non' ? couleurs.encre : couleurs.emeraude}
-                onPress={() => setFeuille(true)}
-              />
+              <View>
+                <IconButton
+                  icone="moon"
+                  label={etiquetteMinuterie}
+                  taille={24}
+                  couleur={reste !== null || minuterie.type === 'finSourate' ? couleurs.emeraude : couleurs.encre2}
+                  onPress={() => setFeuille(true)}
+                />
+                {reste !== null || minuterie.type === 'finSourate' ? (
+                  <View pointerEvents="none" style={[styles.pointMinuterie, { backgroundColor: couleurs.or, borderRadius: rayon.rayonPastille }]} />
+                ) : null}
+              </View>
             </View>
 
-              <Pressable
-                accessibilityRole="button"
-                accessibilityLabel={etiquetteMinuterie}
-                onPress={() => setFeuille(true)}
-                style={[
-                  styles.minuterie,
-                  { borderColor: couleurs.ligneForte, borderRadius: rayon.rayonPastille, gap: espace.espace2, marginTop: espace.espace4 },
-                ]}>
-                <Icon name="moon" size={18} color={couleurs.encre} />
-                <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.texteMinuterie, { color: couleurs.encre }]}>
-                  {etiquetteMinuterie}
-                </Text>
-              </Pressable>
               {/* Planche « Lecteur défilé » : sous les commandes, le verset en cours puis la suite. */}
               <View style={{ alignSelf: 'stretch', gap: espace.espace2, marginTop: espace.espace6 }}>
                 <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, styles.surtitre, { color: couleurs.encre3 }]}>
@@ -417,29 +430,22 @@ const styles = StyleSheet.create({
   surtitre: { letterSpacing: 0.7, textTransform: 'uppercase' },
   pochette: { alignItems: 'center', justifyContent: 'center' },
   nomPochette: { fontFamily: 'Amiri_700Bold', fontSize: 58, lineHeight: 80 },
-  titreLigne: { alignItems: 'center' },
-  titres: { flex: 1, alignItems: 'center' },
-  centreScroll: { alignItems: 'center', flexGrow: 1, justifyContent: 'center' },
+  titreLigne: { alignSelf: 'stretch', flexDirection: 'row', alignItems: 'flex-start' },
+  titres: { flex: 1, alignItems: 'flex-start' },
+  centreScroll: { alignItems: 'center', flexGrow: 1, justifyContent: 'flex-start' },
+  blocBarre: { alignSelf: 'stretch' },
+  zoneBarre: { height: tailles.t16, justifyContent: 'center' },
+  curseur: { position: 'absolute', width: tailles.t12, height: tailles.t12, marginStart: -tailles.t12 / 2 },
+  pointMinuterie: { position: 'absolute', top: 8, end: 8, width: 8, height: 8 },
   centre: { textAlign: 'center' },
   temps: { flexDirection: 'row', justifyContent: 'space-between' },
   // Planche : verset en cours 34/64, vitesse 16/24, minuterie 14/20.
   versetCourant: { fontSize: tailles.t34, lineHeight: interlignes.l64 },
-  vitesse: { fontSize: tailles.t16, lineHeight: interlignes.l24 },
-  texteMinuterie: { fontSize: tailles.t14, lineHeight: interlignes.l20 },
   resumeMinuterie: { fontSize: tailles.t14, lineHeight: interlignes.l20 },
   arabe: { textAlign: 'center', writingDirection: 'rtl', alignSelf: 'stretch' },
-  piste: { height: 4, borderRadius: rayon.rayonPastille, overflow: 'hidden' },
-  remplissage: { height: 4, borderRadius: rayon.rayonPastille },
-  commandes: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  commandeSimple: { width: 48, height: 48, alignItems: 'center', justifyContent: 'center' },
+  piste: { position: 'absolute', start: 0, end: 0, height: 2 },
+  remplissage: { end: undefined },
+  commandes: { alignSelf: 'stretch', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   principal: { alignItems: 'center', justifyContent: 'center' },
-  minuterie: {
-    alignSelf: 'center',
-    minHeight: 40,
-    paddingHorizontal: espace.espace4,
-    borderWidth: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
   puces: { flexDirection: 'row', flexWrap: 'wrap' },
 });
