@@ -28,7 +28,6 @@ import { translitSansBalises } from '@/features/lire/reperes';
 import { ReglagesLecture } from '@/features/lire/ReglagesLecture';
 import { enChiffresArabes } from '@/lib/chiffres';
 import { Etoile } from '@/ui/Etoile';
-import { Reglette } from '@/ui/Reglette';
 import type { IconName } from '@/ui/types';
 import { Medaillon } from '@/ui/Medaillon';
 import { TranslitVerset } from '@/features/lire/TranslitVerset';
@@ -141,8 +140,6 @@ function LectureSourate({
   const [page, setPage] = useState(() => pageDe(s.n, versetInitial) ?? 1);
   // Page sur laquelle s'ouvre la liste des pages ; `page` suit ensuite la page affichée.
   const [pageDepart, setPageDepart] = useState(page);
-  // Page visée pendant le glissement de la réglette ; la page ne change qu'au relâchement.
-  const [pageReglette, setPageReglette] = useState<number | null>(null);
   // Mode page : la barre du haut apparaît et disparaît au toucher ; la zone mesurée dimensionne chaque page.
   const [barres, setBarres] = useState(false);
   const [zone, setZone] = useState<LayoutRectangle | null>(null);
@@ -354,22 +351,9 @@ function LectureSourate({
                   : ''}
               </Text>
               <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre }]}>
-                {t('lire.pageSurTotal', { n: pageReglette ?? page, total: nombreDePages })}
+                {t('lire.pageSurTotal', { n: page, total: nombreDePages })}
               </Text>
             </View>
-            <Reglette
-              label={t('lire.page')}
-              min={1}
-              max={nombreDePages}
-              valeur={pageReglette ?? page}
-              onChange={setPageReglette}
-              onTerminer={(p) => {
-                setPageReglette(null);
-                setPage(p);
-                listePages.current?.scrollToIndex({ index: p - 1, animated: false });
-              }}
-              texte={t('lire.pageSurTotal', { n: pageReglette ?? page, total: nombreDePages })}
-            />
             <View style={styles.outilsPage}>
               {[
                 { icone: 'headphones', libelle: t('commun.ecouter'), onPress: () => ecouterPage(page) },
