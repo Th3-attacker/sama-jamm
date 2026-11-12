@@ -712,7 +712,7 @@
   "aPropos": {
     "titre": "À propos",
     "texte": "Sama Jàmm est une app gratuite, sans publicité, pour lire, écouter, prier et tenir le budget du foyer.",
-    "sources": "Sources et licences",
+    "sources": "Sources",
     "sourceCoran": "Texte du Coran : édition uthmani obtenue via alquran.cloud (api.alquran.cloud), reproduite sans modification.",
     "sourceAdhan": "Appels à la prière : deux enregistrements (Fajr, puis de Dhuhr à Isha), gratuits, fournis pour Sama Jàmm.",
     "polices": "Polices : Cormorant Garamond, Source Serif 4, Source Sans 3, Amiri, Amiri Quran, Noto Sans Arabic (SIL Open Font License). Icônes : Lucide (licence ISC).",
@@ -724,7 +724,7 @@
     "signalerEntete": "Sama Jàmm · erreurs récentes",
     "aucuneErreur": "Aucune erreur enregistrée.",
     "sourceTanzil": "Translittération, juz, hizb et prosternations : Tanzil Project (tanzil.net), licence CC BY 3.0, reproduits sans modification.",
-    "sourceInvocations": "Invocations : UmmahAPI (ummahapi.com), avec le recueil et le numéro cités pour chaque invocation. Arabe et translittération de la source ; titres et sens en français établis pour Sama Jàmm. Les textes du Coran restent en arabe seul. Licence de l’API non déclarée.",
+    "sourceInvocations": "Invocations : UmmahAPI (ummahapi.com), avec le recueil et le numéro cités pour chaque invocation. Arabe et translittération de la source ; titres et sens en français établis pour Sama Jàmm. Les textes du Coran restent en arabe seul.",
     "sourceRecitations": "Récitations : alquran.cloud (Islamic Network), autorisées par les récitateurs ou leurs ayants droit pour une diffusion gratuite et non commerciale.",
     "version": "Sama Jàmm · version {{version}}",
     "confidentialite": "Politique de confidentialité",

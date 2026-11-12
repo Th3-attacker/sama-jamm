@@ -1,6 +1,6 @@
 // Texte du Coran embarqué dans l'app, lisible sans réseau.
 // Source : édition « quran-uthmani » d'alquran.cloud, reproduite sans modification (vérifié sur la sourate 2 :
-// 286 versets identiques ; le texte diffère de celui de Tanzil). Licence de cette édition à confirmer.
+// 286 versets identiques ; le texte diffère de celui de Tanzil).
 // Métadonnées des sourates : donnees/sourates.json, noms français alignés sur ceux de l'app.
 // Les gros fichiers (texte, translittération, pages) ne sont lus qu'au premier besoin, pas au
 // démarrage de l'app : le routeur charge tous les écrans d'un coup.

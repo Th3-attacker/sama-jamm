@@ -74,7 +74,7 @@ Toutes les routes existent (`budget/index`, `paie`, `bilan`, `comptes`, `devise`
 | `Favoris`, `Telechargements` | `plus/favoris.tsx`, `plus/telechargements.tsx` | à modifier | `favoris.tsx` passe `trad` à `CarteVerset` |
 | `Reglages` | `plus/reglages.tsx` | à modifier | Ligne « Traduction » (l. 221) et `definirTraduction` (l. 107) à retirer ; sous-écran Réglages de lecture |
 | `Compte`, `CompteSupprimer`, `Connexion` | `plus/compte*`, `plus/connexion.tsx` | à vérifier | Hors ligne : suppression impossible, dit pourquoi |
-| `APropos` | `plus/a-propos.tsx` | à modifier | Groupe « Traductions » (Hamidullah, alquran.cloud) à retirer des sources ; à propos garde sources et licences |
+| `APropos` | `plus/a-propos.tsx` | à modifier | Groupe « Traductions » (Hamidullah, alquran.cloud) à retirer des sources ; à propos garde les sources |
 | `Soutenir`, `DonDeclarer`, `DonMerci` | aucune route | **manquant ou à écarter** | `supabase/migrations/004_retrait_dons.sql` indique que les dons ont été retirés volontairement. Ambigu : voir §6 |
 | `EtatHorsLigne`, `Erreur`, `MiseAJour` | `useReseau`, `features/erreur/*`, `features/miseAJour/*` | à vérifier | Code support préfixé (`AUD`, `PRI`…) : `lib/codeErreur.ts` existe |
 | `Construction`, `Declinaisons`, `Confort`, `Espace*` | planches de règles | sans objet | Servent de référence |

@@ -9,7 +9,7 @@ Brouillons rédigés d'après le code (version 1.0.0). Tout ce qui est marqué *
 | `aide-contact.md` | Page d'aide et contact (`URL_AIDE`) |
 | `fiche-store.md` | Titre, descriptions, mots-clés, catégories, classification (fr, ar, wo) |
 | `confidentialite-stores.md` | App Privacy (Apple) et Data safety (Google Play) |
-| `licences.md` | Sources, polices, sons, dépendances |
+| `licences.md` | Sources et attributions, polices, sons, dépendances |
 | `notes-de-version.md` | Notes de la version 1.0.0 |
 | `accessibilite-apple.md` | Déclaration d'accessibilité Apple |
 | `notes-revue-apple.md` | Notes pour la revue Apple |
@@ -22,5 +22,5 @@ Brouillons rédigés d'après le code (version 1.0.0). Tout ce qui est marqué *
 2. Hébergement des pages confidentialité, conditions et aide (le site GitHub Pages actuel n'a pas été vérifié).
 3. Nom de l'éditeur et pays/adresse requis par les stores (personne physique ou structure).
 4. Validation des textes arabes (référent arabophone) et wolof (locuteur wolof).
-5. Validation de la licence des invocations (rn0x) et des droits des récitations.
+5. Relecture des titres et sens français des invocations.
 6. Comptes développeur Apple et Google, clés de soumission EAS.

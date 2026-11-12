@@ -32,7 +32,7 @@ function ouvrir(url: string) {
   Linking.openURL(url).catch((e: unknown) => console.warn('Lien impossible à ouvrir', e));
 }
 
-/** À propos : signature, version, sources et licences, aide, confidentialité, avis, signaler un problème. */
+/** À propos : signature, version, sources, aide, confidentialité, avis, signaler un problème. */
 export default function APropos() {
   const { t } = useTranslation();
   const { couleurs, espace, typographie, latin } = useTheme();

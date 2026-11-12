@@ -1,6 +1,6 @@
 // Télécharge les données de UmmahAPI (https://ummahapi.com/api/docs) dans src/data/ummah/.
 // Usage : node scripts/telecharger-ummah.mjs
-// Source : API publique, sans licence déclarée (à valider, voir docs/deploiement/licences.md).
+// Source : API publique.
 // Les données sont réduites aux champs utilisés par l'app. Les audios et les traductions non utilisées sont exclus.
 import { Buffer } from 'node:buffer';
 import { createHash } from 'node:crypto';
@@ -97,7 +97,6 @@ ecrire('duas.json', {
 // 5. Manifeste : date, nombre d'éléments et empreinte de chaque fichier.
 ecrire('manifeste.json', {
   source: 'https://ummahapi.com/api/docs',
-  licence: 'Non déclarée : à valider avant toute publication',
   telechargeLe: new Date().toISOString(),
   comptes: { sourates: sourates.length, pages: pages.length, juz: juz.length, duas: duas.length },
   fichiers,

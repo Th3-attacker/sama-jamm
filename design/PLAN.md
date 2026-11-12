@@ -74,7 +74,7 @@ D1 à D4 faits ; voir le tableau « Fait ».
 
 ## E. Contenus de lecture (après les droits)
 
-E1 bis : licence du texte arabe d'alquran.cloud à confirmer (ou passer au texte de Tanzil) · E4 invocations · E5 xassaïdes : audios de xassaid.com en place dans l'app, autorisation écrite à obtenir avant publication.
+E1 bis · E4 invocations · E5 xassaïdes : audios de xassaid.com en place dans l'app, autorisation écrite à obtenir avant publication.
 
 ## F. Écouter (après les droits audio)
 

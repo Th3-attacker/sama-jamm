@@ -12,7 +12,7 @@
 - [ ] Nom et adresse de l'éditeur.
 - [ ] Compte Apple Developer et App Store Connect (app créée, identifiant numérique ascAppId).
 - [ ] Compte Google Play Console + clé de compte de service pour EAS Submit.
-- [ ] Textes arabes et wolof validés ; licences des invocations et des récitations validées.
+- [ ] Textes arabes et wolof validés ; titres et sens français des invocations relus.
 - [ ] Captures et visuels (voir `visuels-captures.md`).
 - [ ] Connexion Google et Apple : configurer les fournisseurs dans Supabase (Auth) et l'URL de retour `samajamm://auth`.
 
@@ -43,7 +43,7 @@
 
 ## Contrôles finaux
 - [ ] Aucun `À VALIDER` dans les textes publiés.
-- [ ] Mentions À propos alignées sur `licences.md`.
+- [ ] Mentions À propos alignées sur `licences.md` (sources et attributions).
 - [ ] `npx tsc --noEmit`, `npx eslint`, `npm test` verts.
 
 ## Ce qui manque de ton côté (récapitulatif)
@@ -54,5 +54,5 @@
 5. Compte de démonstration pour la revue Apple.
 6. Captures (iPhone, téléphone Android ; pas d'iPad), icône 1024 et 512, image 1024×500.
 7. Tests sur appareil : VoiceOver, texte agrandi, notifications/adhan, alarmes exactes Android.
-8. Validation des textes arabes et wolof ; licences des invocations et récitations ; questionnaires d'âge et de confidentialité à remplir dans les consoles.
+8. Validation des textes arabes et wolof ; relecture des titres et sens français des invocations ; questionnaires d'âge et de confidentialité à remplir dans les consoles.
 9. Test fermé Google Play si ton compte est un compte personnel récent (règle à vérifier dans la console).

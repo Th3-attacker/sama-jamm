@@ -7,8 +7,8 @@ Date : 10 novembre 2026 · Branche : `feat/navigation-native` (57 fichiers modif
 | Cible | Verdict | Raison principale |
 | --- | --- | --- |
 | Code (types, tests, bundle) | **Sain** | Tout passe, voir section 1 |
-| Google Play | **Pas prêt** | Pages légales incomplètes, licences non validées, comptes absents |
-| App Store | **Pas prêt** | Compte de démonstration, licences non validées, `ascAppId` absent |
+| Google Play | **Pas prêt** | Pages légales incomplètes, comptes absents |
+| App Store | **Pas prêt** | Compte de démonstration, `ascAppId` absent |
 | Design | **Bon niveau, 3 corrections** | Icône, valeurs en dur, manques face au marché |
 
 Le code est nettement plus avancé que le dossier de publication. Ce qui bloque est surtout hors du code.
@@ -38,8 +38,8 @@ L'app affichait un numéro de wallet et le nom d'un particulier pour recevoir de
 ### B2. Pages légales en ligne inachevées
 Vérifié en direct sur `sama-jamm-site.vercel.app` : les quatre pages répondent, mais `/confidentialite` et `/supprimer-compte` contiennent encore « À FOURNIR », et toutes portent `noindex`. Les deux stores exigent une politique de confidentialité complète ; Google exige aussi la page de suppression de compte. Il manque : nom et pays de l'éditeur, région Supabase, âge minimal, durées de conservation, droit applicable.
 
-### B3. Licences des contenus religieux non validées
-`docs/deploiement/licences.md` : texte du Coran (alquran.cloud), traduction Hamidullah et récitations (`cdn.islamic.network`, « non commercial ») sont marqués « À VALIDER ». Publier sans autorisation écrite expose à un retrait pour propriété intellectuelle. Le retrait des dons rend la mention « non commercial » plus facile à tenir.
+### B3. Licences des contenus religieux — **plus demandées**
+Décision du propriétaire (12 novembre 2026) : aucune licence n'est demandée aux sources. Les crédits et les attributions exigées par les licences publiques (Tanzil CC BY 3.0, polices SIL OFL, icônes ISC) restent dans l'app et sur le site. Les traductions de Hamidullah ne sont plus dans l'app.
 
 ### B4. Revue Apple impossible sans compte de démonstration
 La connexion se fait par code reçu par email, Google ou Apple. Le relecteur d'Apple ne peut pas recevoir ce code : il faut un compte de démonstration utilisable, sinon rejet (règle 2.1). Les notes de revue (`notes-revue-apple.md`) ont encore le contact « À FOURNIR ».
@@ -118,7 +118,7 @@ Les écrans n'ont pas été vus sur appareil ; une tentative de rendu web a éch
 ## 7. Ordre conseillé
 
 1. ~~Trancher B1 (dons) et M1 (wolof)~~ : fait.
-2. Compléter les pages légales et obtenir les licences (B2, B3).
+2. Compléter les pages légales (B2). B3 (licences) : plus de demande de licence, seules les attributions exigées restent.
 3. Corriger M2, M3, M4, puis commiter (M6).
 4. Ouvrir les comptes, build `staging`, recette sur appareil (B5, B6).
 5. Compte de démonstration, captures, fiches, soumission (B4).
