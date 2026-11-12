@@ -40,7 +40,7 @@ export default function NouveauKhatm() {
       const id = await creerKhatm(nom.trim(), intention.trim() || null, jour);
       const { data } = await supabase.from('khatms').select('code').eq('id', id).single();
       const code: unknown = data?.code;
-      if (typeof code === 'string') await inviter(nom.trim(), code);
+      if (typeof code === 'string') await inviter(nom.trim(), intention.trim() || null, code);
       router.replace({ pathname: '/plus/khatm/[id]', params: { id } });
     } catch (e: unknown) {
       console.warn('Khatm non créé', e);

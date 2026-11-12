@@ -16,14 +16,18 @@ import {
   type Membre,
 } from '@/features/khatm/depot';
 import { resumeKhatm, vuePart, type VuePart } from '@/features/khatm/logique';
-import { inviter } from '@/features/khatm/partager';
+import { copierCode, inviter } from '@/features/khatm/partager';
 import { reperes } from '@/features/lire/coran';
 import { useParametre } from '@/hooks/useParametre';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { KhatmGrid, type EtatJuz } from '@/ui/KhatmGrid';
 import { Banner } from '@/ui/Banner';
+import { BottomSheet } from '@/ui/BottomSheet';
 import { Button } from '@/ui/Button';
+import { ListGroup } from '@/ui/ListGroup';
+import { ListItem } from '@/ui/ListItem';
+import { useToast } from '@/ui/Toast';
 import { ProgressBar } from '@/ui/ProgressBar';
 import { TopBar } from '@/ui/TopBar';
 
@@ -36,6 +40,8 @@ export default function EcranKhatm() {
   const moi = useSession((s) => s.session?.user.id ?? null);
   const { etat, relire } = useKhatm(id);
   const [message, setMessage] = useState<string | null>(null);
+  const [feuilleInviter, setFeuilleInviter] = useState(false);
+  const { afficher } = useToast();
 
   const resume = etat.etat === 'pret' ? resumeKhatm(etat.parts, moi) : null;
   const monJuz = resume?.monJuz ?? null;
@@ -127,8 +133,46 @@ export default function EcranKhatm() {
         retour
         centre
         titre={t('khatm.titre')}
-        actions={[{ icone: 'share', texte: t('khatm.inviter'), libelle: true, label: t('khatm.inviter'), onPress: () => void inviter(khatm.nom, khatm.code) }]}
+        actions={[{ icone: 'share', texte: t('khatm.inviter'), libelle: true, label: t('khatm.inviter'), onPress: () => setFeuilleInviter(true) }]}
       />
+      <BottomSheet ouvert={feuilleInviter} titre={t('khatm.inviterTitre')} onFermer={() => setFeuilleInviter(false)}>
+        <View style={{ alignItems: 'center', gap: espace.espace1 }}>
+          <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, { color: couleurs.encre3 }]}>
+            {t('khatm.codeInvitation')}
+          </Text>
+          <Text
+            accessibilityLabel={khatm.code.split('').join(' ')}
+            selectable
+            maxFontSizeMultiplier={echelleMax.grand}
+            style={[typographie.titre1, { color: couleurs.encre, letterSpacing: espace.espace1 }]}>
+            {khatm.code}
+          </Text>
+        </View>
+        <ListGroup>
+          <ListItem
+            icone="share"
+            titre={t('khatm.partagerInvitation')}
+            sousTitre={t('khatm.partagerInvitationAide')}
+            onPress={() => {
+              setFeuilleInviter(false);
+              inviter(khatm.nom, khatm.intention ?? null, khatm.code).catch((e: unknown) => console.warn('Invitation non partagée', e));
+            }}
+          />
+          <ListItem
+            icone="copy"
+            titre={t('khatm.copierCode')}
+            sousTitre={t('khatm.copierCodeAide')}
+            onPress={() => {
+              copierCode(khatm.code)
+                .then(() => afficher({ texte: t('khatm.codeCopie'), icone: 'check' }))
+                .catch((e: unknown) => {
+                  console.warn('Code non copié', e);
+                  afficher({ texte: t('etats.erreurTexte'), icone: 'alert' });
+                });
+            }}
+          />
+        </ListGroup>
+      </BottomSheet>
       <ScrollView
         contentContainerStyle={{
           paddingHorizontal: espace.espace6,
