@@ -405,6 +405,7 @@
     "progression": "Téléchargement, {{part}} %"
   },
   "priere": {
+    "prochaine": "Prochaine prière",
     "titre": "Prière",
     "noms": {
       "fajr": "Fajr",

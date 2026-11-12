@@ -14,6 +14,8 @@ import { stockage } from '@/stores/stockage';
 
 import { comparerFenetre } from './comparaison';
 import { construireFenetre, type Planifiee } from './fenetre';
+import { mettreAJourWidgets } from '@/features/horsapp/widgets';
+
 import { fuseauDuLieu } from './villes';
 
 export const URL_PRIERE = 'samajamm://priere';
@@ -225,6 +227,8 @@ async function executerReplanification(): Promise<number> {
     });
   }
   ecrireEmpreintes(Object.fromEntries(aProgrammer.map((x) => [x.n.id, x.empreinte])));
+  // Le widget suit les mêmes horaires ; son échec ne doit pas faire échouer la replanification.
+  await mettreAJourWidgets().catch((erreur: unknown) => console.warn('Widget non mis à jour', erreur));
   return aProgrammer.length;
 }
 

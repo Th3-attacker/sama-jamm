@@ -441,6 +441,7 @@
     "progression": "جارٍ التنزيل، {{part}}٪"
   },
   "priere": {
+    "prochaine": "الصلاة القادمة",
     "titre": "الصلاة",
     "noms": {
       "fajr": "الفجر",

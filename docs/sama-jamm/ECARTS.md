@@ -70,3 +70,4 @@ Tenu par l'agent de code (voir `AGENTS.md`, section 1). Un écart par ligne : da
 | Date | Paquet | Raison |
 | --- | --- | --- |
 | 2026-11-12 | `expo-widgets` ~58.0.28 | Widgets, activité en direct (fiche technique, « Hors de l'app »). Installé par le propriétaire du dépôt ; plugin ajouté à `app.json`. Aucun widget écrit pour l'instant |
+| 2026-11-12 | Widgets | `expo-widgets` remis (retiré dans le dépôt de travail) ; widget iPhone « Prochaine prière » (petit format) alimenté par `features/horsapp/widgets.ts` après chaque replanification | **Non vérifié** : API de `@expo/ui/swift-ui` lue dans la doc en ligne, pas dans `node_modules` (accès refusé). Reste : widget Android (« Asr 16:35 », `updateSnapshot`), widget des cinq prières, Reprendre, écran verrouillé. Nouveau build natif EAS obligatoire. L'entrée `widgets` du plugin est dans `app.json` (non commité : le fichier contient aussi d'autres changements du propriétaire) |
