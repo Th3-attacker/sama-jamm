@@ -64,7 +64,7 @@ export function TopBar({
   const { t } = useTranslation();
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { couleurs, espace, typographie, latin, cible } = useTheme();
+  const { couleurs, espace, typographie, latin, cible, ligne } = useTheme();
   const chemin = usePathname();
   const enEcoute = useLecteur(ecouteEnCours);
   const { miniRange } = useBottomStack();
@@ -125,7 +125,7 @@ export function TopBar({
               ]}>
               <Text
                 maxFontSizeMultiplier={echelleMax.courant}
-                style={a.libelle ? [typographie.corps, styles.libelle, { color: couleurs.emeraude }] : [typographie.lecture, styles.glyphe, { color: couleurs.encre2 }]}>
+                style={a.libelle ? [typographie.corps, styles.libelle, { color: couleurs.emeraude }] : [typographie.lecture, ligne(styles.glyphe), { color: couleurs.encre2 }]}>
                 {a.texte}
               </Text>
             </Pressable>

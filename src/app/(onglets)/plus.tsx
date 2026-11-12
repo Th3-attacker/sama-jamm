@@ -35,7 +35,7 @@ export default function Plus() {
   const defilement = useRef<ComponentRef<typeof ScrollView>>(null);
   useScrollToTop(defilement);
   const { t } = useTranslation();
-  const { couleurs, espace, typographie } = useTheme();
+  const { couleurs, espace, typographie, ligne } = useTheme();
   const marge = useMargeBasse();
   const { styleColonne: colonne } = useLayout();
   const connecte = useSession((s) => s.session !== null);
@@ -60,7 +60,7 @@ export default function Plus() {
               style={[typographie.display, { color: couleurs.emeraude }]}>
               {t('onglets.plus')}
             </Text>
-            <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.translitteration, styles.sousTitre, { color: couleurs.encre2 }]}>
+            <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.translitteration, ligne(styles.sousTitre), { color: couleurs.encre2 }]}>
               {t('menuPlus.sousTitre')}
             </Text>
           </View>
@@ -92,15 +92,15 @@ export default function Plus() {
                 <View style={[styles.pastille, { backgroundColor: khatm ? couleurs.orDoux : couleurs.emeraudeDoux, marginBottom: espace.espace2 }]}>
                   <Icon name={tuile.icone} size={22} color={khatm ? couleurs.orTexte : couleurs.surEmeraudeDoux} />
                 </View>
-                <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, styles.titre, { color: couleurs.encre }]}>
+                <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, ligne(styles.titre), { color: couleurs.encre }]}>
                   {t(tuile.titre)}
                 </Text>
-                <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.sous, { color: couleurs.encre2 }]}>
+                <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, ligne(styles.sous), { color: couleurs.encre2 }]}>
                   {t(tuile.sous)}
                 </Text>
                 {badge ? (
                   <View style={[styles.badge, { backgroundColor: couleurs.orDoux }]}>
-                    <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, styles.badgeTexte, { color: couleurs.orTexte }]}>
+                    <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, ligne(styles.badgeTexte), { color: couleurs.orTexte }]}>
                       {badge}
                     </Text>
                   </View>

@@ -54,7 +54,7 @@ export function Button({
   onPress,
   accessibilityHint,
 }: ButtonProps) {
-  const { couleurs, espace, rayon, cible, typographie } = useTheme();
+  const { couleurs, espace, rayon, cible, typographie, ligne } = useTheme();
   const t = teintes(variant, couleurs);
 
   return (
@@ -82,7 +82,7 @@ export function Button({
         },
       ]}>
       {icone ? <Icon name={icone} size={18} color={t.texte} /> : null}
-      <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, { color: t.texte }, grand && styles.libelleGrand]}>
+      <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, { color: t.texte }, grand && ligne(styles.libelleGrand)]}>
         {children}
       </Text>
     </Pressable>

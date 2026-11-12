@@ -43,7 +43,7 @@ export default function AjoutDepense() {
 function ContenuAjout() {
   const { t } = useTranslation();
   const formatMontant = useFormatMontant();
-  const { espace, typographie, couleurs, rayon } = useTheme();
+  const { espace, typographie, couleurs, rayon, ligne } = useTheme();
   const insets = useSafeAreaInsets();
   const { afficher } = useToast();
   const etat = useBudget(async (depot, carnet) => ({
@@ -137,13 +137,13 @@ function ContenuAjout() {
             adjustsFontSizeToFit
             minimumFontScale={0.5}
             numberOfLines={1}
-            style={[typographie.chiffre, styles.grandMontant, { color: couleurs.encre }]}>
+            style={[typographie.chiffre, ligne(styles.grandMontant), { color: couleurs.encre }]}>
             {isoleLtr(f(montant))}
           </Text>
           {choix ? (
             <Text
               maxFontSizeMultiplier={echelleMax.courant}
-              style={[typographie.corps, styles.info, { color: apres < 0 ? couleurs.alerte : couleurs.encre2 }]}>
+              style={[typographie.corps, ligne(styles.info), { color: apres < 0 ? couleurs.alerte : couleurs.encre2 }]}>
               {apres >= 0
                 ? t('budget.ilRestera', { enveloppe: choix.nom, montant: f(apres) })
                 : t('budget.depasseraDe', { enveloppe: choix.nom, montant: f(-apres) })}

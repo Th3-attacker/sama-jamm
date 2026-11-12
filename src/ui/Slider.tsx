@@ -25,7 +25,7 @@ export type SliderProps = {
 
 /** Curseur à crans (planche « Minuterie et répétition ») : libellé, valeur, piste à crans réglable au doigt et par gestes. */
 export function Slider({ label, min, max, pas, valeur, onChange, format, gauche, droite }: SliderProps) {
-  const { couleurs, espace, rayon, typographie } = useTheme();
+  const { couleurs, espace, rayon, typographie, ligne } = useTheme();
   const valeurs = cransDe(min, max, pas);
   const index = Math.max(0, valeurs.indexOf(valeur));
   const aller = (i: number) => {
@@ -45,7 +45,7 @@ export function Slider({ label, min, max, pas, valeur, onChange, format, gauche,
         <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, { color: couleurs.encre }]}>
           {label}
         </Text>
-        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.valeur, { color: couleurs.encre2 }]}>
+        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, ligne(styles.valeur), { color: couleurs.encre2 }]}>
           {format(valeur)}
         </Text>
       </View>

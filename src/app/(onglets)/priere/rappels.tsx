@@ -22,7 +22,7 @@ import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 import { interlignes, tailles } from '@/theme/tokens.generated';
 export default function AppelEtRappels() {
   const { t } = useTranslation();
-  const { couleurs, espace, rayon, typographie } = useTheme();
+  const { couleurs, espace, rayon, typographie, ligne } = useTheme();
   const marge = useMargeBasse();
   const rappels = useReglages((s) => s.rappels);
   const sonsChoisis = useReglages((s) => s.sons);
@@ -69,7 +69,7 @@ export default function AppelEtRappels() {
         }
       />
       <ScrollView contentContainerStyle={{ paddingHorizontal: espace.espace5, paddingBottom: espace.espace8 + marge, gap: espace.espace4 }}>
-        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.translitteration, styles.phrase, { color: couleurs.encre2 }]}>
+        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.translitteration, ligne(styles.phrase), { color: couleurs.encre2 }]}>
           {t('priere.rappelsSousTitre')}
         </Text>
         {/* Une seule carte : une ligne par prière, le réglage du son s'ouvre en touchant la ligne. */}
@@ -91,7 +91,7 @@ export default function AppelEtRappels() {
                     <Text style={[styles.local, { color: couleurs.encre3 }]}>{` · ${t(`priere.nomsLocaux.${p}`)}${heure}`}</Text>
                   </Text>
                   <View style={[styles.son, { gap: espace.espace1 }]}>
-                    <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.sonTexte, { color: couleurs.encre2 }]}>
+                    <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, ligne(styles.sonTexte), { color: couleurs.encre2 }]}>
                       {resume(p)}
                     </Text>
                     <Icon name="chevron-right" size={14} color={couleurs.encre2} />
@@ -119,7 +119,7 @@ export default function AppelEtRappels() {
             <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, { color: couleurs.encre }]}>
               {t('priere.methodeTitre')}
             </Text>
-            <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.sonTexte, { color: couleurs.encre3 }]}>
+            <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, ligne(styles.sonTexte), { color: couleurs.encre3 }]}>
               {`${t(`priere.methodes.${methode}`)} · ${t('priere.asrResume', { ecole: t(ecoleAsr === 'hanafite' ? 'priere.asrHanafite' : 'priere.asrStandard').toLowerCase() })}`}
             </Text>
           </View>

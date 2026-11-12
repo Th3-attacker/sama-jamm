@@ -14,14 +14,14 @@ type Props = {
 
 // Ligne de réglage à plat de la planche « Bienvenue · rappels » : filet en bas, interrupteur à droite.
 export function LigneReglage({ titre, detail, active, onChange }: Props) {
-  const { couleurs, espace, typographie } = useTheme();
+  const { couleurs, espace, typographie, ligne } = useTheme();
   return (
     <View style={[styles.ligne, { gap: espace.espace4, paddingVertical: espace.espace4, borderBottomColor: couleurs.ligne }]}>
       <View style={styles.textes}>
-        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.titre3, styles.titre, { color: couleurs.encre }]}>
+        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.titre3, ligne(styles.titre), { color: couleurs.encre }]}>
           {titre}
         </Text>
-        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.detail, { color: couleurs.encre2 }]}>
+        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, ligne(styles.detail), { color: couleurs.encre2 }]}>
           {detail}
         </Text>
       </View>

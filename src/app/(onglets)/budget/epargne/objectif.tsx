@@ -28,7 +28,7 @@ type Mode = 'fixe' | 'libre';
 export default function EcranObjectif() {
   const { t, i18n } = useTranslation();
   const formatMontant = useFormatMontant();
-  const { couleurs, espace, rayon, typographie } = useTheme();
+  const { couleurs, espace, rayon, typographie, ligne } = useTheme();
   const marge = useMargeBasse();
   const { afficher } = useToast();
   const id = useParametre('id');
@@ -174,7 +174,7 @@ export default function EcranObjectif() {
             </View>
           </View>
           <View style={{ padding: espace.espace4, borderRadius: rayon.rayonCarte, backgroundColor: couleurs.orDoux }}>
-            <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.petit, { color: couleurs.encre }]}>
+            <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, ligne(styles.petit), { color: couleurs.encre }]}>
               {texteProjection}
             </Text>
           </View>

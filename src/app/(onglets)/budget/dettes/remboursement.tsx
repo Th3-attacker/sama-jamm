@@ -30,7 +30,7 @@ type ChoixJour = 'aujourdhui' | 'hier' | 'autre';
 export default function Remboursement() {
   const { t } = useTranslation();
   const formatMontant = useFormatMontant();
-  const { couleurs, espace, typographie } = useTheme();
+  const { couleurs, espace, typographie, ligne } = useTheme();
   const marge = useMargeBasse();
   const { afficher } = useToast();
   const id = useParametre('id');
@@ -89,7 +89,7 @@ export default function Remboursement() {
           gap: espace.espace4,
         }}>
         <EnteteRetour titre={t('dettes.rembTitre')} fermer />
-        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.petit, { color: couleurs.encre2 }]}>
+        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, ligne(styles.petit), { color: couleurs.encre2 }]}>
           {d.sens === 'prete'
             ? t('dettes.rembOnMeDoit', { personne: d.personne, montant: f(d.reste) })
             : t('dettes.rembJeDois', { personne: d.personne, montant: f(d.reste) })}

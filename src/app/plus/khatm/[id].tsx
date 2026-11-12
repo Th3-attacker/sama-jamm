@@ -37,7 +37,7 @@ const DELAI_APRES_FEUILLE = 320;
 /** Un khatm collectif : les 30 juz en direct, mon juz, inviter. */
 export default function EcranKhatm() {
   const { t, i18n } = useTranslation();
-  const { couleurs, espace, rayon, typographie, latin } = useTheme();
+  const { couleurs, espace, rayon, typographie, latin, ligne } = useTheme();
   const id = useParametre('id');
   const moi = useSession((s) => s.session?.user.id ?? null);
   const { etat, relire } = useKhatm(id);
@@ -197,7 +197,7 @@ export default function EcranKhatm() {
           </Text>
           <Text
             maxFontSizeMultiplier={echelleMax.courant}
-            style={[typographie.translitteration, styles.trad, { color: couleurs.encre2 }]}>
+            style={[typographie.translitteration, ligne(styles.trad), { color: couleurs.encre2 }]}>
             {t('formules.entraideTrad')}
           </Text>
         </View>

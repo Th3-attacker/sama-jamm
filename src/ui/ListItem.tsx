@@ -55,7 +55,7 @@ export function ListItem({
   danger = false,
   onPress,
 }: ListItemProps) {
-  const { couleurs, espace, rayon, typographie } = useTheme();
+  const { couleurs, espace, rayon, typographie, ligne } = useTheme();
   const finEffective = fin ?? (onPress ? 'chevron' : undefined);
   const p = pastille(ton, couleurs);
 
@@ -82,7 +82,7 @@ export function ListItem({
         <Text
           accessibilityLanguage="ar"
           maxFontSizeMultiplier={echelleMax.courant}
-          style={[styles.arabe, { color: couleurs.encre }]}>
+          style={[ligne(styles.arabe), { color: couleurs.encre }]}>
           {arabe}
         </Text>
       ) : null}

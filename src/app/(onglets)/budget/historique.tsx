@@ -26,7 +26,7 @@ const FILTRES: readonly FiltreHistorique[] = ['tout', 'depenses', 'revenus'];
 export default function Historique() {
   const { t, i18n } = useTranslation();
   const formatMontant = useFormatMontant();
-  const { couleurs, espace, typographie } = useTheme();
+  const { couleurs, espace, typographie, ligne } = useTheme();
   const marge = useMargeBasse();
   const insets = useSafeAreaInsets();
   const [filtre, setFiltre] = useState<FiltreHistorique>('tout');
@@ -106,7 +106,7 @@ export default function Historique() {
             {section.total !== 0 ? (
               <Text
                 maxFontSizeMultiplier={echelleMax.courant}
-                style={[typographie.corps, styles.jourTotal, { color: couleurs.encre3 }]}>
+                style={[typographie.corps, ligne(styles.jourTotal), { color: couleurs.encre3 }]}>
                 {signe(section.total)}
               </Text>
             ) : null}

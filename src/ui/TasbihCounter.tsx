@@ -21,7 +21,7 @@ const CIRCONFERENCE = 2 * Math.PI * RAYON;
 // Le grand grain : toute la pastille est la zone tactile, un toucher = un grain.
 export function TasbihCounter({ compte, objectif, onCompter }: TasbihCounterProps) {
   const { t } = useTranslation();
-  const { couleurs, ombres, typographie } = useTheme();
+  const { couleurs, ombres, typographie, ligne } = useTheme();
   const fini = objectif !== null && compte >= objectif;
   const part = objectif ? Math.min(compte / objectif, 1) : 0;
   const libelle = objectif
@@ -57,7 +57,7 @@ export function TasbihCounter({ compte, objectif, onCompter }: TasbihCounterProp
           />
         ) : null}
       </Svg>
-      <Text accessibilityLiveRegion="polite" maxFontSizeMultiplier={echelleMax.grand} style={[typographie.chiffre, styles.compte, { color: couleurs.encre }]}>
+      <Text accessibilityLiveRegion="polite" maxFontSizeMultiplier={echelleMax.grand} style={[typographie.chiffre, ligne(styles.compte), { color: couleurs.encre }]}>
         {chiffresAffiches(String(compte))}
       </Text>
       {objectif ? (

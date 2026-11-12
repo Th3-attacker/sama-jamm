@@ -21,7 +21,7 @@ import { interlignes, tailles } from '@/theme/tokens.generated';
 export default function EcranEpargne() {
   const { t } = useTranslation();
   const formatMontant = useFormatMontant();
-  const { couleurs, espace, typographie, latin } = useTheme();
+  const { couleurs, espace, typographie, latin, ligne } = useTheme();
   const marge = useMargeBasse();
   const etat = useBudget((depot, carnet) => depot.epargne(carnet));
 
@@ -65,18 +65,18 @@ export default function EcranEpargne() {
             adjustsFontSizeToFit
             minimumFontScale={0.5}
             numberOfLines={1}
-            style={[typographie.chiffre, styles.total, { color: couleurs.encre }]}>
+            style={[typographie.chiffre, ligne(styles.total), { color: couleurs.encre }]}>
             {isoleLtr(formatMontant(e.total, devise))}
           </Text>
           <Text
             accessibilityLanguage="wo"
             maxFontSizeMultiplier={echelleMax.courant}
-            style={[latin.titre2, styles.proverbe, { color: couleurs.emeraude, marginTop: espace.espace2 }]}>
+            style={[latin.titre2, ligne(styles.proverbe), { color: couleurs.emeraude, marginTop: espace.espace2 }]}>
             {t('epargne.proverbe')}
           </Text>
           <Text
             maxFontSizeMultiplier={echelleMax.courant}
-            style={[typographie.translitteration, styles.petit, { color: couleurs.encre2 }]}>
+            style={[typographie.translitteration, ligne(styles.petit), { color: couleurs.encre2 }]}>
             {t('epargne.sousTitre')}
           </Text>
         </View>
@@ -118,7 +118,7 @@ export default function EcranEpargne() {
           </>
         ) : null}
 
-        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.petit, { color: couleurs.encre2 }]}>
+        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, ligne(styles.petit), { color: couleurs.encre2 }]}>
           {t('epargne.sansInteret')}
         </Text>
         <ListGroup>

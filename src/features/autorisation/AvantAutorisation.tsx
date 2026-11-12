@@ -84,7 +84,7 @@ export function AvantAutorisation({
   bouton?: boolean;
 }) {
   const { t } = useTranslation();
-  const { couleurs, espace, typographie } = useTheme();
+  const { couleurs, espace, typographie, ligne } = useTheme();
   return (
     <View style={{ gap: espace.espace4 }}>
       <EmptyState
@@ -96,7 +96,7 @@ export function AvantAutorisation({
       <RaisonsAutorisation type={type} />
       <Text
         maxFontSizeMultiplier={echelleMax.courant}
-        style={[typographie.corps, { color: couleurs.encre3, textAlign: 'center' }, styles.demande]}>
+        style={[typographie.corps, { color: couleurs.encre3, textAlign: 'center' }, ligne(styles.demande)]}>
         {t(`autorisations.avant.${type}.demande`)}
       </Text>
       {bouton ? (

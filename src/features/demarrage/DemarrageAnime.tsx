@@ -30,7 +30,7 @@ const COURBE = Easing.bezier(0.2, 0.8, 0.2, 1);
 
 export function DemarrageAnime({ onFin }: { onFin: () => void }) {
   const { t, i18n } = useTranslation();
-  const { typographie, latin } = useTheme();
+  const { typographie, latin, ligne } = useTheme();
   const reduit = useReducedMotion();
   const arabe = i18n.language === 'ar';
   // Même image que le démarrage natif, qui suit le mode du téléphone (pas le thème choisi dans l'app).
@@ -84,14 +84,14 @@ export function DemarrageAnime({ onFin }: { onFin: () => void }) {
           maxFontSizeMultiplier={echelleMax.courant}
           style={[
             latin.titre1,
-            styles.signature,
+            ligne(styles.signature),
             { color: sombre ? couleurs.encre : couleurs.emeraude, writingDirection: 'ltr' },
           ]}>
           {t('demarrage.signature')}
         </Text>
         <Text
           maxFontSizeMultiplier={echelleMax.courant}
-          style={[arabe ? styles.sousTitreAr : typographie.translitteration, { color: couleurs.encre2 }]}>
+          style={[arabe ? ligne(styles.sousTitreAr) : typographie.translitteration, { color: couleurs.encre2 }]}>
           {t('demarrage.traduction')}
         </Text>
       </Animated.View>

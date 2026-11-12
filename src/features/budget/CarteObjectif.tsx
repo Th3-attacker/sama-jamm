@@ -38,7 +38,7 @@ export function CarteObjectif({ objectif: o, devise }: { objectif: Objectif; dev
   const { t } = useTranslation();
   const formatMontant = useFormatMontant();
   const rythmeDe = useRythmeObjectif();
-  const { couleurs, espace, rayon, typographie } = useTheme();
+  const { couleurs, espace, rayon, typographie, ligne } = useTheme();
   const f = (m: number) => formatMontant(m, devise);
   const part = progressionObjectif(o.verse, o.cible);
   const montants =
@@ -70,14 +70,14 @@ export function CarteObjectif({ objectif: o, devise }: { objectif: Objectif; dev
           style={[typographie.corps, styles.nom, { fontFamily: typographie.libelle.fontFamily, color: couleurs.encre }]}>
           {o.nom}
         </Text>
-        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.petit, { color: couleurs.encre3 }]}>
+        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, ligne(styles.petit), { color: couleurs.encre3 }]}>
           {montants}
         </Text>
       </View>
       {o.intention ? (
         <Text
           maxFontSizeMultiplier={echelleMax.courant}
-          style={[typographie.translitteration, styles.petit, { color: couleurs.encre2 }]}>
+          style={[typographie.translitteration, ligne(styles.petit), { color: couleurs.encre2 }]}>
           {t('epargne.intentionLigne', { texte: o.intention })}
         </Text>
       ) : null}
@@ -85,7 +85,7 @@ export function CarteObjectif({ objectif: o, devise }: { objectif: Objectif; dev
       {part !== null && !o.utilise ? (
         <ProgressBar valeur={part} label={o.nom} detail={rythme} ton="or" fine />
       ) : (
-        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.petit, { color: couleurs.encre2 }]}>
+        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, ligne(styles.petit), { color: couleurs.encre2 }]}>
           {rythme}
         </Text>
       )}

@@ -17,7 +17,7 @@ export type SegmentedControlProps = {
 };
 
 export function SegmentedControl({ label, options, valeur, onChange, pilule = false }: SegmentedControlProps) {
-  const { couleurs, ombres, espace, rayon, typographie } = useTheme();
+  const { couleurs, ombres, espace, rayon, typographie, ligne } = useTheme();
 
   return (
     <View
@@ -48,7 +48,7 @@ export function SegmentedControl({ label, options, valeur, onChange, pilule = fa
               maxFontSizeMultiplier={echelleMax.courant}
               style={[
                 typographie.libelle,
-                pilule ? styles.textePilule : null,
+                pilule ? ligne(styles.textePilule) : null,
                 pilule
                   ? { color: on ? couleurs.emeraude : couleurs.encre2 }
                   : on

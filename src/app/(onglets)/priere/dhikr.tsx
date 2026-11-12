@@ -31,7 +31,7 @@ const versetDhikr = versetRubrique('dhikr');
 export default function Dhikr() {
   useKeepAwake();
   const { t } = useTranslation();
-  const { couleurs, espace, typographie, latin } = useTheme();
+  const { couleurs, espace, typographie, latin, ligne } = useTheme();
   const marge = useMargeBasse();
   const formuleId = useDhikr((s) => s.formule);
   const comptes = useDhikr((s) => s.comptes);
@@ -88,10 +88,10 @@ export default function Dhikr() {
 
         {formule ? (
           <View style={[styles.formule, { gap: espace.espace2, marginTop: espace.espace3 }]}>
-            <Text accessibilityLanguage="ar" maxFontSizeMultiplier={echelleMax.courant} style={[typographie.arabe, styles.arabe, { color: couleurs.encre }]}>
+            <Text accessibilityLanguage="ar" maxFontSizeMultiplier={echelleMax.courant} style={[typographie.arabe, ligne(styles.arabe), { color: couleurs.encre }]}>
               {formule.arabe}
             </Text>
-            <Text maxFontSizeMultiplier={echelleMax.courant} style={[latin.translitteration, styles.translitteration, { color: couleurs.encre2 }]}>
+            <Text maxFontSizeMultiplier={echelleMax.courant} style={[latin.translitteration, ligne(styles.translitteration), { color: couleurs.encre2 }]}>
               {formule.translitteration}
             </Text>
           </View>
@@ -106,12 +106,12 @@ export default function Dhikr() {
             <Text accessibilityLanguage="wo" maxFontSizeMultiplier={echelleMax.grand} style={[latin.titre1, { color: couleurs.emeraude }]}>
               {t('formules.gratitude')}
             </Text>
-            <Text maxFontSizeMultiplier={echelleMax.courant} style={[latin.translitteration, styles.translitteration, { color: couleurs.encre2 }]}>
+            <Text maxFontSizeMultiplier={echelleMax.courant} style={[latin.translitteration, ligne(styles.translitteration), { color: couleurs.encre2 }]}>
               {t('formules.gratitudeTrad')}
             </Text>
           </View>
         ) : (
-          <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.aide, { color: couleurs.encre2, marginTop: espace.espace2 }]}>
+          <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, ligne(styles.aide), { color: couleurs.encre2, marginTop: espace.espace2 }]}>
             {t('dhikr.aide')}
           </Text>
         )}

@@ -41,7 +41,7 @@ export function AmountDisplay({
   surEmeraude = false,
   centre = false,
 }: AmountDisplayProps) {
-  const { couleurs, typographie, nom } = useTheme();
+  const { couleurs, typographie, nom, ligne } = useTheme();
   const formatMontant = useFormatMontant();
   const encre = surEmeraude ? couleurs.surEmeraude : couleurs.encre;
   const secondaire = surEmeraude ? couleurs.surEmeraude2 : couleurs.encre2;
@@ -78,7 +78,7 @@ export function AmountDisplay({
         {isoleLtr(texte)}
       </Text>
       {detail ? (
-        <Text maxFontSizeMultiplier={ECHELLE_CHIFFRES} style={[typographie.corps, surEmeraude ? styles.detailCarte : null, { color: couleurDetail }]}>
+        <Text maxFontSizeMultiplier={ECHELLE_CHIFFRES} style={[typographie.corps, surEmeraude ? ligne(styles.detailCarte) : null, { color: couleurDetail }]}>
           {detail}
         </Text>
       ) : null}

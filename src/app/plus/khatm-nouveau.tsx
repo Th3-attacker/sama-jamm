@@ -21,7 +21,7 @@ import { interlignes, tailles } from '@/theme/tokens.generated';
 /** Nouveau khatm : nom, intention, date de fin ; puis l'invitation part par la feuille de partage. */
 export default function NouveauKhatm() {
   const { t } = useTranslation();
-  const { couleurs, espace, typographie, latin } = useTheme();
+  const { couleurs, espace, typographie, latin, ligne } = useTheme();
   const [nom, setNom] = useState(t('khatm.nomDefaut'));
   const [intention, setIntention] = useState('');
   const [echeance, setEcheance] = useState('');
@@ -70,7 +70,7 @@ export default function NouveauKhatm() {
             paddingBottom: espace.espace4,
             gap: espace.espace4,
           }}>
-          <Text accessibilityLanguage="wo" maxFontSizeMultiplier={echelleMax.courant} style={[latin.translitteration, styles.phrase, { color: couleurs.encre2 }]}>
+          <Text accessibilityLanguage="wo" maxFontSizeMultiplier={echelleMax.courant} style={[latin.translitteration, ligne(styles.phrase), { color: couleurs.encre2 }]}>
             {t('khatm.nouveauTexte')}
           </Text>
           <TextField label={t('khatm.nom')} valeur={nom} onChange={setNom} maxLength={60} />

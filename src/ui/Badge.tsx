@@ -35,7 +35,7 @@ function teintes(ton: TonBadge, c: Couleurs) {
 
 /** Étiquette d'état, non interactive (téléchargé, nouveau, bientôt atteint, dépassé). */
 export function Badge({ children, ton = 'neutre', icone }: BadgeProps) {
-  const { couleurs, espace, rayon, typographie } = useTheme();
+  const { couleurs, espace, rayon, typographie, ligne } = useTheme();
   const t = teintes(ton, couleurs);
   return (
     <View
@@ -50,7 +50,7 @@ export function Badge({ children, ton = 'neutre', icone }: BadgeProps) {
         },
       ]}>
       {icone ? <Icon name={icone} size={14} color={t.texte} /> : null}
-      <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, styles.texte, { color: t.texte }]}>
+      <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, ligne(styles.texte), { color: t.texte }]}>
         {children}
       </Text>
     </View>

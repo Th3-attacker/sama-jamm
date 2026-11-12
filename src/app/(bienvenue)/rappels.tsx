@@ -18,7 +18,7 @@ import iconeApp from '../../../assets/images/icon.png';
 import { interlignes, tailles } from '@/theme/tokens.generated';
 export default function Rappels() {
   const { t } = useTranslation();
-  const { couleurs, espace, ombres, typographie, latin } = useTheme();
+  const { couleurs, espace, ombres, typographie, latin, ligne } = useTheme();
   const rappels = useReglages((s) => s.rappels);
   const definirRappel = useReglages((s) => s.definirRappel);
   const rappelAvant = useReglages((s) => s.rappelAvant);
@@ -87,10 +87,10 @@ export default function Rappels() {
             <Text
               accessibilityLanguage="wo"
               maxFontSizeMultiplier={echelleMax.courant}
-              style={[latin.titre3, styles.notificationTitre, { color: couleurs.encre }]}>
+              style={[latin.titre3, ligne(styles.notificationTitre), { color: couleurs.encre }]}>
               {`${t('formules.appel').replace(/\.$/, '')} · Asr`}
             </Text>
-            <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, styles.notificationDetail, { color: couleurs.encre2 }]}>
+            <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, ligne(styles.notificationDetail), { color: couleurs.encre2 }]}>
               {t('bienvenue.heureExemple', { heure: '16:35' })}
             </Text>
           </View>

@@ -35,7 +35,7 @@ export default function Priere() {
   const defilement = useRef<ComponentRef<typeof ScrollView>>(null);
   useScrollToTop(defilement);
   const { t, i18n } = useTranslation();
-  const { couleurs, espace, rayon, typographie } = useTheme();
+  const { couleurs, espace, rayon, typographie, ligne } = useTheme();
   const marge = useMargeBasse();
   const { styleColonne: colonne } = useLayout();
   const maintenant = useMaintenant();
@@ -86,7 +86,7 @@ export default function Priere() {
         ) : (
           <>
             {/* Jamais d'heures sans le lieu de calcul. */}
-            <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.lieu, { color: couleurs.encre2 }]}>
+            <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, ligne(styles.lieu), { color: couleurs.encre2 }]}>
               {`${nomLieu} · ${formatJour(maintenant, i18n.language)}`}
             </Text>
             {/* Planche : l'arc du jour seul, sans texte au-dessus ; les horaires sont dans la liste. */}
@@ -152,7 +152,7 @@ export default function Priere() {
                   ]}>
                   <Icon name={x.icone} size={24} color={couleurs.emeraude} />
                   <View style={styles.tuileTextes}>
-                    <Text numberOfLines={1} maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, styles.tuileTitre, { color: couleurs.encre }]}>
+                    <Text numberOfLines={1} maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, ligne(styles.tuileTitre), { color: couleurs.encre }]}>
                       {x.titre}
                     </Text>
                     <Text numberOfLines={2} maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre3 }]}>

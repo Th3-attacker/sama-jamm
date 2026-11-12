@@ -27,7 +27,7 @@ const REARMEMENT = 10;
 
 export default function Qibla() {
   const { t } = useTranslation();
-  const { couleurs, espace, rayon, typographie } = useTheme();
+  const { couleurs, espace, rayon, typographie, ligne } = useTheme();
   const marge = useMargeBasse();
   const lieu = useReglages((s) => s.lieu);
   const definirLieu = useReglages((s) => s.definirLieu);
@@ -87,10 +87,10 @@ export default function Qibla() {
               {t('qibla.sansBoussoleExplication')}
             </Banner>
             <View style={[styles.centreBloc, { gap: espace.espace1, paddingTop: espace.espace2 }]}>
-              <Text maxFontSizeMultiplier={echelleMax.grand} style={[typographie.chiffre, styles.degres, { color: couleurs.encre }]}>
+              <Text maxFontSizeMultiplier={echelleMax.grand} style={[typographie.chiffre, ligne(styles.degres), { color: couleurs.encre }]}>
                 {`${Math.round(qibla)}°`}
               </Text>
-              <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.directionTexte, { color: couleurs.encre2 }]}>
+              <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, ligne(styles.directionTexte), { color: couleurs.encre2 }]}>
                 {t('qibla.directionDepuis', { direction, lieu: nomLieu })}
               </Text>
             </View>
@@ -126,7 +126,7 @@ export default function Qibla() {
               <View style={styles.iconeConseil}>
                 <Icon name="info" size={20} color={couleurs.info} />
               </View>
-              <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.texteConseil, { color: couleurs.encre }]}>
+              <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, ligne(styles.texteConseil), { color: couleurs.encre }]}>
                 {t('qibla.calibration')}
               </Text>
             </View>

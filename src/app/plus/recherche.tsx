@@ -23,7 +23,7 @@ const FILTRES: Filtre[] = ['tout', 'coran', 'invocations'];
 
 export default function Recherche() {
   const { t } = useTranslation();
-  const { couleurs, espace, rayon, typographie } = useTheme();
+  const { couleurs, espace, rayon, typographie, ligne } = useTheme();
   const insets = useSafeAreaInsets();
   const [filtre, setFiltre] = useState<Filtre>('tout');
   // La requête reste dans l'état de l'écran : elle survit à l'ouverture d'un verset et au retour.
@@ -74,7 +74,7 @@ export default function Recherche() {
           <SearchField autoFocus placeholder={t('recherche.placeholder')} valeur={requete} onChange={setRequete} />
         </View>
         <Pressable accessibilityRole="button" accessibilityLabel={t('commun.fermer')} hitSlop={8} onPress={() => router.back()}>
-          <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, styles.fermer, { color: couleurs.encre }]}>
+          <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, ligne(styles.fermer), { color: couleurs.encre }]}>
             {t('commun.fermer')}
           </Text>
         </Pressable>
@@ -126,7 +126,7 @@ export default function Recherche() {
                 <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, { color: couleurs.encre }]}>
                   {t('recherche.videTitre')}
                 </Text>
-                <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.aide, { color: couleurs.encre2 }]}>
+                <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, ligne(styles.aide), { color: couleurs.encre2 }]}>
                   {t('recherche.aide')}
                 </Text>
               </View>

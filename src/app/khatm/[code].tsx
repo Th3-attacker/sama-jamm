@@ -17,7 +17,7 @@ import { interlignes, tailles } from '@/theme/tokens.generated';
 /** Invitation au khatm, ouverte par le lien samajamm://khatm/CODE (ou un code saisi). */
 export default function Invitation() {
   const { t, i18n } = useTranslation();
-  const { couleurs, espace, rayon, typographie, latin } = useTheme();
+  const { couleurs, espace, rayon, typographie, latin, ligne } = useTheme();
   const code = lireCode(useParametre('code'));
   const connecte = useSession((s) => s.session !== null);
   const [apercu, setApercu] = useState<Apercu | null | 'chargement'>('chargement');
@@ -67,7 +67,7 @@ export default function Invitation() {
           </Text>
           <Text
             maxFontSizeMultiplier={echelleMax.courant}
-            style={[typographie.translitteration, styles.trad, { color: couleurs.encre2 }]}>
+            style={[typographie.translitteration, ligne(styles.trad), { color: couleurs.encre2 }]}>
             {t('formules.entraideTrad')}
           </Text>
         </View>

@@ -18,7 +18,7 @@ type Props = {
 
 /** Ligne de la carte de l'onglet Plus (planche) : pastille neutre de 32, titre, valeur, chevron. */
 export function LigneHub({ icone, titre, valeur, premiere = false, onPress }: Props) {
-  const { couleurs, espace, typographie } = useTheme();
+  const { couleurs, espace, typographie, ligne } = useTheme();
   return (
     <Pressable
       accessibilityRole="button"
@@ -42,7 +42,7 @@ export function LigneHub({ icone, titre, valeur, premiere = false, onPress }: Pr
         {titre}
       </Text>
       {valeur ? (
-        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.valeur, { color: couleurs.encre3 }]}>
+        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, ligne(styles.valeur), { color: couleurs.encre3 }]}>
           {valeur}
         </Text>
       ) : null}

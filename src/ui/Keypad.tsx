@@ -19,7 +19,7 @@ const TOUCHES: ToucheClavier[] = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '
 /** Pavé numérique pour saisir un montant d'un pouce, sans le clavier du téléphone. Toujours sous un `AmountDisplay`. */
 export function Keypad({ onTouche }: KeypadProps) {
   const { t } = useTranslation();
-  const { couleurs, espace, rayon, typographie } = useTheme();
+  const { couleurs, espace, rayon, typographie, ligne } = useTheme();
 
   return (
     <View accessibilityLabel={t('accessibilite.padNumerique')} style={[styles.grille, { gap: espace.espace2 }]}>
@@ -47,7 +47,7 @@ export function Keypad({ onTouche }: KeypadProps) {
             ) : (
               <Text
                 maxFontSizeMultiplier={echelleMax.courant}
-                style={[typographie.titre3, styles.chiffre, { color: couleurs.encre }]}>
+                style={[typographie.titre3, ligne(styles.chiffre), { color: couleurs.encre }]}>
                 {touche}
               </Text>
             )}

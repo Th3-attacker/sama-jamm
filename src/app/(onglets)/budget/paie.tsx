@@ -24,7 +24,7 @@ import { interlignes, tailles } from '@/theme/tokens.generated';
 export default function JourDePaie() {
   const { t } = useTranslation();
   const formatMontant = useFormatMontant();
-  const { couleurs, espace, typographie } = useTheme();
+  const { couleurs, espace, typographie, ligne } = useTheme();
   const marge = useMargeBasse();
   const { afficher } = useToast();
   const etat = useBudget(async (depot, carnet) => ({
@@ -213,7 +213,7 @@ export default function JourDePaie() {
             },
           ]}>
           <View style={styles.reste}>
-            <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.petit, { color: couleurs.encre2 }]}>
+            <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, ligne(styles.petit), { color: couleurs.encre2 }]}>
               {t('budget.nonReparti')}
             </Text>
             <Text

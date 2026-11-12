@@ -40,7 +40,7 @@ function ClocheBarree({ couleur }: { couleur: string }) {
 
 // Les cinq prières du jour, la prochaine mise en avant (fond, graisse et texte, pas la couleur seule).
 export function PrayerTimes({ prieres, onBasculerAppel }: PrayerTimesProps) {
-  const { couleurs, espace, rayon, cible, typographie } = useTheme();
+  const { couleurs, espace, rayon, cible, typographie, ligne } = useTheme();
 
   return (
     <View style={{ gap: espace.espace1 }}>
@@ -74,7 +74,7 @@ export function PrayerTimes({ prieres, onBasculerAppel }: PrayerTimesProps) {
             <Text
               accessibilityLanguage="ar"
               maxFontSizeMultiplier={echelleMax.courant}
-              style={[styles.arabe, { color: passee ? couleurs.encre3 : couleurs.encre2 }]}>
+              style={[ligne(styles.arabe), { color: passee ? couleurs.encre3 : couleurs.encre2 }]}>
               {p.nomArabe}
             </Text>
             <Text maxFontSizeMultiplier={echelleMax.grand} style={[typographie.titre3, styles.heure, { fontFamily: gras, color: teinte }]}>

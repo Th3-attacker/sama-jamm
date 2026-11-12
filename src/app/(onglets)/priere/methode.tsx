@@ -21,7 +21,7 @@ const signe = (n: number) => (n > 0 ? `+${n} min` : `${n} min`);
 
 export default function MethodeDeCalcul() {
   const { t } = useTranslation();
-  const { couleurs, espace, rayon, typographie } = useTheme();
+  const { couleurs, espace, rayon, typographie, ligne } = useTheme();
   const marge = useMargeBasse();
   const methode = useReglages((s) => s.methode);
   const ecoleAsr = useReglages((s) => s.ecoleAsr);
@@ -48,7 +48,7 @@ export default function MethodeDeCalcul() {
         }
       />
       <ScrollView contentContainerStyle={{ paddingHorizontal: espace.espace5, paddingBottom: espace.espace8 + marge, gap: espace.espace4 }}>
-        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.translitteration, styles.phrase, { color: couleurs.encre2 }]}>
+        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.translitteration, ligne(styles.phrase), { color: couleurs.encre2 }]}>
           {t('priere.methodeSousTitre')}
         </Text>
 
@@ -106,7 +106,7 @@ export default function MethodeDeCalcul() {
                     disabled={valeur <= -AJUSTEMENT_MAX}
                     onPress={() => ajuster(p, -1)}
                   />
-                  <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, styles.valeur, { color: couleurs.encre }]}>
+                  <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, ligne(styles.valeur), { color: couleurs.encre }]}>
                     {signe(valeur)}
                   </Text>
                   <IconButton
@@ -120,7 +120,7 @@ export default function MethodeDeCalcul() {
               );
             })}
           </View>
-          <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.note, { color: couleurs.encre3 }]}>
+          <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, ligne(styles.note), { color: couleurs.encre3 }]}>
             {t('priere.ajusterAide')}
           </Text>
         </View>

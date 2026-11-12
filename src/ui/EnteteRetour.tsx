@@ -29,7 +29,7 @@ export type EnteteRetourProps = {
  */
 export function EnteteRetour({ titre, sousTitre, italique = false, fermer = false, onRetour, droite }: EnteteRetourProps) {
   const { t } = useTranslation();
-  const { couleurs, espace, typographie } = useTheme();
+  const { couleurs, espace, typographie, ligne } = useTheme();
   const insets = useSafeAreaInsets();
   return (
     <View style={[styles.ligne, { paddingTop: insets.top + espace.espace2, gap: espace.espace1 }]}>
@@ -55,7 +55,7 @@ export function EnteteRetour({ titre, sousTitre, italique = false, fermer = fals
             style={
               italique
                 ? [typographie.translitteration, styles.sousTitreItalique, { color: couleurs.encre2 }]
-                : [typographie.corps, styles.sousTitre, { color: couleurs.encre3 }]
+                : [typographie.corps, ligne(styles.sousTitre), { color: couleurs.encre3 }]
             }>
             {sousTitre}
           </Text>

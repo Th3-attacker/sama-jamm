@@ -25,7 +25,7 @@ type Feuille = { mode: 'ajout' } | { mode: 'taux'; cible: Devise } | null;
 /** Devise du carnet : la liste, l'ajout d'une devise personnelle et le changement avec un taux de conversion. */
 export default function EcranDevise() {
   const { t } = useTranslation();
-  const { couleurs, espace, rayon, typographie } = useTheme();
+  const { couleurs, espace, rayon, typographie, ligne } = useTheme();
   const marge = useMargeBasse();
   const { afficher } = useToast();
   const libelle = useLibelleDevise();
@@ -137,7 +137,7 @@ export default function EcranDevise() {
                   </Text>
                   <Text
                     maxFontSizeMultiplier={echelleMax.courant}
-                    style={[typographie.corps, styles.detail, { color: couleurs.encre3 }]}>
+                    style={[typographie.corps, ligne(styles.detail), { color: couleurs.encre3 }]}>
                     {libelle(d).detail}
                   </Text>
                 </View>
@@ -162,7 +162,7 @@ export default function EcranDevise() {
             {`+ ${t('devise.ajouterMa')}`}
           </Text>
         </Pressable>
-        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.detail, { color: couleurs.encre2 }]}>
+        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, ligne(styles.detail), { color: couleurs.encre2 }]}>
           {t('devise.note')}
         </Text>
       </ScrollView>

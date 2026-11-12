@@ -32,7 +32,7 @@ const versetDettes = versetRubrique('dettes');
 export default function Dettes() {
   const { t } = useTranslation();
   const formatMontant = useFormatMontant();
-  const { couleurs, espace, rayon, typographie } = useTheme();
+  const { couleurs, espace, rayon, typographie, ligne } = useTheme();
   const marge = useMargeBasse();
   const etat = useBudget(async (depot, carnet) => ({
     ouvertes: await depot.dettes(carnet, 'ouvertes'),
@@ -82,7 +82,7 @@ export default function Dettes() {
         adjustsFontSizeToFit
         minimumFontScale={0.5}
         numberOfLines={1}
-        style={[typographie.corps, styles.montant, { color: couleurs.encre, fontVariant: ['tabular-nums'] }]}>
+        style={[typographie.corps, ligne(styles.montant), { color: couleurs.encre, fontVariant: ['tabular-nums'] }]}>
         {isoleLtr(f(montant))}
       </Text>
     </View>
@@ -101,7 +101,7 @@ export default function Dettes() {
           {carte('prete', resume.onMeDoit)}
           {carte('emprunte', resume.jeDois)}
         </View>
-        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.solde, { color: couleurs.encre2 }]}>
+        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, ligne(styles.solde), { color: couleurs.encre2 }]}>
           {avantSolde}
           {apresSolde !== undefined ? (
             <>

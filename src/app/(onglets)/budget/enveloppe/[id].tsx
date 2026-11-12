@@ -32,7 +32,7 @@ import { interlignes, tailles } from '@/theme/tokens.generated';
 export default function EcranEnveloppe() {
   const { t, i18n } = useTranslation();
   const formatMontant = useFormatMontant();
-  const { couleurs, espace, rayon, typographie } = useTheme();
+  const { couleurs, espace, rayon, typographie, ligne } = useTheme();
   const marge = useMargeBasse();
   const id = useParametre('id');
   const etat = useBudget((depot, carnet) => depot.detailEnveloppe(carnet, id), id);
@@ -163,7 +163,7 @@ export default function EcranEnveloppe() {
             {reste > 0 ? (
               <Text
                 maxFontSizeMultiplier={echelleMax.courant}
-                style={[typographie.corps, styles.petit, { color: couleurs.encre2 }]}>
+                style={[typographie.corps, ligne(styles.petit), { color: couleurs.encre2 }]}>
                 {phraseParJour[0]}
                 <Text style={[styles.gras, { color: couleurs.encre }]}>{montantParJour}</Text>
                 {phraseParJour[1]}

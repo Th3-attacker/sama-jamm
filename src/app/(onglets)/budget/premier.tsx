@@ -24,7 +24,7 @@ import { interlignes, tailles } from '@/theme/tokens.generated';
 /** Premier budget : devise, jour de paie, revenu du cycle, enveloppes de départ et leurs plafonds. */
 export default function PremierBudget() {
   const { t } = useTranslation();
-  const { couleurs, espace, typographie } = useTheme();
+  const { couleurs, espace, typographie, ligne } = useTheme();
   const marge = useMargeBasse();
   const insets = useSafeAreaInsets();
   // Devise par défaut : l'ouguiya (MRU). Le F CFA reste proposé en second, les devises personnelles s'ajoutent.
@@ -146,7 +146,7 @@ export default function PremierBudget() {
               style={[typographie.libelle, { color: couleurs.encre }]}>
               {t('budget.premierEnveloppes')}
             </Text>
-            <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.petit, { color: couleurs.encre3 }]}>
+            <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, ligne(styles.petit), { color: couleurs.encre3 }]}>
               {t('budget.premierEnveloppesAide')}
             </Text>
             <View style={[styles.puces, { gap: espace.espace2 }]}>
@@ -171,7 +171,7 @@ export default function PremierBudget() {
             </Button>
             <Text
               maxFontSizeMultiplier={echelleMax.courant}
-              style={[typographie.corps, styles.petit, styles.centre, { color: couleurs.encre3 }]}>
+              style={[typographie.corps, ligne(styles.petit), styles.centre, { color: couleurs.encre3 }]}>
               {t('budget.premierResume', { count: gardees.length })}
             </Text>
             <Button variant="discret" icone="reset" pleineLargeur onPress={() => router.push('/budget/sauvegarde')}>
