@@ -405,6 +405,7 @@
     "progression": "Téléchargement, {{part}} %"
   },
   "priere": {
+    "cinqPrieres": "Les cinq prières",
     "prochaine": "Prochaine prière",
     "titre": "Prière",
     "noms": {

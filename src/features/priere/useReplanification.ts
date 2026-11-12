@@ -3,6 +3,8 @@ import { router } from 'expo-router';
 import { useEffect } from 'react';
 import { AppState } from 'react-native';
 
+import { mettreAJourReprendre } from '@/features/horsapp/widgets';
+import { useLecture } from '@/stores/lecture';
 import { useReglages } from '@/stores/reglages';
 
 import { creerCanaux, enregistrerTacheQuotidienne, replanifier, URL_PRIERE, URL_ZAKAT } from './notifications';
@@ -13,6 +15,7 @@ Notifications.setNotificationHandler({
 });
 
 const DELAI = 500;
+const DELAI_REPRENDRE = 2000;
 
 function lancer() {
   replanifier().catch((erreur: unknown) => {
@@ -51,6 +54,22 @@ export function useReplanification(): void {
         s.langue !== avant.langue;
       if (change) differer();
     });
+    // Widget « Reprendre » : suit la position de lecture (légèrement différé, la position change au fil du défilement).
+    let minuterieReprendre: ReturnType<typeof setTimeout> | undefined;
+    const majReprendre = () => {
+      if (minuterieReprendre) clearTimeout(minuterieReprendre);
+      minuterieReprendre = setTimeout(() => {
+        try {
+          mettreAJourReprendre();
+        } catch (erreur: unknown) {
+          console.warn('Widget Reprendre non mis à jour', erreur);
+        }
+      }, DELAI_REPRENDRE);
+    };
+    majReprendre();
+    const desabonnerLecture = useLecture.subscribe((s, avant) => {
+      if (s.position !== avant.position) majReprendre();
+    });
     const premierPlan = AppState.addEventListener('change', (etat) => {
       if (etat === 'active') differer();
     });
@@ -65,7 +84,9 @@ export function useReplanification(): void {
 
     return () => {
       if (minuterie) clearTimeout(minuterie);
+      if (minuterieReprendre) clearTimeout(minuterieReprendre);
       desabonner();
+      desabonnerLecture();
       premierPlan.remove();
       toucher.remove();
     };
