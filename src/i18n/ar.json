@@ -482,7 +482,7 @@
     "toutTitre": "تنزيل السور الـ114؟",
     "toutTexte": "نحو 500 ميغابايت على الهاتف. أبقِ التطبيق مفتوحًا ويُفضّل الواي فاي.",
     "toutConfirmer": "تنزيل",
-    "enCoursPart": "{{part}}٪"
+    "progression": "جارٍ التنزيل، {{part}}٪"
   },
   "priere": {
     "titre": "الصلاة",

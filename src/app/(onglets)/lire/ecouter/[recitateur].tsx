@@ -17,6 +17,8 @@ import { sourates } from '@/features/lire/coran';
 import { useParametre } from '@/hooks/useParametre';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
+import { AnneauProgression } from '@/ui/AnneauProgression';
+import { pourcentage } from '@/ui/anneau';
 import { Banner } from '@/ui/Banner';
 import { Button } from '@/ui/Button';
 import { IconButton } from '@/ui/IconButton';
@@ -166,7 +168,7 @@ export default function EcranRecitateur() {
                     arabe={item.arabe}
                     droite={
                       part !== undefined ? (
-                        <Text style={[typographie.legende, { color: couleurs.encre2 }]}>{`${Math.round(part * 100)} %`}</Text>
+                        <AnneauProgression part={part} label={t('telechargements.progression', { part: pourcentage(part) })} />
                       ) : (
                         <IconButton
                           icone={telechargee ? 'check' : 'download'}

@@ -15,6 +15,8 @@ import { EmptyState } from '@/ui/EmptyState';
 import { IconButton } from '@/ui/IconButton';
 import { ListGroup } from '@/ui/ListGroup';
 import { ListItem } from '@/ui/ListItem';
+import { AnneauProgression } from '@/ui/AnneauProgression';
+import { pourcentage } from '@/ui/anneau';
 import { ProgressBar } from '@/ui/ProgressBar';
 import { Switch } from '@/ui/Switch';
 import { TopBar } from '@/ui/TopBar';
@@ -72,7 +74,7 @@ export default function Telechargements() {
                   icone="download"
                   titre={sourate(Number(n))?.nom ?? String(n)}
                   sousTitre={`${recitateur(idR ?? '')?.nom ?? idR} · ${t('telechargements.reprend')}`}
-                  valeur={t('telechargements.enCoursPart', { part: Math.round(part * 100) })}
+                  droite={<AnneauProgression part={part} label={t('telechargements.progression', { part: pourcentage(part) })} />}
                 />
               );
             })}

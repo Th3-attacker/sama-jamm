@@ -442,7 +442,7 @@
     "toutTitre": "Télécharger les 114 sourates ?",
     "toutTexte": "Environ 500 Mo sur le téléphone. Gardez l’app ouverte et préférez le Wi-Fi.",
     "toutConfirmer": "Télécharger",
-    "enCoursPart": "{{part}} %"
+    "progression": "Téléchargement, {{part}} %"
   },
   "priere": {
     "titre": "Prière",

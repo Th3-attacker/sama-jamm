@@ -31,6 +31,8 @@ import { sourateTelechargee, telechargerSourate, useTelechargements, WifiRequis 
 import { reperes, sourate, versetsDe } from '@/features/lire/coran';
 import { cleVerset, useFavoris } from '@/stores/favoris';
 import { formatTemps } from '@/features/xassaides/pistes';
+import { AnneauProgression } from '@/ui/AnneauProgression';
+import { pourcentage } from '@/ui/anneau';
 import { BarreTemps } from '@/ui/BarreTemps';
 import { LecteurXassaide } from '@/features/xassaides/LecteurXassaide';
 import { echelleMax } from '@/theme/typographie';
@@ -152,7 +154,9 @@ function LecteurCoran() {
                 : (s?.nom ?? t('ecouter.titre'))}
             </Text>
           </View>
-          {position && page === null ? (
+          {position && page === null && partTelechargee !== undefined ? (
+            <AnneauProgression part={partTelechargee} label={t('telechargements.progression', { part: pourcentage(partTelechargee) })} />
+          ) : position && page === null ? (
             <IconButton
               icone={telechargee ? 'check-circle' : 'download'}
               couleur={telechargee ? couleurs.emeraude : undefined}
