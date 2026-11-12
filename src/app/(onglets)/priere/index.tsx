@@ -93,23 +93,24 @@ export default function Priere() {
               {`${nomLieu} · ${formatJour(maintenant, i18n.language)}`}
             </Text>
             {/* Planche : l'arc du jour seul, sans texte au-dessus ; les horaires sont dans la liste. */}
-            <DayArc
-              simple
-              lever={minutesDuJour(donnees.h.lever, fuseau)}
-              coucher={minutesDuJour(donnees.h.coucher, fuseau)}
-              maintenant={minutesDuJour(maintenant, fuseau)}
-              dans=""
-              avant=""
-              a=""
-
-              prieres={prieres.map((p) => ({
-                nom: t(`priere.noms.${p}`),
-                heure: formatHeure(donnees.h[p], fuseau),
-                minutes: minutesDuJour(donnees.h[p], fuseau),
-                etat: donnees.h[p] <= maintenant ? 'passee' : p === donnees.suivante.nom ? 'prochaine' : 'a-venir',
-              }))}
-              description={t('accessibilite.arcDuJour')}
-            />
+            <View style={{ paddingVertical: espace.espace6, paddingHorizontal: espace.espace4 }}>
+              <DayArc
+                simple
+                lever={minutesDuJour(donnees.h.lever, fuseau)}
+                coucher={minutesDuJour(donnees.h.coucher, fuseau)}
+                maintenant={minutesDuJour(maintenant, fuseau)}
+                dans=""
+                avant=""
+                a=""
+                prieres={prieres.map((p) => ({
+                  nom: t(`priere.noms.${p}`),
+                  heure: formatHeure(donnees.h[p], fuseau),
+                  minutes: minutesDuJour(donnees.h[p], fuseau),
+                  etat: donnees.h[p] <= maintenant ? 'passee' : p === donnees.suivante.nom ? 'prochaine' : 'a-venir',
+                }))}
+                description={t('accessibilite.arcDuJour')}
+              />
+            </View>
             <PrayerTimes
               prieres={prieres.map<LignePriere>((p) => {
                 const prochaine = p === donnees.suivante.nom && donnees.h[p] > maintenant;
