@@ -124,6 +124,11 @@ export function basmalaDe(n: number): { arabe: string } | undefined {
   return { arabe: versetsDe(1)[0] ?? '' };
 }
 
+/** Versets d'une sourate avec leur numéro (arabe seul) ; tableau vide si la sourate est inconnue. */
+export function versetsNumerotes(n: number): { n: number; texte: string }[] {
+  return versetsDe(n).map((texte, i) => ({ n: i + 1, texte }));
+}
+
 /** Versets d'une page : texte et référence, dans l'ordre de lecture. */
 export function versetsDePage(p: number): VersetPage[] {
   return refsDePage(p).map(([s, v]) => ({

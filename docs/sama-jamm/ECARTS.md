@@ -18,6 +18,10 @@ Tenu par l'agent de code (voir `AGENTS.md`, section 1). Un écart par ligne : da
 | 2026-11-12 | `src/data/coran/fr.json` | Traduction Hamidullah embarquée | Fichier supprimé du dépôt (le texte arabe et la translittération restent) ; crédit retiré de À propos |
 | 2026-11-12 | `features/recherche` | La recherche portait sur la traduction française | Elle porte sur l'arabe et la translittération sans balises ; les résultats montrent la translittération surlignée quand la requête est en lettres latines |
 | 2026-11-12 | Écran Partage | Option « Ajouter la traduction » | Clés retirées ; l'option de translittération viendra avec l'écran recréé (phase 4) |
+| 2026-11-12 | `src/app/(onglets)/lire/**`, `src/app/coran/[sourate].tsx` | Le commit `fa434c8` avait réduit tous les écrans de Lire à `return null` (onglet vide), et retiré juz, progression et partage, alors que les planches `Bibliotheque` et `Partage` les montrent. L'audit les avait notés « à modifier » à tort | Écrans, `ListeJuz`, `juz`, `progression`, `BasculeMode`, `InterrupteurLireEcouter`, `PartageVerset` restaurés depuis `fa434c8^`, puis adaptés : arabe seul, translittération en option |
+| 2026-11-12 | `src/data/ummah/` | Choix demandé : reconstruire Lire sur ces données. Mais `sourates.json` n'a ni translittération ni autre chose que l'arabe et une traduction française (interdite), la licence est « non déclarée » (manifeste) | Non branchées : le Coran reste sur `data/coran/ar.json` + `translit.json`. À rediscuter avant d'utiliser `duas.json` ou `pages.json` |
+| 2026-11-12 | `src/features/lire/PartageVerset.tsx` | Écran Partage = feuille (`BottomSheet`), pas la route modale `partage` de l'inventaire | Conservé tel quel ; sans traduction ; option « Translittération » désactivée par défaut |
+| 2026-11-12 | `src/stores/lecture.ts` | `ModeLecture` accepte `'sourate'` (ajout de `fa434c8`) sans écran qui l'utilise | Laissé ; clé i18n `lire.modeSourateCourt` conservée |
 
 ## Dépendances
 
