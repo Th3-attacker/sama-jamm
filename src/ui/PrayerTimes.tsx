@@ -15,8 +15,6 @@ export type LignePriere = {
   /** « 16:35 ». */
   heure: string;
   etat: 'passee' | 'prochaine' | 'a-venir';
-  /** « dans 42 min », pour la prochaine. */
-  dans?: string;
   appelActif: boolean;
   /** Libellé de la cloche : « Appel d'Asr activé ». */
   libelleAppel: string;
@@ -65,7 +63,7 @@ export function PrayerTimes({ prieres, onBasculerAppel }: PrayerTimesProps) {
             ]}>
             <View style={styles.noms}>
               <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, { fontFamily: gras, color: teinte }]}>
-                {prochaine && p.dans ? `${p.nom} · ${p.dans}` : p.nom}
+                {p.nom}
               </Text>
               <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: prochaine ? couleurs.encre2 : couleurs.encre3 }]}>
                 {p.nomLocal}

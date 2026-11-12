@@ -8,7 +8,7 @@ import { calculerHoraires, prochainePriere } from '@/features/priere/horaires';
 import { fuseauDuLieu } from '@/features/priere/villes';
 import { useOptionsCalcul } from '@/features/priere/useOptionsCalcul';
 import { useMaintenant } from '@/hooks/useMaintenant';
-import { formatDuree, formatHeure, formatJour, minutesDuJour } from '@/lib/dates';
+import { formatHeure, formatJour, minutesDuJour } from '@/lib/dates';
 import { prieres, useReglages } from '@/stores/reglages';
 import { echelleMax } from '@/theme/typographie';
 import { useLayout } from '@/theme/useLayout';
@@ -52,13 +52,12 @@ export default function Priere() {
     if (!lieu) return null;
     const h = calculerHoraires(lieu, maintenant, options);
     const suivante = prochainePriere(lieu, maintenant, options);
-    const dans = formatDuree((suivante.heure.getTime() - maintenant.getTime()) / 60_000);
     const semaine = Array.from({ length: JOURS_SEMAINE - 1 }, (_, i) => {
       const jour = new Date(maintenant);
       jour.setDate(jour.getDate() + i + 1);
       return { jour, horaires: calculerHoraires(lieu, jour, options) };
     });
-    return { h, suivante, dans, semaine };
+    return { h, suivante, semaine };
   }, [lieu, maintenant, options]);
 
   const nomLieu = lieu ? (lieu.type === 'ville' ? lieu.nom : t('priere.maPosition')) : null;
@@ -118,7 +117,6 @@ export default function Priere() {
                   nomArabe: tAr(`priere.noms.${p}`),
                   heure: formatHeure(donnees.h[p], fuseau),
                   etat: donnees.h[p] <= maintenant ? 'passee' : prochaine ? 'prochaine' : 'a-venir',
-                  dans: prochaine ? t('commun.dans', { duree: donnees.dans }) : undefined,
                   appelActif: rappels[p],
                   libelleAppel: t('priere.notificationDe', { priere: t(`priere.noms.${p}`) }),
                 };
