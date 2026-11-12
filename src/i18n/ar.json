@@ -232,7 +232,7 @@
     "sajdaObligatoire": "سجدة تلاوة",
     "bibliotheque": "المكتبة",
     "vue": "العرض",
-    "vueSourates": "السور",
+    "vueSourates": "سُوَر",
     "vueJuz": "الأجزاء",
     "juzPrefixe": "الجزء",
     "versetsPlage": "الآيات من {{debut}} إلى {{fin}}",
@@ -652,7 +652,7 @@
     "resultats_other": "{{count}} نتيجة",
     "aucun": "لا نتائج لـ«{{terme}}»",
     "aucunTexte": "جرّب كلمة أخرى، أو اسم سورة: «الكهف»، «يس».",
-    "sourates": "السور",
+    "sourates": "سُوَر",
     "versets": "الآيات",
     "videTitre": "ابحث كما تتكلم",
     "tout": "الكل"
