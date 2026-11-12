@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
   barre: { flexDirection: 'row', alignItems: 'center', borderTopWidth: StyleSheet.hairlineWidth },
   titre: { flex: 1 },
   bouton: { minWidth: 88, height: 48, paddingHorizontal: espace.espace4, alignItems: 'center', justifyContent: 'center' },
-  chiffres: { fontVariant: ['tabular-nums'] },
+  chiffres: { fontVariant: ['tabular-nums'], textAlignVertical: 'center', includeFontPadding: false },
   nav: { width: 48, height: 48, borderRadius: rayon.rayonPastille, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
   compter: { flex: 1, height: 48, alignItems: 'center', justifyContent: 'center' },
   retourne: { transform: [{ scaleX: -1 }] },

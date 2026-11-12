@@ -100,7 +100,7 @@ export function KhatmGrid({ juz, onChoisir, legende, libelleJuz }: KhatmGridProp
 const styles = StyleSheet.create({
   grille: { flexDirection: 'row', flexWrap: 'wrap' },
   case: { alignItems: 'center', justifyContent: 'center' },
-  chiffre: { fontVariant: ['tabular-nums'] },
+  chiffre: { fontVariant: ['tabular-nums'], textAlign: 'center', textAlignVertical: 'center', includeFontPadding: false },
   legende: { flexDirection: 'row', flexWrap: 'wrap' },
   legendeLigne: { flexDirection: 'row', alignItems: 'center' },
   pastille: { width: 12, height: 12 },

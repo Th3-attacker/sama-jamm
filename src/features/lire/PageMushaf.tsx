@@ -2,15 +2,15 @@ import { memo, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, Text, View, type LayoutChangeEvent } from 'react-native';
 
+import { enChiffresArabes } from '@/lib/chiffres';
 import { basmalaDe, reperes, segmentsDePage, sourate } from '@/features/lire/coran';
 import { useTheme } from '@/theme/useTheme';
 
 import { interlignes, tailles } from '@/theme/tokens.generated';
-const CHIFFRES_ARABES = '٠١٢٣٤٥٦٧٨٩';
 
 /** Marqueur de verset style mushaf : chiffres arabo-indiens entre crochets ornés, ﴿٥﴾. */
 export function marqueur(n: number): string {
-  return `﴿${String(n).replace(/\d/g, (d) => CHIFFRES_ARABES[Number(d)])}﴾`;
+  return `﴿${enChiffresArabes(n)}﴾`;
 }
 
 /** Taille de départ du texte coranique en mode page ; ajustée ensuite pour remplir l'écran. */
@@ -205,7 +205,7 @@ export const PageMushaf = memo(function PageMushaf({ page, largeur, hauteur, hau
           <Text
             allowFontScaling={false}
             style={[typographie.arabe, styles.numeroBas, styles.centre, { color: couleurs.encre3, paddingVertical: espace.espace1 }]}>
-            {String(page).replace(/\d/g, (d) => CHIFFRES_ARABES[Number(d)] ?? d)}
+            {enChiffresArabes(page)}
           </Text>
         </View>
       </View>

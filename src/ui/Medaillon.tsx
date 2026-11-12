@@ -36,7 +36,7 @@ export function Medaillon({ numero, prefixe, taille = 36, affiche, actif = false
         style={[
           typographie.libelle,
           styles.chiffre,
-          { color: actif ? couleurs.surEmeraude : couleurs.orTexte, fontSize: taille * 0.33, lineHeight: taille * 0.42 },
+          { color: actif ? couleurs.surEmeraude : couleurs.orTexte, fontSize: taille * 0.33, lineHeight: taille },
         ]}>
         {affiche ?? numero}
       </Text>
@@ -46,5 +46,6 @@ export function Medaillon({ numero, prefixe, taille = 36, affiche, actif = false
 
 const styles = StyleSheet.create({
   medaillon: { alignItems: 'center', justifyContent: 'center' },
-  chiffre: { fontVariant: ['tabular-nums'] },
+  // lineHeight = taille et pas de marge de police : le chiffre reste centré dans l'étoile, aussi avec les polices arabes.
+  chiffre: { fontVariant: ['tabular-nums'], textAlign: 'center', textAlignVertical: 'center', includeFontPadding: false },
 });

@@ -59,5 +59,5 @@ export function Badge({ children, ton = 'neutre', icone }: BadgeProps) {
 
 const styles = StyleSheet.create({
   badge: { alignSelf: 'flex-start', flexDirection: 'row', alignItems: 'center', borderWidth: 1, paddingVertical: 2 },
-  texte: { fontWeight: '600' },
+  texte: { fontWeight: '600', textAlignVertical: 'center', includeFontPadding: false },
 });
