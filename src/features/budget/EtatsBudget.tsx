@@ -44,6 +44,16 @@ export function EtatsBudget({ etat }: { etat: EtatBudget<unknown> }) {
     );
   }
 
+  // Build sans SQLCipher : jamais d'effacement proposé, la base n'est pas en cause.
+  if (etat.etat === 'chiffrement') {
+    return (
+      <View style={{ padding: espace.espace5 }}>
+        <Banner ton="erreur" titre={t('budget.chiffrementTitre')}>
+          {t('budget.chiffrementTexte')}
+        </Banner>
+      </View>
+    );
+  }
   if (etat.etat === 'erreur') {
     return (
       <View style={{ padding: espace.espace5 }}>

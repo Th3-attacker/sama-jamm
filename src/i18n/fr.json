@@ -1012,7 +1012,9 @@
     "operations": "Opérations",
     "comptesIntro": "Où se trouve l’argent du foyer, aujourd’hui.",
     "virementNote": "Un virement entre deux comptes n’est ni une dépense ni un revenu : il ne touche pas vos enveloppes.",
-    "dernierMouvement": "dernier mouvement le {{date}}"
+    "dernierMouvement": "dernier mouvement le {{date}}",
+    "chiffrementTitre": "Le budget ne peut pas s’ouvrir dans cette version",
+    "chiffrementTexte": "Cette version de l’app n’inclut pas le chiffrement du budget (SQLCipher). Par sécurité, rien n’est ouvert ni écrit. Installez une version complète de l’app (build de développement ou de production) ; Expo Go ne convient pas."
   },
   "epargne": {
     "titre": "Épargne",

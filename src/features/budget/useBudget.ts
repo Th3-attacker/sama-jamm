@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from 'react';
 import { cleJour } from '@/lib/dates';
 import { uuidV7 } from '@/lib/uuid';
 
+import { ChiffrementIndisponible } from './chiffrement';
 import { BudgetIllisible, budgetDb } from './db';
 import { creerDepot, type Carnet, type Depot, type Parametre, type Sql } from './depot';
 
@@ -56,6 +57,7 @@ export function budgetModifie(): void {
 export type EtatBudget<T> =
   | { etat: 'chargement' }
   | { etat: 'illisible' }
+  | { etat: 'chiffrement' }
   | { etat: 'erreur' }
   | { etat: 'vide' }
   | { etat: 'pret'; carnet: Carnet; depot: Depot; donnees: T };
@@ -95,7 +97,10 @@ export function useBudget<T>(lire: (depot: Depot, carnet: Carnet) => Promise<T>,
         if (actif) setEtat({ etat: 'pret', carnet, depot, donnees });
       } catch (erreur: unknown) {
         if (!actif) return;
-        if (erreur instanceof BudgetIllisible) {
+        if (erreur instanceof ChiffrementIndisponible) {
+          console.error('SQLCipher absent : budget non ouvert', erreur);
+          setEtat({ etat: 'chiffrement' });
+        } else if (erreur instanceof BudgetIllisible) {
           console.error('Budget illisible', erreur.cause);
           setEtat({ etat: 'illisible' });
         } else {
