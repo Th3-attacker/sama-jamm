@@ -28,6 +28,8 @@ import { translitSansBalises } from '@/features/lire/reperes';
 import { ReglagesLecture } from '@/features/lire/ReglagesLecture';
 import { enChiffresArabes } from '@/lib/chiffres';
 import { Etoile } from '@/ui/Etoile';
+import { Reglette } from '@/ui/Reglette';
+import type { IconName } from '@/ui/types';
 import { Medaillon } from '@/ui/Medaillon';
 import { TranslitVerset } from '@/features/lire/TranslitVerset';
 import { cleVerset, useFavoris } from '@/stores/favoris';
@@ -137,6 +139,8 @@ function LectureSourate({
   const [page, setPage] = useState(() => pageDe(s.n, versetInitial) ?? 1);
   // Page sur laquelle s'ouvre la liste des pages ; `page` suit ensuite la page affichée.
   const [pageDepart, setPageDepart] = useState(page);
+  // Page visée pendant le glissement de la réglette ; la page ne change qu'au relâchement.
+  const [pageReglette, setPageReglette] = useState<number | null>(null);
   // Mode page : la barre du haut apparaît et disparaît au toucher ; la zone mesurée dimensionne chaque page.
   const [barres, setBarres] = useState(false);
   const [zone, setZone] = useState<LayoutRectangle | null>(null);
@@ -284,6 +288,64 @@ function LectureSourate({
             />
           ) : null}
         </View>
+        {/* Planche « Mode page, réglette » : en bas, juz et page, réglette pour aller à une page, quatre outils. */}
+        {barres ? (
+          <View
+            style={[
+              styles.reglette,
+              {
+                backgroundColor: couleurs.surface,
+                borderTopColor: couleurs.ligne,
+                paddingHorizontal: espace.espace5,
+                paddingTop: espace.espace3,
+                paddingBottom: insets.bottom + espace.espace2,
+                gap: espace.espace3,
+              },
+            ]}>
+            <View style={styles.infosPage}>
+              <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre3 }]}>
+                {premierSegment
+                  ? t('lire.juz', { n: reperes().juzDe(premierSegment.sourate, premierSegment.versets[0]?.verset ?? 1) })
+                  : ''}
+              </Text>
+              <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre }]}>
+                {t('lire.pageSurTotal', { n: pageReglette ?? page, total: nombreDePages })}
+              </Text>
+            </View>
+            <Reglette
+              label={t('lire.page')}
+              min={1}
+              max={nombreDePages}
+              valeur={pageReglette ?? page}
+              onChange={setPageReglette}
+              onTerminer={(p) => {
+                setPageReglette(null);
+                setPage(p);
+                listePages.current?.scrollToIndex({ index: p - 1, animated: false });
+              }}
+              texte={t('lire.pageSurTotal', { n: pageReglette ?? page, total: nombreDePages })}
+            />
+            <View style={styles.outilsPage}>
+              {[
+                { icone: 'headphones', libelle: t('commun.ecouter'), onPress: () => ecouterPage(page) },
+                { icone: 'type', libelle: t('lire.affichageOutil'), onPress: () => setReglagesOuverts(true) },
+                {
+                  icone: 'moon',
+                  libelle: t('lire.veilleOutil'),
+                  onPress: () => useReglages.getState().definirTheme(useReglages.getState().theme === 'veille' ? 'auto' : 'veille'),
+                },
+                { icone: 'search', libelle: t('lire.chercher'), onPress: () => router.push('/plus/recherche') },
+              ].map((o) => (
+                <Pressable key={o.libelle} accessibilityRole="button" accessibilityLabel={o.libelle} onPress={o.onPress} style={styles.outilPage}>
+                  <Icon name={o.icone as IconName} size={22} color={couleurs.encre2} />
+                  <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre2 }]}>
+                    {o.libelle}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
+          </View>
+        ) : null}
         {/* Un toucher sur la page affiche la barre par-dessus la page, sans la déplacer. */}
         {barres ? <View
             style={[
@@ -345,7 +407,12 @@ function LectureSourate({
               styles.verset,
               // Planche : chaque verset est une carte de 12 de rayon, 12 / 8 de marge, sans filet.
               { gap: espace.espace3, borderRadius: rayon.rayonCarte, paddingHorizontal: espace.espace3, paddingVertical: espace.espace2 },
-              versetEcoute === item.n ? { backgroundColor: couleurs.emeraudeDoux } : null,
+              // Planche « Pendant la récitation » : le verset récité s'élève (surface, rayon 20), les autres s'estompent.
+              versetEcoute === item.n
+                ? { backgroundColor: couleurs.surface, borderColor: couleurs.ligne, borderWidth: 1, borderRadius: rayon.rayonFeuille, paddingVertical: espace.espace4 }
+                : versetEcoute !== null
+                  ? { opacity: 0.42 }
+                  : null,
             ]}>
             <Medaillon
               numero={item.n}
@@ -362,7 +429,7 @@ function LectureSourate({
                   typographie.coran,
                   tailleArabe,
                   styles.arabe,
-                  { color: versetEcoute === item.n ? couleurs.emeraude : couleurs.encre },
+                  { color: couleurs.encre },
                 ]}>
                 {item.texte}
               </Text>
@@ -544,6 +611,10 @@ function Entete({ sourate: n }: { sourate: number }) {
 }
 
 const styles = StyleSheet.create({
+  reglette: { position: 'absolute', start: 0, end: 0, bottom: 0, borderTopWidth: 1 },
+  infosPage: { flexDirection: 'row', justifyContent: 'space-between' },
+  outilsPage: { flexDirection: 'row', justifyContent: 'space-around' },
+  outilPage: { minWidth: 56, minHeight: 48, alignItems: 'center', justifyContent: 'center', gap: 2 },
   fil: { height: 2, borderRadius: 2, overflow: 'hidden' },
   ecran: { flex: 1 },
   coupe: { overflow: 'hidden' },

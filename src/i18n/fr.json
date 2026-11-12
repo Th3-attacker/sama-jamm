@@ -254,7 +254,12 @@
     "reprendreCourt": "Reprendre",
     "marquePages": "Marque-pages",
     "khatmCourt": "Khatm {{lus}}/30",
-    "ecouterNom": "Écouter {{nom}}"
+    "ecouterNom": "Écouter {{nom}}",
+    "pageSurTotal": "Page {{n}} sur {{total}}",
+    "page": "Page",
+    "affichageOutil": "Affichage",
+    "veilleOutil": "Veille",
+    "chercher": "Chercher"
   },
   "khatm": {
     "titre": "Khatm collectif",
@@ -669,7 +674,12 @@
     "titreFeuille": "Partager un verset",
     "reference": "{{sourate}} · verset {{verset}}",
     "marque": "Sama Jàmm",
-    "copie": "Verset copié"
+    "copie": "Verset copié",
+    "ivoire": "Ivoire",
+    "style": "Style de l'image",
+    "format": "Format",
+    "carre": "Carré",
+    "story": "Story"
   },
   "reglages": {
     "titre": "Réglages",

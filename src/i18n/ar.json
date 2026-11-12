@@ -274,7 +274,12 @@
     "reprendreCourt": "متابعة",
     "marquePages": "العلامات",
     "khatmCourt": "ختمة {{lus}}/30",
-    "ecouterNom": "استمع إلى {{nom}}"
+    "ecouterNom": "استمع إلى {{nom}}",
+    "pageSurTotal": "صفحة {{n}} من {{total}}",
+    "page": "الصفحة",
+    "affichageOutil": "العرض",
+    "veilleOutil": "السهر",
+    "chercher": "بحث"
   },
   "khatm": {
     "titre": "ختمة جماعية",
@@ -725,7 +730,12 @@
     "titreFeuille": "مشاركة آية",
     "reference": "{{sourate}} · الآية {{verset}}",
     "marque": "سما جام",
-    "copie": "تم نسخ الآية"
+    "copie": "تم نسخ الآية",
+    "ivoire": "عاجي",
+    "style": "نمط الصورة",
+    "format": "الحجم",
+    "carre": "مربع",
+    "story": "قصة"
   },
   "reglages": {
     "titre": "الإعدادات",
