@@ -11,6 +11,8 @@ import { tempsApresSaut, type Piste, type PisteEnCours } from '@/features/xassai
 import { sourcePiste } from '@/features/xassaides/telechargements';
 import { stockage } from '@/stores/stockage';
 
+import { versetAuTemps } from './durees';
+import { dureesDe } from './dureesDonnees';
 import { rejouerVerset, resteMinuterie, type Minuterie, type RepetitionVerset } from './minuterie';
 import { positionValide, recitateur, RECITATEURS, pistesDePages, type Position } from './recitateurs';
 import { erreurDuStatut, indexDuStatut } from './statut';
@@ -400,6 +402,15 @@ export function chercher(secondes: number): void {
   const cible = Math.max(0, duree > 0 ? Math.min(secondes, duree) : secondes);
   useLecteur.setState({ temps: Math.floor(cible) });
   liste.seekTo(cible).catch((erreur: unknown) => console.warn('Position non appliquée', erreur));
+}
+
+/** Place la lecture à `secondes` dans la sourate en cours (écoute par sourate, durées des versets connues). */
+export function chercherSourate(secondes: number): void {
+  const { position, recitateur: idRecitateur } = useLecteur.getState();
+  if (!position || enFile?.mode !== 'sourate') return;
+  const cible = versetAuTemps(dureesDe(idRecitateur), VERSETS, position.sourate, secondes);
+  if (!cible) return;
+  lire(null, cible.verset - 1, cible.dansVerset);
 }
 
 /** Lecture ou pause ; reprend au dernier verset si rien n'est chargé. */

@@ -7,6 +7,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   arreter,
   basculer,
+  chercherSourate,
   definirMinuterie,
   definirRepetitionVerset,
   definirRepeterSourate,
@@ -30,6 +31,7 @@ import { sourateTelechargee, telechargerSourate, useTelechargements, WifiRequis 
 import { reperes, sourate, versetsDe } from '@/features/lire/coran';
 import { cleVerset, useFavoris } from '@/stores/favoris';
 import { formatTemps } from '@/features/xassaides/pistes';
+import { BarreTemps } from '@/ui/BarreTemps';
 import { LecteurXassaide } from '@/features/xassaides/LecteurXassaide';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
@@ -104,8 +106,6 @@ function LecteurCoran() {
     () => (position ? tempsSourate(dureesDe(idRecitateur), VERSETS_PAR_SOURATE, position.sourate, position.verset, tempsPiste) : null),
     [idRecitateur, position, tempsPiste],
   );
-  const avance = temps ? Math.min(1, temps.ecoule / Math.max(1, temps.total)) : position && s ? position.verset / s.versets : 0;
-  const resteSourate = temps ? Math.max(0, Math.round((temps.total - temps.ecoule) / vitesse)) : 0;
 
   const repetition: Repetition = repeterSourate ? 'sourate' : repetitionVerset === 1 ? 'non' : 'verset';
   const choisirRepetition = (r: Repetition) => {
@@ -223,43 +223,31 @@ function LecteurCoran() {
                 </View>
               ) : null}
 
-              <View style={[styles.blocBarre, { marginTop: espace.espace6, gap: espace.espace2 }]}>
-              <View
-                accessibilityRole="progressbar"
-                accessibilityValue={{ min: 0, max: s.versets, now: position.verset }}
-                style={styles.zoneBarre}>
-                <View style={[styles.piste, { backgroundColor: couleurs.ligneForte }]} />
-                <View style={[styles.piste, styles.remplissage, { width: `${Math.round(avance * 100)}%`, backgroundColor: couleurs.emeraude }]} />
-                <View
-                  style={[
-                    styles.curseur,
-                    { start: `${Math.round(avance * 100)}%`, backgroundColor: couleurs.emeraude, borderRadius: rayon.rayonPastille },
-                  ]}
-                />
+              <View style={[styles.blocBarre, { marginTop: espace.espace3 }]}>
+                {temps ? (
+                  // Glissable en écoute par sourate ; en écoute page par page, la barre s'affiche sans se déplacer.
+                  <BarreTemps
+                    label={t('ecouter.positionSourate')}
+                    temps={temps.ecoule}
+                    duree={temps.total}
+                    onChercher={page === null ? chercherSourate : undefined}
+                    format={formatTemps}
+                    pas={15}
+                    restant
+                    ton="emeraude"
+                    fine
+                  />
+                ) : (
+                  // Sans durées : « Verset N sur M » comme avant.
+                  <Text
+                    maxFontSizeMultiplier={echelleMax.courant}
+                    style={[typographie.legende, styles.centre, { color: couleurs.encre3 }]}>
+                    {page !== null
+                      ? `${t('lire.pageN', { n: page })} · ${t('ecouter.versetSur', { n: position.verset, total: s.versets })}`
+                      : t('ecouter.versetSur', { n: position.verset, total: s.versets })}
+                  </Text>
+                )}
               </View>
-              {temps ? (
-                <View
-                  accessible
-                  accessibilityLabel={t('ecouter.tempsSourate', { ecoule: formatTemps(temps.ecoule), reste: formatTemps(resteSourate) })}
-                  style={styles.temps}>
-                  <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre3 }]}>
-                    {formatTemps(temps.ecoule)}
-                  </Text>
-                  <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre3 }]}>
-                    {`−${formatTemps(resteSourate)}`}
-                  </Text>
-                </View>
-              ) : (
-                // La planche n'a que les temps ; « Verset N sur M » reste seulement si les durées manquent.
-                <Text
-                  maxFontSizeMultiplier={echelleMax.courant}
-                  style={[typographie.legende, styles.centre, { color: couleurs.encre3 }]}>
-                  {page !== null
-                    ? `${t('lire.pageN', { n: page })} · ${t('ecouter.versetSur', { n: position.verset, total: s.versets })}`
-                    : t('ecouter.versetSur', { n: position.verset, total: s.versets })}
-                </Text>
-              )}
-            </View>
 
             <View style={[styles.commandes, { marginTop: espace.espace3 }]}>
               <IconButton
@@ -434,17 +422,12 @@ const styles = StyleSheet.create({
   titres: { flex: 1, alignItems: 'flex-start' },
   centreScroll: { alignItems: 'center', flexGrow: 1, justifyContent: 'flex-start' },
   blocBarre: { alignSelf: 'stretch' },
-  zoneBarre: { height: tailles.t16, justifyContent: 'center' },
-  curseur: { position: 'absolute', width: tailles.t12, height: tailles.t12, marginStart: -tailles.t12 / 2 },
   pointMinuterie: { position: 'absolute', top: 8, end: 8, width: 8, height: 8 },
   centre: { textAlign: 'center' },
-  temps: { flexDirection: 'row', justifyContent: 'space-between' },
   // Planche : verset en cours 34/64, vitesse 16/24, minuterie 14/20.
   versetCourant: { fontSize: tailles.t34, lineHeight: interlignes.l64 },
   resumeMinuterie: { fontSize: tailles.t14, lineHeight: interlignes.l20 },
   arabe: { textAlign: 'center', writingDirection: 'rtl', alignSelf: 'stretch' },
-  piste: { position: 'absolute', start: 0, end: 0, height: 2 },
-  remplissage: { end: undefined },
   commandes: { alignSelf: 'stretch', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   principal: { alignItems: 'center', justifyContent: 'center' },
   puces: { flexDirection: 'row', flexWrap: 'wrap' },

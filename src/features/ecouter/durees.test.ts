@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import { tempsSourate } from './durees.ts';
+import { tempsSourate, versetAuTemps } from './durees.ts';
 
 // Deux sourates : 3 versets puis 2 versets. Durées en dixièmes de seconde.
 const VERSETS = [3, 2];
@@ -28,4 +28,17 @@ test('durées absentes, trop courtes ou verset hors limites : null', () => {
   assert.equal(tempsSourate([100, 200], VERSETS, 1, 1, 0), null);
   assert.equal(tempsSourate(D, VERSETS, 1, 4, 0), null);
   assert.equal(tempsSourate(D, VERSETS, 3, 1, 0), null);
+});
+
+test('versetAuTemps : retrouve le verset et la position dedans', () => {
+  assert.deepEqual(versetAuTemps(D, VERSETS, 1, 0), { verset: 1, dansVerset: 0 });
+  assert.deepEqual(versetAuTemps(D, VERSETS, 1, 12), { verset: 2, dansVerset: 2 });
+  assert.deepEqual(versetAuTemps(D, VERSETS, 2, 5.5), { verset: 2, dansVerset: 0.5 });
+});
+
+test('versetAuTemps : temps hors limites ramené au début ou à la fin, null sans durées', () => {
+  assert.deepEqual(versetAuTemps(D, VERSETS, 1, -4), { verset: 1, dansVerset: 0 });
+  assert.deepEqual(versetAuTemps(D, VERSETS, 1, 999), { verset: 3, dansVerset: 30 });
+  assert.equal(versetAuTemps(undefined, VERSETS, 1, 3), null);
+  assert.equal(versetAuTemps(D, VERSETS, 3, 3), null);
 });

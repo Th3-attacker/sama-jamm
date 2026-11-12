@@ -30,3 +30,27 @@ export function tempsSourate(
   const dedans = Math.min(duree, Math.max(0, Math.round((Number.isFinite(dansVerset) ? dansVerset : 0) * 10)));
   return { ecoule: Math.round((avant + dedans) / 10), total: Math.round(total / 10) };
 }
+
+/**
+ * Verset et position dans ce verset (secondes) pour un temps visé dans la sourate, à la vitesse 1×.
+ * Un temps hors limites est ramené au début ou à la fin ; null si les durées manquent.
+ */
+export function versetAuTemps(
+  d: readonly number[] | undefined,
+  versetsParSourate: readonly number[],
+  sourate: number,
+  secondes: number,
+): { verset: number; dansVerset: number } | null {
+  const nb = versetsParSourate[sourate - 1];
+  if (!d || !nb || !Number.isFinite(secondes)) return null;
+  let premier = 0;
+  for (let s = 1; s < sourate; s++) premier += versetsParSourate[s - 1] ?? 0;
+  let reste = Math.max(0, secondes) * 10;
+  for (let i = 0; i < nb; i++) {
+    const dixiemes = d[premier + i];
+    if (!dixiemes) return null;
+    if (reste < dixiemes || i === nb - 1) return { verset: i + 1, dansVerset: Math.min(reste, dixiemes) / 10 };
+    reste -= dixiemes;
+  }
+  return null;
+}

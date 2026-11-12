@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
@@ -27,11 +27,13 @@ import { BottomSheet } from '@/ui/BottomSheet';
 import { Button } from '@/ui/Button';
 import { ListGroup } from '@/ui/ListGroup';
 import { ListItem } from '@/ui/ListItem';
-import { useToast } from '@/ui/Toast';
 import { ProgressBar } from '@/ui/ProgressBar';
 import { TopBar } from '@/ui/TopBar';
 
 import { interlignes, tailles } from '@/theme/tokens.generated';
+/** Durée de l'animation de fermeture d'une feuille, plus une marge, avant d'ouvrir le partage du téléphone. */
+const DELAI_APRES_FEUILLE = 320;
+
 /** Un khatm collectif : les 30 juz en direct, mon juz, inviter. */
 export default function EcranKhatm() {
   const { t, i18n } = useTranslation();
@@ -41,7 +43,9 @@ export default function EcranKhatm() {
   const { etat, relire } = useKhatm(id);
   const [message, setMessage] = useState<string | null>(null);
   const [feuilleInviter, setFeuilleInviter] = useState(false);
-  const { afficher } = useToast();
+  const [codeCopie, setCodeCopie] = useState(false);
+  const retourCopie = useRef<ReturnType<typeof setTimeout>>(undefined);
+  useEffect(() => () => clearTimeout(retourCopie.current), []);
 
   const resume = etat.etat === 'pret' ? resumeKhatm(etat.parts, moi) : null;
   const monJuz = resume?.monJuz ?? null;
@@ -155,20 +159,25 @@ export default function EcranKhatm() {
             sousTitre={t('khatm.partagerInvitationAide')}
             onPress={() => {
               setFeuilleInviter(false);
-              inviter(khatm.nom, khatm.intention ?? null, khatm.code).catch((e: unknown) => console.warn('Invitation non partagée', e));
+              // Le partage du téléphone s'ouvre une fois la feuille refermée : deux animations en même temps saccadent.
+              setTimeout(() => {
+                inviter(khatm.nom, khatm.intention ?? null, khatm.code).catch((e: unknown) => console.warn('Invitation non partagée', e));
+              }, DELAI_APRES_FEUILLE);
             }}
           />
           <ListItem
-            icone="copy"
+            icone={codeCopie ? 'check' : 'copy'}
+            ton={codeCopie ? 'emeraude' : undefined}
             titre={t('khatm.copierCode')}
-            sousTitre={t('khatm.copierCodeAide')}
+            sousTitre={codeCopie ? t('khatm.codeCopie') : t('khatm.copierCodeAide')}
             onPress={() => {
               copierCode(khatm.code)
-                .then(() => afficher({ texte: t('khatm.codeCopie'), icone: 'check' }))
-                .catch((e: unknown) => {
-                  console.warn('Code non copié', e);
-                  afficher({ texte: t('etats.erreurTexte'), icone: 'alert' });
-                });
+                .then(() => {
+                  setCodeCopie(true);
+                  clearTimeout(retourCopie.current);
+                  retourCopie.current = setTimeout(() => setCodeCopie(false), 2000);
+                })
+                .catch((e: unknown) => console.warn('Code non copié', e));
             }}
           />
         </ListGroup>
