@@ -15,7 +15,7 @@ import { echelleMax } from '@/theme/typographie';
 import { useLayout } from '@/theme/useLayout';
 import { useTheme } from '@/theme/useTheme';
 import { Banner } from '@/ui/Banner';
-import { PrieresCentrale } from '@/ui/PrieresCentrale';
+import { DayArc } from '@/ui/DayArc';
 import { Icon } from '@/ui/Icon';
 import { ListGroup } from '@/ui/ListGroup';
 import { ListItem } from '@/ui/ListItem';
@@ -92,11 +92,16 @@ export default function Priere() {
             <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.lieu, { color: couleurs.encre2 }]}>
               {`${nomLieu} · ${formatJour(maintenant, i18n.language)}`}
             </Text>
-            <PrieresCentrale
-              titre={t('accueil.prochaine', { priere: t(`priere.noms.${donnees.suivante.nom}`) })}
-              nomEtHeure={`${t(`priere.noms.${donnees.suivante.nom}`)} · ${formatHeure(donnees.suivante.heure, fuseau)}`}
-              dans={donnees.dans}
+            {/* Planche : l'arc du jour seul, sans texte au-dessus ; les horaires sont dans la liste. */}
+            <DayArc
+              simple
+              lever={minutesDuJour(donnees.h.lever, fuseau)}
+              coucher={minutesDuJour(donnees.h.coucher, fuseau)}
               maintenant={minutesDuJour(maintenant, fuseau)}
+              dans=""
+              avant=""
+              a=""
+
               prieres={prieres.map((p) => ({
                 nom: t(`priere.noms.${p}`),
                 heure: formatHeure(donnees.h[p], fuseau),

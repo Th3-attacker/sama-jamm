@@ -5,7 +5,7 @@ import Svg, { Circle, Line } from 'react-native-svg';
 
 import { echelleMax } from '@/theme/typographie';
 
-import { segmentMaintenant } from './positionsFrise';
+import { fractionFrise } from './positionsFrise';
 import { useTheme } from '@/theme/useTheme';
 import type { PriereArc } from '@/ui/DayArc';
 
@@ -18,15 +18,13 @@ type Props = {
   /** Délai déjà formaté (« 42 min », « 1 h 05 »). */
   dans: string;
   prieres: readonly PriereArc[];
-  /** Heure actuelle en minutes depuis minuit : le petit cercle « maintenant » entre deux prières. */
-  maintenant?: number;
 };
 
-// Frise : 314 × 20. Les cinq points sont répartis régulièrement, chacun juste au-dessus du nom de sa prière
-// (cinq colonnes égales) ; le petit cercle « maintenant » se place entre deux points selon l'heure.
+// Frise de la planche « Accueil » : 314 × 20. Les points sont placés à l'heure réelle de chaque prière, de Fajr (x = 12)
+// à Isha (x = 302) ; le trait pointillé va de 4 à 310, le trait plein jusqu'à la prochaine prière.
 const LARGEUR = 314;
-const COLONNE = LARGEUR / 5;
-const xPriere = (i: number) => (i + 0.5) * COLONNE;
+const X_PREMIER = 12;
+const X_DERNIER = 302;
 
 /** « 42 min » → chiffre et unité séparés, comme sur la planche ; « 1 h 05 » reste d'un bloc. */
 function separerDelai(dans: string): { valeur: string; unite: string | null } {
@@ -35,17 +33,18 @@ function separerDelai(dans: string): { valeur: string; unite: string | null } {
 }
 
 /** Carte héros de l'Accueil : la prochaine prière, le délai, l'heure, la frise du jour et les cinq prières (passées atténuées). */
-export function CarteHeros({ nom, heure, dans, prieres, maintenant }: Props) {
+export function CarteHeros({ nom, heure, dans, prieres }: Props) {
   const { t } = useTranslation();
   const { couleurs, espace, typographie } = useTheme();
   const surEmeraude = couleurs.surEmeraude;
   const { valeur, unite } = separerDelai(dans);
 
-  const indiceSuivante = prieres.findIndex((p) => p.etat === 'prochaine');
+  const premiere = prieres[0]?.minutes ?? 0;
+  const derniere = prieres[prieres.length - 1]?.minutes ?? 0;
+  const xPriere = (minutes: number) => X_PREMIER + (X_DERNIER - X_PREMIER) * fractionFrise(minutes, premiere, derniere);
+  const suivante = prieres.find((p) => p.etat === 'prochaine');
   // Trait plein jusqu'à la prochaine prière ; toutes passées : jusqu'au dernier point.
-  const finTrait = indiceSuivante >= 0 ? xPriere(indiceSuivante) : xPriere(prieres.length - 1);
-  const segment = maintenant === undefined ? null : segmentMaintenant(maintenant, prieres.map((p) => p.minutes));
-  const xMaintenant = segment ? xPriere(segment.indice) + (xPriere(segment.indice + 1) - xPriere(segment.indice)) * segment.fraction : null;
+  const finTrait = suivante ? xPriere(suivante.minutes) : X_DERNIER;
 
   return (
     <Pressable
@@ -71,19 +70,16 @@ export function CarteHeros({ nom, heure, dans, prieres, maintenant }: Props) {
       </View>
       <View importantForAccessibility="no-hide-descendants" accessibilityElementsHidden style={I18nManager.isRTL ? styles.miroir : undefined}>
         <Svg width="100%" height={20} viewBox={`0 0 ${LARGEUR} 20`}>
-          <Line x1={xPriere(0)} y1={10} x2={xPriere(4)} y2={10} stroke={surEmeraude} strokeWidth={1.5} strokeDasharray="2 5" />
-          <Line x1={xPriere(0)} y1={10} x2={finTrait} y2={10} stroke={surEmeraude} strokeWidth={2.5} strokeLinecap="round" />
-          {prieres.map((p, i) => {
-            const cx = xPriere(i);
-            // Fond de la carte = émeraude : le remplissage doit être clair (surEmeraude) pour que les points restent visibles.
+          <Line x1={4} y1={10} x2={310} y2={10} stroke={surEmeraude} strokeWidth={1.5} strokeDasharray="2 5" />
+          <Line x1={4} y1={10} x2={finTrait} y2={10} stroke={surEmeraude} strokeWidth={2.5} strokeLinecap="round" />
+          {prieres.map((p) => {
+            const cx = xPriere(p.minutes);
+            // Fond de la carte = émeraude : la prochaine prière est un grand cercle creux, les passées sont pleines.
             if (p.etat === 'prochaine')
-              return <Circle key={p.nom} cx={cx} cy={10} r={7} fill={surEmeraude} stroke={surEmeraude} strokeWidth={2.5} />;
+              return <Circle key={p.nom} cx={cx} cy={10} r={7} fill={couleurs.emeraudeAplat} stroke={surEmeraude} strokeWidth={2.5} />;
             if (p.etat === 'passee') return <Circle key={p.nom} cx={cx} cy={10} r={4.5} fill={surEmeraude} />;
             return <Circle key={p.nom} cx={cx} cy={10} r={4.5} fill={couleurs.emeraudeAplat} stroke={surEmeraude} strokeWidth={1.5} />;
           })}
-          {xMaintenant !== null ? (
-            <Circle cx={xMaintenant} cy={10} r={3} fill={couleurs.orSurEmeraude} stroke={couleurs.emeraudeAplat} strokeWidth={1.5} />
-          ) : null}
         </Svg>
       </View>
       <View style={styles.prieres}>
@@ -91,7 +87,7 @@ export function CarteHeros({ nom, heure, dans, prieres, maintenant }: Props) {
           const style = [
             p.etat === 'prochaine' ? typographie.libelle : typographie.legende,
             styles.nom,
-            { color: surEmeraude, opacity: p.etat === 'passee' ? 0.6 : 1 },
+            { color: surEmeraude },
           ];
           return (
             <View key={p.nom} style={styles.priere}>
