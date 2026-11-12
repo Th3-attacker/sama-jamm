@@ -59,6 +59,7 @@ export default function Accueil() {
       liste,
       lever: minutesDuJour(h.lever, fuseau),
       coucher: minutesDuJour(h.coucher, fuseau),
+      maintenantMin: minutesDuJour(maintenant, fuseau),
       dans: formatDuree((suivante.heure.getTime() - maintenant.getTime()) / 60_000),
       nom: t(`priere.noms.${suivante.nom}`),
       heure: formatHeure(suivante.heure, fuseau),
@@ -100,7 +101,7 @@ export default function Accueil() {
         }}>
         <BandeauVeille />
         {arc ? (
-          <CarteHeros nom={arc.nom} heure={arc.heure} dans={arc.dans} prieres={arc.liste} />
+          <CarteHeros nom={arc.nom} heure={arc.heure} dans={arc.dans} prieres={arc.liste} maintenant={arc.maintenantMin} />
         ) : (
           <Banner ton="info" action={{ label: t('bienvenue.positionVille'), onPress: () => router.push('/position') }}>
             {t('priere.positionRefuseeTexte')}

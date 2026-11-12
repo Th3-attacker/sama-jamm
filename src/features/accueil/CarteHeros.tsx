@@ -5,7 +5,7 @@ import Svg, { Circle, Line } from 'react-native-svg';
 
 import { echelleMax } from '@/theme/typographie';
 
-import { fractionFrise } from './positionsFrise';
+import { fractionFrise, fractionMaintenant } from './positionsFrise';
 import { useTheme } from '@/theme/useTheme';
 import type { PriereArc } from '@/ui/DayArc';
 
@@ -18,6 +18,8 @@ type Props = {
   /** Délai déjà formaté (« 42 min », « 1 h 05 »). */
   dans: string;
   prieres: readonly PriereArc[];
+  /** Heure actuelle en minutes depuis minuit : le petit cercle « maintenant » entre deux prières. */
+  maintenant?: number;
 };
 
 // Frise de la planche : 314 × 20, premier point à 12, dernier à 302, trait pointillé de 4 à 310.
@@ -32,7 +34,7 @@ function separerDelai(dans: string): { valeur: string; unite: string | null } {
 }
 
 /** Carte héros de l'Accueil : la prochaine prière, le délai, l'heure, la frise du jour et les cinq prières (passées atténuées). */
-export function CarteHeros({ nom, heure, dans, prieres }: Props) {
+export function CarteHeros({ nom, heure, dans, prieres, maintenant }: Props) {
   const { t } = useTranslation();
   const { couleurs, espace, typographie } = useTheme();
   const surEmeraude = couleurs.surEmeraude;
@@ -41,6 +43,7 @@ export function CarteHeros({ nom, heure, dans, prieres }: Props) {
   const premiere = prieres[0]?.minutes ?? 0;
   const derniere = prieres[prieres.length - 1]?.minutes ?? 1;
   const x = (m: number) => X_DEBUT + (X_FIN - X_DEBUT) * fractionFrise(m, premiere, derniere);
+  const fm = maintenant === undefined ? null : fractionMaintenant(maintenant, premiere, derniere);
   const suivante = prieres.find((p) => p.etat === 'prochaine');
   // Trait plein jusqu'à la prochaine prière ; toutes passées : jusqu'au bout.
   const finTrait = suivante ? x(suivante.minutes) : LARGEUR - 4;
@@ -79,6 +82,9 @@ export function CarteHeros({ nom, heure, dans, prieres }: Props) {
             if (p.etat === 'passee') return <Circle key={p.nom} cx={cx} cy={10} r={4.5} fill={surEmeraude} />;
             return <Circle key={p.nom} cx={cx} cy={10} r={4.5} fill={couleurs.emeraudeAplat} stroke={surEmeraude} strokeWidth={1.5} />;
           })}
+          {fm !== null ? (
+            <Circle cx={X_DEBUT + (X_FIN - X_DEBUT) * fm} cy={10} r={3} fill={couleurs.orSurEmeraude} stroke={couleurs.emeraudeAplat} strokeWidth={1.5} />
+          ) : null}
         </Svg>
       </View>
       <View style={styles.prieres}>

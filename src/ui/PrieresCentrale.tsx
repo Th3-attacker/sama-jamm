@@ -2,7 +2,7 @@ import { I18nManager, StyleSheet, Text, View } from 'react-native';
 import Svg, { Circle, Line } from 'react-native-svg';
 
 import { useTheme } from '@/theme/useTheme';
-import { fractionFrise } from '@/features/accueil/positionsFrise';
+import { fractionFrise, fractionMaintenant } from '@/features/accueil/positionsFrise';
 
 import type { PriereArc } from './DayArc';
 
@@ -14,6 +14,8 @@ export type PrieresCentraleProps = {
   /** Délai déjà formaté : « dans 42 min ». */
   dans: string;
   prieres: readonly PriereArc[];
+  /** Heure actuelle en minutes depuis minuit : le petit cercle « maintenant » entre deux prières. */
+  maintenant?: number;
   /** Pour les lecteurs d'écran. */
   description: string;
 };
@@ -29,12 +31,13 @@ const Y = 14;
  * Écran Prière, variante « typographie seule » : la prochaine prière au centre, puis la frise du jour
  * (cinq points, trait plein jusqu'à la prochaine prière). Remplace l'arc du jour.
  */
-export function PrieresCentrale({ titre, nomEtHeure, dans, prieres, description }: PrieresCentraleProps) {
+export function PrieresCentrale({ titre, nomEtHeure, dans, prieres, maintenant, description }: PrieresCentraleProps) {
   const { couleurs, espace, typographie } = useTheme();
 
   const premiere = prieres[0]?.minutes ?? 0;
   const derniere = prieres[prieres.length - 1]?.minutes ?? 1;
   const x = (m: number) => X_DEBUT + (X_FIN - X_DEBUT) * fractionFrise(m, premiere, derniere);
+  const fm = maintenant === undefined ? null : fractionMaintenant(maintenant, premiere, derniere);
   const suivante = prieres.find((p) => p.etat === 'prochaine');
   // Trait plein jusqu'à la prochaine prière ; toutes passées : jusqu'au bout.
   const finTrait = suivante ? x(suivante.minutes) : X_FIN;
@@ -58,6 +61,7 @@ export function PrieresCentrale({ titre, nomEtHeure, dans, prieres, description 
             if (p.etat === 'passee') return <Circle key={p.nom} cx={cx} cy={Y} r={4.5} fill={couleurs.emeraude} />;
             return <Circle key={p.nom} cx={cx} cy={Y} r={4.5} fill={couleurs.fond} stroke={couleurs.ligneForte} strokeWidth={1.5} />;
           })}
+          {fm !== null ? <Circle cx={X_DEBUT + (X_FIN - X_DEBUT) * fm} cy={Y} r={3} fill={couleurs.or} stroke={couleurs.fond} strokeWidth={1.5} /> : null}
         </Svg>
       </View>
     </View>

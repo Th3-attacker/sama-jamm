@@ -50,12 +50,27 @@ function lendemain(date: Date): Date {
   return d;
 }
 
-/** Prochaine prière : celle du jour, ou Fajr du lendemain après Isha. */
+function veille(date: Date): Date {
+  const d = new Date(date);
+  d.setDate(d.getDate() - 1);
+  return d;
+}
+
+/**
+ * Prochaine prière : la première prière strictement à venir, parmi celles de la veille, d'aujourd'hui et de demain.
+ * Le jour de calcul d'`adhan` est celui du téléphone ; quand le lieu est dans un autre fuseau, la date du lieu peut
+ * différer d'un jour : regarder les trois jours évite de sauter une prière.
+ */
 export function prochainePriere(lieu: Point, maintenant: Date, options?: OptionsCalcul): { nom: NomPriere; heure: Date } {
-  const aujourdhui = calculerHoraires(lieu, maintenant, options);
-  const nom = ORDRE.find((p) => aujourdhui[p] > maintenant);
-  if (nom) return { nom, heure: aujourdhui[nom] };
-  return { nom: 'fajr', heure: calculerHoraires(lieu, lendemain(maintenant), options).fajr };
+  let meilleure: { nom: NomPriere; heure: Date } | undefined;
+  for (const jour of [veille(maintenant), maintenant, lendemain(maintenant)]) {
+    const h = calculerHoraires(lieu, jour, options);
+    for (const nom of ORDRE) {
+      if (h[nom] > maintenant && (!meilleure || h[nom] < meilleure.heure)) meilleure = { nom, heure: h[nom] };
+    }
+  }
+  // Toujours trouvé : le lendemain a au moins un Fajr futur.
+  return meilleure ?? { nom: 'fajr', heure: calculerHoraires(lieu, lendemain(maintenant), options).fajr };
 }
 
 /**

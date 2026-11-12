@@ -96,6 +96,7 @@ export default function Priere() {
               titre={t('accueil.prochaine', { priere: t(`priere.noms.${donnees.suivante.nom}`) })}
               nomEtHeure={`${t(`priere.noms.${donnees.suivante.nom}`)} · ${formatHeure(donnees.suivante.heure, fuseau)}`}
               dans={donnees.dans}
+              maintenant={minutesDuJour(maintenant, fuseau)}
               prieres={prieres.map((p) => ({
                 nom: t(`priere.noms.${p}`),
                 heure: formatHeure(donnees.h[p], fuseau),

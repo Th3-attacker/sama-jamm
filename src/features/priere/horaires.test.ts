@@ -54,6 +54,15 @@ test('prochaine prière : celle qui suit dans la journée', () => {
   assert.equal(p.heure.getTime(), h.asr.getTime());
 });
 
+test('prochaine prière : entre Fajr et Dhuhr, c’est Dhuhr (jamais Asr)', () => {
+  const h = calculerHoraires(DAKAR, JOUR);
+  for (const decalage of [60_000, 3 * 3_600_000, h.dhuhr.getTime() - h.fajr.getTime() - 60_000]) {
+    const p = prochainePriere(DAKAR, new Date(h.fajr.getTime() + decalage));
+    assert.equal(p.nom, 'dhuhr');
+    assert.equal(p.heure.getTime(), h.dhuhr.getTime());
+  }
+});
+
 test('prochaine prière après Isha : Fajr du lendemain', () => {
   const h = calculerHoraires(DAKAR, JOUR);
   const p = prochainePriere(DAKAR, new Date(h.isha.getTime() + 60_000));

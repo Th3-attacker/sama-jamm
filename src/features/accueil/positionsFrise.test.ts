@@ -2,7 +2,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { fractionFrise } from './positionsFrise.ts';
+import { fractionFrise, fractionMaintenant } from './positionsFrise.ts';
 
 const minutes = (h: number, m: number) => h * 60 + m;
 
@@ -34,4 +34,19 @@ test('Isha après minuit : Maghrib et Isha restent après Dhuhr et Asr', () => {
 
 test('une valeur hors plage est ramenée entre 0 et 1', () => {
   assert.equal(fractionFrise(minutes(23, 0), minutes(5, 0), minutes(6, 0)), 1);
+});
+
+test('maintenant : entre Dhuhr et Asr, le cercle tombe entre les deux points', () => {
+  const fajr = 6 * 60 + 5;
+  const dhuhr = 13 * 60 + 20;
+  const asr = 16 * 60 + 35;
+  const isha = 20 * 60 + 25;
+  const f = fractionMaintenant(15 * 60, fajr, isha);
+  assert.ok(f !== null);
+  assert.ok(f > fractionFrise(dhuhr, fajr, isha) && f < fractionFrise(asr, fajr, isha));
+});
+
+test('maintenant : avant Fajr ou après Isha, pas de cercle', () => {
+  assert.equal(fractionMaintenant(4 * 60, 6 * 60 + 5, 20 * 60 + 25), null);
+  assert.equal(fractionMaintenant(22 * 60, 6 * 60 + 5, 20 * 60 + 25), null);
 });
