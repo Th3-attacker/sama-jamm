@@ -105,7 +105,7 @@ function LectureSourate({
   versetInitial: number;
   modeInitial: ModeLecture;
 }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { couleurs, ombres, espace, rayon, cible, typographie } = useTheme();
   // La pilule d'outils est l'outil fixe du bas : la pile la compte, le contenu lui laisse sa place.
   const dessous = useDessousOutil();
@@ -230,7 +230,9 @@ function LectureSourate({
           ? `${t('lire.pageN', { n: page })} · ${t('lire.juz', { n: reperes().juzDe(premierSegment.sourate, premierSegment.versets[0]?.verset ?? 1) })}`
           : modePage
             ? t('lire.pageN', { n: page })
-            : undefined
+            : [i18n.language === 'ar' ? null : sensDe(s.n), t('lire.juz', { n: reperes().juzDe(s.n, versetHaut) })]
+                .filter(Boolean)
+                .join(' · ')
       }
       actions={
         modePage
@@ -296,6 +298,13 @@ function LectureSourate({
   return (
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
       {barre}
+      {/* Planche : fil de 2 de haut sous la barre, or, qui avance avec le verset. */}
+      <View
+        accessible
+        accessibilityLabel={t('accueil.versetSur', { n: versetHaut, total: s.versets })}
+        style={[styles.fil, { marginHorizontal: espace.espace4, backgroundColor: couleurs.ligne }]}>
+        <View style={{ height: espace.espace1 / 2, width: `${Math.round((versetHaut / s.versets) * 100)}%`, backgroundColor: couleurs.or }} />
+      </View>
       {/* Veille : le bandeau de la nuit, une seule fois. */}
       <View style={{ paddingHorizontal: espace.espace5 }}>
         <BandeauVeille />
@@ -535,6 +544,7 @@ function Entete({ sourate: n }: { sourate: number }) {
 }
 
 const styles = StyleSheet.create({
+  fil: { height: 2, borderRadius: 2, overflow: 'hidden' },
   ecran: { flex: 1 },
   coupe: { overflow: 'hidden' },
   centre: { textAlign: 'center', writingDirection: 'rtl' },
