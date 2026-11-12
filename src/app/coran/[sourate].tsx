@@ -109,7 +109,7 @@ function LectureSourate({
   modeInitial: ModeLecture;
 }) {
   const { t, i18n } = useTranslation();
-  const { couleurs, ombres, espace, rayon, cible, typographie } = useTheme();
+  const { couleurs, ombres, espace, rayon, cible, typographie, ligne } = useTheme();
   // La pilule d'outils est l'outil fixe du bas : la pile la compte, le contenu lui laisse sa place.
   const dessous = useDessousOutil();
   // Avant la première image : la pile du bas compte la pilule dès l'ouverture, elle ne se décale pas ensuite.
@@ -475,7 +475,7 @@ function LectureSourate({
                 </Text>
                 {translits[item.n - 1] ? <TranslitVerset texte={translits[item.n - 1] ?? ''} taille={tailleTrad} /> : null}
                 {versetEcoute === item.n ? (
-                  <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, styles.etiquette, { color: couleurs.emeraude }]}>
+                  <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, ligne(styles.etiquette), { color: couleurs.emeraude }]}>
                     {t('lire.recitationEnCours')}
                   </Text>
                 ) : null}
@@ -620,7 +620,7 @@ function LectureSourate({
 /** En-tête coranique d'une sourate (nom arabe dans un bandeau vert, basmala). */
 function Entete({ sourate: n }: { sourate: number }) {
   const { t, i18n } = useTranslation();
-  const { couleurs, espace, typographie } = useTheme();
+  const { couleurs, espace, typographie, ligne } = useTheme();
   const { tailleArabe } = useTaillesLecture();
   const meta = sourate(n);
   const basmala = basmalaDe(n);
@@ -642,7 +642,7 @@ function Entete({ sourate: n }: { sourate: number }) {
             {sensDe(n)}
           </Text>
         ) : null}
-        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.meta, styles.centreLatin, { color: couleurs.encre3 }]}>
+        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, ligne(styles.meta), styles.centreLatin, { color: couleurs.encre3 }]}>
           {`${t('lire.sourate')} ${n} · ${t('lire.versets', { count: meta.versets })} · ${t(meta.mecquoise ? 'lire.mecquoise' : 'lire.medinoise')}`}
         </Text>
       </View>

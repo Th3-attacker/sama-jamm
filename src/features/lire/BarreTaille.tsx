@@ -84,7 +84,7 @@ export function BarreTaille() {
  */
 export function ReglageTaille() {
   const { t } = useTranslation();
-  const { couleurs, espace, typographie } = useTheme();
+  const { couleurs, espace, typographie, ligne } = useTheme();
   const echelon = useReglages((s) => s.tailleLecture);
 
   return (
@@ -93,12 +93,12 @@ export function ReglageTaille() {
         <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, { color: couleurs.encre }]}>
           {t('reglages.tailleEcriture')}
         </Text>
-        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.niveau, { color: couleurs.encre2 }]}>
+        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, ligne(styles.niveau), { color: couleurs.encre2 }]}>
           {t('reglages.niveau', { n: echelon + 1 })}
         </Text>
       </View>
       <BarreTaille />
-      <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.aide, { color: couleurs.encre3 }]}>
+      <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, ligne(styles.aide), { color: couleurs.encre3 }]}>
         {t('reglages.tailleAide')}
       </Text>
     </View>

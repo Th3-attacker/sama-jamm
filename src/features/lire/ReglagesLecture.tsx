@@ -18,7 +18,7 @@ import { ReglageTaille, useTaillesLecture } from './BarreTaille';
 import { interlignes, tailles } from '@/theme/tokens.generated';
 export function ReglagesLecture({ ouvert, onFermer }: { ouvert: boolean; onFermer: () => void }) {
   const { t } = useTranslation();
-  const { couleurs, espace, rayon, typographie } = useTheme();
+  const { couleurs, espace, rayon, typographie, ligne } = useTheme();
   const { tailleArabe } = useTaillesLecture();
   const translit = useReglages((s) => s.translitLecture);
   const definirTranslit = useReglages((s) => s.definirTranslitLecture);
@@ -47,7 +47,7 @@ export function ReglagesLecture({ ouvert, onFermer }: { ouvert: boolean; onFerme
           {`إِنَّ مَعَ ٱلْعُسْرِ يُسْرًا ${chiffres ? '﴿٦﴾' : '﴿6﴾'}`}
         </Text>
         {translit ? (
-          <Text style={[typographie.translitteration, styles.translit, { color: couleurs.encre2 }]}>
+          <Text style={[typographie.translitteration, ligne(styles.translit), { color: couleurs.encre2 }]}>
             Inna maʿa l-ʿusri yusrā
           </Text>
         ) : null}

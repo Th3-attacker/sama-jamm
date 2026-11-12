@@ -34,7 +34,7 @@ export default function Lire() {
   const defilement = useRef<FlatList<Sourate>>(null);
   useScrollToTop(defilement);
   const { t } = useTranslation();
-  const { couleurs, espace, typographie } = useTheme();
+  const { couleurs, espace, typographie, ligne } = useTheme();
   const marge = useMargeBasse();
   const { styleColonne: colonne } = useLayout();
   const rubrique = useParametre('rubrique');
@@ -134,7 +134,7 @@ export default function Lire() {
                 onPress={() => router.push({ pathname: '/plus/khatm/[id]', params: { id: premierKhatm.id } })}
                 style={[styles.lienKhatm, { gap: espace.espace2 }]}>
                 <Icon name="users" size={16} color={couleurs.orTexte} />
-                <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, styles.libelleKhatm, { color: couleurs.orTexte }]}>
+                <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, ligne(styles.libelleKhatm), { color: couleurs.orTexte }]}>
                   {t('lire.khatmCourt', { lus: premierKhatm.lus })}
                 </Text>
               </Pressable>
@@ -170,12 +170,12 @@ export default function Lire() {
                       <Text
                         accessibilityLanguage="ar"
                         maxFontSizeMultiplier={echelleMax.grand}
-                        style={[typographie.arabe, styles.tuileNom, { color: couleurs.orSurEmeraude }]}>
+                        style={[typographie.arabe, ligne(styles.tuileNom), { color: couleurs.orSurEmeraude }]}>
                         {repris.arabe}
                       </Text>
                     </View>
                     <View style={[styles.repriseTexte, { gap: espace.espace1 }]}>
-                      <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, styles.surtitre, { color: couleurs.orTexte }]}>
+                      <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, ligne(styles.surtitre), { color: couleurs.orTexte }]}>
                         {t('lire.reprendreCourt')}
                       </Text>
                       <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.titre2, { color: couleurs.encre }]}>

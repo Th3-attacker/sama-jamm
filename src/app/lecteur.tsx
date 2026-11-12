@@ -53,7 +53,7 @@ type Repetition = 'non' | 'verset' | 'sourate';
 export default function LecteurPleinEcran() {
   const { t } = useTranslation();
   const { afficher } = useToast();
-  const { couleurs, espace, rayon, cible, typographie } = useTheme();
+  const { couleurs, espace, rayon, cible, typographie, ligne } = useTheme();
   const insets = useSafeAreaInsets();
   const { height } = useWindowDimensions();
   const position = useLecteur((s) => s.position ?? s.derniere);
@@ -181,7 +181,7 @@ export default function LecteurPleinEcran() {
                 <Text
                   accessibilityLanguage="ar"
                   allowFontScaling={false}
-                  style={[styles.nomPochette, { color: couleurs.orSurEmeraude }]}>
+                  style={[ligne(styles.nomPochette), { color: couleurs.orSurEmeraude }]}>
                   {s.arabe}
                 </Text>
               </View>
@@ -297,7 +297,7 @@ export default function LecteurPleinEcran() {
                 <Text
                   accessibilityLanguage="ar"
                   maxFontSizeMultiplier={echelleMax.grand}
-                  style={[typographie.coran, styles.versetCourant, styles.arabe, { color: couleurs.encre }]}>
+                  style={[typographie.coran, ligne(styles.versetCourant), styles.arabe, { color: couleurs.encre }]}>
                   {texte}
                 </Text>
               ) : null}
@@ -357,7 +357,7 @@ export default function LecteurPleinEcran() {
               {t('ecouter.minuterieFinSourate')}
             </Chip>
           </View>
-          <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.resumeMinuterie, { color: couleurs.encre3 }]}>
+          <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, ligne(styles.resumeMinuterie), { color: couleurs.encre3 }]}>
             {reste !== null
               ? t('ecouter.minuterieArret', { duree: formatReste(reste) })
               : minuterie.type === 'finSourate'

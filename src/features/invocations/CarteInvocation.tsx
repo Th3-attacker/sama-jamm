@@ -24,7 +24,7 @@ type CarteProps = {
 // (si activée), sens en français (absent pour un texte du Coran), puis Partager.
 export function CarteInvocation({ invocation, source, termine, onChoisir, onPartager }: CarteProps) {
   const { t } = useTranslation();
-  const { couleurs, espace, rayon, typographie } = useTheme();
+  const { couleurs, espace, rayon, typographie, ligne } = useTheme();
   const { tailleArabe, tailleTrad } = useTaillesLecture();
   const translitActive = useReglages((s) => s.translitLecture);
 
@@ -39,7 +39,7 @@ export function CarteInvocation({ invocation, source, termine, onChoisir, onPart
       <Pressable accessibilityRole="button" onPress={onChoisir} style={{ padding: espace.espace5, gap: espace.espace4 }}>
         <View style={styles.sourceLigne}>
           <View style={[styles.pastille, { backgroundColor: couleurs.orDoux, paddingHorizontal: espace.espace3, paddingVertical: espace.espace1 }]}>
-            <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.source, { color: couleurs.orTexte }]}>
+            <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, ligne(styles.source), { color: couleurs.orTexte }]}>
               {source}
             </Text>
           </View>

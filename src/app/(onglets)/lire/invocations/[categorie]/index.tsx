@@ -49,7 +49,7 @@ export default function EcranMoment() {
 
 function Moment({ categorie }: { categorie: CategorieId }) {
   const { t } = useTranslation();
-  const { couleurs, espace, typographie } = useTheme();
+  const { couleurs, espace, typographie, ligne } = useTheme();
   const comptes = useComptesDuJour();
   const liste = invocationsDe(categorie);
   const fait = (id: string, repetitions: number) => (comptes[id] ?? 0) >= repetitions;
@@ -68,7 +68,7 @@ function Moment({ categorie }: { categorie: CategorieId }) {
         }
       />
       <ScrollView contentContainerStyle={{ paddingHorizontal: espace.espace6, paddingBottom: espace.espace8, gap: espace.espace3 }}>
-        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.translitteration, styles.phrase, { color: couleurs.encre2 }]}>
+        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.translitteration, ligne(styles.phrase), { color: couleurs.encre2 }]}>
           {t('invocations.sousTitre')}
         </Text>
         <ScrollView
@@ -99,7 +99,7 @@ function Moment({ categorie }: { categorie: CategorieId }) {
           <View style={[styles.piste, { backgroundColor: couleurs.ligneForte }]}>
             <View style={{ width: `${liste.length ? (nbFaites / liste.length) * 100 : 0}%`, height: 8, backgroundColor: couleurs.or }} />
           </View>
-          <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.compte, { color: couleurs.encre2 }]}>
+          <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, ligne(styles.compte), { color: couleurs.encre2 }]}>
             {detail}
           </Text>
         </View>
@@ -122,14 +122,14 @@ function Moment({ categorie }: { categorie: CategorieId }) {
                   <Medaillon numero={i + 1} prefixe={t('lire.invocations')} taille={40} />
                 )}
                 <View style={styles.textes}>
-                  <Text numberOfLines={2} maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, styles.titreLigne, { color: couleurs.encre }]}>
+                  <Text numberOfLines={2} maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, ligne(styles.titreLigne), { color: couleurs.encre }]}>
                     {inv.titre}
                   </Text>
-                  <Text numberOfLines={1} maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.compte, { color: couleurs.encre3 }]}>
+                  <Text numberOfLines={1} maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, ligne(styles.compte), { color: couleurs.encre3 }]}>
                     {inv.source}
                   </Text>
                 </View>
-                <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.compte, { color: couleurs.encre2 }]}>
+                <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, ligne(styles.compte), { color: couleurs.encre2 }]}>
                   {t('invocations.fois', { count: inv.repetitions })}
                 </Text>
               </Pressable>

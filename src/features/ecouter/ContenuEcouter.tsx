@@ -25,7 +25,7 @@ const SUGGESTIONS = [18, 36, 67] as const;
 /** Mode Écouter de l'onglet Lire : reprendre l'écoute en cours, récitations, écoute sans réseau, récitateurs. */
 export function ContenuEcouter({ onToutVoir }: { onToutVoir: () => void }) {
   const { t } = useTranslation();
-  const { couleurs, espace, rayon, typographie } = useTheme();
+  const { couleurs, espace, rayon, typographie, ligne } = useTheme();
   const fixe = themes.jour.couleurs;
   // Pochettes : émeraude, nuit, or doux ; le nom arabe et le numéro suivent le fond.
   const pochettes = [
@@ -71,13 +71,13 @@ export function ContenuEcouter({ onToutVoir }: { onToutVoir: () => void }) {
             <Icon name="play" size={22} color={couleurs.emeraude} />
           </View>
           <View style={[styles.heroTextes, { gap: espace.espace1 }]}>
-            <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, styles.etiquette, { color: couleurs.orSurEmeraude }]}>
+            <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, ligne(styles.etiquette), { color: couleurs.orSurEmeraude }]}>
               {t('ecouter.continuer')}
             </Text>
             <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.titre3, { color: couleurs.surEmeraude }]}>
               {sourate(derniere.sourate)?.nom ?? ''}
             </Text>
-            <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.detail, { color: couleurs.surEmeraude2 }]}>
+            <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, ligne(styles.detail), { color: couleurs.surEmeraude2 }]}>
               {`${t('ecouter.versetSur', { n: derniere.verset, total: sourate(derniere.sourate)?.versets ?? 0 })} · ${recitateur(idRecitateur)?.nom ?? ''}`}
             </Text>
           </View>
@@ -110,7 +110,7 @@ export function ContenuEcouter({ onToutVoir }: { onToutVoir: () => void }) {
                 }}
                 style={[styles.tuile, { gap: espace.espace2 }]}>
                 <View style={[styles.pochette, { backgroundColor: p.fond, borderRadius: rayon.rayonCarte, gap: espace.espace1 }]}>
-                  <Text accessibilityLanguage="ar" style={[typographie.arabe, styles.nomArabe, { color: p.nom }]}>
+                  <Text accessibilityLanguage="ar" style={[typographie.arabe, ligne(styles.nomArabe), { color: p.nom }]}>
                     {meta.arabe}
                   </Text>
                   <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: p.numero }]}>

@@ -43,7 +43,7 @@ type Props = {
  */
 export const PageMushaf = memo(function PageMushaf({ page, largeur, hauteur, hautSur, basSur = 0, onToucher }: Props) {
   const { t } = useTranslation();
-  const { couleurs, espace, rayon, typographie } = useTheme();
+  const { couleurs, espace, rayon, typographie, ligne } = useTheme();
   const segments = useMemo(() => segmentsDePage(page), [page]);
   const cle = `${page}:${Math.round(largeur)}x${Math.round(hauteur)}:${Math.round(hautSur + basSur)}`;
   const connu = coefsConnus.get(cle);
@@ -135,7 +135,7 @@ export const PageMushaf = memo(function PageMushaf({ page, largeur, hauteur, hau
         <Text numberOfLines={1} allowFontScaling={false} style={[typographie.legende, styles.cote, { color: couleurs.encre3 }]}>
           {libelleJuz}
         </Text>
-        <Text allowFontScaling={false} style={[typographie.libelle, styles.numeroPage, { color: couleurs.emeraude }]}>
+        <Text allowFontScaling={false} style={[typographie.libelle, ligne(styles.numeroPage), { color: couleurs.emeraude }]}>
           {page}
         </Text>
         <Text numberOfLines={1} allowFontScaling={false} style={[typographie.legende, styles.cote, styles.droite, { color: couleurs.encre3 }]}>
@@ -204,7 +204,7 @@ export const PageMushaf = memo(function PageMushaf({ page, largeur, hauteur, hau
       </View>
           <Text
             allowFontScaling={false}
-            style={[typographie.arabe, styles.numeroBas, styles.centre, { color: couleurs.encre3, paddingVertical: espace.espace1 }]}>
+            style={[typographie.arabe, ligne(styles.numeroBas), styles.centre, { color: couleurs.encre3, paddingVertical: espace.espace1 }]}>
             {enChiffresArabes(page)}
           </Text>
         </View>

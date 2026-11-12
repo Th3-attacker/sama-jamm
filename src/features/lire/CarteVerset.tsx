@@ -21,7 +21,7 @@ type Props = {
 
 /** Un verset hors de son contexte (résultat de recherche, favori) : référence, arabe, translittération si elle est active. Jamais tronqué. */
 export function CarteVerset({ sourate, verset, texte, translit, onPress, plat = false, surligner: requete }: Props) {
-  const { couleurs, espace, rayon, typographie } = useTheme();
+  const { couleurs, espace, rayon, typographie, ligne } = useTheme();
   const reference = referenceVerset(sourate, verset);
 
   if (plat) {
@@ -42,7 +42,7 @@ export function CarteVerset({ sourate, verset, texte, translit, onPress, plat = 
           {texte}
         </Text>
         {translit ? (
-          <Text accessibilityLanguage="en" maxFontSizeMultiplier={echelleMax.grand} style={[typographie.translitteration, styles.translitPlate, { color: couleurs.encre }]}>
+          <Text accessibilityLanguage="en" maxFontSizeMultiplier={echelleMax.grand} style={[typographie.translitteration, ligne(styles.translitPlate), { color: couleurs.encre }]}>
             {(requete ? surligner(translit, requete) : [{ texte: translit, trouve: false }]).map((m, i) =>
               m.trouve ? (
                 <Text key={i} style={{ backgroundColor: couleurs.orDoux, color: couleurs.encre }}>

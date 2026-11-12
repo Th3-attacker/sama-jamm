@@ -31,7 +31,7 @@ import { interlignes, tailles } from '@/theme/tokens.generated';
 /** Les 114 sourates d'un récitateur : toucher une sourate lance son écoute depuis le premier verset. */
 export default function EcranRecitateur() {
   const { t } = useTranslation();
-  const { couleurs, espace, rayon, typographie } = useTheme();
+  const { couleurs, espace, rayon, typographie, ligne } = useTheme();
   const marge = useMargeBasse();
   const [echec, setEchec] = useState(false);
   const [wifiRequis, setWifiRequis] = useState(false);
@@ -96,7 +96,7 @@ export default function EcranRecitateur() {
               {/* Planche : pastille d'initiales, nom en 30/36, résumé en 14/20. */}
               <View style={[styles.identite, { gap: espace.espace4 }]}>
                 <View style={[styles.pastille, { backgroundColor: couleurs.emeraudeDoux, borderRadius: rayon.rayonCarte + espace.espace1 }]}>
-                  <Text maxFontSizeMultiplier={echelleMax.grand} style={[typographie.titre3, styles.initiales, { color: couleurs.surEmeraudeDoux }]}>
+                  <Text maxFontSizeMultiplier={echelleMax.grand} style={[typographie.titre3, ligne(styles.initiales), { color: couleurs.surEmeraudeDoux }]}>
                     {initiales(r.nom)}
                   </Text>
                 </View>
@@ -104,7 +104,7 @@ export default function EcranRecitateur() {
                   <Text accessibilityRole="header" maxFontSizeMultiplier={echelleMax.grand} style={[typographie.titre1, { color: couleurs.emeraude }]}>
                     {r.nom}
                   </Text>
-                  <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.resume, { color: couleurs.encre2 }]}>
+                  <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, ligne(styles.resume), { color: couleurs.encre2 }]}>
                     {t('ecouter.resumeRecitateur', { count: telechargees })}
                   </Text>
                 </View>

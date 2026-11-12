@@ -13,7 +13,7 @@ import { Medaillon } from '@/ui/Medaillon';
 
 export function ListeJuz() {
   const { t } = useTranslation();
-  const { couleurs, espace, rayon, typographie } = useTheme();
+  const { couleurs, espace, rayon, typographie, ligne } = useTheme();
 
   return (
     <View style={{ gap: espace.espace4 }}>
@@ -67,7 +67,7 @@ export function ListeJuz() {
                       {plage}
                     </Text>
                   </View>
-                  <Text accessibilityLanguage="ar" maxFontSizeMultiplier={echelleMax.courant} style={[styles.arabe, { color: couleurs.emeraude }]}>
+                  <Text accessibilityLanguage="ar" maxFontSizeMultiplier={echelleMax.courant} style={[ligne(styles.arabe), { color: couleurs.emeraude }]}>
                     {arabe}
                   </Text>
                   <Icon name="chevron-right" size={18} color={couleurs.encre3} />

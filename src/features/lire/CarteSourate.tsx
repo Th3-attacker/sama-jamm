@@ -22,7 +22,7 @@ type Props = {
 /** Carte d'une sourate dans la liste : médaillon, nom arabe, page, lieu de révélation, nombre de versets. */
 export function CarteSourate({ sourate, onPress, plat = false, enCours = false, juzDebut }: Props) {
   const { t, i18n } = useTranslation();
-  const { couleurs, espace, rayon, typographie } = useTheme();
+  const { couleurs, espace, rayon, typographie, ligne } = useTheme();
   // Planche « Lire en arabe » : le nom arabe devient le titre de la ligne (Amiri gras), sans doublon à l'autre bout.
   const titreArabe = plat && i18n.language === 'ar';
   const page = pageDe(sourate.n, 1);
@@ -64,20 +64,20 @@ export function CarteSourate({ sourate, onPress, plat = false, enCours = false, 
       <Medaillon numero={sourate.n} prefixe={t('lire.sourate')} taille={plat ? 34 : undefined} />
       <View style={styles.textes}>
         {titreArabe ? (
-          <Text accessibilityLanguage="ar" maxFontSizeMultiplier={echelleMax.courant} style={[styles.titreArabe, { color: couleurs.encre }]}>
+          <Text accessibilityLanguage="ar" maxFontSizeMultiplier={echelleMax.courant} style={[ligne(styles.titreArabe), { color: couleurs.encre }]}>
             {sourate.arabe}
           </Text>
         ) : (
-          <Text maxFontSizeMultiplier={echelleMax.courant} style={[plat ? typographie.titre3 : typographie.corps, plat ? styles.nomPlat : null, { color: couleurs.encre }]}>
+          <Text maxFontSizeMultiplier={echelleMax.courant} style={[plat ? typographie.titre3 : typographie.corps, plat ? ligne(styles.nomPlat) : null, { color: couleurs.encre }]}>
             {sourate.nom}
           </Text>
         )}
-        <Text numberOfLines={1} maxFontSizeMultiplier={echelleMax.courant} style={[plat ? typographie.corps : typographie.legende, plat ? styles.metaPlat : null, { color: couleurs.encre3 }]}>
+        <Text numberOfLines={1} maxFontSizeMultiplier={echelleMax.courant} style={[plat ? typographie.corps : typographie.legende, plat ? ligne(styles.metaPlat) : null, { color: couleurs.encre3 }]}>
           {meta}
         </Text>
       </View>
       {titreArabe ? null : (
-        <Text accessibilityLanguage="ar" maxFontSizeMultiplier={echelleMax.courant} style={[styles.arabe, plat ? styles.arabePlat : null, { color: couleurs.emeraude }]}>
+        <Text accessibilityLanguage="ar" maxFontSizeMultiplier={echelleMax.courant} style={[ligne(styles.arabe), plat ? styles.arabePlat : null, { color: couleurs.emeraude }]}>
           {sourate.arabe}
         </Text>
       )}

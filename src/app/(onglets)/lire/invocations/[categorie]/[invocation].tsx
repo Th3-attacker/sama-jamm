@@ -54,7 +54,7 @@ export default function EcranLectureInvocation() {
 
 function Lecture({ inv, categorie, liste }: { inv: Invocation; categorie: CategorieId; liste: Invocation[] }) {
   const { t } = useTranslation();
-  const { couleurs, espace, typographie } = useTheme();
+  const { couleurs, espace, typographie, ligne } = useTheme();
   // Tout le moment est fini : l'écran « Terminé » remplace la lecture.
   const [termine, setTermine] = useState(false);
   // Lecture sans la barre d'onglets, comme la page du Coran.
@@ -118,10 +118,10 @@ function Lecture({ inv, categorie, liste }: { inv: Invocation; categorie: Catego
         retour
         gauche={
           <View style={styles.centre}>
-            <Text accessibilityRole="header" maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, styles.titreCentre, { color: couleurs.encre }]}>
+            <Text accessibilityRole="header" maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, ligne(styles.titreCentre), { color: couleurs.encre }]}>
               {nomCategorie}
             </Text>
-            <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.compteCentre, { color: couleurs.encre2 }]}>
+            <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, ligne(styles.compteCentre), { color: couleurs.encre2 }]}>
               {t('invocations.progression', { n: index + 1, total: liste.length })}
             </Text>
           </View>
