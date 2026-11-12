@@ -414,7 +414,8 @@
     "resumeRecitateur_two": "مرتل · 114 سورة · سورتان منزّلتان",
     "resumeRecitateur_few": "مرتل · 114 سورة · {{count}} سور منزّلة",
     "resumeRecitateur_many": "مرتل · 114 سورة · {{count}} سورة منزّلة",
-    "resumeRecitateur_other": "مرتل · 114 سورة · {{count}} سورة منزّلة"
+    "resumeRecitateur_other": "مرتل · 114 سورة · {{count}} سورة منزّلة",
+    "enLecture": "قيد التشغيل"
   },
   "xassaides": {
     "titre": "القصائد",

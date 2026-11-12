@@ -378,7 +378,8 @@
     "minuterieSommeil": "Minuterie de sommeil",
     "minuterieSommeilDuree": "Minuterie de sommeil · {{duree}}",
     "resumeRecitateur_one": "Murattal · 114 sourates · {{count}} téléchargée",
-    "resumeRecitateur_other": "Murattal · 114 sourates · {{count}} téléchargées"
+    "resumeRecitateur_other": "Murattal · 114 sourates · {{count}} téléchargées",
+    "enLecture": "En lecture"
   },
   "xassaides": {
     "titre": "Xassaïdes",

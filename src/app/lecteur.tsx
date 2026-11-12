@@ -3,7 +3,6 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import Svg, { Circle } from 'react-native-svg';
 
 import {
   arreter,
@@ -26,7 +25,7 @@ import {
 } from '@/features/ecouter/minuterie';
 import { recitateur } from '@/features/ecouter/recitateurs';
 import { sourateTelechargee, telechargerSourate, useTelechargements, WifiRequis } from '@/features/ecouter/telechargements';
-import { sourate, versetsDe } from '@/features/lire/coran';
+import { reperes, sourate, versetsDe } from '@/features/lire/coran';
 import { LecteurXassaide } from '@/features/xassaides/LecteurXassaide';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
@@ -36,7 +35,6 @@ import { Button } from '@/ui/Button';
 import { Chip } from '@/ui/Chip';
 import { Icon } from '@/ui/Icon';
 import { IconButton } from '@/ui/IconButton';
-import { Logo } from '@/ui/Logo';
 import { useToast } from '@/ui/Toast';
 import { SegmentedControl } from '@/ui/SegmentedControl';
 import { Slider } from '@/ui/Slider';
@@ -93,10 +91,8 @@ function LecteurCoran() {
   const avant = position ? arabes[position.verset - 2] : undefined;
   const apres = position ? arabes[position.verset] : undefined;
 
-  // Anneau : avancée dans la sourate, par versets (la durée du son n'est pas connue à l'avance).
-  const TAILLE_ANNEAU = height < 700 ? 150 : 220;
-  const RAYON = TAILLE_ANNEAU / 2 - 8;
-  const circonference = 2 * Math.PI * RAYON;
+  // Pochette : plus petite sur un écran bas.
+  const COTE_POCHETTE = height < 700 ? 170 : 260;
   const avance = position && s ? position.verset / s.versets : 0;
 
   const repetition: Repetition = repeterSourate ? 'sourate' : repetitionVerset === 1 ? 'non' : 'verset';
@@ -132,14 +128,16 @@ function LecteurCoran() {
             <Text
               numberOfLines={1}
               maxFontSizeMultiplier={echelleMax.courant}
-              style={[typographie.libelle, { color: couleurs.encre }]}>
-              {s?.nom ?? t('ecouter.titre')}
+              style={[typographie.legende, styles.surtitre, { color: couleurs.encre3 }]}>
+              {t('ecouter.enLecture')}
             </Text>
             <Text
               numberOfLines={1}
               maxFontSizeMultiplier={echelleMax.courant}
-              style={[typographie.legende, { color: couleurs.encre3 }]}>
-              {recitateur(idRecitateur)?.nom}
+              style={[typographie.libelle, { color: couleurs.encre }]}>
+              {s && page === null
+                ? `${t('lire.sourate')} ${s.n} · ${t('lire.juz', { n: reperes().juzDe(s.n, position?.verset ?? 1) })}`
+                : (s?.nom ?? t('ecouter.titre'))}
             </Text>
           </View>
           {position && page === null ? (
@@ -164,31 +162,27 @@ function LecteurCoran() {
           <>
             <ScrollView
               contentContainerStyle={[styles.centreScroll, { paddingHorizontal: espace.espace6, gap: espace.espace2 }]}>
-              <View style={{ width: TAILLE_ANNEAU, height: TAILLE_ANNEAU, alignItems: 'center', justifyContent: 'center' }}>
-                <Svg width={TAILLE_ANNEAU} height={TAILLE_ANNEAU} style={StyleSheet.absoluteFill}>
-                  <Circle
-                    cx={TAILLE_ANNEAU / 2}
-                    cy={TAILLE_ANNEAU / 2}
-                    r={RAYON}
-                    fill="none"
-                    stroke={couleurs.surface}
-                    strokeWidth={6}
-                  />
-                  <Circle
-                    cx={TAILLE_ANNEAU / 2}
-                    cy={TAILLE_ANNEAU / 2}
-                    r={RAYON}
-                    fill="none"
-                    stroke={couleurs.or}
-                    strokeWidth={6}
-                    strokeLinecap="round"
-                    strokeDasharray={circonference}
-                    strokeDashoffset={circonference * (1 - avance)}
-                    rotation={-90}
-                    origin={`${TAILLE_ANNEAU / 2}, ${TAILLE_ANNEAU / 2}`}
-                  />
-                </Svg>
-                <Logo taille={TAILLE_ANNEAU - 30} />
+              {/* Planche « Lecteur audio » : pochette en vert plein avec le nom arabe, puis titre et récitateur. */}
+              <View
+                accessible={false}
+                style={[
+                  styles.pochette,
+                  { width: COTE_POCHETTE, height: COTE_POCHETTE, backgroundColor: couleurs.emeraudeAplat, borderRadius: rayon.rayonFeuille },
+                ]}>
+                <Text
+                  accessibilityLanguage="ar"
+                  allowFontScaling={false}
+                  style={[styles.nomPochette, { color: couleurs.orSurEmeraude }]}>
+                  {s.arabe}
+                </Text>
+              </View>
+              <View style={[styles.titreLigne, { gap: espace.espace2, marginTop: espace.espace3 }]}>
+                <Text maxFontSizeMultiplier={echelleMax.grand} style={[typographie.titre1, { color: couleurs.encre }]}>
+                  {s.nom}
+                </Text>
+                <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, { color: couleurs.encre2 }]}>
+                  {recitateur(idRecitateur)?.nom}
+                </Text>
               </View>
 
               {erreur ? (
@@ -396,6 +390,10 @@ function LecteurCoran() {
 const styles = StyleSheet.create({
   ecran: { flex: 1 },
   entete: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  surtitre: { letterSpacing: 0.7, textTransform: 'uppercase' },
+  pochette: { alignItems: 'center', justifyContent: 'center' },
+  nomPochette: { fontFamily: 'Amiri_700Bold', fontSize: 58, lineHeight: 80 },
+  titreLigne: { alignItems: 'center' },
   titres: { flex: 1, alignItems: 'center' },
   centreScroll: { alignItems: 'center', flexGrow: 1, justifyContent: 'center' },
   centre: { textAlign: 'center' },
