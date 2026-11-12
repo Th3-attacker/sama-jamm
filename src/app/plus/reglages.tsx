@@ -17,6 +17,7 @@ import { estLangueProposee, languesProposees, type Langue } from "@/i18n/langues
 import { useReglages } from "@/stores/reglages";
 import { echelleMax } from "@/theme/typographie";
 import { themes } from "@/theme/tokens.generated";
+import { useLayout } from "@/theme/useLayout";
 import { useTheme } from "@/theme/useTheme";
 import type { ChoixTheme } from "@/theme/choixTheme";
 import { Banner } from "@/ui/Banner";
@@ -39,6 +40,7 @@ const THEMES: readonly ChoixTheme[] = ["auto", "jour", "nuit"];
 export default function Reglages() {
   const { t, i18n } = useTranslation();
   const { couleurs, espace, rayon, typographie } = useTheme();
+  const { styleColonne: colonne } = useLayout();
   const [feuilleLecture, setFeuilleLecture] = useState(false);
   const theme = useReglages((s) => s.theme);
   const translitLecture = useReglages((s) => s.translitLecture);
@@ -117,7 +119,7 @@ export default function Reglages() {
       <TopBar retour titre={t("reglages.titre")} />
       <ScrollView
         contentContainerStyle={{
-          paddingHorizontal: espace.espace5,
+          ...colonne,
           paddingBottom: espace.espace8,
           gap: espace.espace6,
         }}

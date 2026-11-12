@@ -54,7 +54,7 @@ export default function Invitation() {
       <ScrollView
         contentContainerStyle={{
           flexGrow: 1,
-          paddingHorizontal: espace.espace5,
+          paddingHorizontal: espace.espace6,
           paddingBottom: espace.espace5,
           gap: espace.espace4,
         }}>

@@ -23,7 +23,7 @@ export default function DettesSoldees() {
       {etat.etat !== 'pret' ? (
         <EtatsBudget etat={etat} />
       ) : (
-        <ScrollView contentContainerStyle={{ paddingHorizontal: espace.espace5, paddingBottom: espace.espace8 + marge }}>
+        <ScrollView contentContainerStyle={{ paddingHorizontal: espace.espace6, paddingBottom: espace.espace8 + marge }}>
           {etat.donnees.length > 0 ? (
             <ListGroup>
               {etat.donnees.map((d) => (

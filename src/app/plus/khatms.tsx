@@ -7,6 +7,7 @@ import { useSession } from '@/features/compte/compte';
 import { mesKhatms, type Khatm } from '@/features/khatm/depot';
 import { lireCode, saisieCodeKhatm } from '@/features/khatm/logique';
 import { echelleMax } from '@/theme/typographie';
+import { useLayout } from '@/theme/useLayout';
 import { useTheme } from '@/theme/useTheme';
 import { Banner } from '@/ui/Banner';
 import { Button } from '@/ui/Button';
@@ -21,6 +22,7 @@ import { TopBar } from '@/ui/TopBar';
 export default function MesKhatms() {
   const { t } = useTranslation();
   const { couleurs, espace, typographie } = useTheme();
+  const { styleColonne: colonne } = useLayout();
   const marge = useMargeBasse();
   const connecte = useSession((s) => s.session !== null);
   const [liste, setListe] = useState<Khatm[] | null>(null);
@@ -50,9 +52,9 @@ export default function MesKhatms() {
       <ScrollView
         keyboardShouldPersistTaps="handled"
         contentContainerStyle={{
-          paddingHorizontal: espace.espace5,
+          ...colonne,
           paddingBottom: espace.espace8 + marge,
-          gap: espace.espace5,
+          gap: espace.espace6,
         }}>
         <View>
           <Text

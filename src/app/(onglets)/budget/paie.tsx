@@ -117,7 +117,7 @@ export default function JourDePaie() {
         <ScrollView
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={{
-            paddingHorizontal: espace.espace5,
+            paddingHorizontal: espace.espace6,
             paddingBottom: espace.espace5,
             gap: espace.espace4,
           }}>

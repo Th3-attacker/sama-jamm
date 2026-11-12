@@ -136,7 +136,7 @@ export default function EcranRecitateur() {
             </View>
           }
           keyExtractor={(s) => String(s.n)}
-          contentContainerStyle={{ paddingHorizontal: espace.espace5, paddingBottom: espace.espace8 + marge }}
+          contentContainerStyle={{ paddingHorizontal: espace.espace6, paddingBottom: espace.espace8 + marge }}
           initialNumToRender={12}
           extraData={[enCours, version]}
           renderItem={({ item, index }) => {

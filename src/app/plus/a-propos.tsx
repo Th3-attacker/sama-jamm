@@ -46,7 +46,7 @@ export default function APropos() {
       <TopBar retour titre={t('aPropos.titre')} />
       <ScrollView
         contentContainerStyle={{
-          paddingHorizontal: espace.espace5,
+          paddingHorizontal: espace.espace6,
           paddingBottom: espace.espace8,
           gap: espace.espace6,
         }}>

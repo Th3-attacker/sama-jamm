@@ -7,6 +7,7 @@ import { EMAIL_CONTACT } from '@/constants/liens';
 import { journalDesErreurs } from '@/features/erreur/journal';
 import { journalEnTexte } from '@/lib/journalErreurs';
 import { echelleMax } from '@/theme/typographie';
+import { useLayout } from '@/theme/useLayout';
 import { useTheme } from '@/theme/useTheme';
 import { Button } from '@/ui/Button';
 import { Chip } from '@/ui/Chip';
@@ -24,6 +25,7 @@ const JOURNAL_MAX_MAIL = 1500;
 export default function Aide() {
   const { t } = useTranslation();
   const { couleurs, espace, rayon, typographie, latin } = useTheme();
+  const { styleColonne: colonne } = useLayout();
   const [focus, setFocus] = useState(false);
   const { afficher } = useToast();
   const [type, setType] = useState<TypeProbleme | null>(null);
@@ -61,7 +63,7 @@ export default function Aide() {
       <TopBar retour titre={t('aide.titre')} />
       <ScrollView
         keyboardShouldPersistTaps="handled"
-        contentContainerStyle={{ paddingHorizontal: espace.espace5, paddingBottom: espace.espace8, gap: espace.espace5 }}>
+        contentContainerStyle={{ ...colonne, paddingBottom: espace.espace8, gap: espace.espace6 }}>
         <Text maxFontSizeMultiplier={echelleMax.courant} style={[latin.titre2, { color: couleurs.emeraude }]} accessibilityRole="header">
           {t('aide.titre')}
         </Text>

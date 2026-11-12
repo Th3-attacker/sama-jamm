@@ -121,7 +121,7 @@ export default function Comptes() {
       <ScrollView
         contentContainerStyle={{
           paddingTop: insets.top + espace.espace2,
-          paddingHorizontal: espace.espace5,
+          paddingHorizontal: espace.espace6,
           paddingBottom: espace.espace8 + marge,
           gap: espace.espace4,
         }}>

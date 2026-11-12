@@ -114,7 +114,7 @@ export default function EcranObjectif() {
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={{
             flexGrow: 1,
-            paddingHorizontal: espace.espace5,
+            paddingHorizontal: espace.espace6,
             paddingBottom: espace.espace4 + marge,
             gap: espace.espace4,
           }}>

@@ -169,7 +169,7 @@ export default function Recherche() {
               />
             )
           }
-          contentContainerStyle={{ paddingHorizontal: espace.espace5, paddingBottom: espace.espace8 }}
+          contentContainerStyle={{ paddingHorizontal: espace.espace6, paddingBottom: espace.espace8 }}
         />
       )}
     </View>

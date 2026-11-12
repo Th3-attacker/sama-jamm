@@ -69,7 +69,7 @@ export default function Plus() {
       />
       <ScrollView
         ref={defilement}
-        contentContainerStyle={{ ...colonne, paddingBottom: espace.espace8 + marge, gap: espace.espace4 }}>
+        contentContainerStyle={{ ...colonne, paddingBottom: espace.espace8 + marge, gap: espace.espace6 }}>
         <View style={[styles.grille, { gap: espace.espace3 }]}>
           {TUILES.map((tuile) => {
             const khatm = tuile.id === 'khatm';

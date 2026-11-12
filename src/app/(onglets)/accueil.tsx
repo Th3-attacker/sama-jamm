@@ -96,7 +96,8 @@ export default function Accueil() {
         contentContainerStyle={{
           ...colonne,
           paddingBottom: espace.espace8 + marge,
-          gap: espace.espace3,
+          // Charte : 24 entre deux blocs (la grille de cartes garde ses 12).
+          gap: espace.espace6,
         }}>
         {arc ? (
           <CarteHeros nom={arc.nom} heure={arc.heure} dans={arc.dans} prieres={arc.liste} maintenant={arc.maintenantMin} />

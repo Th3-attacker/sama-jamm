@@ -491,7 +491,7 @@ function LectureSourate({
           }}
           extraData={[translits, versetEcoute, chiffresArabes]}
           contentContainerStyle={{
-            paddingHorizontal: espace.espace5,
+            paddingHorizontal: espace.espace6,
             paddingBottom: espace.espace8,
             // Planche : 4 entre deux versets.
             gap: espace.espace1,

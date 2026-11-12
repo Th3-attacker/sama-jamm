@@ -105,7 +105,7 @@ export default function PremierBudget() {
           contentContainerStyle={{
             flexGrow: 1,
             paddingTop: insets.top + espace.espace4,
-            paddingHorizontal: espace.espace5,
+            paddingHorizontal: espace.espace6,
             paddingBottom: marge + espace.espace4,
             gap: espace.espace4,
           }}>

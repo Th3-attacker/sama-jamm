@@ -44,7 +44,7 @@ export default function SupprimerCompte() {
       <ScrollView
         contentContainerStyle={{
           flexGrow: 1,
-          paddingHorizontal: espace.espace5,
+          paddingHorizontal: espace.espace6,
           paddingBottom: espace.espace8,
           gap: espace.espace5,
         }}>

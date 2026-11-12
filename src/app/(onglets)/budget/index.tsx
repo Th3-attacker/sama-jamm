@@ -128,7 +128,7 @@ export default function Budget() {
         contentContainerStyle={{
           ...colonne,
           paddingBottom: espace.espace8 + marge + 52 + espace.espace4,
-          gap: espace.espace4,
+          gap: espace.espace6,
         }}>
         <View style={[styles.entete, { gap: espace.espace3 }]}>
           <View style={styles.enteteTexte}>
@@ -255,7 +255,8 @@ export default function Budget() {
           <Icon name="chevron-right" size={18} color={couleurs.encre3} />
         </Pressable>
 
-        <View>
+        {/* Charte : 32 avant un titre de section = 24 du bloc + 8. */}
+        <View style={{ marginTop: espace.espace2 }}>
           <View style={styles.titreEnveloppes}>
             <Text accessibilityRole="header" {...surTexte} style={[typographie.titre3, { color: couleurs.encre }]}>
               {t('budget.enveloppes')}

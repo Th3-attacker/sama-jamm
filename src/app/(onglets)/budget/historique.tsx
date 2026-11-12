@@ -158,7 +158,7 @@ export default function Historique() {
           </ListGroup>
         )}
         contentContainerStyle={{
-          paddingHorizontal: espace.espace5,
+          paddingHorizontal: espace.espace6,
           paddingTop: insets.top + espace.espace2,
           paddingBottom: espace.espace8 + marge,
         }}

@@ -73,7 +73,7 @@ export default function Qibla() {
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
       {/* Titre centré pendant la recherche ; à gauche quand la qibla est trouvée ou sans boussole. */}
       <TopBar retour centre={!sansBoussole && !trouvee} titre={t('qibla.titre')} />
-      <ScrollView contentContainerStyle={{ paddingHorizontal: espace.espace5, paddingBottom: espace.espace8 + marge, gap: sansBoussole ? espace.espace4 : espace.espace5 }}>
+      <ScrollView contentContainerStyle={{ paddingHorizontal: espace.espace6, paddingBottom: espace.espace8 + marge, gap: sansBoussole ? espace.espace4 : espace.espace5 }}>
         {!lieu || qibla === null ? (
           <>
             <Banner ton="erreur" titre={t('priere.positionRefusee')}>

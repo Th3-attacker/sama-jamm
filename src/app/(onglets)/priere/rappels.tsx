@@ -68,7 +68,7 @@ export default function AppelEtRappels() {
           </Text>
         }
       />
-      <ScrollView contentContainerStyle={{ paddingHorizontal: espace.espace5, paddingBottom: espace.espace8 + marge, gap: espace.espace4 }}>
+      <ScrollView contentContainerStyle={{ paddingHorizontal: espace.espace6, paddingBottom: espace.espace8 + marge, gap: espace.espace4 }}>
         <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.translitteration, ligne(styles.phrase), { color: couleurs.encre2 }]}>
           {t('priere.rappelsSousTitre')}
         </Text>

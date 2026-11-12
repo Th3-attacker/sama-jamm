@@ -114,7 +114,7 @@ export default function Zakat() {
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
       <ScrollView
         contentContainerStyle={{
-          paddingHorizontal: espace.espace5,
+          paddingHorizontal: espace.espace6,
           paddingBottom: espace.espace8 + marge,
           gap: espace.espace4,
         }}>

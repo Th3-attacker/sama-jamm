@@ -70,7 +70,7 @@ export default function Compte() {
       <ScrollView
         keyboardShouldPersistTaps="handled"
         contentContainerStyle={{
-          paddingHorizontal: espace.espace5,
+          paddingHorizontal: espace.espace6,
           paddingBottom: espace.espace8,
           gap: espace.espace5,
         }}>

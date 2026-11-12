@@ -66,7 +66,7 @@ export default function NouveauKhatm() {
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={{
             flexGrow: 1,
-            paddingHorizontal: espace.espace5,
+            paddingHorizontal: espace.espace6,
             paddingBottom: espace.espace4,
             gap: espace.espace4,
           }}>

@@ -73,7 +73,7 @@ export default function Priere() {
         }
         actions={[{ icone: 'bell', label: t('priere.rappelsTitre'), onPress: () => router.push('/priere/rappels') }]}
       />
-      <ScrollView ref={defilement} contentContainerStyle={{ ...colonne, paddingBottom: espace.espace8 + marge, gap: espace.espace4 }}>
+      <ScrollView ref={defilement} contentContainerStyle={{ ...colonne, paddingBottom: espace.espace8 + marge, gap: espace.espace6 }}>
 
         {!lieu || !donnees ? (
           <>

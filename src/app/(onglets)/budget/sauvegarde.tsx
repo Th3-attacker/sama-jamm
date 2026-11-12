@@ -174,7 +174,7 @@ export default function EcranSauvegarde() {
       <TopBar retour titre={t('sauvegarde.titre')} />
       <ScrollView
         contentContainerStyle={{
-          paddingHorizontal: espace.espace5,
+          paddingHorizontal: espace.espace6,
           paddingBottom: espace.espace8 + marge,
           gap: espace.espace5,
         }}>

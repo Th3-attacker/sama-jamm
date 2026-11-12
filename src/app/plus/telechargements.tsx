@@ -57,7 +57,7 @@ export default function Telechargements() {
       <TopBar retour titre={t('telechargements.titre')} sousTitre={t('telechargements.sousTitre')} />
       <ScrollView
         contentContainerStyle={{
-          paddingHorizontal: espace.espace5,
+          paddingHorizontal: espace.espace6,
           paddingBottom: espace.espace8,
           gap: espace.espace5,
         }}>

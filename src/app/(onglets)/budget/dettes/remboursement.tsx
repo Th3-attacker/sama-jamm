@@ -84,7 +84,7 @@ export default function Remboursement() {
         keyboardShouldPersistTaps="handled"
         contentContainerStyle={{
           flexGrow: 1,
-          paddingHorizontal: espace.espace5,
+          paddingHorizontal: espace.espace6,
           paddingBottom: marge + espace.espace5,
           gap: espace.espace4,
         }}>
