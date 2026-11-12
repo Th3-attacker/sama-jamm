@@ -22,6 +22,10 @@ Tenu par l'agent de code (voir `AGENTS.md`, section 1). Un écart par ligne : da
 | 2026-11-12 | `src/data/ummah/` | Choix demandé : reconstruire Lire sur ces données. Mais `sourates.json` n'a ni translittération ni autre chose que l'arabe et une traduction française (interdite), la licence est « non déclarée » (manifeste) | Non branchées : le Coran reste sur `data/coran/ar.json` + `translit.json`. À rediscuter avant d'utiliser `duas.json` ou `pages.json` |
 | 2026-11-12 | `src/features/lire/PartageVerset.tsx` | Écran Partage = feuille (`BottomSheet`), pas la route modale `partage` de l'inventaire | Conservé tel quel ; sans traduction ; option « Translittération » désactivée par défaut |
 | 2026-11-12 | `src/stores/lecture.ts` | `ModeLecture` accepte `'sourate'` (ajout de `fa434c8`) sans écran qui l'utilise | Laissé ; clé i18n `lire.modeSourateCourt` conservée |
+| 2026-11-12 | Parcours Bienvenue | Audit : ordre « à modifier » | Vérifié : langue → position → rappels est déjà l'ordre de la maquette ; `Bienvenue2` et `Bienvenue3` jouent le rôle des écrans d'explication avant la demande système ; `AvantAutorisation` sert déjà pour Qibla et Zakat. Rien changé |
+| 2026-11-12 | Liens profonds | `samajamm://lire/coran/18?verset=46`, `lire/xassaides/{recueil}/{chant}`, `budget/ajouter` sans route | Relais ajoutés : `(onglets)/lire/coran/[sourate]`, `(onglets)/lire/xassaides/[recitant]/[chant]` (le paramètre porte l'identifiant du recueil), `(onglets)/budget/ajouter` |
+| 2026-11-12 | Raccourcis d'icône (appui long) | Demandés par `04-structure-et-navigation.md` | Non faits : demandent un paquet communautaire (`expo-quick-actions`) et un build natif. À décider |
+| 2026-11-12 | Liens universels | Domaine de l'app non réservé | Pas de `associatedDomains` ni d'`intentFilters` ; seul le schéma `samajamm://` fonctionne |
 
 ## Dépendances
 
