@@ -5,10 +5,7 @@ import { useTranslation } from "react-i18next";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import {
-  appliquerSensLecture,
-  sensChange,
-} from "@/features/bienvenue/sensDeLecture";
+import { appliquerSensEtRecharger, sensChange } from "@/features/bienvenue/sensDeLecture";
 import { estLangueProposee, type Langue } from "@/i18n/langues";
 import { useReglages } from "@/stores/reglages";
 import { echelleMax } from "@/theme/typographie";
@@ -42,9 +39,8 @@ export default function EcranLangue() {
 
   const choisir = (langue: Langue) => {
     definirLangue(langue);
-    // Le sens de lecture est enregistré pour la prochaine ouverture ; la langue, elle, change tout de suite.
-    appliquerSensLecture(langue);
-    setSensDiffere(sensChange(langue));
+    // La langue change tout de suite ; si le sens change, l'app se recharge pour l'appliquer.
+    void appliquerSensEtRecharger(langue).then((recharge) => setSensDiffere(!recharge && sensChange(langue)));
   };
 
   const continuer = () => {

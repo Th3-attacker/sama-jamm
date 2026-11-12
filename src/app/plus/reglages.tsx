@@ -3,10 +3,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
-import {
-  appliquerSensLecture,
-  sensChange,
-} from "@/features/bienvenue/sensDeLecture";
+import { appliquerSensEtRecharger, sensChange } from "@/features/bienvenue/sensDeLecture";
 import { authentifier, verrouPossible } from "@/features/budget/verrou";
 import { depotBudget } from "@/features/budget/useBudget";
 import { EtatAutorisations } from "@/features/autorisation/EtatAutorisations";
@@ -107,11 +104,10 @@ export default function Reglages() {
       setFeuilleLangue(false);
       return;
     }
-    // La langue change tout de suite ; le sens de lecture s'applique à la prochaine ouverture.
+    // La langue change tout de suite ; si le sens change, l'app se recharge pour l'appliquer.
     setFeuilleLangue(false);
     appliquerLangue(id);
-    appliquerSensLecture(id);
-    setSensDiffere(sensChange(id));
+    void appliquerSensEtRecharger(id).then((recharge) => setSensDiffere(!recharge && sensChange(id)));
   };
 
   return (
