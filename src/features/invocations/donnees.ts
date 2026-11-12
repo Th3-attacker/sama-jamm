@@ -1,55 +1,62 @@
-// Invocations coraniques : des références vers le texte du Coran déjà embarqué (Tanzil pour l'arabe, traduction de
-// l'app), jamais un texte recopié ici. Les invocations tirées des hadiths s'ajouteront quand leur source et leur
-// licence seront validées. Fonctions pures : aucune dépendance à React Native.
+// Invocations (UmmahAPI) : 78 invocations en 16 catégories, arabe, translittération, sens en français et source.
+// Les textes coraniques (Al-Fatiha, Ayat al-Kursi, derniers versets d'al-Baqara…) n'ont pas de sens : le Coran
+// s'affiche en arabe seul. Fonctions pures, données lues au premier besoin (fichier d'environ 55 Ko).
 
-export const CATEGORIES = ['matin', 'soir', 'sommeil'] as const;
-export type CategorieId = (typeof CATEGORIES)[number];
+export const CATEGORIES_IDS = [
+  'morning',
+  'evening',
+  'wudu',
+  'prayer',
+  'after_prayer',
+  'sleep',
+  'travel',
+  'home',
+  'masjid',
+  'illness',
+  'protection',
+  'marriage',
+  'grief',
+  'business',
+  'night_prayer',
+  'quran_recitation',
+] as const;
+export type CategorieId = (typeof CATEGORIES_IDS)[number];
+
+export type Categorie = { id: CategorieId; nom: string };
 
 export type Invocation = {
   id: string;
   categorie: CategorieId;
-  /** Verset (ou suite de versets) du Coran : sourate, du verset `de` au verset `a` inclus. */
-  sourate: number;
-  de: number;
-  a: number;
+  /** Titre en français. */
+  titre: string;
+  arabe: string;
+  /** Translittération latine, affichée seulement si l'utilisateur l'active. */
+  translit: string;
+  /** Sens en français, ou null pour un texte du Coran (arabe seul). */
+  sens: string | null;
+  /** Recueil et numéro : « Sahih Muslim 2723 ». */
+  source: string;
   /** Nombre de lectures recommandé ; 1 sans compteur. */
   repetitions: number;
 };
 
-const ayatAlKursi = { sourate: 2, de: 255, a: 255 } as const;
-const troisSourates = [112, 113, 114] as const;
+type Donnees = { categories: Categorie[]; duas: Invocation[] };
 
-const matinSoir = (categorie: 'matin' | 'soir'): Invocation[] => [
-  { id: `${categorie}-kursi`, categorie, ...ayatAlKursi, repetitions: 1 },
-  ...troisSourates.map((s) => ({
-    id: `${categorie}-${s}`,
-    categorie,
-    sourate: s,
-    de: 1,
-    a: s === 112 ? 4 : s === 113 ? 5 : 6,
-    repetitions: 3,
-  })),
-];
+let enMemoire: Donnees | undefined;
 
-export const INVOCATIONS: readonly Invocation[] = [
-  ...matinSoir('matin'),
-  ...matinSoir('soir'),
-  { id: 'sommeil-kursi', categorie: 'sommeil', ...ayatAlKursi, repetitions: 1 },
-  { id: 'sommeil-baqara', categorie: 'sommeil', sourate: 2, de: 285, a: 286, repetitions: 1 },
-  ...troisSourates.map((s) => ({
-    id: `sommeil-${s}`,
-    categorie: 'sommeil' as const,
-    sourate: s,
-    de: 1,
-    a: s === 112 ? 4 : s === 113 ? 5 : 6,
-    repetitions: 3,
-  })),
-];
-
-export function estCategorie(valeur: string): valeur is CategorieId {
-  return CATEGORIES.some((c) => c === valeur);
+function donnees(): Donnees {
+  enMemoire ??= require('@/data/invocations/duas.json') as Donnees;
+  return enMemoire;
 }
 
-export function invocationsDe(categorie: CategorieId): Invocation[] {
-  return INVOCATIONS.filter((i) => i.categorie === categorie);
+export const categories = (): readonly Categorie[] => donnees().categories;
+export const invocations = (): readonly Invocation[] => donnees().duas;
+
+export const estCategorie = (valeur: string): valeur is CategorieId => CATEGORIES_IDS.some((c) => c === valeur);
+
+export const invocationsDe = (categorie: CategorieId): Invocation[] => invocations().filter((i) => i.categorie === categorie);
+
+/** Les premiers mots d'une phrase, pour le titre court du compteur. */
+export function debutDe(texte: string, mots = 3): string {
+  return texte.replace(/[()[\]﴿﴾]/g, ' ').split(/\s+/).filter(Boolean).slice(0, mots).join(' ');
 }

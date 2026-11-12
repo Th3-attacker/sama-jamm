@@ -2,28 +2,46 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 
-import { CATEGORIES, estCategorie, INVOCATIONS, invocationsDe } from './donnees.ts';
+import { CATEGORIES_IDS, debutDe, estCategorie, type Categorie, type Invocation } from './donnees.ts';
 
-const sourates: { n: number; versets: number }[] = JSON.parse(
-  readFileSync(new URL('../../data/sourates.json', import.meta.url), 'utf8'),
+const { categories, duas }: { categories: Categorie[]; duas: Invocation[] } = JSON.parse(
+  readFileSync(new URL('../../data/invocations/duas.json', import.meta.url), 'utf8'),
 );
 
-test('chaque invocation désigne des versets qui existent', () => {
-  for (const i of INVOCATIONS) {
-    const s = sourates.find((x) => x.n === i.sourate);
-    assert.ok(s, `sourate ${i.sourate} inconnue (${i.id})`);
-    assert.ok(i.de >= 1 && i.de <= i.a && i.a <= s.versets, `versets invalides (${i.id})`);
-    assert.ok(Number.isInteger(i.repetitions) && i.repetitions >= 1, `répétitions invalides (${i.id})`);
+// Textes qui sont des versets du Coran : arabe seul, sans traduction (AGENTS.md, contenu sacré).
+const CORANIQUES = ['d13', 'd19', 'd47', 'd59', 'd61', 'd92', 'd102', 'd124', 'd125'];
+
+test('16 catégories, 78 invocations, identifiants uniques', () => {
+  assert.equal(categories.length, 16);
+  assert.equal(duas.length, 78);
+  assert.equal(new Set(duas.map((d) => d.id)).size, duas.length);
+  assert.equal(new Set(categories.map((c) => c.id)).size, categories.length);
+});
+
+test('chaque invocation a une catégorie connue, un titre, de l’arabe, une source et des répétitions valides', () => {
+  const ids = new Set(categories.map((c) => c.id));
+  for (const d of duas) {
+    assert.ok(ids.has(d.categorie), `catégorie inconnue : ${d.id}`);
+    assert.ok(d.titre.trim() !== '' && d.arabe.trim() !== '' && d.source.trim() !== '', `champ vide : ${d.id}`);
+    assert.ok(/[؀-ۿ]/.test(d.arabe), `pas d’arabe : ${d.id}`);
+    assert.ok(Number.isInteger(d.repetitions) && d.repetitions >= 1, `répétitions invalides : ${d.id}`);
+  }
+  for (const c of categories) assert.ok(duas.some((d) => d.categorie === c.id), `catégorie vide : ${c.id}`);
+});
+
+test('le Coran n’a pas de traduction : sens absent pour les textes coraniques, présent pour les autres', () => {
+  for (const d of duas) {
+    if (CORANIQUES.includes(d.id)) assert.equal(d.sens, null, `traduction du Coran : ${d.id}`);
+    else assert.ok(d.sens && d.sens.trim() !== '', `sens manquant : ${d.id}`);
   }
 });
 
-test('identifiants uniques et catégories connues', () => {
-  assert.equal(new Set(INVOCATIONS.map((i) => i.id)).size, INVOCATIONS.length);
-  for (const i of INVOCATIONS) assert.ok(estCategorie(i.categorie));
-  for (const c of CATEGORIES) assert.ok(invocationsDe(c).length > 0, `catégorie vide : ${c}`);
+test('debutDe garde les premiers mots sans parenthèses', () => {
+  assert.equal(debutDe('(بِسْمِ اللَّهِ) الرَّحْمَٰنِ الرَّحِيمِ ثم', 3), 'بِسْمِ اللَّهِ الرَّحْمَٰنِ');
 });
 
-test('estCategorie refuse une valeur inconnue', () => {
-  assert.equal(estCategorie('voyage'), false);
-  assert.equal(estCategorie('matin'), true);
+test('la liste des catégories du code suit celle des données, dans le même ordre', () => {
+  assert.deepEqual([...CATEGORIES_IDS], categories.map((c) => c.id));
+  assert.equal(estCategorie('morning'), true);
+  assert.equal(estCategorie('hisn'), false);
 });

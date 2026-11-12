@@ -1,0 +1,851 @@
+{
+ "source": "UmmahAPI /api/duas/category/{id} ; titres et sens en français établis pour Sama Jàmm (à faire valider)",
+ "categories": [
+  {
+   "id": "morning",
+   "nom": "Adhkar du matin"
+  },
+  {
+   "id": "evening",
+   "nom": "Adhkar du soir"
+  },
+  {
+   "id": "wudu",
+   "nom": "Ablutions et purification"
+  },
+  {
+   "id": "prayer",
+   "nom": "Pendant la prière"
+  },
+  {
+   "id": "after_prayer",
+   "nom": "Après la prière"
+  },
+  {
+   "id": "sleep",
+   "nom": "Sommeil et réveil"
+  },
+  {
+   "id": "travel",
+   "nom": "Voyage"
+  },
+  {
+   "id": "home",
+   "nom": "Maison"
+  },
+  {
+   "id": "masjid",
+   "nom": "Mosquée"
+  },
+  {
+   "id": "illness",
+   "nom": "Maladie et guérison"
+  },
+  {
+   "id": "protection",
+   "nom": "Protection"
+  },
+  {
+   "id": "marriage",
+   "nom": "Mariage et famille"
+  },
+  {
+   "id": "grief",
+   "nom": "Deuil et perte"
+  },
+  {
+   "id": "business",
+   "nom": "Commerce et subsistance"
+  },
+  {
+   "id": "night_prayer",
+   "nom": "Prière de la nuit"
+  },
+  {
+   "id": "quran_recitation",
+   "nom": "Récitation du Coran"
+  }
+ ],
+ "duas": [
+  {
+   "id": "d1",
+   "categorie": "morning",
+   "titre": "Le matin",
+   "arabe": "أَصْبَحْنَا وَأَصْبَحَ الْمُلْكُ لِلَّهِ وَالْحَمْدُ لِلَّهِ لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ رَبِّ أَسْأَلُكَ خَيْرَ مَا فِي هَذَا الْيَوْمِ وَخَيْرَ مَا بَعْدَهُ وَأَعُوذُ بِكَ مِنْ شَرِّ مَا فِي هَذَا الْيَوْمِ وَشَرِّ مَا بَعْدَهُ رَبِّ أَعُوذُ بِكَ مِنَ الْكَسَلِ وَسُوءِ الْكِبَرِ رَبِّ أَعُوذُ بِكَ مِنْ عَذَابٍ فِي النَّارِ وَعَذَابٍ فِي الْقَبْرِ",
+   "translit": "Asbahna wa asbahal-mulku lillah, walhamdu lillah, la ilaha illallahu wahdahu la shareeka lah, lahul-mulku wa lahul-hamdu wa huwa 'ala kulli shay'in qadeer. Rabbi as'aluka khayra ma fi hadhal-yawmi wa khayra ma ba'dahu, wa a'udhu bika min sharri ma fi hadhal-yawmi wa sharri ma ba'dahu. Rabbi a'udhu bika minal-kasali wa su'il-kibar. Rabbi a'udhu bika min 'adhabin fin-nari wa 'adhabin fil-qabr",
+   "sens": "Nous voici au matin, et la royauté appartient à Allah. Louange à Allah. Il n’y a de divinité digne d’adoration qu’Allah, seul, sans associé. À Lui la royauté et la louange, et Il est capable de toute chose. Seigneur, je Te demande le bien de ce jour et le bien de ce qui le suit, et je cherche refuge auprès de Toi contre le mal de ce jour et le mal de ce qui le suit. Seigneur, je cherche refuge auprès de Toi contre la paresse et la misère de la vieillesse. Seigneur, je cherche refuge auprès de Toi contre le châtiment du Feu et le châtiment de la tombe.",
+   "source": "Sahih Muslim 4:2088",
+   "repetitions": 1
+  },
+  {
+   "id": "d2",
+   "categorie": "morning",
+   "titre": "Le maître de la demande de pardon (Sayyid al-istighfâr)",
+   "arabe": "اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَهَ إِلَّا أَنْتَ خَلَقْتَنِي وَأَنَا عَبْدُكَ وَأَنَا عَلَى عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ أَعُوذُ بِكَ مِنْ شَرِّ مَا صَنَعْتُ أَبُوءُ لَكَ بِنِعْمَتِكَ عَلَيَّ وَأَبُوءُ بِذَنْبِي فَاغْفِرْ لِي فَإِنَّهُ لَا يَغْفِرُ الذُّنُوبَ إِلَّا أَنْتَ",
+   "translit": "Allahumma anta rabbi la ilaha illa anta, khalaqtani wa ana 'abduka, wa ana 'ala 'ahdika wa wa'dika mastata'tu, a'udhu bika min sharri ma sana'tu, abu'u laka bini'matika 'alayya, wa abu'u bidhanbi, faghfir li, fa innahu la yaghfirudh-dhunuba illa anta",
+   "sens": "Ô Allah, Tu es mon Seigneur, il n’y a de divinité digne d’adoration que Toi. Tu m’as créé et je suis Ton serviteur, et je reste fidèle à Ton engagement et à Ta promesse autant que je le peux. Je cherche refuge auprès de Toi contre le mal de ce que j’ai commis. Je reconnais Ton bienfait envers moi et je reconnais mon péché : pardonne-moi, car nul ne pardonne les péchés en dehors de Toi.",
+   "source": "Sahih Al-Bukhari 7:150",
+   "repetitions": 1
+  },
+  {
+   "id": "d3",
+   "categorie": "morning",
+   "titre": "Protection du matin",
+   "arabe": "بِسْمِ اللَّهِ الَّذِي لَا يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الْأَرْضِ وَلَا فِي السَّمَاءِ وَهُوَ السَّمِيعُ الْعَلِيمُ",
+   "translit": "Bismillahilladhi la yadurru ma'asmihi shay'un fil-ardi wa la fis-sama'i wa huwas-sami'ul-'aleem",
+   "sens": "Au nom d’Allah, avec le nom duquel rien ne peut nuire, ni sur terre ni dans le ciel, et Il est Celui qui entend tout, Celui qui sait tout.",
+   "source": "Abu Dawud 4:323, At-Tirmidhi 5:465",
+   "repetitions": 3
+  },
+  {
+   "id": "d46",
+   "categorie": "morning",
+   "titre": "Tasbih du matin",
+   "arabe": "سُبْحَانَ اللَّهِ وَبِحَمْدِهِ",
+   "translit": "SubhanAllahi wa bihamdih",
+   "sens": "Gloire à Allah et louange à Lui. (Celui qui le dit cent fois le matin et le soir, nul ne viendra le Jour de la Résurrection avec une meilleure action.)",
+   "source": "Sahih Al-Bukhari 8:412, Sahih Muslim 4:2071",
+   "repetitions": 100
+  },
+  {
+   "id": "d47",
+   "categorie": "morning",
+   "titre": "Les trois sourates de protection, le matin",
+   "arabe": " قُلْ هُوَ ٱللَّهُ أَحَدٌ ٱللَّهُ ٱلصَّمَدُ لَمْ يَلِدْ وَلَمْ يُولَدْ وَلَمْ يَكُن لَّهُۥ كُفُوًا أَحَدٌۢ  قُلْ أَعُوذُ بِرَبِّ ٱلْفَلَقِ مِن شَرِّ مَا خَلَقَ وَمِن شَرِّ غَاسِقٍ إِذَا وَقَبَ وَمِن شَرِّ ٱلنَّفَّـٰثَـٰتِ فِى ٱلْعُقَدِ وَمِن شَرِّ حَاسِدٍ إِذَا حَسَدَ  قُلْ أَعُوذُ بِرَبِّ ٱلنَّاسِ مَلِكِ ٱلنَّاسِ إِلَـٰهِ ٱلنَّاسِ مِن شَرِّ ٱلْوَسْوَاسِ ٱلْخَنَّاسِ ٱلَّذِى يُوَسْوِسُ فِى صُدُورِ ٱلنَّاسِ مِنَ ٱلْجِنَّةِ وَٱلنَّاسِ",
+   "translit": "(Al-Ikhlas) Qul Huwallahu Ahad. Allahus-Samad. Lam yalid wa lam yulad. Wa lam yakul-lahu kufuwan ahad. (Al-Falaq) Qul a'udhu bi Rabbil-falaq. Min sharri ma khalaq. Wa min sharri ghasiqin idha waqab. Wa min sharrin-naffathati fil-'uqad. Wa min sharri hasidin idha hasad. (An-Nas) Qul a'udhu bi Rabbin-nas. Malikin-nas. Ilahin-nas. Min sharril-waswasil-khannas. Alladhi yuwaswisu fi sudurin-nas. Minal-jinnati wan-nas.",
+   "sens": null,
+   "source": "Abu Dawud 4:322, At-Tirmidhi 5:567",
+   "repetitions": 3
+  },
+  {
+   "id": "d48",
+   "categorie": "morning",
+   "titre": "Pour bien commencer la journée",
+   "arabe": "اللَّهُمَّ بِكَ أَصْبَحْنَا وَبِكَ أَمْسَيْنَا وَبِكَ نَحْيَا وَبِكَ نَمُوتُ وَإِلَيْكَ النُّشُورُ",
+   "translit": "Allahumma bika asbahna wa bika amsayna wa bika nahya wa bika namutu wa ilaykan-nushur",
+   "sens": "Ô Allah, c’est par Toi que nous entrons dans le matin et par Toi que nous entrons dans le soir, par Toi nous vivons et par Toi nous mourons, et c’est vers Toi la résurrection.",
+   "source": "Abu Dawud 4:317, At-Tirmidhi 5:466",
+   "repetitions": 1
+  },
+  {
+   "id": "d49",
+   "categorie": "morning",
+   "titre": "Gloire à Allah le Magnifique",
+   "arabe": "سُبْحَانَ اللَّهِ الْعَظِيمِ وَبِحَمْدِهِ",
+   "translit": "SubhanAllahil-'Adheem wa bihamdih",
+   "sens": "Gloire à Allah le Magnifique, et louange à Lui. (Un palmier est planté au Paradis pour celui qui le dit.)",
+   "source": "At-Tirmidhi, Al-Hakim",
+   "repetitions": 1
+  },
+  {
+   "id": "d4",
+   "categorie": "evening",
+   "titre": "Le soir",
+   "arabe": "أَمْسَيْنَا وَأَمْسَى الْمُلْكُ لِلَّهِ وَالْحَمْدُ لِلَّهِ لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ رَبِّ أَسْأَلُكَ خَيْرَ مَا فِي هَذِهِ اللَّيْلَةِ وَخَيْرَ مَا بَعْدَهَا وَأَعُوذُ بِكَ مِنْ شَرِّ مَا فِي هَذِهِ اللَّيْلَةِ وَشَرِّ مَا بَعْدَهَا رَبِّ أَعُوذُ بِكَ مِنَ الْكَسَلِ وَسُوءِ الْكِبَرِ رَبِّ أَعُوذُ بِكَ مِنْ عَذَابٍ فِي النَّارِ وَعَذَابٍ فِي الْقَبْرِ",
+   "translit": "Amsayna wa amsal-mulku lillah walhamdu lillah, la ilaha illallahu wahdahu la shareeka lah, lahul-mulku wa lahul-hamdu wa huwa 'ala kulli shay'in qadeer. Rabbi as'aluka khayra ma fi hadhihil-laylati wa khayra ma ba'daha, wa a'udhu bika min sharri ma fi hadhihil-laylati wa sharri ma ba'daha. Rabbi a'udhu bika minal-kasali wa su'il-kibar. Rabbi a'udhu bika min 'adhabin fin-nari wa 'adhabin fil-qabr",
+   "sens": "Nous voici au soir, et la royauté appartient à Allah. Louange à Allah. Il n’y a de divinité digne d’adoration qu’Allah, seul, sans associé. À Lui la royauté et la louange, et Il est capable de toute chose. Seigneur, je Te demande le bien de cette nuit et le bien de ce qui la suit, et je cherche refuge auprès de Toi contre le mal de cette nuit et le mal de ce qui la suit. Seigneur, je cherche refuge auprès de Toi contre la paresse et la misère de la vieillesse. Seigneur, je cherche refuge auprès de Toi contre le châtiment du Feu et le châtiment de la tombe.",
+   "source": "Sahih Muslim 4:2088",
+   "repetitions": 1
+  },
+  {
+   "id": "d5",
+   "categorie": "evening",
+   "titre": "Protection du soir",
+   "arabe": "أَعُوذُ بِكَلِمَاتِ اللَّهِ التَّامَّاتِ مِنْ شَرِّ مَا خَلَقَ",
+   "translit": "A'udhu bikalimatillahit-tammati min sharri ma khalaq",
+   "sens": "Je cherche refuge dans les paroles parfaites d’Allah contre le mal de ce qu’Il a créé.",
+   "source": "Sahih Muslim 4:2081",
+   "repetitions": 3
+  },
+  {
+   "id": "d50",
+   "categorie": "evening",
+   "titre": "Se souvenir d’Allah le soir",
+   "arabe": "اللَّهُمَّ بِكَ أَمْسَيْنَا وَبِكَ أَصْبَحْنَا وَبِكَ نَحْيَا وَبِكَ نَمُوتُ وَإِلَيْكَ الْمَصِيرُ",
+   "translit": "Allahumma bika amsayna wa bika asbahna wa bika nahya wa bika namutu wa ilaykal-masir",
+   "sens": "Ô Allah, c’est par Toi que nous entrons dans le soir et par Toi que nous entrons dans le matin, par Toi nous vivons et par Toi nous mourons, et c’est vers Toi le retour.",
+   "source": "Abu Dawud 4:317, At-Tirmidhi 5:466",
+   "repetitions": 1
+  },
+  {
+   "id": "d51",
+   "categorie": "evening",
+   "titre": "Demander pardon cent fois par jour",
+   "arabe": "أَسْتَغْفِرُ اللَّهَ وَأَتُوبُ إِلَيْهِ",
+   "translit": "Astaghfirullaha wa atubu ilayh",
+   "sens": "Je demande pardon à Allah et je me repens à Lui.",
+   "source": "Sahih Al-Bukhari 8:319, Sahih Muslim 4:2075",
+   "repetitions": 100
+  },
+  {
+   "id": "d52",
+   "categorie": "evening",
+   "titre": "Protection du soir",
+   "arabe": "أَعُوذُ بِكَلِمَاتِ اللَّهِ التَّامَّاتِ مِنْ شَرِّ مَا خَلَقَ",
+   "translit": "A'udhu bikalimatillahit-tammati min sharri ma khalaq",
+   "sens": "Je cherche refuge dans les paroles parfaites d’Allah contre le mal de ce qu’Il a créé.",
+   "source": "Sahih Muslim 4:2081",
+   "repetitions": 3
+  },
+  {
+   "id": "d41",
+   "categorie": "wudu",
+   "titre": "Avant les ablutions",
+   "arabe": "بِسْمِ اللَّهِ",
+   "translit": "Bismillah",
+   "sens": "Au nom d’Allah.",
+   "source": "Abu Dawud 1:73, At-Tirmidhi 1:5",
+   "repetitions": 1
+  },
+  {
+   "id": "d42",
+   "categorie": "wudu",
+   "titre": "Après les ablutions",
+   "arabe": "أَشْهَدُ أَنْ لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ وَأَشْهَدُ أَنَّ مُحَمَّدًا عَبْدُهُ وَرَسُولُهُ",
+   "translit": "Ash-hadu an la ilaha illallahu wahdahu la shareeka lahu wa ash-hadu anna Muhammadan 'abduhu wa rasuluh",
+   "sens": "J’atteste qu’il n’y a de divinité digne d’adoration qu’Allah seul, sans associé, et j’atteste que Muhammad est Son serviteur et Son messager.",
+   "source": "Sahih Muslim 1:234",
+   "repetitions": 1
+  },
+  {
+   "id": "d43",
+   "categorie": "wudu",
+   "titre": "Demande après les ablutions",
+   "arabe": "اللَّهُمَّ اجْعَلْنِي مِنَ التَّوَّابِينَ وَاجْعَلْنِي مِنَ الْمُتَطَهِّرِينَ",
+   "translit": "Allahumma-j'alni minat-tawwabina waj'alni minal-mutatahhirin",
+   "sens": "Ô Allah, fais de moi l’un de ceux qui se repentent et l’un de ceux qui se purifient.",
+   "source": "At-Tirmidhi 1:78",
+   "repetitions": 1
+  },
+  {
+   "id": "d44",
+   "categorie": "wudu",
+   "titre": "En mettant un vêtement",
+   "arabe": "الْحَمْدُ لِلَّهِ الَّذِي كَسَانِي هَذَا وَرَزَقَنِيهِ مِنْ غَيْرِ حَوْلٍ مِنِّي وَلَا قُوَّةٍ",
+   "translit": "Alhamdu lillahilladhi kasani hadha wa razaqanihi min ghayri hawlin minni wa la quwwah",
+   "sens": "Louange à Allah qui m’a revêtu de ceci et me l’a accordé sans que j’y sois pour rien, ni par ma force ni par ma puissance.",
+   "source": "Abu Dawud 4:41, At-Tirmidhi 5:521",
+   "repetitions": 1
+  },
+  {
+   "id": "d45",
+   "categorie": "wudu",
+   "titre": "En retirant un vêtement",
+   "arabe": "بِسْمِ اللَّهِ",
+   "translit": "Bismillah",
+   "sens": "Au nom d’Allah.",
+   "source": "Ibn Majah, At-Tirmidhi",
+   "repetitions": 1
+  },
+  {
+   "id": "d6",
+   "categorie": "prayer",
+   "titre": "Invocation d’ouverture de la prière",
+   "arabe": "سُبْحَانَكَ اللَّهُمَّ وَبِحَمْدِكَ وَتَبَارَكَ اسْمُكَ وَتَعَالَى جَدُّكَ وَلَا إِلَهَ غَيْرُكَ",
+   "translit": "Subhanakallahumma wa bihamdika wa tabarakasmuka wa ta'ala jadduka wa la ilaha ghairuk",
+   "sens": "Gloire à Toi, ô Allah, et louange à Toi. Béni soit Ton nom, élevée Ta majesté, et il n’y a de divinité digne d’adoration que Toi.",
+   "source": "Abu Dawud, At-Tirmidhi, An-Nasai",
+   "repetitions": 1
+  },
+  {
+   "id": "d7",
+   "categorie": "prayer",
+   "titre": "Entre les deux prosternations",
+   "arabe": "رَبِّ اغْفِرْ لِي رَبِّ اغْفِرْ لِي",
+   "translit": "Rabbighfir li, Rabbighfir li",
+   "sens": "Seigneur, pardonne-moi. Seigneur, pardonne-moi.",
+   "source": "Abu Dawud 1:231",
+   "repetitions": 1
+  },
+  {
+   "id": "d8",
+   "categorie": "prayer",
+   "titre": "Dans la prosternation",
+   "arabe": "سُبْحَانَ رَبِّيَ الْأَعْلَى",
+   "translit": "Subhana Rabbiyal-A'la",
+   "sens": "Gloire à mon Seigneur, le Très-Haut.",
+   "source": "Sahih Muslim",
+   "repetitions": 3
+  },
+  {
+   "id": "d53",
+   "categorie": "prayer",
+   "titre": "Dans l’inclinaison",
+   "arabe": "سُبْحَانَ رَبِّيَ الْعَظِيمِ",
+   "translit": "Subhana Rabbiyal-'Adheem",
+   "sens": "Gloire à mon Seigneur, le Très-Grand.",
+   "source": "Abu Dawud 1:230, Sahih Muslim",
+   "repetitions": 3
+  },
+  {
+   "id": "d54",
+   "categorie": "prayer",
+   "titre": "En se relevant de l’inclinaison",
+   "arabe": "رَبَّنَا وَلَكَ الْحَمْدُ حَمْدًا كَثِيرًا طَيِّبًا مُبَارَكًا فِيهِ",
+   "translit": "Rabbana wa lakal-hamdu hamdan kathiran tayyiban mubarakan fih",
+   "sens": "Notre Seigneur, à Toi la louange, une louange abondante, pure et bénie.",
+   "source": "Sahih Al-Bukhari 1:773",
+   "repetitions": 1
+  },
+  {
+   "id": "d55",
+   "categorie": "prayer",
+   "titre": "Le tachahhoud",
+   "arabe": "التَّحِيَّاتُ لِلَّهِ وَالصَّلَوَاتُ وَالطَّيِّبَاتُ السَّلَامُ عَلَيْكَ أَيُّهَا النَّبِيُّ وَرَحْمَةُ اللَّهِ وَبَرَكَاتُهُ السَّلَامُ عَلَيْنَا وَعَلَى عِبَادِ اللَّهِ الصَّالِحِينَ أَشْهَدُ أَنْ لَا إِلَهَ إِلَّا اللَّهُ وَأَشْهَدُ أَنَّ مُحَمَّدًا عَبْدُهُ وَرَسُولُهُ",
+   "translit": "At-tahiyyatu lillahi was-salawatu wat-tayyibat, as-salamu 'alayka ayyuhan-nabiyyu wa rahmatullahi wa barakatuh, as-salamu 'alayna wa 'ala 'ibadillahis-salihin, ash-hadu an la ilaha illallah wa ash-hadu anna Muhammadan 'abduhu wa rasuluh",
+   "sens": "Les salutations, les prières et les bonnes paroles sont pour Allah. Que la paix soit sur toi, ô Prophète, ainsi que la miséricorde d’Allah et Ses bénédictions. Que la paix soit sur nous et sur les serviteurs vertueux d’Allah. J’atteste qu’il n’y a de divinité digne d’adoration qu’Allah, et j’atteste que Muhammad est Son serviteur et Son messager.",
+   "source": "Sahih Al-Bukhari 1:831, Sahih Muslim 1:402",
+   "repetitions": 1
+  },
+  {
+   "id": "d56",
+   "categorie": "prayer",
+   "titre": "La prière sur le Prophète dans la prière",
+   "arabe": "اللَّهُمَّ صَلِّ عَلَى مُحَمَّدٍ وَعَلَى آلِ مُحَمَّدٍ كَمَا صَلَّيْتَ عَلَى إِبْرَاهِيمَ وَعَلَى آلِ إِبْرَاهِيمَ إِنَّكَ حَمِيدٌ مَجِيدٌ اللَّهُمَّ بَارِكْ عَلَى مُحَمَّدٍ وَعَلَى آلِ مُحَمَّدٍ كَمَا بَارَكْتَ عَلَى إِبْرَاهِيمَ وَعَلَى آلِ إِبْرَاهِيمَ إِنَّكَ حَمِيدٌ مَجِيدٌ",
+   "translit": "Allahumma salli 'ala Muhammadin wa 'ala ali Muhammadin kama sallayta 'ala Ibrahima wa 'ala ali Ibrahima innaka Hamidun Majid, Allahumma barik 'ala Muhammadin wa 'ala ali Muhammadin kama barakta 'ala Ibrahima wa 'ala ali Ibrahima innaka Hamidun Majid",
+   "sens": "Ô Allah, prie sur Muhammad et sur la famille de Muhammad, comme Tu as prié sur Ibrahim et sur la famille d’Ibrahim. Tu es digne de louange, glorieux. Ô Allah, bénis Muhammad et la famille de Muhammad, comme Tu as béni Ibrahim et la famille d’Ibrahim. Tu es digne de louange, glorieux.",
+   "source": "Sahih Al-Bukhari 4:589, Sahih Muslim 1:406",
+   "repetitions": 1
+  },
+  {
+   "id": "d57",
+   "categorie": "prayer",
+   "titre": "Avant le salut final",
+   "arabe": "اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنْ عَذَابِ الْقَبْرِ وَمِنْ عَذَابِ النَّارِ وَمِنْ فِتْنَةِ الْمَحْيَا وَالْمَمَاتِ وَمِنْ شَرِّ فِتْنَةِ الْمَسِيحِ الدَّجَّالِ",
+   "translit": "Allahumma inni a'udhu bika min 'adhabil-qabri wa min 'adhabin-nar, wa min fitnatil-mahya wal-mamat, wa min sharri fitnatil-masihid-dajjal",
+   "sens": "Ô Allah, je cherche refuge auprès de Toi contre le châtiment de la tombe, contre le châtiment du Feu, contre les épreuves de la vie et de la mort, et contre le mal de l’épreuve du faux Messie.",
+   "source": "Sahih Al-Bukhari 2:102, Sahih Muslim 1:590",
+   "repetitions": 1
+  },
+  {
+   "id": "d9",
+   "categorie": "after_prayer",
+   "titre": "Demande de pardon après la prière",
+   "arabe": "أَسْتَغْفِرُ اللَّهَ",
+   "translit": "Astaghfirullah",
+   "sens": "Je demande pardon à Allah.",
+   "source": "Sahih Muslim 1:414",
+   "repetitions": 3
+  },
+  {
+   "id": "d10",
+   "categorie": "after_prayer",
+   "titre": "Gloire à Allah après la prière",
+   "arabe": "سُبْحَانَ اللَّهِ",
+   "translit": "SubhanAllah",
+   "sens": "Gloire à Allah.",
+   "source": "Sahih Muslim 1:418",
+   "repetitions": 33
+  },
+  {
+   "id": "d11",
+   "categorie": "after_prayer",
+   "titre": "Louange à Allah après la prière",
+   "arabe": "الْحَمْدُ لِلَّهِ",
+   "translit": "Alhamdulillah",
+   "sens": "Louange à Allah.",
+   "source": "Sahih Muslim 1:418",
+   "repetitions": 33
+  },
+  {
+   "id": "d12",
+   "categorie": "after_prayer",
+   "titre": "Allah est le Plus Grand, après la prière",
+   "arabe": "اللَّهُ أَكْبَرُ",
+   "translit": "Allahu Akbar",
+   "sens": "Allah est le Plus Grand.",
+   "source": "Sahih Muslim 1:418",
+   "repetitions": 33
+  },
+  {
+   "id": "d13",
+   "categorie": "after_prayer",
+   "titre": "Ayat al-Kursi après la prière",
+   "arabe": "ٱللَّهُ لَآ إِلَـٰهَ إِلَّا هُوَ ٱلْحَىُّ ٱلْقَيُّومُ ۚ لَا تَأْخُذُهُۥ سِنَةٌ وَلَا نَوْمٌ ۚ لَّهُۥ مَا فِى ٱلسَّمَـٰوَٰتِ وَمَا فِى ٱلْأَرْضِ ۗ مَن ذَا ٱلَّذِى يَشْفَعُ عِندَهُۥٓ إِلَّا بِإِذْنِهِۦ ۚ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ ۖ وَلَا يُحِيطُونَ بِشَىْءٍ مِّنْ عِلْمِهِۦٓ إِلَّا بِمَا شَآءَ ۚ وَسِعَ كُرْسِيُّهُ ٱلسَّمَـٰوَٰتِ وَٱلْأَرْضَ ۖ وَلَا يَـُٔودُهُۥ حِفْظُهُمَا ۚ وَهُوَ ٱلْعَلِىُّ ٱلْعَظِيمُ",
+   "translit": "Allahu la ilaha illa Huwal-Hayyul-Qayyum, la ta'khudhuhu sinatun wa la nawm, lahu ma fis-samawati wa ma fil-ard, man dhal-ladhi yashfa'u 'indahu illa bi-idhnih, ya'lamu ma bayna aydihim wa ma khalfahum, wa la yuhituna bi shay'im-min 'ilmihi illa bima sha', wasi'a kursiyyuhus-samawati wal-ard, wa la ya'uduhu hifdhuhuma, wa Huwal-'Aliyyul-'Adheem",
+   "sens": null,
+   "source": "An-Nasai, Al-Kubra",
+   "repetitions": 1
+  },
+  {
+   "id": "d58",
+   "categorie": "after_prayer",
+   "titre": "Dix fois après Fajr et Maghrib",
+   "arabe": "لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ يُحْيِي وَيُمِيتُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ",
+   "translit": "La ilaha illallahu wahdahu la shareeka lah, lahul-mulku wa lahul-hamdu yuhyi wa yumitu wa huwa 'ala kulli shay'in qadir",
+   "sens": "Il n’y a de divinité digne d’adoration qu’Allah, seul, sans associé. À Lui la royauté et la louange. Il donne la vie et la mort, et Il est capable de toute chose.",
+   "source": "At-Tirmidhi 5:515",
+   "repetitions": 10
+  },
+  {
+   "id": "d59",
+   "categorie": "after_prayer",
+   "titre": "Le bien ici-bas et dans l’au-delà",
+   "arabe": "رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ",
+   "translit": "Rabbana atina fid-dunya hasanatan wa fil-akhirati hasanatan wa qina 'adhaban-nar",
+   "sens": null,
+   "source": "Quran 2:201, Sahih Al-Bukhari 8:95",
+   "repetitions": 1
+  },
+  {
+   "id": "d60",
+   "categorie": "after_prayer",
+   "titre": "Aide pour invoquer et adorer, après la prière",
+   "arabe": "اللَّهُمَّ أَعِنِّي عَلَى ذِكْرِكَ وَشُكْرِكَ وَحُسْنِ عِبَادَتِكَ",
+   "translit": "Allahumma a'inni 'ala dhikrika wa shukrika wa husni 'ibadatik",
+   "sens": "Ô Allah, aide-moi à Te mentionner, à Te remercier et à bien T’adorer.",
+   "source": "Abu Dawud 2:86, An-Nasai",
+   "repetitions": 1
+  },
+  {
+   "id": "d14",
+   "categorie": "sleep",
+   "titre": "Avant de dormir",
+   "arabe": "بِاسْمِكَ اللَّهُمَّ أَمُوتُ وَأَحْيَا",
+   "translit": "Bismika Allahumma amutu wa ahya",
+   "sens": "C’est en Ton nom, ô Allah, que je meurs et que je vis.",
+   "source": "Sahih Al-Bukhari 11:113",
+   "repetitions": 1
+  },
+  {
+   "id": "d15",
+   "categorie": "sleep",
+   "titre": "Au réveil",
+   "arabe": "الْحَمْدُ لِلَّهِ الَّذِي أَحْيَانَا بَعْدَ مَا أَمَاتَنَا وَإِلَيْهِ النُّشُورُ",
+   "translit": "Alhamdu lillahilladhi ahyana ba'da ma amatana wa ilaihin-nushur",
+   "sens": "Louange à Allah qui nous a rendu la vie après nous l’avoir prise, et c’est vers Lui la résurrection.",
+   "source": "Sahih Al-Bukhari 11:113",
+   "repetitions": 1
+  },
+  {
+   "id": "d61",
+   "categorie": "sleep",
+   "titre": "Les trois sourates de protection, avant de dormir",
+   "arabe": " قُلْ هُوَ ٱللَّهُ أَحَدٌ ٱللَّهُ ٱلصَّمَدُ لَمْ يَلِدْ وَلَمْ يُولَدْ وَلَمْ يَكُن لَّهُۥ كُفُوًا أَحَدٌۢ  قُلْ أَعُوذُ بِرَبِّ ٱلْفَلَقِ مِن شَرِّ مَا خَلَقَ وَمِن شَرِّ غَاسِقٍ إِذَا وَقَبَ وَمِن شَرِّ ٱلنَّفَّـٰثَـٰتِ فِى ٱلْعُقَدِ وَمِن شَرِّ حَاسِدٍ إِذَا حَسَدَ  قُلْ أَعُوذُ بِرَبِّ ٱلنَّاسِ مَلِكِ ٱلنَّاسِ إِلَـٰهِ ٱلنَّاسِ مِن شَرِّ ٱلْوَسْوَاسِ ٱلْخَنَّاسِ ٱلَّذِى يُوَسْوِسُ فِى صُدُورِ ٱلنَّاسِ مِنَ ٱلْجِنَّةِ وَٱلنَّاسِ",
+   "translit": "(Al-Ikhlas) Qul Huwallahu Ahad. Allahus-Samad. Lam yalid wa lam yulad. Wa lam yakul-lahu kufuwan ahad. (Al-Falaq) Qul a'udhu bi Rabbil-falaq. Min sharri ma khalaq. Wa min sharri ghasiqin idha waqab. Wa min sharrin-naffathati fil-'uqad. Wa min sharri hasidin idha hasad. (An-Nas) Qul a'udhu bi Rabbin-nas. Malikin-nas. Ilahin-nas. Min sharril-waswasil-khannas. Alladhi yuwaswisu fi sudurin-nas. Minal-jinnati wan-nas.",
+   "sens": null,
+   "source": "Sahih Al-Bukhari 6:536",
+   "repetitions": 3
+  },
+  {
+   "id": "d62",
+   "categorie": "sleep",
+   "titre": "Après un mauvais rêve",
+   "arabe": "أَعُوذُ بِاللَّهِ مِنَ الشَّيْطَانِ الرَّجِيمِ",
+   "translit": "A'udhu billahi minash-shaytanir-rajeem",
+   "sens": "Je cherche refuge auprès d’Allah contre Satan le maudit. (On crache légèrement trois fois à gauche et l’on se retourne de l’autre côté après un mauvais rêve.)",
+   "source": "Sahih Muslim 4:1772",
+   "repetitions": 3
+  },
+  {
+   "id": "d63",
+   "categorie": "sleep",
+   "titre": "En se réveillant la nuit",
+   "arabe": "لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ الْحَمْدُ لِلَّهِ وَسُبْحَانَ اللَّهِ وَلَا إِلَهَ إِلَّا اللَّهُ وَاللَّهُ أَكْبَرُ وَلَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ",
+   "translit": "La ilaha illallahu wahdahu la shareeka lah, lahul-mulku wa lahul-hamdu wa huwa 'ala kulli shay'in qadir, Alhamdu lillahi wa SubhanAllahi wa la ilaha illallahu wallahu akbar wa la hawla wa la quwwata illa billah",
+   "sens": "Il n’y a de divinité digne d’adoration qu’Allah, seul, sans associé. À Lui la royauté et la louange, et Il est capable de toute chose. Louange à Allah, gloire à Allah, il n’y a de divinité digne d’adoration qu’Allah, Allah est le Plus Grand, et il n’y a de force ni de puissance qu’en Allah.",
+   "source": "Sahih Al-Bukhari 2:323",
+   "repetitions": 1
+  },
+  {
+   "id": "d64",
+   "categorie": "sleep",
+   "titre": "Après un beau rêve",
+   "arabe": "الْحَمْدُ لِلَّهِ",
+   "translit": "Alhamdulillah",
+   "sens": "Louange à Allah. (Après un beau rêve, on loue Allah et on le raconte à ceux que l’on aime, pas à ceux qui pourraient être envieux.)",
+   "source": "Sahih Al-Bukhari 9:119",
+   "repetitions": 1
+  },
+  {
+   "id": "d19",
+   "categorie": "travel",
+   "titre": "Invocation du voyage",
+   "arabe": "سُبْحَانَ الَّذِي سَخَّرَ لَنَا هَذَا وَمَا كُنَّا لَهُ مُقْرِنِينَ وَإِنَّا إِلَى رَبِّنَا لَمُنْقَلِبُونَ",
+   "translit": "Subhanal-ladhi sakh-khara lana hadha wa ma kunna lahu muqrinin wa inna ila Rabbina lamunqalibun",
+   "sens": null,
+   "source": "Quran 43:13-14, Sahih Muslim 2:978",
+   "repetitions": 1
+  },
+  {
+   "id": "d20",
+   "categorie": "travel",
+   "titre": "En entrant dans une ville",
+   "arabe": "اللَّهُمَّ رَبَّ السَّمَوَاتِ السَّبْعِ وَمَا أَظْلَلْنَ وَرَبَّ الْأَرَضِينَ السَّبْعِ وَمَا أَقْلَلْنَ وَرَبَّ الشَّيَاطِينِ وَمَا أَضْلَلْنَ وَرَبَّ الرِّيَاحِ وَمَا ذَرَيْنَ أَسْأَلُكَ خَيْرَ هَذِهِ الْقَرْيَةِ وَخَيْرَ أَهْلِهَا وَخَيْرَ مَا فِيهَا وَأَعُوذُ بِكَ مِنْ شَرِّهَا وَشَرِّ أَهْلِهَا وَشَرِّ مَا فِيهَا",
+   "translit": "Allahumma Rabbas-samawatis-sab'i wa ma adhlalna, wa Rabbal-aradeenas-sab'i wa ma aqlalna, wa Rabbash-shayateeni wa ma adlalna, wa Rabbar-riyahi wa ma dharayna, as'aluka khayra hadhihil-qaryati wa khayra ahliha wa khayra ma fiha, wa a'udhu bika min sharriha wa sharri ahliha wa sharri ma fiha",
+   "sens": "Ô Allah, Seigneur des sept cieux et de ce qu’ils couvrent, Seigneur des sept terres et de ce qu’elles portent, Seigneur des démons et de ceux qu’ils égarent, Seigneur des vents et de ce qu’ils emportent : je Te demande le bien de cette ville, le bien de ses habitants et le bien de ce qu’elle contient, et je cherche refuge auprès de Toi contre son mal, le mal de ses habitants et le mal de ce qu’elle contient.",
+   "source": "Al-Hakim 2:100, An-Nasai",
+   "repetitions": 1
+  },
+  {
+   "id": "d68",
+   "categorie": "travel",
+   "titre": "En faisant une halte",
+   "arabe": "أَعُوذُ بِكَلِمَاتِ اللَّهِ التَّامَّاتِ مِنْ شَرِّ مَا خَلَقَ",
+   "translit": "A'udhu bikalimatillahit-tammati min sharri ma khalaq",
+   "sens": "Je cherche refuge dans les paroles parfaites d’Allah contre le mal de ce qu’Il a créé. (Celui qui le dit en s’arrêtant quelque part ne subira aucun mal jusqu’à son départ.)",
+   "source": "Sahih Muslim 4:2080",
+   "repetitions": 1
+  },
+  {
+   "id": "d69",
+   "categorie": "travel",
+   "titre": "Au retour de voyage",
+   "arabe": "آيِبُونَ تَائِبُونَ عَابِدُونَ لِرَبِّنَا حَامِدُونَ",
+   "translit": "Ayibuna ta'ibuna 'abiduna li Rabbina hamidun",
+   "sens": "Nous revenons, repentants, adorateurs, louant notre Seigneur.",
+   "source": "Sahih Al-Bukhari 2:995, Sahih Muslim 2:980",
+   "repetitions": 1
+  },
+  {
+   "id": "d70",
+   "categorie": "travel",
+   "titre": "Pour celui qui part",
+   "arabe": "أَسْتَوْدِعُ اللَّهَ دِينَكَ وَأَمَانَتَكَ وَخَوَاتِيمَ عَمَلِكَ",
+   "translit": "Astawdi'ullah dinaka wa amanataka wa khawatima 'amalik",
+   "sens": "Je confie à Allah ta religion, ce que l’on t’a confié, et la fin de tes actions.",
+   "source": "Abu Dawud 3:74, At-Tirmidhi 5:499",
+   "repetitions": 1
+  },
+  {
+   "id": "d71",
+   "categorie": "travel",
+   "titre": "Au début d’un voyage",
+   "arabe": "اللَّهُمَّ إِنَّا نَسْأَلُكَ فِي سَفَرِنَا هَذَا الْبِرَّ وَالتَّقْوَى وَمِنَ الْعَمَلِ مَا تَرْضَى",
+   "translit": "Allahumma inna nas'aluka fi safarina hadhal-birra wat-taqwa wa minal-'amali ma tarda",
+   "sens": "Ô Allah, nous Te demandons, dans ce voyage, la piété, la crainte de Toi et des actes qui Te plaisent.",
+   "source": "Sahih Muslim 2:978",
+   "repetitions": 1
+  },
+  {
+   "id": "d21",
+   "categorie": "home",
+   "titre": "En sortant de la maison",
+   "arabe": "بِسْمِ اللَّهِ تَوَكَّلْتُ عَلَى اللَّهِ لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ",
+   "translit": "Bismillah, tawakkaltu 'alallah, la hawla wa la quwwata illa billah",
+   "sens": "Au nom d’Allah, je place ma confiance en Allah. Il n’y a de force ni de puissance qu’en Allah.",
+   "source": "Abu Dawud 4:325, At-Tirmidhi 5:490",
+   "repetitions": 1
+  },
+  {
+   "id": "d22",
+   "categorie": "home",
+   "titre": "En entrant dans la maison",
+   "arabe": "بِسْمِ اللَّهِ وَلَجْنَا وَبِسْمِ اللَّهِ خَرَجْنَا وَعَلَى اللَّهِ رَبِّنَا تَوَكَّلْنَا",
+   "translit": "Bismillahi walajna, wa bismillahi kharajna, wa 'ala Allahi Rabbina tawakkalna",
+   "sens": "Au nom d’Allah nous entrons, au nom d’Allah nous sortons, et c’est en notre Seigneur que nous plaçons notre confiance.",
+   "source": "Abu Dawud 4:325",
+   "repetitions": 1
+  },
+  {
+   "id": "d23",
+   "categorie": "masjid",
+   "titre": "En entrant à la mosquée",
+   "arabe": "اللَّهُمَّ افْتَحْ لِي أَبْوَابَ رَحْمَتِكَ",
+   "translit": "Allahummaf-tah li abwaba rahmatik",
+   "sens": "Ô Allah, ouvre-moi les portes de Ta miséricorde.",
+   "source": "Sahih Muslim 1:494",
+   "repetitions": 1
+  },
+  {
+   "id": "d24",
+   "categorie": "masjid",
+   "titre": "En sortant de la mosquée",
+   "arabe": "اللَّهُمَّ إِنِّي أَسْأَلُكَ مِنْ فَضْلِكَ",
+   "translit": "Allahumma inni as'aluka min fadlik",
+   "sens": "Ô Allah, je Te demande de Ta grâce.",
+   "source": "Sahih Muslim 1:494",
+   "repetitions": 1
+  },
+  {
+   "id": "d72",
+   "categorie": "masjid",
+   "titre": "Après l’appel à la prière",
+   "arabe": "اللَّهُمَّ رَبَّ هَذِهِ الدَّعْوَةِ التَّامَّةِ وَالصَّلَاةِ الْقَائِمَةِ آتِ مُحَمَّدًا الْوَسِيلَةَ وَالْفَضِيلَةَ وَابْعَثْهُ مَقَامًا مَحْمُودًا الَّذِي وَعَدْتَهُ",
+   "translit": "Allahumma Rabba hadhihid-da'watit-tammati was-salatil-qa'ima, ati Muhammadanil-wasilata wal-fadilata wab'ath-hu maqaman mahmudanil-ladhi wa'adtah",
+   "sens": "Ô Allah, Seigneur de cet appel parfait et de la prière qui va être accomplie, accorde à Muhammad le moyen d’accès et l’excellence, et élève-le à la station louable que Tu lui as promise.",
+   "source": "Sahih Al-Bukhari 1:614",
+   "repetitions": 1
+  },
+  {
+   "id": "d73",
+   "categorie": "masjid",
+   "titre": "En entrant à la mosquée, avec le salut au Prophète",
+   "arabe": "بِسْمِ اللَّهِ وَالسَّلَامُ عَلَى رَسُولِ اللَّهِ اللَّهُمَّ اغْفِرْ لِي ذُنُوبِي وَافْتَحْ لِي أَبْوَابَ رَحْمَتِكَ",
+   "translit": "Bismillahi was-salamu 'ala Rasulillah, Allahummaghfir li dhunubi waftah li abwaba rahmatik",
+   "sens": "Au nom d’Allah, et que la paix soit sur le Messager d’Allah. Ô Allah, pardonne-moi mes péchés et ouvre-moi les portes de Ta miséricorde.",
+   "source": "Ibn Majah 771, At-Tirmidhi",
+   "repetitions": 1
+  },
+  {
+   "id": "d30",
+   "categorie": "illness",
+   "titre": "Rendre visite à un malade",
+   "arabe": "لَا بَأْسَ طَهُورٌ إِنْ شَاءَ اللَّهُ",
+   "translit": "La ba'sa tahurun insha'Allah",
+   "sens": "Pas de mal : c’est une purification, si Allah le veut.",
+   "source": "Sahih Al-Bukhari 7:372",
+   "repetitions": 1
+  },
+  {
+   "id": "d31",
+   "categorie": "illness",
+   "titre": "Demande de guérison",
+   "arabe": "اللَّهُمَّ رَبَّ النَّاسِ أَذْهِبِ الْبَأْسَ اشْفِ أَنْتَ الشَّافِي لَا شِفَاءَ إِلَّا شِفَاؤُكَ شِفَاءً لَا يُغَادِرُ سَقَمًا",
+   "translit": "Allahumma Rabban-nasi, adhibil-ba'sa, ishfi antash-Shafi, la shifa'a illa shifa'uka, shifa'an la yughadiru saqama",
+   "sens": "Ô Allah, Seigneur des hommes, éloigne le mal. Guéris, car Tu es Celui qui guérit. Il n’y a de guérison que Ta guérison, une guérison qui ne laisse aucune maladie.",
+   "source": "Sahih Al-Bukhari 7:379, Sahih Muslim",
+   "repetitions": 1
+  },
+  {
+   "id": "d81",
+   "categorie": "illness",
+   "titre": "Contre la douleur : formule des sept fois",
+   "arabe": "أَعُوذُ بِاللَّهِ وَقُدْرَتِهِ مِنْ شَرِّ مَا أَجِدُ وَأُحَاذِرُ",
+   "translit": "A'udhu billahi wa qudratihi min sharri ma ajidu wa uhādhir",
+   "sens": "Je cherche refuge auprès d’Allah et de Sa puissance contre le mal de ce que je ressens et de ce que je redoute. (On place la main sur l’endroit douloureux, on dit « Au nom d’Allah » trois fois, puis cette formule sept fois.)",
+   "source": "Sahih Muslim 4:1728",
+   "repetitions": 7
+  },
+  {
+   "id": "d82",
+   "categorie": "illness",
+   "titre": "Pour un malade",
+   "arabe": "أَسْأَلُ اللَّهَ الْعَظِيمَ رَبَّ الْعَرْشِ الْعَظِيمِ أَنْ يَشْفِيَكَ",
+   "translit": "As'alullahil-'Adhima Rabbal-'Arshil-'Adhimi an yashfiyak",
+   "sens": "Je demande à Allah le Magnifique, Seigneur du Trône magnifique, de te guérir.",
+   "source": "Abu Dawud 3:187, At-Tirmidhi 2:210",
+   "repetitions": 7
+  },
+  {
+   "id": "d83",
+   "categorie": "illness",
+   "titre": "Contre une douleur dans le corps",
+   "arabe": "بِسْمِ اللَّهِ بِسْمِ اللَّهِ بِسْمِ اللَّهِ، أَعُوذُ بِاللَّهِ وَقُدْرَتِهِ مِنْ شَرِّ مَا أَجِدُ وَأُحَاذِرُ",
+   "translit": "Bismillah (x3), then: A'udhu billahi wa qudratihi min sharri ma ajidu wa uhādhir (x7)",
+   "sens": "Au nom d’Allah (3 fois), puis : Je cherche refuge auprès d’Allah et de Sa puissance contre le mal de ce que je ressens et de ce que je redoute (7 fois).",
+   "source": "Sahih Muslim 4:1728",
+   "repetitions": 1
+  },
+  {
+   "id": "d39",
+   "categorie": "protection",
+   "titre": "Protection contre le mauvais œil",
+   "arabe": "أَعُوذُ بِكَلِمَاتِ اللَّهِ التَّامَّةِ مِنْ كُلِّ شَيْطَانٍ وَهَامَّةٍ وَمِنْ كُلِّ عَيْنٍ لَامَّةٍ",
+   "translit": "A'udhu bikalimatillahit-tammati min kulli shaytanin wa hammatin wa min kulli 'aynin lammah",
+   "sens": "Je cherche refuge dans les paroles parfaites d’Allah contre tout démon, tout reptile venimeux et tout mauvais œil.",
+   "source": "Sahih Al-Bukhari 4:119",
+   "repetitions": 1
+  },
+  {
+   "id": "d40",
+   "categorie": "protection",
+   "titre": "Protection générale",
+   "arabe": "بِسْمِ اللَّهِ الَّذِي لَا يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الْأَرْضِ وَلَا فِي السَّمَاءِ وَهُوَ السَّمِيعُ الْعَلِيمُ",
+   "translit": "Bismillahilladhi la yadurru ma'asmihi shay'un fil-ardi wa la fis-sama'i wa huwas-sami'ul-'aleem",
+   "sens": "Au nom d’Allah, avec le nom duquel rien ne peut nuire, ni sur terre ni dans le ciel, et Il est Celui qui entend tout, Celui qui sait tout.",
+   "source": "Abu Dawud 4:323",
+   "repetitions": 3
+  },
+  {
+   "id": "d92",
+   "categorie": "protection",
+   "titre": "Les deux derniers versets de la sourate al-Baqara",
+   "arabe": "ءَامَنَ ٱلرَّسُولُ بِمَآ أُنزِلَ إِلَيْهِ مِن رَّبِّهِۦ وَٱلْمُؤْمِنُونَ ۚ كُلٌّ ءَامَنَ بِٱللَّهِ وَمَلَـٰٓئِكَتِهِۦ وَكُتُبِهِۦ وَرُسُلِهِۦ لَا نُفَرِّقُ بَيْنَ أَحَدٍ مِّن رُّسُلِهِۦ ۚ وَقَالُوا۟ سَمِعْنَا وَأَطَعْنَا ۖ غُفْرَانَكَ رَبَّنَا وَإِلَيْكَ ٱلْمَصِيرُ لَا يُكَلِّفُ ٱللَّهُ نَفْسًا إِلَّا وُسْعَهَا ۚ لَهَا مَا كَسَبَتْ وَعَلَيْهَا مَا ٱكْتَسَبَتْ ۗ رَبَّنَا لَا تُؤَاخِذْنَآ إِن نَّسِينَآ أَوْ أَخْطَأْنَا ۚ رَبَّنَا وَلَا تَحْمِلْ عَلَيْنَآ إِصْرًا كَمَا حَمَلْتَهُۥ عَلَى ٱلَّذِينَ مِن قَبْلِنَا ۚ رَبَّنَا وَلَا تُحَمِّلْنَا مَا لَا طَاقَةَ لَنَا بِهِۦ ۖ وَٱعْفُ عَنَّا وَٱغْفِرْ لَنَا وَٱرْحَمْنَآ ۚ أَنتَ مَوْلَىٰنَا فَٱنصُرْنَا عَلَى ٱلْقَوْمِ ٱلْكَـٰفِرِينَ",
+   "translit": "Amanar-rasulu bima unzila ilayhi mir-rabbihi wal-mu'minun, kullun amana billahi wa mala'ikatihi wa kutubihi wa rusulihi, la nufarriqu bayna ahadin mir-rusulihi wa qalu sami'na wa ata'na ghufranaka rabbana wa ilaykal-masir. La yukallifullahu nafsan illa wus'aha, laha ma kasabat wa 'alayha maktasabat. Rabbana la tu'akhidhna in nasina aw akhta'na. Rabbana wa la tahmil 'alayna isran kama hamaltahu 'alal-ladhina min qablina. Rabbana wa la tuhammilna ma la taqata lana bih. Wa'fu 'anna, waghfir lana, warhamna, anta mawlana fansurna 'alal-qawmil-kafirin",
+   "sens": null,
+   "source": "Quran 2:285-286, Sahih Al-Bukhari 5:345",
+   "repetitions": 1
+  },
+  {
+   "id": "d93",
+   "categorie": "protection",
+   "titre": "Protection contre le faux Messie",
+   "arabe": "اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنْ عَذَابِ جَهَنَّمَ وَمِنْ عَذَابِ الْقَبْرِ وَمِنْ فِتْنَةِ الْمَحْيَا وَالْمَمَاتِ وَمِنْ شَرِّ فِتْنَةِ الْمَسِيحِ الدَّجَّالِ",
+   "translit": "Allahumma inni a'udhu bika min 'adhabi jahannam, wa min 'adhabul-qabr, wa min fitnatil-mahya wal-mamat, wa min sharri fitnatil-masihid-dajjal",
+   "sens": "Ô Allah, je cherche refuge auprès de Toi contre le châtiment de l’Enfer, contre le châtiment de la tombe, contre les épreuves de la vie et de la mort, et contre le mal de l’épreuve du faux Messie.",
+   "source": "Sahih Al-Bukhari 8:375, Sahih Muslim 1:587",
+   "repetitions": 1
+  },
+  {
+   "id": "d100",
+   "categorie": "marriage",
+   "titre": "En voyant son épouse",
+   "arabe": "اللَّهُمَّ إِنِّي أَسْأَلُكَ خَيْرَهَا وَخَيْرَ مَا جَبَلْتَهَا عَلَيْهِ وَأَعُوذُ بِكَ مِنْ شَرِّهَا وَشَرِّ مَا جَبَلْتَهَا عَلَيْهِ",
+   "translit": "Allahumma inni as'aluka khayrahā wa khayra ma jabaltaha 'alayhi wa a'udhu bika min sharriha wa sharri ma jabaltaha 'alayh",
+   "sens": "Ô Allah, je Te demande son bien et le bien de la nature que Tu as créée en elle, et je cherche refuge auprès de Toi contre son mal et le mal de la nature que Tu as créée en elle.",
+   "source": "Abu Dawud 2:248, Ibn Majah 1:617",
+   "repetitions": 1
+  },
+  {
+   "id": "d101",
+   "categorie": "marriage",
+   "titre": "Avant l’intimité conjugale",
+   "arabe": "بِسْمِ اللَّهِ اللَّهُمَّ جَنِّبْنَا الشَّيْطَانَ وَجَنِّبِ الشَّيْطَانَ مَا رَزَقْتَنَا",
+   "translit": "Bismillah, Allahumma jannibnash-shaytana wa jannibish-shaytana ma razaqtana",
+   "sens": "Au nom d’Allah. Ô Allah, éloigne Satan de nous et éloigne Satan de ce que Tu nous accordes. (Si un enfant est conçu, Satan ne lui nuira pas.)",
+   "source": "Sahih Al-Bukhari 7:94, Sahih Muslim 2:1058",
+   "repetitions": 1
+  },
+  {
+   "id": "d102",
+   "categorie": "marriage",
+   "titre": "Pour un conjoint et des enfants vertueux",
+   "arabe": "رَبَّنَا هَبْ لَنَا مِنْ أَزْوَاجِنَا وَذُرِّيَّاتِنَا قُرَّةَ أَعْيُنٍ وَاجْعَلْنَا لِلْمُتَّقِينَ إِمَامًا",
+   "translit": "Rabbana hab lana min azwajina wa dhurriyyatina qurrata a'yunin waj'alna lil-muttaqina imama",
+   "sens": null,
+   "source": "Quran 25:74",
+   "repetitions": 1
+  },
+  {
+   "id": "d103",
+   "categorie": "marriage",
+   "titre": "Au mariage",
+   "arabe": "بَارَكَ اللَّهُ لَكَ وَبَارَكَ عَلَيْكَ وَجَمَعَ بَيْنَكُمَا فِي خَيْرٍ",
+   "translit": "Barakallahu laka wa baraka 'alayka wa jama'a baynakuma fi khayr",
+   "sens": "Qu’Allah te bénisse, qu’Il répande Ses bénédictions sur toi et qu’Il vous réunisse dans le bien.",
+   "source": "Abu Dawud 2:228, At-Tirmidhi 3:221",
+   "repetitions": 1
+  },
+  {
+   "id": "d108",
+   "categorie": "grief",
+   "titre": "En cas de malheur : Inna lillâhi",
+   "arabe": "إِنَّا لِلَّهِ وَإِنَّا إِلَيْهِ رَاجِعُونَ اللَّهُمَّ أْجُرْنِي فِي مُصِيبَتِي وَأَخْلِفْ لِي خَيْرًا مِنْهَا",
+   "translit": "Inna lillahi wa inna ilayhi raji'un, Allahumma-jurni fi musibati wa akhlif li khayran minha",
+   "sens": "À Allah nous appartenons et c’est à Lui que nous reviendrons. Ô Allah, récompense-moi dans mon malheur et remplace-le par mieux.",
+   "source": "Sahih Muslim 2:632",
+   "repetitions": 1
+  },
+  {
+   "id": "d109",
+   "categorie": "grief",
+   "titre": "Pour le défunt",
+   "arabe": "اللَّهُمَّ اغْفِرْ لَهُ وَارْحَمْهُ وَعَافِهِ وَاعْفُ عَنْهُ وَأَكْرِمْ نُزُلَهُ وَوَسِّعْ مُدْخَلَهُ وَاغْسِلْهُ بِالْمَاءِ وَالثَّلْجِ وَالْبَرَدِ",
+   "translit": "Allahummaghfir lahu warhamhu wa 'afihi wa'fu 'anhu wa akrim nuzulahu wa wassi' mudkhalahu waghsilhu bil-ma'i wath-thalji wal-barad",
+   "sens": "Ô Allah, pardonne-lui et fais-lui miséricorde, mets-le en sécurité et efface ses fautes, honore sa demeure, élargis son entrée, lave-le avec de l’eau, de la neige et de la grêle.",
+   "source": "Sahih Muslim 2:663",
+   "repetitions": 1
+  },
+  {
+   "id": "d110",
+   "categorie": "grief",
+   "titre": "Patience dans le deuil",
+   "arabe": "اللَّهُمَّ أْجُرْنِي فِي مُصِيبَتِي وَأَعْقِبْنِي خَيْرًا مِنْهَا",
+   "translit": "Allahumma'-jurni fi musibati wa a'qibni khayran minha",
+   "sens": "Ô Allah, récompense-moi dans mon épreuve et accorde-moi mieux en compensation.",
+   "source": "Al-Muwatta' (Malik)",
+   "repetitions": 1
+  },
+  {
+   "id": "d111",
+   "categorie": "grief",
+   "titre": "Au cimetière",
+   "arabe": "السَّلَامُ عَلَى أَهْلِ الدِّيَارِ مِنَ الْمُؤْمِنِينَ وَالْمُسْلِمِينَ وَيَرْحَمُ اللَّهُ الْمُسْتَقْدِمِينَ مِنَّا وَالْمُسْتَأْخِرِينَ وَإِنَّا إِنْ شَاءَ اللَّهُ بِكُمْ لَلَاحِقُونَ",
+   "translit": "As-salamu 'ala ahlid-diyari minal-mu'minina wal-muslimin, wa yarhamullahul-mustaqdimina minna wal-musta'khirin, wa inna in sha'allahu bikum la-lahiqun",
+   "sens": "Que la paix soit sur les habitants de ces demeures, croyants et musulmans. Qu’Allah fasse miséricorde à ceux qui nous ont précédés et à ceux qui viendront après, et nous vous rejoindrons, si Allah le veut.",
+   "source": "Sahih Muslim 2:671",
+   "repetitions": 1
+  },
+  {
+   "id": "d116",
+   "categorie": "business",
+   "titre": "Pour la subsistance",
+   "arabe": "اللَّهُمَّ اكْفِنِي بِحَلَالِكَ عَنْ حَرَامِكَ وَأَغْنِنِي بِفَضْلِكَ عَمَّنْ سِوَاكَ",
+   "translit": "Allahummak-fini bihalali 'an haramika wa aghnini bifadlika 'amman siwak",
+   "sens": "Ô Allah, contente-moi de ce que Tu as rendu licite pour que je m’éloigne de ce que Tu as interdit, et dispense-moi de tout autre que Toi par Ta grâce.",
+   "source": "At-Tirmidhi 5:560",
+   "repetitions": 1
+  },
+  {
+   "id": "d117",
+   "categorie": "business",
+   "titre": "Pour s’acquitter d’une dette",
+   "arabe": "اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْهَمِّ وَالْحَزَنِ وَالْعَجْزِ وَالْكَسَلِ وَالْبُخْلِ وَالْجُبْنِ وَضَلَعِ الدَّيْنِ وَغَلَبَةِ الرِّجَالِ",
+   "translit": "Allahumma inni a'udhu bika minal-hammi wal-hazani, wal-'ajzi wal-kasali, wal-bukhli wal-jubni, wa dala'id-dayni wa ghalabatir-rijal",
+   "sens": "Ô Allah, je cherche refuge auprès de Toi contre le souci et le chagrin, contre l’impuissance et la paresse, contre l’avarice et la lâcheté, contre le poids de la dette et la domination des hommes.",
+   "source": "Sahih Al-Bukhari 7:158",
+   "repetitions": 1
+  },
+  {
+   "id": "d119",
+   "categorie": "business",
+   "titre": "Au marché",
+   "arabe": "لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ يُحْيِي وَيُمِيتُ وَهُوَ حَيٌّ لَا يَمُوتُ بِيَدِهِ الْخَيْرُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ",
+   "translit": "La ilaha illallahu wahdahu la shareeka lah, lahul-mulku wa lahul-hamdu yuhyi wa yumitu wa huwa hayyun la yamutu biyadihil-khayru wa huwa 'ala kulli shay'in qadir",
+   "sens": "Il n’y a de divinité digne d’adoration qu’Allah, seul, sans associé. À Lui la royauté et la louange. Il donne la vie et la mort ; Il est vivant et ne meurt pas. Le bien est dans Sa main et Il est capable de toute chose. (Allah inscrira un million de bonnes actions à celui qui le dit au marché.)",
+   "source": "At-Tirmidhi 5:491",
+   "repetitions": 1
+  },
+  {
+   "id": "d120",
+   "categorie": "night_prayer",
+   "titre": "Dans la prière de la nuit (tahajjud)",
+   "arabe": "اللَّهُمَّ لَكَ الْحَمْدُ أَنْتَ نُورُ السَّمَوَاتِ وَالْأَرْضِ وَمَنْ فِيهِنَّ وَلَكَ الْحَمْدُ أَنْتَ قَيِّمُ السَّمَوَاتِ وَالْأَرْضِ وَمَنْ فِيهِنَّ",
+   "translit": "Allahumma lakal-hamdu anta nurus-samawati wal-ardi wa man fihinn, wa lakal-hamdu anta qayyimus-samawati wal-ardi wa man fihinn",
+   "sens": "Ô Allah, à Toi la louange. Tu es la lumière des cieux et de la terre et de ceux qui s’y trouvent. À Toi la louange. Tu es Celui qui maintient les cieux et la terre et ceux qui s’y trouvent.",
+   "source": "Sahih Al-Bukhari 2:324, Sahih Muslim 1:769",
+   "repetitions": 1
+  },
+  {
+   "id": "d121",
+   "categorie": "night_prayer",
+   "titre": "Qunut du witr",
+   "arabe": "اللَّهُمَّ اهْدِنِي فِيمَنْ هَدَيْتَ وَعَافِنِي فِيمَنْ عَافَيْتَ وَتَوَلَّنِي فِيمَنْ تَوَلَّيْتَ وَبَارِكْ لِي فِيمَا أَعْطَيْتَ وَقِنِي شَرَّ مَا قَضَيْتَ إِنَّكَ تَقْضِي وَلَا يُقْضَى عَلَيْكَ وَإِنَّهُ لَا يَذِلُّ مَنْ وَالَيْتَ وَلَا يَعِزُّ مَنْ عَادَيْتَ تَبَارَكْتَ رَبَّنَا وَتَعَالَيْتَ",
+   "translit": "Allahummahdini fiman hadayt, wa 'afini fiman 'afayt, wa tawallani fiman tawallayt, wa barik li fima a'tayt, wa qini sharra ma qadayt, innaka taqdi wa la yuqda 'alayk, wa innahu la yadhillu man walayt, wa la ya'izzu man 'adayt, tabarakta Rabbana wa ta'alayt",
+   "sens": "Ô Allah, guide-moi parmi ceux que Tu as guidés, pardonne-moi parmi ceux que Tu as pardonnés, prends-moi en charge parmi ceux que Tu as pris en charge, bénis ce que Tu m’as accordé et protège-moi du mal de ce que Tu as décrété. Car c’est Toi qui décrètes et nul ne décrète contre Toi. Celui que Tu prends pour allié n’est pas humilié, et celui que Tu prends pour ennemi n’est pas honoré. Béni sois-Tu, notre Seigneur, et Très-Haut.",
+   "source": "Abu Dawud 2:39, At-Tirmidhi 1:464",
+   "repetitions": 1
+  },
+  {
+   "id": "d122",
+   "categorie": "night_prayer",
+   "titre": "La nuit du Destin (Laylat al-Qadr)",
+   "arabe": "اللَّهُمَّ إِنَّكَ عَفُوٌّ تُحِبُّ الْعَفْوَ فَاعْفُ عَنِّي",
+   "translit": "Allahumma innaka 'afuwwun tuhibbul-'afwa fa'fu 'anni",
+   "sens": "Ô Allah, Tu es Celui qui pardonne et Tu aimes pardonner : pardonne-moi.",
+   "source": "At-Tirmidhi 5:534, Ibn Majah 2:1265",
+   "repetitions": 1
+  },
+  {
+   "id": "d123",
+   "categorie": "night_prayer",
+   "titre": "Ouverture de la prière de la nuit",
+   "arabe": "اللَّهُمَّ رَبَّ جِبْرَائِيلَ وَمِيكَائِيلَ وَإِسْرَافِيلَ فَاطِرَ السَّمَوَاتِ وَالْأَرْضِ عَالِمَ الْغَيْبِ وَالشَّهَادَةِ أَنْتَ تَحْكُمُ بَيْنَ عِبَادِكَ فِيمَا كَانُوا فِيهِ يَخْتَلِفُونَ اهْدِنِي لِمَا اخْتُلِفَ فِيهِ مِنَ الْحَقِّ بِإِذْنِكَ إِنَّكَ تَهْدِي مَنْ تَشَاءُ إِلَى صِرَاطٍ مُسْتَقِيمٍ",
+   "translit": "Allahumma Rabba Jibra'ila wa Mika'ila wa Israfila, Fatiras-samawati wal-ardi, 'alimal-ghaybi wash-shahadati, anta tahkumu bayna 'ibadika fima kanu fihi yakhtalifun, ihdini limakhtulifa fihi minal-haqqi bi-idhnik, innaka tahdi man tasha'u ila siratim-mustaqim",
+   "sens": "Ô Allah, Seigneur de Jibril, de Mikail et d’Israfil, Créateur des cieux et de la terre, Connaisseur de l’invisible et du visible. Tu juges entre Tes serviteurs sur ce qui les opposait. Guide-moi, par Ta permission, vers la vérité sur ce qui fait l’objet de divergence. Tu guides qui Tu veux vers un chemin droit.",
+   "source": "Sahih Muslim 1:770",
+   "repetitions": 1
+  },
+  {
+   "id": "d124",
+   "categorie": "quran_recitation",
+   "titre": "Avant de réciter le Coran",
+   "arabe": "أَعُوذُ بِاللَّهِ مِنَ الشَّيْطَانِ الرَّجِيمِ",
+   "translit": "A'udhu billahi minash-shaytanir-rajeem",
+   "sens": null,
+   "source": "Quran 16:98",
+   "repetitions": 1
+  },
+  {
+   "id": "d125",
+   "categorie": "quran_recitation",
+   "titre": "Al-Fatiha, la sourate d’ouverture",
+   "arabe": "بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ الرَّحْمَنِ الرَّحِيمِ مَالِكِ يَوْمِ الدِّينِ إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ",
+   "translit": "Bismillahir-Rahmanir-Rahim, Alhamdu lillahi Rabbil-'alamin, Ar-Rahmanir-Rahim, Maliki yawmid-din, Iyyaka na'budu wa iyyaka nasta'in, Ihdinas-siratal-mustaqim, Siratal-ladhina an'amta 'alayhim, ghayril-maghdubi 'alayhim wa lad-dallin",
+   "sens": null,
+   "source": "Quran 1:1-7",
+   "repetitions": 1
+  },
+  {
+   "id": "d126",
+   "categorie": "quran_recitation",
+   "titre": "En terminant le Coran",
+   "arabe": "سُبْحَانَكَ اللَّهُمَّ وَبِحَمْدِكَ أَشْهَدُ أَنْ لَا إِلَهَ إِلَّا أَنْتَ أَسْتَغْفِرُكَ وَأَتُوبُ إِلَيْكَ",
+   "translit": "SubhanakaAllahumma wa bihamdika ash-hadu an la ilaha illa anta astaghfiruka wa atubu ilayk",
+   "sens": "Gloire à Toi, ô Allah, et louange à Toi. J’atteste qu’il n’y a de divinité digne d’adoration que Toi. Je Te demande pardon et je me repens à Toi.",
+   "source": "An-Nasai, At-Tirmidhi",
+   "repetitions": 1
+  }
+ ]
+}

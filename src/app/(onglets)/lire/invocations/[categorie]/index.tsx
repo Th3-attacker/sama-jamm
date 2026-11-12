@@ -3,8 +3,7 @@ import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import { CATEGORIES, estCategorie, invocationsDe, type CategorieId } from '@/features/invocations/donnees';
-import { referenceDe } from '@/features/invocations/CarteInvocation';
+import { categories, estCategorie, invocationsDe, type CategorieId } from '@/features/invocations/donnees';
 import { useParametre } from '@/hooks/useParametre';
 import { cleJour } from '@/lib/dates';
 import { useComptesDuJour } from '@/stores/invocationsJour';
@@ -64,32 +63,37 @@ function Moment({ categorie }: { categorie: CategorieId }) {
         retour
         gauche={
           <Text accessibilityRole="header" maxFontSizeMultiplier={echelleMax.grand} style={[typographie.titre1, { color: couleurs.emeraude }]}>
-            {t(`invocations.${categorie}`)}
+            {t(`invocations.categories.${categorie}`)}
           </Text>
         }
       />
       <ScrollView contentContainerStyle={{ paddingHorizontal: espace.espace6, paddingBottom: espace.espace8, gap: espace.espace3 }}>
         <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.translitteration, styles.phrase, { color: couleurs.encre2 }]}>
-          {categorie === 'matin' ? t('invocations.sousTitreMatin') : t('invocations.sousTitre')}
+          {t('invocations.sousTitre')}
         </Text>
-        <View accessibilityRole="radiogroup" accessibilityLabel={t('invocations.moments')} style={[styles.puces, { gap: espace.espace2 }]}>
-          {CATEGORIES.map((c) => (
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          accessibilityRole="radiogroup"
+          accessibilityLabel={t('invocations.moments')}
+          contentContainerStyle={{ gap: espace.espace2 }}>
+          {categories().map((c) => (
             <Chip
-              key={c}
+              key={c.id}
               pilule
-              selectionne={c === categorie}
+              selectionne={c.id === categorie}
               onPress={() => {
                 // Catégorie déjà affichée : on ne recharge pas la même route.
-                if (c !== categorie) router.replace({ pathname: '/lire/invocations/[categorie]', params: { categorie: c } });
+                if (c.id !== categorie) router.replace({ pathname: '/lire/invocations/[categorie]', params: { categorie: c.id } });
               }}>
-              {t(`invocations.${c}`)}
+              {t(`invocations.categories.${c.id}`)}
             </Chip>
           ))}
-        </View>
+        </ScrollView>
         <View
           accessible
           accessibilityRole="progressbar"
-          accessibilityLabel={t(`invocations.${categorie}`)}
+          accessibilityLabel={t(`invocations.categories.${categorie}`)}
           accessibilityValue={{ min: 0, max: 100, now: liste.length ? Math.round((nbFaites / liste.length) * 100) : 0, text: detail }}
           style={{ gap: espace.espace2 }}>
           <View style={[styles.piste, { backgroundColor: couleurs.ligneForte }]}>
@@ -119,10 +123,10 @@ function Moment({ categorie }: { categorie: CategorieId }) {
                 )}
                 <View style={styles.textes}>
                   <Text numberOfLines={2} maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, styles.titreLigne, { color: couleurs.encre }]}>
-                    {referenceDe(inv)}
+                    {inv.titre}
                   </Text>
-                  <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.compte, { color: couleurs.encre3 }]}>
-                    {t('invocations.sourceCoranCourt')}
+                  <Text numberOfLines={1} maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.compte, { color: couleurs.encre3 }]}>
+                    {inv.source}
                   </Text>
                 </View>
                 <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.compte, { color: couleurs.encre2 }]}>
@@ -140,7 +144,6 @@ function Moment({ categorie }: { categorie: CategorieId }) {
 const styles = StyleSheet.create({
   ecran: { flex: 1 },
   phrase: { fontSize: tailles.t16, lineHeight: interlignes.l24 },
-  puces: { flexDirection: 'row', flexWrap: 'wrap' },
   piste: { height: 8, borderRadius: rayon.rayonPastille, overflow: 'hidden' },
   compte: { fontSize: tailles.t14, lineHeight: interlignes.l20, fontVariant: ['tabular-nums'] },
   ligne: { flexDirection: 'row', alignItems: 'center', minHeight: 72, borderBottomWidth: 1 },

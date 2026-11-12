@@ -1,10 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { marqueur } from '@/features/lire/PageMushaf';
 import { useTaillesLecture } from '@/features/lire/BarreTaille';
-import { TranslitVerset } from '@/features/lire/TranslitVerset';
-import { sourate, translitDe, versetsDe } from '@/features/lire/coran';
 import { useReglages } from '@/stores/reglages';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
@@ -13,35 +10,19 @@ import { Icon } from '@/ui/Icon';
 import type { Invocation } from './donnees';
 
 import { interlignes, rayon, tailles } from '@/theme/tokens.generated';
-export type Contenu = { n: number; arabe: string; translit: string };
-
-export function contenuDe(inv: Invocation): Contenu[] {
-  const arabes = versetsDe(inv.sourate);
-  const translits = translitDe(inv.sourate);
-  return Array.from({ length: inv.a - inv.de + 1 }, (_, k) => {
-    const n = inv.de + k;
-    return { n, arabe: arabes[n - 1] ?? '', translit: translits[n - 1] ?? '' };
-  });
-}
-
-/** Référence lisible d'une invocation du Coran : « Al-Ikhlas 112:1-4 ». */
-export function referenceDe(inv: Invocation): string {
-  const nom = sourate(inv.sourate)?.nom ?? '';
-  return `${nom} ${inv.sourate}:${inv.de}${inv.a > inv.de ? `-${inv.a}` : ''}`;
-}
 
 type CarteProps = {
-  /** Texte de la pastille : « Coran · Al-Ikhlas 112:1-4 · 3 fois ». */
+  invocation: Invocation;
+  /** Texte de la pastille : « Sahih Muslim 2723 · 3 fois ». */
   source: string;
-  contenu: Contenu[];
   termine: boolean;
   onChoisir: () => void;
-  onEcouter: () => void;
   onPartager: () => void;
 };
 
-// Planche « Invocations · lecture » : carte surface, pastille de source or-doux, texte, puis Écouter et Partager.
-export function CarteInvocation({ source, contenu, termine, onChoisir, onEcouter, onPartager }: CarteProps) {
+// Planche « Invocations · lecture » : carte surface, pastille de source or-doux, arabe, translittération
+// (si activée), sens en français (absent pour un texte du Coran), puis Partager.
+export function CarteInvocation({ invocation, source, termine, onChoisir, onPartager }: CarteProps) {
   const { t } = useTranslation();
   const { couleurs, espace, rayon, typographie } = useTheme();
   const { tailleArabe, tailleTrad } = useTaillesLecture();
@@ -65,23 +46,25 @@ export function CarteInvocation({ source, contenu, termine, onChoisir, onEcouter
           <View style={styles.espace} />
           {termine ? <Icon name="check-circle" size={20} color={couleurs.emeraude} /> : null}
         </View>
+        {/* Texte sacré : jamais tronqué. */}
         <Text
           accessibilityLanguage="ar"
           maxFontSizeMultiplier={echelleMax.grand}
           style={[typographie.coran, tailleArabe, styles.arabe, { color: couleurs.encre }]}>
-          {contenu.map((v) => `${v.arabe} ${marqueur(v.n)}`).join(' ')}
+          {invocation.arabe}
         </Text>
-        {translitActive
-          ? contenu.map((v) => (v.translit ? <TranslitVerset key={v.n} texte={v.translit} taille={tailleTrad} /> : null))
-          : null}
+        {translitActive ? (
+          <Text accessibilityLanguage="en" maxFontSizeMultiplier={echelleMax.grand} style={[typographie.translitteration, tailleTrad, { color: couleurs.encre2 }]}>
+            {invocation.translit}
+          </Text>
+        ) : null}
+        {invocation.sens ? (
+          <Text accessibilityLanguage="fr" maxFontSizeMultiplier={echelleMax.grand} style={[typographie.corps, { color: couleurs.encre2 }]}>
+            {invocation.sens}
+          </Text>
+        ) : null}
       </Pressable>
       <View style={[styles.actions, { borderTopColor: couleurs.ligne, paddingHorizontal: espace.espace4, paddingVertical: espace.espace2 }]}>
-        <Pressable accessibilityRole="button" onPress={onEcouter} style={[styles.ecouter, { gap: espace.espace2 }]}>
-          <Icon name="play" size={16} color={couleurs.emeraude} />
-          <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, { color: couleurs.emeraude }]}>
-            {t('commun.ecouter')}
-          </Text>
-        </Pressable>
         <View style={styles.sortie}>
           <Pressable accessibilityRole="button" accessibilityLabel={t('partage.titre')} hitSlop={8} onPress={onPartager} style={styles.icone}>
             <Icon name="share" size={20} color={couleurs.encre2} />
@@ -99,7 +82,6 @@ const styles = StyleSheet.create({
   espace: { flex: 1 },
   arabe: { textAlign: 'right', writingDirection: 'rtl' },
   actions: { flexDirection: 'row', alignItems: 'center', borderTopWidth: StyleSheet.hairlineWidth },
-  ecouter: { flexDirection: 'row', alignItems: 'center', minHeight: 44 },
   sortie: { flex: 1, flexDirection: 'row', justifyContent: 'flex-end' },
   icone: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
 });

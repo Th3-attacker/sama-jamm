@@ -1,18 +1,14 @@
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, Share, StyleSheet, Text, View } from 'react-native';
 
-import { ecouter } from '@/features/ecouter/lecteur';
-import { estCategorie, invocationsDe, type CategorieId, type Invocation } from '@/features/invocations/donnees';
+import { debutDe, estCategorie, invocationsDe, type CategorieId, type Invocation } from '@/features/invocations/donnees';
 import { BarreCompteur } from '@/features/invocations/BarreCompteur';
-import { CarteInvocation, contenuDe, referenceDe } from '@/features/invocations/CarteInvocation';
-import { sourate } from '@/features/lire/coran';
-import { PartageVerset, type VersetAPartager } from '@/features/lire/PartageVerset';
+import { CarteInvocation } from '@/features/invocations/CarteInvocation';
 import { useParametre } from '@/hooks/useParametre';
 import { cleJour } from '@/lib/dates';
 import { vibrerLeger } from '@/lib/haptique';
-import { cleVerset, useFavoris } from '@/stores/favoris';
 import { useComptesDuJour, useInvocationsJour } from '@/stores/invocationsJour';
 import { useLecture } from '@/stores/lecture';
 import { usePleinEcran } from '@/stores/pleinEcran';
@@ -22,7 +18,6 @@ import { Banner } from '@/ui/Banner';
 import { Button } from '@/ui/Button';
 import { Icon } from '@/ui/Icon';
 import { TopBar } from '@/ui/TopBar';
-import { useToast } from '@/ui/Toast';
 
 import { interlignes, tailles } from '@/theme/tokens.generated';
 /** Un jour de lecture est compté après ce délai à l'écran, comme pour le Coran. */
@@ -60,8 +55,6 @@ export default function EcranLectureInvocation() {
 function Lecture({ inv, categorie, liste }: { inv: Invocation; categorie: CategorieId; liste: Invocation[] }) {
   const { t } = useTranslation();
   const { couleurs, espace, typographie } = useTheme();
-  const { afficher } = useToast();
-  const [aPartager, setAPartager] = useState<VersetAPartager | null>(null);
   // Tout le moment est fini : l'écran « Terminé » remplace la lecture.
   const [termine, setTermine] = useState(false);
   // Lecture sans la barre d'onglets, comme la page du Coran.
@@ -69,17 +62,11 @@ function Lecture({ inv, categorie, liste }: { inv: Invocation; categorie: Catego
     usePleinEcran.setState({ actif: true });
     return () => usePleinEcran.setState({ actif: false });
   }, []);
-  const favoris = useFavoris((s) => s.versets);
-  const basculerFavori = useFavoris((s) => s.basculer);
   const comptes = useComptesDuJour();
   const definir = useInvocationsJour((s) => s.definir);
 
-  const contenu = contenuDe(inv);
-  const meta = sourate(inv.sourate);
-  const premier = contenu[0];
-  const favori = favoris.includes(cleVerset(inv.sourate, inv.de));
   const n = comptes[inv.id] ?? 0;
-  const libelle = (premier?.translit ?? '').replace(/<[^>]*>/g, '').split(' ').slice(0, 2).join(' ');
+  const libelle = debutDe(inv.arabe, 3);
 
   // Un toucher compte une lecture ; la dernière passe à l'invocation suivante, un toucher de plus recommence.
   const compter = () => {
@@ -97,19 +84,25 @@ function Lecture({ inv, categorie, liste }: { inv: Invocation; categorie: Catego
   const aller = (i: Invocation | undefined) => {
     if (i) router.setParams({ invocation: i.id });
   };
-  const sourceTexte = t('invocations.sourceCoran', { ref: referenceDe(inv), fois: t('invocations.fois', { count: inv.repetitions }) });
+  const sourceTexte = `${inv.source} · ${t('invocations.fois', { count: inv.repetitions })}`;
+  const nomCategorie = t(`invocations.categories.${categorie}`);
+  // Partage en texte : titre, arabe, sens (sauf Coran) et source.
+  const partager = () => {
+    const message = [inv.titre, inv.arabe, inv.sens, inv.source].filter(Boolean).join('\n\n');
+    Share.share({ message }).catch((e: unknown) => console.warn('Invocation non partagée', e));
+  };
 
   if (termine) {
     return (
       <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
-        <TopBar retour titre={t(`invocations.${categorie}`)} />
+        <TopBar retour titre={nomCategorie} />
         <View style={[styles.fin, { padding: espace.espace6, gap: espace.espace4 }]}>
           <Icon name="check-circle" size={56} color={couleurs.emeraude} />
           <Text accessibilityRole="header" maxFontSizeMultiplier={echelleMax.grand} style={[typographie.titre1, styles.texteFin, { color: couleurs.emeraude }]}>
             {t('invocations.terminee')}
           </Text>
           <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.texteFin, { color: couleurs.encre2 }]}>
-            {t('invocations.termineeMoment', { moment: t(`invocations.${categorie}`) })}
+            {t('invocations.termineeMoment', { moment: nomCategorie })}
           </Text>
           <Button pleineLargeur onPress={() => router.back()}>
             {t('invocations.retourInvocations')}
@@ -121,34 +114,23 @@ function Lecture({ inv, categorie, liste }: { inv: Invocation; categorie: Catego
 
   return (
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
-      {/* Planche : le moment et « 3 sur 12 » au centre, le marque-page de l'invocation à droite. */}
+      {/* Planche : la catégorie et « 3 sur 12 » au centre. */}
       <TopBar
         retour
         gauche={
           <View style={styles.centre}>
             <Text accessibilityRole="header" maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, styles.titreCentre, { color: couleurs.encre }]}>
-              {t(`invocations.${categorie}`)}
+              {nomCategorie}
             </Text>
             <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.compteCentre, { color: couleurs.encre2 }]}>
               {t('invocations.progression', { n: index + 1, total: liste.length })}
             </Text>
           </View>
         }
-        actions={[
-          {
-            icone: 'bookmark',
-            label: t(favori ? 'lire.favoriRetirer' : 'lire.favoriAjouter'),
-            actif: favori,
-            couleur: couleurs.orTexte,
-            onPress: () => {
-              if (basculerFavori(inv.sourate, inv.de)) afficher({ texte: t('lire.favoriAjoute'), icone: 'check' });
-            },
-          },
-        ]}
       />
       <ScrollView contentContainerStyle={{ paddingHorizontal: espace.espace6, paddingBottom: espace.espace6, gap: espace.espace4 }}>
         {/* Une barre par invocation : faite en émeraude, en cours en or. */}
-        <View accessible accessibilityRole="progressbar" accessibilityLabel={t(`invocations.${categorie}`)} accessibilityValue={{ text: t('invocations.progression', { n: index + 1, total: liste.length }) }} style={[styles.segments, { gap: espace.espace1 }]}>
+        <View accessible accessibilityRole="progressbar" accessibilityLabel={nomCategorie} accessibilityValue={{ text: t('invocations.progression', { n: index + 1, total: liste.length }) }} style={[styles.segments, { gap: espace.espace1 }]}>
           {liste.map((i, k) => (
             <View
               key={i.id}
@@ -160,25 +142,12 @@ function Lecture({ inv, categorie, liste }: { inv: Invocation; categorie: Catego
           ))}
         </View>
         <CarteInvocation
+          invocation={inv}
           source={sourceTexte}
-          contenu={contenu}
           termine={n >= inv.repetitions}
           onChoisir={compter}
-          onEcouter={() => {
-            ecouter({ sourate: inv.sourate, verset: inv.de });
-            router.navigate('/lecteur');
-          }}
-          onPartager={() => {
-            if (premier && meta)
-              setAPartager({
-                sourate: inv.sourate,
-                nomSourate: meta.nom,
-                n: inv.de,
-                texte: contenu.map((v) => v.arabe).join(' '),
-              });
-          }}
+          onPartager={partager}
         />
-        <Banner ton="info">{t('invocations.note')}</Banner>
       </ScrollView>
       <BarreCompteur
         titre={libelle}
@@ -190,7 +159,6 @@ function Lecture({ inv, categorie, liste }: { inv: Invocation; categorie: Catego
         sansPrecedent={index <= 0}
         sansSuivant={index >= liste.length - 1}
       />
-      <PartageVerset verset={aPartager} onFermer={() => setAPartager(null)} />
     </View>
   );
 }

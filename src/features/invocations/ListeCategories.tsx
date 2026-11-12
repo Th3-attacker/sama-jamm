@@ -7,43 +7,38 @@ import { ListGroup } from '@/ui/ListGroup';
 import { ListItem } from '@/ui/ListItem';
 import type { IconName } from '@/ui/types';
 
-import { CATEGORIES, invocationsDe, type CategorieId } from './donnees';
-import { chapitresHisn } from './hisn';
+import { categories, invocationsDe } from './donnees';
 
-// Pas d'icône « lit » dans le jeu d'icônes : le sommeil prend la lune, comme le soir.
-const ICONES: Record<CategorieId, IconName> = {
-  matin: 'sun',
-  soir: 'moon',
-  sommeil: 'moon',
+// Icônes du jeu existant : le jour pour le matin, la lune pour le soir, le sommeil et la nuit ; le livre sinon.
+const ICONES: Record<string, IconName> = {
+  morning: 'sun',
+  evening: 'moon',
+  sleep: 'moon',
+  night_prayer: 'moon',
+  travel: 'compass',
+  home: 'home',
+  masjid: 'kaaba',
+  marriage: 'heart',
+  business: 'cart',
 };
 
-/** Bibliothèque des invocations : un seul bloc avec les trois moments du Coran et la Citadelle du musulman. */
+/** Bibliothèque des invocations : un seul bloc avec les 16 catégories. */
 export function ListeCategories() {
   const { t } = useTranslation();
   const { espace } = useTheme();
   return (
     <View style={{ paddingTop: espace.espace3 }}>
       <ListGroup titre={t('lire.invocations')}>
-        {CATEGORIES.map((c) => (
+        {categories().map((c) => (
           <ListItem
-            key={c}
-            icone={ICONES[c]}
-            titre={t(`invocations.${c}`)}
-            sousTitre={t('invocations.nbInvocations', { count: invocationsDe(c).length })}
+            key={c.id}
+            icone={ICONES[c.id] ?? 'book'}
+            titre={t(`invocations.categories.${c.id}`)}
+            sousTitre={t('invocations.nbInvocations', { count: invocationsDe(c.id).length })}
             fin="chevron"
-            onPress={() => router.push({ pathname: '/lire/invocations/[categorie]', params: { categorie: c } })}
+            onPress={() => router.push({ pathname: '/lire/invocations/[categorie]', params: { categorie: c.id } })}
           />
         ))}
-        {/* Hisn al-Muslim : son contenu a son propre espace (catégories, chapitres, lecteur). */}
-        <ListItem
-          icone="book"
-          ton="or"
-          titre={t('invocations.hisn')}
-          sousTitre={t('invocations.nbChapitres', { count: chapitresHisn().length })}
-          arabe="حصن المسلم"
-          fin="chevron"
-          onPress={() => router.push('/lire/hisn')}
-        />
       </ListGroup>
     </View>
   );
