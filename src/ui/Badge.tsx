@@ -58,7 +58,7 @@ export function Badge({ children, ton = 'neutre', icone }: BadgeProps) {
 }
 
 const styles = StyleSheet.create({
-  badge: { alignSelf: 'flex-start', flexDirection: 'row', alignItems: 'center', borderWidth: 1, minHeight: 22 },
+  badge: { alignSelf: 'flex-start', flexDirection: 'row', alignItems: 'center', borderWidth: 1, minHeight: tailles.t22 },
   // Planche : texte 12/16 graisse 600 ; `libelle` porte déjà la famille semi-gras (latin et arabe).
   texte: { fontSize: tailles.t12, lineHeight: interlignes.l16 },
 });
