@@ -7,6 +7,14 @@ export const ESSAIS_MAX = 8;
 export const DELAI_ESSAI_MS = 60;
 /** Durée maximale du chargement, en ms : au-delà, la liste s'affiche là où elle est, jamais de blocage. */
 export const DUREE_MAX_MS = 1200;
+/** Durée minimale d'affichage du chargement, en ms : assez longue pour être vu, même si la liste est prête avant. */
+export const DUREE_MIN_MS = 350;
+
+/** Délai restant avant de pouvoir masquer le chargement, d'après le temps déjà écoulé depuis son affichage. */
+export function resteAvantMasquage(ecoule: number): number {
+  return Math.max(0, DUREE_MIN_MS - Math.max(0, ecoule));
+}
+
 /** Délai sans échec signalé après lequel le positionnement est considéré réussi, en ms. */
 export const DELAI_SUCCES_MS = 150;
 

@@ -1,7 +1,7 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Animated, FlatList, I18nManager, Pressable, StyleSheet, Text, View, type LayoutRectangle } from 'react-native';
+import { ActivityIndicator, Animated, FlatList, I18nManager, Pressable, StyleSheet, Text, View, type LayoutRectangle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { BasculeMode } from '@/features/lire/BasculeMode';
@@ -32,7 +32,7 @@ import { Reglette } from '@/ui/Reglette';
 import type { IconName } from '@/ui/types';
 import { Medaillon } from '@/ui/Medaillon';
 import { TranslitVerset } from '@/features/lire/TranslitVerset';
-import { apresEchec, DELAI_SUCCES_MS, decalageEstime, DUREE_MAX_MS } from '@/features/lire/positionVerset';
+import { apresEchec, DELAI_SUCCES_MS, decalageEstime, DUREE_MAX_MS, resteAvantMasquage } from '@/features/lire/positionVerset';
 import { cleVerset, useFavoris } from '@/stores/favoris';
 import { usePleinEcran } from '@/stores/pleinEcran';
 import { useLecture, type ModeLecture } from '@/stores/lecture';
@@ -216,10 +216,16 @@ function LectureSourate({
   // Chargement visible : il couvre la liste dès la première image, puis s'efface en fondu quand elle est prête.
   const [chargement, setChargement] = useState(!(modeInitial === 'page' || versetInitial <= 1));
   const [fondu] = useState(() => new Animated.Value(1));
+  const [debutChargement] = useState(() => Date.now());
   useEffect(() => {
     if (!pret) return;
-    Animated.timing(fondu, { toValue: 0, duration: 180, useNativeDriver: true }).start(() => setChargement(false));
-  }, [pret, fondu]);
+    // Visible au moins DUREE_MIN_MS, puis fondu : même un positionnement très rapide laisse voir le chargement.
+    const attente = setTimeout(
+      () => Animated.timing(fondu, { toValue: 0, duration: 180, useNativeDriver: true }).start(() => setChargement(false)),
+      resteAvantMasquage(Date.now() - debutChargement),
+    );
+    return () => clearTimeout(attente);
+  }, [pret, fondu, debutChargement]);
   const essayerDeSePlacer = useCallback(() => {
     essai.current += 1;
     echec.current = false;
@@ -527,7 +533,7 @@ function LectureSourate({
         />
         {chargement ? (
           <Animated.View
-            pointerEvents={pret ? 'none' : 'auto'}
+            pointerEvents="auto"
             style={[StyleSheet.absoluteFill, { opacity: fondu, backgroundColor: couleurs.fond, paddingHorizontal: espace.espace5, paddingTop: espace.espace5, gap: espace.espace4 }]}>
             <Text
               accessibilityRole="header"
@@ -535,7 +541,8 @@ function LectureSourate({
               style={[typographie.titre3, { color: couleurs.emeraude }]}>
               {t('lire.ouvertureVerset', { sourate: s.nom, n: versetInitial })}
             </Text>
-            <Skeleton forme="liste" lignes={5} label={t('lire.chargementVerset', { n: versetInitial })} />
+            <ActivityIndicator accessibilityLabel={t('lire.chargementVerset', { n: versetInitial })} size="large" color={couleurs.emeraude} />
+            <Skeleton forme="liste" lignes={5} />
           </Animated.View>
         ) : null}
       </View>
