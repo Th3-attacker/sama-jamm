@@ -5,7 +5,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { sourate } from '@/features/lire/coran';
 import { echelleMax } from '@/theme/typographie';
-import { themes } from '@/theme/tokens.generated';
+import { interlignes, rayon, tailles, themes } from '@/theme/tokens.generated';
 import { useTheme } from '@/theme/useTheme';
 import { useReseau } from '@/hooks/useReseau';
 import { Badge } from '@/ui/Badge';
@@ -178,14 +178,14 @@ export function ContenuEcouter({ onToutVoir }: { onToutVoir: () => void }) {
 const styles = StyleSheet.create({
   hero: { flexDirection: 'row', alignItems: 'center', overflow: 'hidden' },
   marque: { position: 'absolute', right: -40, top: -30, opacity: 0.35 },
-  rond: { width: 52, height: 52, borderRadius: 999, alignItems: 'center', justifyContent: 'center' },
+  rond: { width: 52, height: 52, borderRadius: rayon.rayonPastille, alignItems: 'center', justifyContent: 'center' },
   heroTextes: { flex: 1, minWidth: 0 },
-  etiquette: { fontSize: 12, lineHeight: 16, letterSpacing: 0.72, textTransform: 'uppercase' },
-  detail: { fontSize: 14, lineHeight: 20 },
+  etiquette: { fontSize: tailles.t12, lineHeight: interlignes.l16, letterSpacing: 0.72, textTransform: 'uppercase' },
+  detail: { fontSize: tailles.t14, lineHeight: interlignes.l20 },
   titreLigne: { flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between' },
   tuile: { width: 124 },
   pochette: { height: 148, alignItems: 'center', justifyContent: 'center' },
-  nomArabe: { fontSize: 28, lineHeight: 56 },
+  nomArabe: { fontSize: tailles.t28, lineHeight: interlignes.l56 },
   ligne: { flexDirection: 'row', alignItems: 'center', minHeight: 56, borderBottomWidth: 1 },
-  titreLigneTexte: { fontSize: 16, lineHeight: 24 },
+  titreLigneTexte: { fontSize: tailles.t16, lineHeight: interlignes.l24 },
 });

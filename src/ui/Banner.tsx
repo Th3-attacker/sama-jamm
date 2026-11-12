@@ -9,6 +9,7 @@ import { Icon } from './Icon';
 import { IconButton } from './IconButton';
 import type { Action, IconName } from './types';
 
+import { interlignes, tailles } from '@/theme/tokens.generated';
 type TonBanniere = 'info' | 'attention' | 'erreur' | 'veille' | 'succes';
 
 export type BannerProps = {
@@ -97,7 +98,7 @@ export function Banner({ ton = 'info', titre, langueTitre, children, icone, acti
 const styles = StyleSheet.create({
   bandeau: { flexDirection: 'row', alignItems: 'flex-start', borderWidth: 1 },
   textes: { flex: 1 },
-  titreVeille: { fontSize: 16, lineHeight: 24 },
-  detailVeille: { fontSize: 14, lineHeight: 20 },
+  titreVeille: { fontSize: tailles.t16, lineHeight: interlignes.l24 },
+  detailVeille: { fontSize: tailles.t14, lineHeight: interlignes.l20 },
   action: { alignSelf: 'flex-start', minHeight: 32, justifyContent: 'center' },
 });

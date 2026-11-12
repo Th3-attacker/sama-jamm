@@ -16,6 +16,7 @@ import { SegmentedControl } from '@/ui/SegmentedControl';
 import { TopBar } from '@/ui/TopBar';
 import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
+import { interlignes, tailles } from '@/theme/tokens.generated';
 const signe = (n: number) => (n > 0 ? `+${n} min` : `${n} min`);
 
 export default function MethodeDeCalcul() {
@@ -130,12 +131,12 @@ export default function MethodeDeCalcul() {
 
 const styles = StyleSheet.create({
   ecran: { flex: 1 },
-  phrase: { fontSize: 16, lineHeight: 24 },
+  phrase: { fontSize: tailles.t16, lineHeight: interlignes.l24 },
   carte: { borderWidth: 1, overflow: 'hidden' },
   ligne: { flexDirection: 'row', alignItems: 'center', minHeight: 56 },
   filet: { borderTopWidth: 1 },
   nom: { flex: 1 },
-  heure: { fontSize: 14, fontVariant: ['tabular-nums'] },
-  valeur: { minWidth: 52, textAlign: 'center', fontSize: 16, lineHeight: 24, fontVariant: ['tabular-nums'] },
-  note: { fontSize: 14, lineHeight: 20 },
+  heure: { fontSize: tailles.t14, fontVariant: ['tabular-nums'] },
+  valeur: { minWidth: 52, textAlign: 'center', fontSize: tailles.t16, lineHeight: interlignes.l24, fontVariant: ['tabular-nums'] },
+  note: { fontSize: tailles.t14, lineHeight: interlignes.l20 },
 });

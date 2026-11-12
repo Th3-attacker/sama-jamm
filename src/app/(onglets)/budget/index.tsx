@@ -30,6 +30,7 @@ import { VersetRubrique } from '@/ui/VersetRubrique';
 import { versetRubrique } from '@/features/rubriques/versetsRubriques';
 import { useDessousOutil, useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
+import { espace, interlignes, rayon, tailles } from '@/theme/tokens.generated';
 // Verset du Coran de la rubrique : données embarquées, lues une fois.
 const verset = versetRubrique('budget');
 
@@ -118,7 +119,7 @@ export default function Budget() {
   const largeur = (m: number) => `${Math.min(100, Math.max(0, (m / recuMois) * 100))}%` as const;
   const resume = resumeDettes(dettes);
   const surTexte = { maxFontSizeMultiplier: echelleMax.courant } as const;
-  const corps14 = { ...typographie.corps, fontSize: 14, lineHeight: 20 };
+  const corps14 = { ...typographie.corps, fontSize: tailles.t14, lineHeight: interlignes.l20 };
 
   return (
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
@@ -405,18 +406,18 @@ const styles = StyleSheet.create({
   ecran: { flex: 1 },
   entete: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   enteteTexte: { flex: 1 },
-  pastille: { flexDirection: 'row', alignItems: 'center', height: 32, borderRadius: 999 },
+  pastille: { flexDirection: 'row', alignItems: 'center', height: 32, borderRadius: rayon.rayonPastille },
   gras: { fontFamily: 'SourceSans3_600SemiBold' },
-  barre: { flexDirection: 'row', height: 12, borderRadius: 999, overflow: 'hidden' },
-  legende: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', rowGap: 4 },
+  barre: { flexDirection: 'row', height: 12, borderRadius: rayon.rayonPastille, overflow: 'hidden' },
+  legende: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', rowGap: espace.espace1 },
   legendeItem: { flexDirection: 'row', alignItems: 'center' },
   carre: { width: 8, height: 8, borderRadius: 2 },
   carteDettes: { flexDirection: 'row', alignItems: 'center', borderWidth: 1 },
-  titreEnveloppes: { flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 4 },
+  titreEnveloppes: { flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: espace.espace1 },
   flottant: {
     position: 'absolute',
     height: 52,
-    borderRadius: 999,
+    borderRadius: rayon.rayonPastille,
     flexDirection: 'row',
     alignItems: 'center',
     overflow: 'hidden',

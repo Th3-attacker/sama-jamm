@@ -13,6 +13,7 @@ import { Banner } from '@/ui/Banner';
 import { Button } from '@/ui/Button';
 import { TopBar } from '@/ui/TopBar';
 
+import { interlignes, tailles } from '@/theme/tokens.generated';
 /** Invitation au khatm, ouverte par le lien samajamm://khatm/CODE (ou un code saisi). */
 export default function Invitation() {
   const { t, i18n } = useTranslation();
@@ -137,7 +138,7 @@ export default function Invitation() {
 
 const styles = StyleSheet.create({
   ecran: { flex: 1 },
-  trad: { fontSize: 16, lineHeight: 24 },
+  trad: { fontSize: tailles.t16, lineHeight: interlignes.l24 },
   gras: { fontFamily: 'SourceSans3_600SemiBold' },
   regulier: { fontFamily: 'SourceSans3_400Regular' },
   centre: { textAlign: 'center' },

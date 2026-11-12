@@ -17,6 +17,7 @@ import { TextField } from '@/ui/TextField';
 import { TopBar } from '@/ui/TopBar';
 import { EvitementClavier } from '@/ui/EvitementClavier';
 
+import { interlignes, tailles } from '@/theme/tokens.generated';
 /** Nouveau khatm : nom, intention, date de fin ; puis l'invitation part par la feuille de partage. */
 export default function NouveauKhatm() {
   const { t } = useTranslation();
@@ -112,7 +113,7 @@ export default function NouveauKhatm() {
 
 const styles = StyleSheet.create({
   ecran: { flex: 1 },
-  phrase: { fontSize: 16, lineHeight: 24 },
+  phrase: { fontSize: tailles.t16, lineHeight: interlignes.l24 },
   pied: { marginTop: 'auto' },
   note: { textAlign: 'center', fontFamily: 'SourceSans3_400Regular' },
 });

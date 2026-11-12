@@ -18,6 +18,7 @@ import { themes } from "@/theme/tokens.generated";
 import { Logo } from "@/ui/Logo";
 import { PageDots } from "@/ui/PageDots";
 
+import { interlignes, tailles } from '@/theme/tokens.generated';
 // Noms des langues dans leur propre langue : ils ne se traduisent pas.
 const OPTIONS: { id: Langue; label: string; arabe?: boolean }[] = [
   { id: "fr", label: "Français" },
@@ -80,7 +81,7 @@ export default function EcranLangue() {
           style={[
             latin.display,
             styles.wolof,
-            { color: ivoire, fontSize: 56, lineHeight: 60, marginTop: espace.espace6 },
+            { color: ivoire, fontSize: tailles.t56, lineHeight: interlignes.l60, marginTop: espace.espace6 },
           ]}
         >
           {t("bienvenue.langueTitre")}
@@ -89,7 +90,7 @@ export default function EcranLangue() {
           maxFontSizeMultiplier={echelleMax.courant}
           style={[
             typographie.translitteration,
-            { color: surEmeraude2, fontSize: 18, lineHeight: 24, marginTop: espace.espace3 },
+            { color: surEmeraude2, fontSize: tailles.t18, lineHeight: interlignes.l24, marginTop: espace.espace3 },
           ]}
         >
           {t("bienvenue.langueSousTitre")}
@@ -144,7 +145,7 @@ export default function EcranLangue() {
                   maxFontSizeMultiplier={echelleMax.courant}
                   style={[
                     latin.corps,
-                    { color: couleurs.marqueEmeraude, fontSize: 14, lineHeight: 20 },
+                    { color: couleurs.marqueEmeraude, fontSize: tailles.t14, lineHeight: interlignes.l20 },
                   ]}
                 >
                   {t("bienvenue.langueChoisie")}
@@ -181,7 +182,7 @@ export default function EcranLangue() {
             maxFontSizeMultiplier={echelleMax.courant}
             style={[
               typographie.libelle,
-              { color: couleurs.marqueEmeraude, fontSize: 16 },
+              { color: couleurs.marqueEmeraude, fontSize: tailles.t16 },
             ]}
           >
             {t("commun.continuer")}

@@ -18,6 +18,7 @@ import { useToast } from '@/ui/Toast';
 import { EnteteRetour } from '@/ui/EnteteRetour';
 import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
+import { interlignes, rayon, tailles } from '@/theme/tokens.generated';
 type Feuille = { mode: 'ajout' } | { mode: 'taux'; cible: Devise } | null;
 
 /** Devise du carnet : la liste, l'ajout d'une devise personnelle et le changement avec un taux de conversion. */
@@ -182,8 +183,8 @@ const styles = StyleSheet.create({
   ecran: { flex: 1 },
   carte: { flexDirection: 'row', alignItems: 'center', minHeight: 64 },
   ajout: { height: 48, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderStyle: 'dashed' },
-  rond: { width: 20, height: 20, borderRadius: 999 },
+  rond: { width: 20, height: 20, borderRadius: rayon.rayonPastille },
   textes: { flex: 1 },
   gras: { fontFamily: 'SourceSans3_600SemiBold' },
-  detail: { fontSize: 14, lineHeight: 20 },
+  detail: { fontSize: tailles.t14, lineHeight: interlignes.l20 },
 });

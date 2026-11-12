@@ -13,7 +13,7 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { echelleMax } from '@/theme/typographie';
-import { themes } from '@/theme/tokens.generated';
+import { tailles, themes } from '@/theme/tokens.generated';
 import { useTheme } from '@/theme/useTheme';
 import { Logo } from '@/ui/Logo';
 
@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
   bas: { position: 'absolute', top: '50%', marginTop: 10, alignItems: 'center' },
   filet: { height: 1.5, borderRadius: 1 },
   // Planche : Cormorant 600, 28 sur 32, centré.
-  signature: { fontSize: 28, lineHeight: 32, textAlign: 'center' },
+  signature: { fontSize: tailles.t28, lineHeight: 32, textAlign: 'center' },
   // Interface en arabe : sous-titre en Amiri 17.
   sousTitreAr: { fontFamily: 'Amiri_400Regular', fontSize: 17, lineHeight: 26, textAlign: 'center' },
 });

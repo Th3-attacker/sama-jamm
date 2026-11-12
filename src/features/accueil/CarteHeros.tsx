@@ -9,6 +9,7 @@ import { fractionFrise } from './positionsFrise';
 import { useTheme } from '@/theme/useTheme';
 import type { PriereArc } from '@/ui/DayArc';
 
+import { interlignes, tailles } from '@/theme/tokens.generated';
 type Props = {
   /** Nom de la prochaine prière. */
   nom: string;
@@ -106,14 +107,14 @@ export function CarteHeros({ nom, heure, dans, prieres }: Props) {
 const styles = StyleSheet.create({
   // Planche : rayon 24.
   carte: { borderRadius: 24 },
-  libelle: { fontSize: 14, lineHeight: 20 },
+  libelle: { fontSize: tailles.t14, lineHeight: interlignes.l20 },
   ligne: { flexDirection: 'row', alignItems: 'baseline' },
   // Planche : 56/60 pour le chiffre, 18/24 pour l'unité.
-  delai: { fontSize: 56, lineHeight: 60, fontVariant: ['tabular-nums'] },
-  unite: { fontSize: 18, lineHeight: 24 },
+  delai: { fontSize: tailles.t56, lineHeight: interlignes.l60, fontVariant: ['tabular-nums'] },
+  unite: { fontSize: tailles.t18, lineHeight: interlignes.l24 },
   heure: { marginStart: 'auto', fontVariant: ['tabular-nums'] },
   miroir: { transform: [{ scaleX: -1 }] },
   prieres: { flexDirection: 'row' },
   priere: { flex: 1 },
-  nom: { fontSize: 12, lineHeight: 16, textAlign: 'center', fontVariant: ['tabular-nums'] },
+  nom: { fontSize: tailles.t12, lineHeight: interlignes.l16, textAlign: 'center', fontVariant: ['tabular-nums'] },
 });

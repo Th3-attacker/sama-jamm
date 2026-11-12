@@ -21,6 +21,10 @@ const miseEnPage = Object.fromEntries(
 );
 const echelleTexte = t['echelle-texte'];
 const echelleEspace = t['echelle-espace'];
+const nomsTailles = Object.fromEntries([...echelleTexte.tailles, ...echelleTexte.arabe].map((v) => ['t' + v, v]));
+const nomsInterlignes = Object.fromEntries(
+  [...Object.values(echelleTexte.interligne), ...Object.values(echelleTexte['interligne-arabe'])].map((v) => ['l' + v, v])
+);
 const out = `// Généré depuis design/tokens.json par scripts/tokens-to-theme.mjs — ne pas modifier à la main.
 export const themes = ${JSON.stringify(themes, null, 2)} as const;
 export const espace = ${JSON.stringify(px('spacing'), null, 2)} as const;
@@ -29,6 +33,8 @@ export const cible = ${JSON.stringify(px('zone-tactile'), null, 2)} as const;
 export const miseEnPage = ${JSON.stringify(miseEnPage, null, 2)} as const;
 export const tailleTexte = ${JSON.stringify(echelleTexte.tailles)} as const;
 export const tailleArabe = ${JSON.stringify(echelleTexte.arabe)} as const;
+export const tailles = ${JSON.stringify(nomsTailles, null, 2)} as const;
+export const interlignes = ${JSON.stringify(nomsInterlignes, null, 2)} as const;
 export const echelleEspace = ${JSON.stringify(echelleEspace.valeurs)} as const;
 export type NomTheme = keyof typeof themes;
 export type Couleurs = (typeof themes)[NomTheme]['couleurs'];

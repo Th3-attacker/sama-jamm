@@ -14,6 +14,7 @@ import { ListGroup } from '@/ui/ListGroup';
 import { ListItem } from '@/ui/ListItem';
 import type { IconName } from '@/ui/types';
 
+import { interlignes, tailles } from '@/theme/tokens.generated';
 export type TypeAutorisation = 'position' | 'notifications';
 
 type Statut = { granted: boolean; canAskAgain: boolean };
@@ -157,5 +158,5 @@ export function useAvantAutorisation(type: TypeAutorisation): {
 
 const styles = StyleSheet.create({
   // Planche : 14/20, normal, centré.
-  demande: { fontSize: 14, lineHeight: 20 },
+  demande: { fontSize: tailles.t14, lineHeight: interlignes.l20 },
 });

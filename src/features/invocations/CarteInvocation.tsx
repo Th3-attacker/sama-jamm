@@ -12,6 +12,7 @@ import { Icon } from '@/ui/Icon';
 
 import type { Invocation } from './donnees';
 
+import { interlignes, rayon, tailles } from '@/theme/tokens.generated';
 export type Contenu = { n: number; arabe: string; trad: string; translit: string };
 
 export function contenuDe(inv: Invocation): Contenu[] {
@@ -102,8 +103,8 @@ export function CarteInvocation({ source, contenu, termine, onChoisir, onEcouter
 
 const styles = StyleSheet.create({
   sourceLigne: { flexDirection: 'row', alignItems: 'center' },
-  pastille: { borderRadius: 999, flexShrink: 1 },
-  source: { fontSize: 14, lineHeight: 20 },
+  pastille: { borderRadius: rayon.rayonPastille, flexShrink: 1 },
+  source: { fontSize: tailles.t14, lineHeight: interlignes.l20 },
   espace: { flex: 1 },
   arabe: { textAlign: 'right', writingDirection: 'rtl' },
   actions: { flexDirection: 'row', alignItems: 'center', borderTopWidth: StyleSheet.hairlineWidth },

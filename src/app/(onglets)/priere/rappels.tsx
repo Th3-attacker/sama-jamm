@@ -19,6 +19,7 @@ import { Switch } from '@/ui/Switch';
 import { TopBar } from '@/ui/TopBar';
 import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
+import { interlignes, tailles } from '@/theme/tokens.generated';
 export default function AppelEtRappels() {
   const { t } = useTranslation();
   const { couleurs, espace, rayon, typographie } = useTheme();
@@ -153,13 +154,13 @@ export default function AppelEtRappels() {
 
 const styles = StyleSheet.create({
   ecran: { flex: 1 },
-  phrase: { fontSize: 16, lineHeight: 24 },
+  phrase: { fontSize: tailles.t16, lineHeight: interlignes.l24 },
   carte: { borderWidth: 1, overflow: 'hidden' },
   ligne: { flexDirection: 'row', alignItems: 'center', minHeight: 66 },
   filet: { borderTopWidth: 1 },
   textes: { flex: 1, minWidth: 0 },
-  local: { fontSize: 14 },
+  local: { fontSize: tailles.t14 },
   son: { flexDirection: 'row', alignItems: 'center' },
-  sonTexte: { fontSize: 14, lineHeight: 20, flexShrink: 1 },
+  sonTexte: { fontSize: tailles.t14, lineHeight: interlignes.l20, flexShrink: 1 },
   methode: { flexDirection: 'row', alignItems: 'center', minHeight: 56, borderWidth: 1 },
 });

@@ -23,6 +23,7 @@ import { TextField } from '@/ui/TextField';
 import { useToast } from '@/ui/Toast';
 import { EnteteRetour } from '@/ui/EnteteRetour';
 
+import { interlignes, tailles } from '@/theme/tokens.generated';
 type ChoixJour = 'aujourdhui' | 'hier' | 'autre';
 
 /** Enregistrer un remboursement d'une dette (jamais plus que le reste), ou faire remise du reste. */
@@ -162,6 +163,6 @@ export default function Remboursement() {
 const styles = StyleSheet.create({
   ecran: { flex: 1 },
   ligne: { flexDirection: 'row', flexWrap: 'wrap' },
-  petit: { fontSize: 14, lineHeight: 20 },
+  petit: { fontSize: tailles.t14, lineHeight: interlignes.l20 },
   espace: { flex: 1 },
 });

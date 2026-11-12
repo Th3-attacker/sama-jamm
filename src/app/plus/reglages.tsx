@@ -27,6 +27,7 @@ import { RadioGroup } from "@/ui/RadioGroup";
 import { Switch } from "@/ui/Switch";
 import { TopBar } from "@/ui/TopBar";
 
+import { rayon } from '@/theme/tokens.generated';
 // Noms des langues dans leur propre langue : ils ne se traduisent pas.
 const NOMS_LANGUES: Record<Langue, string> = {
   ar: "العربية",
@@ -334,5 +335,5 @@ const styles = StyleSheet.create({
   ecran: { flex: 1 },
   themes: { flexDirection: "row" },
   carteTheme: { flex: 1 },
-  echantillon: { height: 40, borderRadius: 6, borderWidth: StyleSheet.hairlineWidth, flexDirection: "row", overflow: "hidden" },
+  echantillon: { height: 40, borderRadius: rayon.rayonPuce, borderWidth: StyleSheet.hairlineWidth, flexDirection: "row", overflow: "hidden" },
 });

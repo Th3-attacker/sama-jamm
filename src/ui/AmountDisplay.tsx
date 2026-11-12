@@ -4,6 +4,7 @@ import { useFormatMontant } from '@/features/budget/verrou';
 import { type Devise } from '@/lib/montant';
 import { useTheme } from '@/theme/useTheme';
 
+import { interlignes, tailles } from '@/theme/tokens.generated';
 export type AmountDisplayProps = {
   /** Montant entier, en plus petites unités de la devise. */
   montant: number;
@@ -92,5 +93,5 @@ const styles = StyleSheet.create({
   montantCentre: { textAlign: 'center' },
   // Planche Budget : libellé 12/16 gras en capitales espacées, détail 14/20.
   libelleCarte: { fontFamily: 'SourceSans3_600SemiBold', letterSpacing: 0.72 },
-  detailCarte: { fontSize: 14, lineHeight: 20 },
+  detailCarte: { fontSize: tailles.t14, lineHeight: interlignes.l20 },
 });

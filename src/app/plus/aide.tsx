@@ -13,6 +13,7 @@ import { Chip } from '@/ui/Chip';
 import { TopBar } from '@/ui/TopBar';
 import { useToast } from '@/ui/Toast';
 
+import { espace } from '@/theme/tokens.generated';
 const TYPES = ['horaires', 'arabe', 'bug', 'autre'] as const;
 type TypeProbleme = (typeof TYPES)[number];
 
@@ -122,6 +123,6 @@ export default function Aide() {
 const styles = StyleSheet.create({
   ecran: { flex: 1 },
   puces: { flexDirection: 'row', flexWrap: 'wrap' },
-  zone: { minHeight: 120, borderWidth: 1, paddingHorizontal: 14, paddingVertical: 12, textAlignVertical: 'top' },
+  zone: { minHeight: 120, borderWidth: 1, paddingHorizontal: 14, paddingVertical: espace.espace3, textAlignVertical: 'top' },
   pied: { textAlign: 'center' },
 });

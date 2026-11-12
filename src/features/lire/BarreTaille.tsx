@@ -5,6 +5,7 @@ import { useReglages } from '@/stores/reglages';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 
+import { interlignes, tailles } from '@/theme/tokens.generated';
 /** Coefficients de taille du texte, du plus petit au plus grand ; l'échelon 2 (1) est la taille d'origine, le 1 (0,9) le défaut. */
 export const ECHELONS_TAILLE = [0.8, 0.9, 1, 1.15, 1.3, 1.5, 1.75] as const;
 const MAX = ECHELONS_TAILLE.length - 1;
@@ -46,7 +47,7 @@ export function BarreTaille() {
         hitSlop={8}
         onPress={() => definir(echelon - 1)}
         style={[styles.bouton, { minWidth: cible.cibleIos, opacity: echelon <= 0 ? 0.4 : 1 }]}>
-        <Text accessibilityLanguage="ar" style={{ color: couleurs.emeraude, fontSize: 14 }}>أ</Text>
+        <Text accessibilityLanguage="ar" style={{ color: couleurs.emeraude, fontSize: tailles.t14 }}>أ</Text>
       </Pressable>
 
       <View style={styles.piste}>
@@ -71,7 +72,7 @@ export function BarreTaille() {
         hitSlop={8}
         onPress={() => definir(echelon + 1)}
         style={[styles.bouton, { minWidth: cible.cibleIos, opacity: echelon >= MAX ? 0.4 : 1 }]}>
-        <Text accessibilityLanguage="ar" style={{ color: couleurs.emeraude, fontSize: 24 }}>أ</Text>
+        <Text accessibilityLanguage="ar" style={{ color: couleurs.emeraude, fontSize: tailles.t24 }}>أ</Text>
       </Pressable>
     </View>
   );
@@ -106,8 +107,8 @@ export function ReglageTaille() {
 
 const styles = StyleSheet.create({
   entete: { flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between' },
-  niveau: { fontSize: 14, lineHeight: 20, fontVariant: ['tabular-nums'] },
-  aide: { fontSize: 14, lineHeight: 20 },
+  niveau: { fontSize: tailles.t14, lineHeight: interlignes.l20, fontVariant: ['tabular-nums'] },
+  aide: { fontSize: tailles.t14, lineHeight: interlignes.l20 },
   barre: { flexDirection: 'row', alignItems: 'center' },
   bouton: { minHeight: 44, alignItems: 'center', justifyContent: 'center' },
   piste: { flex: 1, flexDirection: 'row', alignItems: 'center' },

@@ -18,6 +18,7 @@ import { Chip } from '@/ui/Chip';
 import { EmptyState } from '@/ui/EmptyState';
 import { SearchField } from '@/ui/SearchField';
 
+import { espace, interlignes, tailles } from '@/theme/tokens.generated';
 type Ligne = Sourate | ResultatVerset;
 type Filtre = 'tout' | 'coran' | 'xassaides' | 'invocations';
 const FILTRES: Filtre[] = ['tout', 'coran', 'xassaides', 'invocations'];
@@ -215,7 +216,7 @@ const styles = StyleSheet.create({
   entete: { flexDirection: 'row', alignItems: 'center' },
   champ: { flex: 1 },
   filtres: { flexDirection: 'row', flexWrap: 'wrap' },
-  fermer: { fontSize: 16, lineHeight: 24, paddingHorizontal: 8 },
-  aide: { fontSize: 14, lineHeight: 20 },
+  fermer: { fontSize: tailles.t16, lineHeight: interlignes.l24, paddingHorizontal: espace.espace2 },
+  aide: { fontSize: tailles.t14, lineHeight: interlignes.l20 },
   titreSection: { textTransform: 'uppercase', letterSpacing: 0.84 },
 });

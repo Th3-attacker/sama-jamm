@@ -5,6 +5,7 @@ import { useTheme } from '@/theme/useTheme';
 import { Icon } from '@/ui/Icon';
 import type { IconName } from '@/ui/types';
 
+import { interlignes, rayon, tailles } from '@/theme/tokens.generated';
 type Props = {
   icone: IconName;
   titre: string;
@@ -52,7 +53,7 @@ export function LigneHub({ icone, titre, valeur, premiere = false, onPress }: Pr
 
 const styles = StyleSheet.create({
   ligne: { flexDirection: 'row', alignItems: 'center', minHeight: 56 },
-  pastille: { width: 32, height: 32, borderRadius: 999, alignItems: 'center', justifyContent: 'center' },
+  pastille: { width: 32, height: 32, borderRadius: rayon.rayonPastille, alignItems: 'center', justifyContent: 'center' },
   titre: { flex: 1 },
-  valeur: { fontSize: 14, lineHeight: 20 },
+  valeur: { fontSize: tailles.t14, lineHeight: interlignes.l20 },
 });

@@ -8,6 +8,7 @@ import { Icon } from '@/ui/Icon';
 
 import type { ItemHisn } from './hisn';
 
+import { rayon } from '@/theme/tokens.generated';
 type Props = {
   item: ItemHisn;
   /** L'invocation que le compteur suit. */
@@ -30,7 +31,7 @@ export function CarteHisn({ item, actif, termine, onChoisir }: Props) {
         backgroundColor: couleurs.surface,
         borderColor: actif ? couleurs.emeraude : couleurs.ligne,
         borderWidth: actif ? 2 : 1,
-        borderRadius: 12,
+        borderRadius: rayon.rayonCarte,
         padding: espace.espace4,
         gap: espace.espace3,
       }}>

@@ -14,6 +14,7 @@ import { useTheme } from '@/theme/useTheme';
 import { Banner } from '@/ui/Banner';
 import { Button } from '@/ui/Button';
 
+import { interlignes, tailles } from '@/theme/tokens.generated';
 type Etat = { mode: 'explication' } | { mode: 'ville'; raison: 'choix' | 'refus' | 'introuvable' };
 
 export default function Position() {
@@ -96,7 +97,7 @@ export default function Position() {
         </Text>
         <Text
           maxFontSizeMultiplier={echelleMax.courant}
-          style={[typographie.corps, { color: couleurs.encre, fontSize: 18, lineHeight: 24, marginTop: espace.espace4 }]}>
+          style={[typographie.corps, { color: couleurs.encre, fontSize: tailles.t18, lineHeight: interlignes.l24, marginTop: espace.espace4 }]}>
           {t('bienvenue.positionTexte')}
         </Text>
         <Text

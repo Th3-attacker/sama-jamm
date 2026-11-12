@@ -22,6 +22,7 @@ import { VersetRubrique } from '@/ui/VersetRubrique';
 import { versetRubrique } from '@/features/rubriques/versetsRubriques';
 import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
+import { espace, interlignes, tailles } from '@/theme/tokens.generated';
 type Filtre = 'tous' | SensDette;
 
 /** Dettes entre proches : ce qu'on me doit, ce que je dois, et les dettes en cours. */
@@ -160,8 +161,8 @@ export default function Dettes() {
 const styles = StyleSheet.create({
   ecran: { flex: 1 },
   ligne: { flexDirection: 'row', alignItems: 'center' },
-  carte: { flex: 1, borderWidth: 1, gap: 4 },
-  solde: { fontSize: 14, lineHeight: 20 },
+  carte: { flex: 1, borderWidth: 1, gap: espace.espace1 },
+  solde: { fontSize: tailles.t14, lineHeight: interlignes.l20 },
   gras: { fontFamily: 'SourceSans3_600SemiBold' },
-  montant: { fontFamily: 'SourceSans3_600SemiBold', fontSize: 24, lineHeight: 30, alignSelf: 'stretch' },
+  montant: { fontFamily: 'SourceSans3_600SemiBold', fontSize: tailles.t24, lineHeight: interlignes.l30, alignSelf: 'stretch' },
 });

@@ -19,6 +19,7 @@ import { EnteteRetour } from '@/ui/EnteteRetour';
 import { ListGroup } from '@/ui/ListGroup';
 import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
+import { interlignes, tailles } from '@/theme/tokens.generated';
 const FILTRES: readonly FiltreHistorique[] = ['tout', 'depenses', 'revenus'];
 
 /** Toutes les opérations du cycle, groupées par jour ; toucher une opération ouvre sa correction. */
@@ -170,5 +171,5 @@ const styles = StyleSheet.create({
   ecran: { flex: 1 },
   jour: { flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between' },
   jourTitre: { flex: 1 },
-  jourTotal: { fontSize: 14, lineHeight: 20, fontVariant: ['tabular-nums'] },
+  jourTotal: { fontSize: tailles.t14, lineHeight: interlignes.l20, fontVariant: ['tabular-nums'] },
 });

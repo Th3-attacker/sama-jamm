@@ -17,6 +17,7 @@ import { Switch } from '@/ui/Switch';
 
 import { ReglageTaille, useTaillesLecture } from './BarreTaille';
 
+import { interlignes, tailles } from '@/theme/tokens.generated';
 export function ReglagesLecture({ ouvert, onFermer }: { ouvert: boolean; onFermer: () => void }) {
   const { t } = useTranslation();
   const { couleurs, espace, rayon, typographie } = useTheme();
@@ -134,6 +135,6 @@ export function ReglagesLecture({ ouvert, onFermer }: { ouvert: boolean; onFerme
 }
 
 const styles = StyleSheet.create({
-  translit: { fontSize: 14, lineHeight: 20 },
-  traduction: { fontSize: 16, lineHeight: 24 },
+  translit: { fontSize: tailles.t14, lineHeight: interlignes.l20 },
+  traduction: { fontSize: tailles.t16, lineHeight: interlignes.l24 },
 });

@@ -20,6 +20,7 @@ import { VersetRubrique } from '@/ui/VersetRubrique';
 import { versetRubrique } from '@/features/rubriques/versetsRubriques';
 import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
+import { interlignes, tailles } from '@/theme/tokens.generated';
 // Au-delà, remettre à zéro demande une confirmation.
 const SEUIL_CONFIRMATION = 100;
 const LIBRE = 'libre';
@@ -158,10 +159,10 @@ export default function Dhikr() {
 const styles = StyleSheet.create({
   ecran: { flex: 1 },
   formule: { alignItems: 'center' },
-  arabe: { fontSize: 34, lineHeight: 64, textAlign: 'center', writingDirection: 'rtl' },
+  arabe: { fontSize: tailles.t34, lineHeight: interlignes.l64, textAlign: 'center', writingDirection: 'rtl' },
   puces: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center' },
-  translitteration: { fontSize: 16, lineHeight: 24, textAlign: 'center' },
+  translitteration: { fontSize: tailles.t16, lineHeight: interlignes.l24, textAlign: 'center' },
   fini: { alignItems: 'center' },
-  aide: { fontSize: 14, lineHeight: 20, textAlign: 'center' },
+  aide: { fontSize: tailles.t14, lineHeight: interlignes.l20, textAlign: 'center' },
   actions: { flexDirection: 'row', justifyContent: 'center' },
 });

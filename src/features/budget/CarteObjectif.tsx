@@ -12,6 +12,7 @@ import type { Objectif } from './depot';
 import { progressionObjectif, projectionObjectif } from './epargne';
 import { useFormatMontant } from './verrou';
 
+import { interlignes, tailles } from '@/theme/tokens.generated';
 /** Rythme d'un objectif en une ligne : « 25 000 F par paie · prêt en février 2027 à ce rythme ». */
 export function useRythmeObjectif(): (o: Objectif, devise: Devise) => string {
   const { t, i18n } = useTranslation();
@@ -96,5 +97,5 @@ const styles = StyleSheet.create({
   carte: { borderWidth: 1 },
   ligne: { flexDirection: 'row', alignItems: 'baseline' },
   nom: { flex: 1 },
-  petit: { fontSize: 14, lineHeight: 20 },
+  petit: { fontSize: tailles.t14, lineHeight: interlignes.l20 },
 });

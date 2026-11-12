@@ -8,6 +8,7 @@ import { useTheme } from '@/theme/useTheme';
 import { Icon } from './Icon';
 import type { IconName } from './types';
 
+import { interlignes, tailles } from '@/theme/tokens.generated';
 export type VarianteBouton = 'principal' | 'secondaire' | 'discret' | 'precieux' | 'danger';
 
 export type ButtonProps = {
@@ -89,7 +90,7 @@ export function Button({
 }
 
 const styles = StyleSheet.create({
-  libelleGrand: { fontSize: 16, lineHeight: 24 },
+  libelleGrand: { fontSize: tailles.t16, lineHeight: interlignes.l24 },
   bouton: {
     flexDirection: 'row',
     alignItems: 'center',

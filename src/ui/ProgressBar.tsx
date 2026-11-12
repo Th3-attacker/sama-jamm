@@ -4,6 +4,7 @@ import type { Couleurs } from '@/theme/tokens.generated';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 
+import { rayon } from '@/theme/tokens.generated';
 export type TonProgression = 'emeraude' | 'or' | 'alerte' | 'erreur';
 
 export type ProgressBarProps = {
@@ -59,5 +60,5 @@ export function ProgressBar({ valeur, label, detail, ton = 'emeraude', fine = fa
 
 const styles = StyleSheet.create({
   corps: { fontFamily: 'SourceSans3_400Regular' },
-  piste: { borderRadius: 999, overflow: 'hidden' },
+  piste: { borderRadius: rayon.rayonPastille, overflow: 'hidden' },
 });

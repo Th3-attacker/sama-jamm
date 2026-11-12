@@ -41,6 +41,7 @@ import { useToast } from '@/ui/Toast';
 import { SegmentedControl } from '@/ui/SegmentedControl';
 import { Slider } from '@/ui/Slider';
 
+import { espace, interlignes, rayon, tailles } from '@/theme/tokens.generated';
 type Repetition = 'non' | 'verset' | 'sourate';
 
 /** Lecteur plein écran : celui des xassaïdes quand une piste est en cours, sinon celui du Coran. */
@@ -408,21 +409,21 @@ const styles = StyleSheet.create({
   centreScroll: { alignItems: 'center', flexGrow: 1, justifyContent: 'center' },
   centre: { textAlign: 'center' },
   // Planche : verset en cours 34/64, traduction 16/24, vitesse 16/24, minuterie 14/20.
-  versetCourant: { fontSize: 34, lineHeight: 64 },
-  traduction: { fontSize: 16, lineHeight: 24 },
-  vitesse: { fontSize: 16, lineHeight: 24 },
-  texteMinuterie: { fontSize: 14, lineHeight: 20 },
-  resumeMinuterie: { fontSize: 14, lineHeight: 20 },
+  versetCourant: { fontSize: tailles.t34, lineHeight: interlignes.l64 },
+  traduction: { fontSize: tailles.t16, lineHeight: interlignes.l24 },
+  vitesse: { fontSize: tailles.t16, lineHeight: interlignes.l24 },
+  texteMinuterie: { fontSize: tailles.t14, lineHeight: interlignes.l20 },
+  resumeMinuterie: { fontSize: tailles.t14, lineHeight: interlignes.l20 },
   arabe: { textAlign: 'center', writingDirection: 'rtl', alignSelf: 'stretch' },
-  piste: { height: 4, borderRadius: 999, overflow: 'hidden' },
-  remplissage: { height: 4, borderRadius: 999 },
+  piste: { height: 4, borderRadius: rayon.rayonPastille, overflow: 'hidden' },
+  remplissage: { height: 4, borderRadius: rayon.rayonPastille },
   commandes: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   commandeSimple: { width: 48, height: 48, alignItems: 'center', justifyContent: 'center' },
   principal: { alignItems: 'center', justifyContent: 'center' },
   minuterie: {
     alignSelf: 'center',
     minHeight: 40,
-    paddingHorizontal: 16,
+    paddingHorizontal: espace.espace4,
     borderWidth: 1,
     flexDirection: 'row',
     alignItems: 'center',

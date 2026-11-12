@@ -7,6 +7,7 @@ import { useTheme } from '@/theme/useTheme';
 import { Icon } from '@/ui/Icon';
 import { Medaillon } from '@/ui/Medaillon';
 
+import { espace, interlignes, tailles } from '@/theme/tokens.generated';
 type Props = {
   sourate: Sourate;
   onPress: () => void;
@@ -88,11 +89,11 @@ export function CarteSourate({ sourate, onPress, plat = false, enCours = false, 
 const styles = StyleSheet.create({
   carte: { flexDirection: 'row', alignItems: 'center', minHeight: 64, borderWidth: StyleSheet.hairlineWidth },
   // Planche : ligne de 56, padding vertical 4, filet de 1 en bas.
-  ligne: { flexDirection: 'row', alignItems: 'center', minHeight: 56, paddingVertical: 4, borderBottomWidth: 1 },
-  nomPlat: { fontSize: 16, lineHeight: 24 },
-  metaPlat: { fontSize: 14, lineHeight: 20 },
-  arabePlat: { lineHeight: 30 },
-  titreArabe: { fontFamily: 'Amiri_700Bold', fontSize: 24, lineHeight: 30, writingDirection: 'rtl' },
+  ligne: { flexDirection: 'row', alignItems: 'center', minHeight: 56, paddingVertical: espace.espace1, borderBottomWidth: 1 },
+  nomPlat: { fontSize: tailles.t16, lineHeight: interlignes.l24 },
+  metaPlat: { fontSize: tailles.t14, lineHeight: interlignes.l20 },
+  arabePlat: { lineHeight: interlignes.l30 },
+  titreArabe: { fontFamily: 'Amiri_700Bold', fontSize: tailles.t24, lineHeight: interlignes.l30, writingDirection: 'rtl' },
   textes: { flex: 1 },
-  arabe: { fontFamily: 'Amiri_400Regular', fontSize: 24, lineHeight: 40, writingDirection: 'rtl', textAlign: 'right' },
+  arabe: { fontFamily: 'Amiri_400Regular', fontSize: tailles.t24, lineHeight: interlignes.l40, writingDirection: 'rtl', textAlign: 'right' },
 });

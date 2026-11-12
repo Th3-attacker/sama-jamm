@@ -34,7 +34,7 @@ export const themes = {
       "marqueEmeraude": "#1f5f4a",
       "marqueOr": "#b89a5e",
       "marqueIvoire": "#f7f7f5",
-      "marqueNuit": "#12161b"
+      "marqueNuit": "#0f1714"
     },
     "ombres": {
       "ombre1": "0 1px 2px rgba(28,26,23,0.06), 0 2px 8px rgba(28,26,23,0.04)",
@@ -58,24 +58,24 @@ export const themes = {
       "surEmeraudeDoux": "#cfe8de",
       "orSurEmeraude": "#e3cc97",
       "surEmeraude2": "#cfe8de",
-      "or": "#b89a5e",
+      "or": "#d4b77e",
       "orTexte": "#e3cc97",
       "orDoux": "#2b2618",
-      "surOr": "#12161b",
+      "surOr": "#0f1714",
       "erreur": "#f2a69f",
-      "surErreur": "#12161b",
+      "surErreur": "#0f1714",
       "succes": "#7fc4ab",
       "alerte": "#e3b65c",
       "info": "#8ec1e8",
-      "anneauFocus": "#c9a96a",
-      "inverse": "#2a323a",
-      "surInverse": "#e8eaec",
-      "accentInverse": "#c9a96a",
+      "anneauFocus": "#d4b77e",
+      "inverse": "#2a3530",
+      "surInverse": "#eef1ee",
+      "accentInverse": "#d4b77e",
       "voile": "rgba(0, 0, 0, 0.6)",
       "marqueEmeraude": "#1f5f4a",
       "marqueOr": "#b89a5e",
       "marqueIvoire": "#f7f7f5",
-      "marqueNuit": "#12161b"
+      "marqueNuit": "#0f1714"
     },
     "ombres": {
       "ombre1": "none",
@@ -93,12 +93,12 @@ export const themes = {
       "encre2": "#b3b8bc",
       "encre3": "#9aa0a5",
       "emeraude": "#72ad98",
-      "emeraudeAplat": "#1f5f4a",
-      "surEmeraude": "#0e1115",
+      "emeraudeAplat": "#245747",
+      "surEmeraude": "#d5ddd9",
       "emeraudeDoux": "#1a312a",
       "surEmeraudeDoux": "#b5d2c6",
-      "orSurEmeraude": "#3f3010",
-      "surEmeraude2": "#16261f",
+      "orSurEmeraude": "#d8c08a",
+      "surEmeraude2": "#c4d9cf",
       "or": "#a28955",
       "orTexte": "#bfa670",
       "orDoux": "#1f1c16",
@@ -116,7 +116,7 @@ export const themes = {
       "marqueEmeraude": "#1f5f4a",
       "marqueOr": "#b89a5e",
       "marqueIvoire": "#f7f7f5",
-      "marqueNuit": "#12161b"
+      "marqueNuit": "#0f1714"
     },
     "ombres": {
       "ombre1": "none",
@@ -173,6 +173,33 @@ export const miseEnPage = {
 } as const;
 export const tailleTexte = [12,14,16,18,24,30,40,44,56] as const;
 export const tailleArabe = [22,28,34] as const;
+export const tailles = {
+  "t12": 12,
+  "t14": 14,
+  "t16": 16,
+  "t18": 18,
+  "t24": 24,
+  "t30": 30,
+  "t40": 40,
+  "t44": 44,
+  "t56": 56,
+  "t22": 22,
+  "t28": 28,
+  "t34": 34
+} as const;
+export const interlignes = {
+  "l16": 16,
+  "l20": 20,
+  "l24": 24,
+  "l30": 30,
+  "l36": 36,
+  "l44": 44,
+  "l48": 48,
+  "l60": 60,
+  "l40": 40,
+  "l56": 56,
+  "l64": 64
+} as const;
 export const echelleEspace = [0,4,8,12,16,20,24,32,40,48,56,64,80,96,128] as const;
 export type NomTheme = keyof typeof themes;
 export type Couleurs = (typeof themes)[NomTheme]['couleurs'];

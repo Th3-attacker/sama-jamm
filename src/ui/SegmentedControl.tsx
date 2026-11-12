@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 
+import { interlignes, tailles } from '@/theme/tokens.generated';
 export type OptionSegment = { id: string; label: string };
 
 export type SegmentedControlProps = {
@@ -67,6 +68,6 @@ const styles = StyleSheet.create({
   groupe: { flexDirection: 'row', minHeight: 48 },
   groupePilule: { minHeight: 44 },
   optionPilule: { minHeight: 36 },
-  textePilule: { fontSize: 16, lineHeight: 24 },
+  textePilule: { fontSize: tailles.t16, lineHeight: interlignes.l24 },
   option: { flex: 1, alignItems: 'center', justifyContent: 'center', minHeight: 40 },
 });

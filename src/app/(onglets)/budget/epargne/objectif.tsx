@@ -21,6 +21,7 @@ import { EnteteRetour } from '@/ui/EnteteRetour';
 import { EvitementClavier } from '@/ui/EvitementClavier';
 import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
+import { interlignes, tailles } from '@/theme/tokens.generated';
 type Mode = 'fixe' | 'libre';
 
 /** Créer un objectif, ou le corriger (`?id=`) : nom, intention, montant visé et versement à chaque paie. */
@@ -192,6 +193,6 @@ const styles = StyleSheet.create({
   ecran: { flex: 1 },
   rangee: { flexDirection: 'row' },
   moitie: { flex: 1 },
-  petit: { fontSize: 14, lineHeight: 20 },
+  petit: { fontSize: tailles.t14, lineHeight: interlignes.l20 },
   espace: { flex: 1 },
 });

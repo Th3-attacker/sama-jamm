@@ -5,6 +5,7 @@ import { surligner } from '@/features/recherche/surlignage';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 
+import { interlignes, tailles } from '@/theme/tokens.generated';
 type Props = {
   sourate: number;
   verset: number;
@@ -95,6 +96,6 @@ export function CarteVerset({ sourate, verset, texte, trad, onPress, plat = fals
 const styles = StyleSheet.create({
   carte: { borderWidth: StyleSheet.hairlineWidth },
   ligne: { borderBottomWidth: 1 },
-  tradPlate: { fontSize: 16, lineHeight: 24 },
+  tradPlate: { fontSize: tailles.t16, lineHeight: interlignes.l24 },
   arabe: { textAlign: 'right', writingDirection: 'rtl' },
 });

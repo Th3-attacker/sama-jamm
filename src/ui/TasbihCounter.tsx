@@ -6,6 +6,7 @@ import { chiffresAffiches } from '@/lib/chiffres';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 
+import { interlignes, tailles } from '@/theme/tokens.generated';
 export type TasbihCounterProps = {
   compte: number;
   /** null : sans objectif, l'anneau reste vide. */
@@ -70,5 +71,5 @@ export function TasbihCounter({ compte, objectif, onCompter }: TasbihCounterProp
 
 const styles = StyleSheet.create({
   grain: { width: TAILLE, height: TAILLE, borderRadius: TAILLE / 2, alignItems: 'center', justifyContent: 'center' },
-  compte: { fontSize: 56, lineHeight: 60 },
+  compte: { fontSize: tailles.t56, lineHeight: interlignes.l60 },
 });
