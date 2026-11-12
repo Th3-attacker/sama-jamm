@@ -73,22 +73,6 @@ export function prochainePriere(lieu: Point, maintenant: Date, options?: Options
   return meilleure ?? { nom: 'fajr', heure: calculerHoraires(lieu, lendemain(maintenant), options).fajr };
 }
 
-/**
- * Nuit de prière, d'Isha à Fajr : sert à la Veille automatique.
- * `cle` identifie la nuit par la date de son Isha (« 2026-10-29 »).
- */
-export function nuitDePriere(lieu: Point, maintenant: Date, options?: OptionsCalcul): { active: boolean; cle: string; fin: Date } {
-  const h = calculerHoraires(lieu, maintenant, options);
-  const cleDe = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-  if (maintenant < h.fajr) {
-    const veille = new Date(maintenant);
-    veille.setDate(veille.getDate() - 1);
-    return { active: true, cle: cleDe(veille), fin: h.fajr };
-  }
-  if (maintenant >= h.isha) return { active: true, cle: cleDe(maintenant), fin: calculerHoraires(lieu, lendemain(maintenant), options).fajr };
-  return { active: false, cle: cleDe(maintenant), fin: h.isha };
-}
-
 /** Relèvement de la Kaaba en degrés depuis le nord vrai. */
 export function relevementQibla(lieu: Point): number {
   return Qibla(new Coordinates(lieu.latitude, lieu.longitude));

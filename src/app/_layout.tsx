@@ -15,7 +15,6 @@ import { ErreurDeRoute } from '@/features/erreur/ErreurDeRoute';
 import { installerJournalGlobal } from '@/features/erreur/journal';
 import { EcranMiseAJour } from '@/features/miseAJour/EcranMiseAJour';
 import { useMiseAJour } from '@/features/miseAJour/useMiseAJour';
-import { useNuitDePriere } from '@/features/priere/veille';
 import { useReglages } from '@/stores/reglages';
 import { polices } from '@/theme/polices';
 import { ThemeProvider } from '@/theme/ThemeProvider';
@@ -25,7 +24,7 @@ import { ToastProvider } from '@/ui/Toast';
 export function ErrorBoundary(props: ErrorBoundaryProps) {
   const theme = useReglages((s) => s.theme);
   return (
-    <ThemeProvider choix={theme} veilleAuto={false} nuitDePriere={false} interfaceArabe={i18n.language === 'ar'}>
+    <ThemeProvider choix={theme} interfaceArabe={i18n.language === 'ar'}>
       <ErreurDeRoute {...props} />
     </ThemeProvider>
   );
@@ -40,8 +39,6 @@ SplashScreen.preventAutoHideAsync().catch((erreur: unknown) => {
 export default function RootLayout() {
   const [policesChargees, erreurPolices] = useFonts(polices);
   const theme = useReglages((s) => s.theme);
-  const veilleAuto = useReglages((s) => s.veilleAuto);
-  const nuit = useNuitDePriere();
   const { i18n } = useTranslation();
   useReplanification();
   useSurveillanceVerrou();
@@ -63,7 +60,7 @@ export default function RootLayout() {
   if (!pret) return null;
 
   return (
-    <ThemeProvider choix={theme} veilleAuto={veilleAuto} nuitDePriere={nuit?.active ?? false} interfaceArabe={i18n.language === 'ar'}>
+    <ThemeProvider choix={theme} interfaceArabe={i18n.language === 'ar'}>
       <ToastProvider>
         <Stack screenOptions={{ headerShown: false }}>
           {/* Ajout de dépense : page ouverte en modale, fermée par la flèche de retour. */}

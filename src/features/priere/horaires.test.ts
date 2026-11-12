@@ -2,7 +2,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { calculerHoraires, nuitDePriere, OPTIONS_PAR_DEFAUT, prochainePriere, relevementQibla } from './horaires.ts';
+import { calculerHoraires, OPTIONS_PAR_DEFAUT, prochainePriere, relevementQibla } from './horaires.ts';
 
 // Fuseau fixé : Dakar (UTC+0, sans heure d'été), pour que les dates locales soient identiques partout.
 process.env.TZ = 'Africa/Dakar';
@@ -69,31 +69,6 @@ test('prochaine prière après Isha : Fajr du lendemain', () => {
   const demain = calculerHoraires(DAKAR, new Date(2026, 2, 16, 12, 0));
   assert.equal(p.nom, 'fajr');
   assert.equal(p.heure.getTime(), demain.fajr.getTime());
-});
-
-test('nuit de prière : active avant Fajr, avec la date de la veille', () => {
-  const h = calculerHoraires(DAKAR, JOUR);
-  const nuit = nuitDePriere(DAKAR, new Date(h.fajr.getTime() - 60_000));
-  assert.equal(nuit.active, true);
-  assert.equal(nuit.cle, '2026-03-14');
-  assert.equal(nuit.fin.getTime(), h.fajr.getTime());
-});
-
-test('nuit de prière : inactive en journée, jusqu’à Isha', () => {
-  const h = calculerHoraires(DAKAR, JOUR);
-  const nuit = nuitDePriere(DAKAR, JOUR);
-  assert.equal(nuit.active, false);
-  assert.equal(nuit.cle, '2026-03-15');
-  assert.equal(nuit.fin.getTime(), h.isha.getTime());
-});
-
-test('nuit de prière : active après Isha, jusqu’au Fajr du lendemain', () => {
-  const h = calculerHoraires(DAKAR, JOUR);
-  const nuit = nuitDePriere(DAKAR, new Date(h.isha.getTime() + 60_000));
-  const demain = calculerHoraires(DAKAR, new Date(2026, 2, 16, 12, 0));
-  assert.equal(nuit.active, true);
-  assert.equal(nuit.cle, '2026-03-15');
-  assert.equal(nuit.fin.getTime(), demain.fajr.getTime());
 });
 
 test('qibla depuis Dakar : environ 74° depuis le nord (grand cercle vers La Mecque)', () => {

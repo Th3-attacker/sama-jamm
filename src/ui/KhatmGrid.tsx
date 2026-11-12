@@ -22,7 +22,7 @@ export type KhatmGridProps = {
 
 const COLONNES = 6;
 
-/** Les 30 juz d'un khatm : grille de 6 × 5, cases carrées. « Vous » est le seul aplat vif, même en Veille. */
+/** Les 30 juz d'un khatm : grille de 6 × 5, cases carrées. « Vous » est le seul aplat vif, même la nuit. */
 export function KhatmGrid({ juz, onChoisir, legende, libelleJuz }: KhatmGridProps) {
   const { couleurs, espace, rayon, typographie } = useTheme();
   const [largeur, cote] = useState(0);

@@ -20,11 +20,9 @@ export default function Rappels() {
   const { t } = useTranslation();
   const { couleurs, espace, ombres, typographie, latin } = useTheme();
   const rappels = useReglages((s) => s.rappels);
-  const veilleAuto = useReglages((s) => s.veilleAuto);
   const definirRappel = useReglages((s) => s.definirRappel);
   const rappelAvant = useReglages((s) => s.rappelAvant);
   const definirRappelAvant = useReglages((s) => s.definirRappelAvant);
-  const definirVeilleAuto = useReglages((s) => s.definirVeilleAuto);
   const terminerBienvenue = useReglages((s) => s.terminerBienvenue);
   const [enCours, setEnCours] = useState(false);
 
@@ -121,12 +119,6 @@ export default function Rappels() {
             detail={t('bienvenue.rappelAvantDetail')}
             active={prieres.every((p) => rappelAvant[p] === 10)}
             onChange={(actif) => prieres.forEach((p) => definirRappelAvant(p, actif ? 10 : null))}
-          />
-          <LigneReglage
-            titre={t('bienvenue.veilleAuto')}
-            detail={t('bienvenue.veilleAutoDetail')}
-            active={veilleAuto}
-            onChange={definirVeilleAuto}
           />
         </View>
       </View>

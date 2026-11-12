@@ -7,7 +7,6 @@ import { ChoixVille } from '@/features/priere/ChoixVille';
 import { calculerHoraires, prochainePriere } from '@/features/priere/horaires';
 import { fuseauDuLieu } from '@/features/priere/villes';
 import { useOptionsCalcul } from '@/features/priere/useOptionsCalcul';
-import { BandeauVeille } from '@/features/priere/veille';
 import { useMaintenant } from '@/hooks/useMaintenant';
 import { formatDuree, formatHeure, formatJour, minutesDuJour } from '@/lib/dates';
 import { prieres, useReglages } from '@/stores/reglages';
@@ -47,7 +46,6 @@ export default function Priere() {
   const rappels = useReglages((s) => s.rappels);
   const definirRappel = useReglages((s) => s.definirRappel);
   const definirLieu = useReglages((s) => s.definirLieu);
-  const veilleAuto = useReglages((s) => s.veilleAuto);
   const tAr = i18n.getFixedT('ar');
 
   const donnees = useMemo(() => {
@@ -77,7 +75,6 @@ export default function Priere() {
         actions={[{ icone: 'bell', label: t('priere.rappelsTitre'), onPress: () => router.push('/priere/rappels') }]}
       />
       <ScrollView ref={defilement} contentContainerStyle={{ ...colonne, paddingBottom: espace.espace8 + marge, gap: espace.espace4 }}>
-        <BandeauVeille />
 
         {!lieu || !donnees ? (
           <>
@@ -124,7 +121,6 @@ export default function Priere() {
                   dans: prochaine ? t('commun.dans', { duree: donnees.dans }) : undefined,
                   appelActif: rappels[p],
                   libelleAppel: t('priere.notificationDe', { priere: t(`priere.noms.${p}`) }),
-                  note: p === 'isha' && veilleAuto ? t('priere.veilleEnsuite') : undefined,
                 };
               })}
               onBasculerAppel={(id) => {

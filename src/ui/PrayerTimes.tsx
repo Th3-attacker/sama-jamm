@@ -20,8 +20,6 @@ export type LignePriere = {
   appelActif: boolean;
   /** Libellé de la cloche : « Appel d'Asr activé ». */
   libelleAppel: string;
-  /** Mention après le nom local : « Veille ensuite » pour Isha. */
-  note?: string;
 };
 
 export type PrayerTimesProps = {
@@ -70,7 +68,7 @@ export function PrayerTimes({ prieres, onBasculerAppel }: PrayerTimesProps) {
                 {prochaine && p.dans ? `${p.nom} · ${p.dans}` : p.nom}
               </Text>
               <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: prochaine ? couleurs.encre2 : couleurs.encre3 }]}>
-                {p.note ? `${p.nomLocal} · ${p.note}` : p.nomLocal}
+                {p.nomLocal}
               </Text>
             </View>
             <Text

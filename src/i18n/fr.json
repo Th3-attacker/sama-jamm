@@ -37,7 +37,6 @@
     "effortTrad": "Qui veut le miel affronte les abeilles.",
     "gratitude": "Sant Yàlla.",
     "gratitudeTrad": "Rendez grâce à Dieu.",
-    "repos": "Fanaanal ak jàmm.",
     "reposTrad": "Passez la nuit en paix.",
     "serenite": "Jàmm rekk.",
     "sereniteTrad": "La paix, seulement."
@@ -85,8 +84,6 @@
     "positionVille": "Choisir ma ville",
     "rappelsTitre": "Waxtu julli jot na.",
     "rappelsSousTitre": "L’heure de la prière est arrivée.",
-    "veilleAuto": "Veille automatique",
-    "veilleAutoDetail": "Écran adouci entre Isha et Fajr",
     "commencer": "Commencer",
     "positionIntrouvable": "Position introuvable. Choisissez votre ville pour calculer les horaires.",
     "sensProchaineOuverture": "La langue change tout de suite. La mise en page arabe (de droite à gauche) s’appliquera à la prochaine ouverture de Sama Jàmm.",
@@ -241,7 +238,6 @@
     "pageSurTotal": "Page {{n}} sur {{total}}",
     "page": "Page",
     "affichageOutil": "Affichage",
-    "veilleOutil": "Veille",
     "chercher": "Chercher"
   },
   "khatm": {
@@ -424,7 +420,6 @@
       "maghrib": "Timis",
       "isha": "Gée"
     },
-    "veilleEnsuite": "Veille ensuite",
     "semaine": "Cette semaine",
     "methode": "Méthode : {{nom}}",
     "rappelsTitre": "Appel et rappels",
@@ -644,12 +639,8 @@
     "themes": {
       "auto": "Auto",
       "jour": "Jour",
-      "nuit": "Nuit",
-      "veille": "Veille"
+      "nuit": "Nuit"
     },
-    "veilleAuto": "Veille automatique",
-    "veilleAutoDetail": "Entre Isha et Fajr",
-    "veilleJusqua": "Veille jusqu’à Fajr, {{heure}} · lumière atténuée",
     "lecture": "Lecture",
     "langueApp": "Langue de l’app",
     "priere": "Prière",
@@ -661,7 +652,6 @@
     "haptique": "Vibrations légères",
     "compte": "Compte, en option",
     "aPropos": "À propos",
-    "veilleSiAuto": "Seulement avec le thème Auto",
     "niveau": "Niveau {{n}}",
     "tailleAide": "Pour la lecture verset par verset. En mode page, l’écriture s’ajuste pour que la page tienne dans l’écran.",
     "tailleEcriture": "Taille de l’écriture",

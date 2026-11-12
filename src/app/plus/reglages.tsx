@@ -18,7 +18,7 @@ import { useReglages } from "@/stores/reglages";
 import { echelleMax } from "@/theme/typographie";
 import { themes } from "@/theme/tokens.generated";
 import { useTheme } from "@/theme/useTheme";
-import type { ChoixTheme } from "@/theme/veille";
+import type { ChoixTheme } from "@/theme/choixTheme";
 import { Banner } from "@/ui/Banner";
 import { BottomSheet } from "@/ui/BottomSheet";
 import { ListGroup } from "@/ui/ListGroup";
@@ -34,7 +34,7 @@ const NOMS_LANGUES: Record<Langue, string> = {
   wo: "Wolof",
   fr: "Français",
 };
-const THEMES: readonly ChoixTheme[] = ["auto", "jour", "nuit", "veille"];
+const THEMES: readonly ChoixTheme[] = ["auto", "jour", "nuit"];
 
 export default function Reglages() {
   const { t, i18n } = useTranslation();
@@ -43,12 +43,10 @@ export default function Reglages() {
   const theme = useReglages((s) => s.theme);
   const translitLecture = useReglages((s) => s.translitLecture);
   const definirTranslitLecture = useReglages((s) => s.definirTranslitLecture);
-  const veilleAuto = useReglages((s) => s.veilleAuto);
   const haptique = useReglages((s) => s.haptique);
   const methode = useReglages((s) => s.methode);
   const langueEnregistree = useReglages((s) => s.langue);
   const definirTheme = useReglages((s) => s.definirTheme);
-  const definirVeilleAuto = useReglages((s) => s.definirVeilleAuto);
   const definirHaptique = useReglages((s) => s.definirHaptique);
   const definirLangue = useReglages((s) => s.definirLangue);
   const verrouBudget = useReglages((s) => s.verrouBudget);
@@ -129,7 +127,7 @@ export default function Reglages() {
         ) : null}
 
         <View style={{ gap: espace.espace3 }}>
-          {/* Quatre cartes : chacune montre le thème qu'elle applique. */}
+          {/* Trois cartes : chacune montre le thème qu'elle applique. */}
           <View accessibilityRole="radiogroup" accessibilityLabel={t("reglages.theme")} style={[styles.themes, { gap: espace.espace2 }]}>
             {THEMES.map((id) => {
               const on = id === theme;
@@ -157,7 +155,7 @@ export default function Reglages() {
                         <View style={{ flex: 1, backgroundColor: themes.nuit.couleurs.fond }} />
                       </>
                     ) : (
-                      <View style={{ flex: 1, backgroundColor: themes[id].couleurs.fond, borderBottomWidth: id === "veille" ? 2 : 0, borderBottomColor: themes.veille.couleurs.or }} />
+                      <View style={{ flex: 1, backgroundColor: themes[id].couleurs.fond }} />
                     )}
                   </View>
                   <Text
@@ -171,24 +169,6 @@ export default function Reglages() {
             })}
           </View>
           <ListGroup titre={t("reglages.apparence")} note={t("reglages.tailleNote")}>
-            <ListItem
-              icone="moon"
-              titre={t("reglages.veilleAuto")}
-              // Un thème choisi à la main l'emporte sur la Veille automatique.
-              sousTitre={
-                theme === "auto"
-                  ? t("reglages.veilleAutoDetail")
-                  : t("reglages.veilleSiAuto")
-              }
-              droite={
-                <Switch
-                  label={t("reglages.veilleAuto")}
-                  active={veilleAuto}
-                  disabled={theme !== "auto"}
-                  onChange={definirVeilleAuto}
-                />
-              }
-            />
             <ListItem
               icone="bolt"
               titre={t("reglages.haptique")}

@@ -7,7 +7,6 @@ import { proverbeDuJour } from '@/features/accueil/sagesse';
 import { calculerHoraires, prochainePriere } from '@/features/priere/horaires';
 import { useOptionsCalcul } from '@/features/priere/useOptionsCalcul';
 import { fuseauDuLieu } from '@/features/priere/villes';
-import { BandeauVeille } from '@/features/priere/veille';
 import { useMaintenant } from '@/hooks/useMaintenant';
 import { formatDuree, formatHegirien, formatHeure, formatJour, minutesDuJour } from '@/lib/dates';
 import { prieres, useReglages } from '@/stores/reglages';
@@ -99,7 +98,6 @@ export default function Accueil() {
           paddingBottom: espace.espace8 + marge,
           gap: espace.espace3,
         }}>
-        <BandeauVeille />
         {arc ? (
           <CarteHeros nom={arc.nom} heure={arc.heure} dans={arc.dans} prieres={arc.liste} maintenant={arc.maintenantMin} />
         ) : (

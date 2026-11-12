@@ -3,9 +3,10 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import { migrerSonsAnciens } from './sonsMigration';
 import { retirerTraduction } from './traductionMigration';
+import { retirerVeille } from './veilleMigration';
 
 import type { Langue } from '@/i18n/langues';
-import type { ChoixTheme } from '@/theme/veille';
+import type { ChoixTheme } from '@/theme/choixTheme';
 
 import { stockage } from './stockage';
 
@@ -38,13 +39,10 @@ type Donnees = {
   ecoleAsr: EcoleAsr;
   /** Ajustement en minutes, de −15 à +15. */
   ajustements: ParPriere<number>;
-  veilleAuto: boolean;
   /** Vibrations légères (grains du dhikr, boutons principaux). */
   haptique: boolean;
   /** Télécharger les récitations seulement en Wi-Fi, pour ne pas consommer les données mobiles. */
   wifiSeulement: boolean;
-  /** Nuit pour laquelle le bandeau « Veille activée » a été fermé (« 2026-10-29 »). */
-  veilleVue: string | null;
   theme: ChoixTheme;
   bienvenueTerminee: boolean;
   /** Échelon de taille du texte de lecture, de 0 à 6 (voir `features/lire/BarreTaille`). */
@@ -68,9 +66,7 @@ type Actions = {
   definirMethode: (methode: Methode) => void;
   definirEcoleAsr: (ecole: EcoleAsr) => void;
   ajuster: (priere: NomPriere, delta: number) => void;
-  definirVeilleAuto: (actif: boolean) => void;
   definirHaptique: (actif: boolean) => void;
-  marquerVeilleVue: (nuit: string) => void;
   definirTheme: (theme: ChoixTheme) => void;
   terminerBienvenue: () => void;
   definirTailleLecture: (echelon: number) => void;
@@ -94,10 +90,8 @@ const parDefaut: Donnees = {
   methode: 'mwl',
   ecoleAsr: 'standard',
   ajustements: tout(0),
-  veilleAuto: true,
   haptique: true,
   wifiSeulement: false,
-  veilleVue: null,
   theme: 'auto',
   bienvenueTerminee: false,
   tailleLecture: 1,
@@ -125,10 +119,8 @@ export const useReglages = create<Donnees & Actions>()(
             [priere]: Math.max(-AJUSTEMENT_MAX, Math.min(AJUSTEMENT_MAX, s.ajustements[priere] + delta)),
           },
         })),
-      definirVeilleAuto: (veilleAuto) => set({ veilleAuto }),
       definirHaptique: (haptique) => set({ haptique }),
       definirWifiSeulement: (wifiSeulement) => set({ wifiSeulement }),
-      marquerVeilleVue: (veilleVue) => set({ veilleVue }),
       definirTheme: (theme) => set({ theme }),
       terminerBienvenue: () => set({ bienvenueTerminee: true }),
       definirTailleLecture: (echelon) => set({ tailleLecture: Math.max(0, Math.min(6, Math.round(echelon))) }),
@@ -139,7 +131,7 @@ export const useReglages = create<Donnees & Actions>()(
     }),
     {
       name: 'reglages',
-      version: 8,
+      version: 9,
       storage: createJSONStorage(() => stockage),
       // v1 → v2 : réglages de prière ; v2 → v3 : vibrations. Valeurs par défaut pour les clés absentes.
       // v3 → v4 : la taille de lecture par défaut passe du 3e au 2e cran ; une autre taille choisie est gardée.
@@ -155,6 +147,8 @@ export const useReglages = create<Donnees & Actions>()(
         if (version < 7) migre.sons = migrerSonsAnciens(migre.sons);
         // v7 → v8 : le Coran est en arabe seul ; la traduction et le choix d'affichage enregistrés sont effacés.
         if (version < 8) retirerTraduction(migre);
+        // v8 → v9 : plus de Veille ; le thème « veille » enregistré passe à « nuit », ses réglages sont effacés.
+        if (version < 9) retirerVeille(migre);
         return migre;
       },
       partialize: (s) => ({
@@ -166,10 +160,8 @@ export const useReglages = create<Donnees & Actions>()(
         methode: s.methode,
         ecoleAsr: s.ecoleAsr,
         ajustements: s.ajustements,
-        veilleAuto: s.veilleAuto,
         haptique: s.haptique,
         wifiSeulement: s.wifiSeulement,
-        veilleVue: s.veilleVue,
         verrouBudget: s.verrouBudget,
         masquerMontants: s.masquerMontants,
         theme: s.theme,

@@ -40,7 +40,6 @@ import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { Banner } from '@/ui/Banner';
 import { IconButton } from '@/ui/IconButton';
-import { BandeauVeille } from '@/features/priere/veille';
 import { Icon } from '@/ui/Icon';
 import { useToast } from '@/ui/Toast';
 import { Button } from '@/ui/Button';
@@ -329,11 +328,6 @@ function LectureSourate({
               {[
                 { icone: 'headphones', libelle: t('commun.ecouter'), onPress: () => ecouterPage(page) },
                 { icone: 'type', libelle: t('lire.affichageOutil'), onPress: () => setReglagesOuverts(true) },
-                {
-                  icone: 'moon',
-                  libelle: t('lire.veilleOutil'),
-                  onPress: () => useReglages.getState().definirTheme(useReglages.getState().theme === 'veille' ? 'auto' : 'veille'),
-                },
                 { icone: 'search', libelle: t('lire.chercher'), onPress: () => router.push('/plus/recherche') },
               ].map((o) => (
                 <Pressable key={o.libelle} accessibilityRole="button" accessibilityLabel={o.libelle} onPress={o.onPress} style={styles.outilPage}>
@@ -367,11 +361,6 @@ function LectureSourate({
         style={[styles.fil, { marginHorizontal: espace.espace4, backgroundColor: couleurs.ligne }]}>
         <View style={{ height: espace.espace1 / 2, width: `${Math.round((versetHaut / s.versets) * 100)}%`, backgroundColor: couleurs.or }} />
       </View>
-      {/* Veille : le bandeau de la nuit, une seule fois. */}
-      <View style={{ paddingHorizontal: espace.espace5 }}>
-        <BandeauVeille />
-      </View>
-
       <FlatList
         key={String(s.n)}
         ref={liste}

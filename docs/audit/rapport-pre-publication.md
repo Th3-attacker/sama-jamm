@@ -79,7 +79,7 @@ Rien n'indique qu'un build `staging` a été recetté sur un iPhone et un Androi
 ## 5. Revue design
 
 ### Ce qui est solide
-- Palette sobre (sauge, laiton, pierre, ardoise) avec trois thèmes Jour, Nuit, Veille : plus calme et plus lisible que la plupart des apps du secteur, souvent saturées de vert et de publicité.
+- Palette sobre (sauge, laiton, pierre, ardoise) avec deux thèmes, Jour et Nuit (la Veille a été retirée le 12 novembre 2026) : plus calme et plus lisible que la plupart des apps du secteur, souvent saturées de vert et de publicité.
 - Contrastes recalculés pour cet audit sur 17 paires et trois thèmes : texte principal 11,8 à 15,3:1, texte secondaire ≥ 5:1, bouton principal ≥ 7:1. Conforme AA partout pour le texte.
 - Zones tactiles 44/48, taille de texte du téléphone respectée (11 blocages seulement), barre d'onglets native, RTL arabe prévu.
 - Sans publicité, budget chiffré local : vrai argument face à Muslim Pro et Athan.
@@ -111,7 +111,7 @@ Les écrans n'ont pas été vus sur appareil ; une tentative de rendu web a éch
 - Budget : verrou biométrique, capture d'écran bloquée, sauvegarde puis restauration, changement de téléphone.
 - Lecture audio en arrière-plan, appel entrant, casque débranché, hors ligne.
 - Arabe en RTL sur tous les écrans ; texte agrandi au maximum ; VoiceOver et TalkBack sur les 5 onglets.
-- Petit écran (360×640) et grand écran ; thème sombre et Veille.
+- Petit écran (360×640) et grand écran ; thème sombre.
 - Connexion Google, Apple, code email ; suppression de compte.
 - Démarrage à froid sur un Android d'entrée de gamme (bundle de 12,8 Mo).
 

@@ -5,7 +5,7 @@ import { useColorScheme } from 'react-native';
 
 import { cible, espace, rayon, themes, type Couleurs, type NomTheme, type Ombres } from './tokens.generated';
 import { typographie, typographieArabe, type Typographie } from './typographie';
-import { themeCourant, type ChoixTheme } from './veille';
+import { themeCourant, type ChoixTheme } from './choixTheme';
 
 export type Theme = {
   nom: NomTheme;
@@ -26,14 +26,12 @@ type Props = {
   children: ReactNode;
   // Réglages persistés plus tard dans utilisateur.db ; valeurs par défaut du design system.
   choix?: ChoixTheme;
-  veilleAuto?: boolean;
-  nuitDePriere?: boolean;
   interfaceArabe?: boolean;
 };
 
-export function ThemeProvider({ children, choix = 'auto', veilleAuto = false, nuitDePriere = false, interfaceArabe = false }: Props) {
+export function ThemeProvider({ children, choix = 'auto', interfaceArabe = false }: Props) {
   const systeme = useColorScheme();
-  const nom = themeCourant({ choix, systeme, veilleAuto, nuitDePriere });
+  const nom = themeCourant({ choix, systeme });
 
   const theme = useMemo<Theme>(
     () => ({ nom, ...themes[nom], espace, rayon, cible, typographie: interfaceArabe ? typographieArabe : typographie, latin: typographie }),

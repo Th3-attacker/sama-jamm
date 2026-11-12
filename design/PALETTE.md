@@ -2,17 +2,17 @@
 
 Source unique : `design/tokens.json`. Après toute modification, lancer `npm run tokens` pour régénérer `src/theme/tokens.generated.ts`.
 
-Palette sobre : gris pierre, ardoise, vert sauge et laiton discret. Trois thèmes : Jour, Nuit (suit le mode sombre du téléphone), Veille (lecture nocturne atténuée).
+Palette sobre : gris pierre, ardoise, vert sauge et laiton discret. Deux thèmes : Jour et Nuit (suit le mode sombre du téléphone). La Nuit reprend l'apparence de l'ancienne Veille, plus atténuée ; il n'y a plus de bascule automatique entre Isha et Fajr.
 
-| Rôle | Jour | Nuit | Veille |
-|---|---|---|---|
-| Fond | `#f7f7f5` | `#0f1714` | `#0e1115` |
-| Surface (cartes) | `#ffffff` | `#17201c` | `#14191e` |
-| Texte principal | `#1b2024` | `#eef1ee` | `#c9cdd0` |
-| Accent principal (jeton `emeraude`, texte et contours) | `#1f5f4a` | `#7fc4ab` | `#72ad98` |
-| Aplat émeraude (jeton `emeraudeAplat`, bouton principal, carte, compteur) | `#1f5f4a` | `#2f7d63` | `#1f5f4a` |
-| Accent secondaire (jeton `or`) | `#b89a5e` | `#b89a5e` | `#a28955` |
-| Texte accent secondaire (`orTexte`) | `#7a5f2e` | `#c9a96a` | `#bfa670` |
+| Rôle | Jour | Nuit |
+|---|---|---|
+| Fond | `#f7f7f5` | `#0e1115` |
+| Surface (cartes) | `#ffffff` | `#14191e` |
+| Texte principal | `#1b2024` | `#c9cdd0` |
+| Accent principal (jeton `emeraude`, texte et contours) | `#1f5f4a` | `#72ad98` |
+| Aplat émeraude (jeton `emeraudeAplat`, bouton principal, carte, compteur) | `#1f5f4a` | `#245747` |
+| Accent secondaire (jeton `or`) | `#b89a5e` | `#a28955` |
+| Texte accent secondaire (`orTexte`) | `#7a5f2e` | `#bfa670` |
 
 Couleurs de marque fixes, indépendantes du thème (icône, écran de démarrage, écran de langue) :
 sauge `#1f5f4a`, laiton `#b89a5e`, pierre claire `#f7f7f5`, ardoise nuit `#12161b`.
@@ -27,6 +27,5 @@ Toutes les paires texte et fond des trois thèmes atteignent 4,5:1 (3:1 pour les
 
 - Les jetons gardent leurs anciens noms `emeraude` et `or` : ils désignent désormais du vert sauge et du laiton. Un renommage (par exemple `accent` et `accent2`) est possible plus tard, mais touche tous les écrans.
 - `app.json` : fond de l'écran de démarrage `#f7f7f5` (clair) et `#12161b` (sombre), fond d'icône Android `#f7f7f5`. Un nouveau build natif est nécessaire pour les voir.
-- Veille : le jeton `emeraudeAplat` reprend la valeur du jour (`#1f5f4a`) faute de valeur définie. Le texte `sur-emeraude` veille (`#0e1115`) y serait illisible : à décider avec le thème veille.
 - Les images d'icône (`assets/images`) n'ont pas été remplacées.
 - Les documents du design system hors du dépôt parlent encore de « vert profond et or » et restent à mettre à jour.

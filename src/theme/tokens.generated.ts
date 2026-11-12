@@ -43,47 +43,6 @@ export const themes = {
   },
   "nuit": {
     "couleurs": {
-      "fond": "#0f1714",
-      "surface": "#17201c",
-      "surfaceCreux": "#0b110e",
-      "ligne": "#2a3530",
-      "ligneForte": "#6f7c75",
-      "encre": "#eef1ee",
-      "encre2": "#c4cbc6",
-      "encre3": "#a2aba6",
-      "emeraude": "#7fc4ab",
-      "emeraudeAplat": "#2f7d63",
-      "surEmeraude": "#f5fbf8",
-      "emeraudeDoux": "#1e3a31",
-      "surEmeraudeDoux": "#cfe8de",
-      "orSurEmeraude": "#e3cc97",
-      "surEmeraude2": "#cfe8de",
-      "or": "#d4b77e",
-      "orTexte": "#e3cc97",
-      "orDoux": "#2b2618",
-      "surOr": "#0f1714",
-      "erreur": "#f2a69f",
-      "surErreur": "#0f1714",
-      "succes": "#7fc4ab",
-      "alerte": "#e3b65c",
-      "info": "#8ec1e8",
-      "anneauFocus": "#d4b77e",
-      "inverse": "#2a3530",
-      "surInverse": "#eef1ee",
-      "accentInverse": "#d4b77e",
-      "voile": "rgba(0, 0, 0, 0.6)",
-      "marqueEmeraude": "#1f5f4a",
-      "marqueOr": "#b89a5e",
-      "marqueIvoire": "#f7f7f5",
-      "marqueNuit": "#0f1714"
-    },
-    "ombres": {
-      "ombre1": "none",
-      "ombre2": "none"
-    }
-  },
-  "veille": {
-    "couleurs": {
       "fond": "#0e1115",
       "surface": "#14191e",
       "surfaceCreux": "#0a0d10",

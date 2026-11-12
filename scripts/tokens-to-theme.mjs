@@ -3,7 +3,7 @@
 import fs from 'node:fs';
 
 const t = JSON.parse(fs.readFileSync('design/tokens.json', 'utf8'));
-const ids = t.color.themes.map((x) => x.id); // ['jour', 'nuit', 'veille']
+const ids = t.color.themes.map((x) => x.id); // ['jour', 'nuit']
 const pick = (v, id) => (typeof v === 'string' ? v : v[id] ?? v[ids[0]]);
 const camel = (s) => s.replace(/-([a-z0-9])/g, (_, c) => c.toUpperCase());
 const themes = Object.fromEntries(

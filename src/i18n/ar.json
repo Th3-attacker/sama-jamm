@@ -37,7 +37,6 @@
     "effortTrad": "من أراد العسل صبر على لسع النحل.",
     "gratitude": "Sant Yàlla.",
     "gratitudeTrad": "الحمد لله.",
-    "repos": "Fanaanal ak jàmm.",
     "reposTrad": "تصبح على خير.",
     "serenite": "Jàmm rekk.",
     "sereniteTrad": "السلام، لا غير."
@@ -89,8 +88,6 @@
     "positionVille": "اختيار مدينة",
     "rappelsTitre": "Waxtu julli jot na.",
     "rappelsSousTitre": "حان وقت الصلاة.",
-    "veilleAuto": "الوضع الهادئ التلقائي",
-    "veilleAutoDetail": "إضاءة خافتة بين العشاء والفجر",
     "commencer": "ابدأ",
     "positionIntrouvable": "تعذّر تحديد الموقع. اختر مدينتك لحساب المواقيت.",
     "sensProchaineOuverture": "تغيّرت اللغة فورًا. سيُطبَّق تخطيط الواجهة العربية (من اليمين إلى اليسار) عند فتح سما جام في المرة القادمة.",
@@ -261,7 +258,6 @@
     "pageSurTotal": "صفحة {{n}} من {{total}}",
     "page": "الصفحة",
     "affichageOutil": "العرض",
-    "veilleOutil": "السهر",
     "chercher": "بحث"
   },
   "khatm": {
@@ -460,7 +456,6 @@
       "maghrib": "Timis",
       "isha": "Gée"
     },
-    "veilleEnsuite": "ثم الوضع الهادئ",
     "semaine": "هذا الأسبوع",
     "methode": "طريقة الحساب: {{nom}}",
     "rappelsTitre": "الأذان والتذكيرات",
@@ -692,12 +687,8 @@
     "themes": {
       "auto": "تلقائي",
       "jour": "نهاري",
-      "nuit": "ليلي",
-      "veille": "هادئ"
+      "nuit": "ليلي"
     },
-    "veilleAuto": "الوضع الهادئ التلقائي",
-    "veilleAutoDetail": "بين العشاء والفجر",
-    "veilleJusqua": "الوضع الهادئ حتى الفجر، {{heure}} · إضاءة خافتة",
     "lecture": "القراءة",
     "langueApp": "لغة التطبيق",
     "priere": "الصلاة",
@@ -709,7 +700,6 @@
     "haptique": "اهتزازات خفيفة",
     "compte": "الحساب، اختياري",
     "aPropos": "حول التطبيق",
-    "veilleSiAuto": "فقط مع المظهر التلقائي",
     "niveau": "المستوى {{n}}",
     "tailleAide": "للقراءة آية بآية. في وضع الصفحة، يتكيّف الخط لتتسع الصفحة في الشاشة.",
     "tailleEcriture": "حجم الخط",
