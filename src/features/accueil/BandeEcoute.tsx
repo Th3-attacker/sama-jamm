@@ -13,7 +13,7 @@ import { interlignes, tailles } from '@/theme/tokens.generated';
 /** Bande « Continuer l'écoute » : rouvre le lecteur sur la sourate et le récitateur en cours. */
 export function BandeEcoute() {
   const { t } = useTranslation();
-  const { couleurs, espace, rayon, typographie } = useTheme();
+  const { couleurs, espace, rayon, typographie, ligne } = useTheme();
   const position = useLecteur((s) => s.position);
   const idRecitateur = useLecteur((s) => s.recitateur);
   if (!position) return null;
@@ -31,10 +31,10 @@ export function BandeEcoute() {
         <Icon name="play" size={18} color={couleurs.surEmeraude} />
       </View>
       <View style={styles.texte}>
-        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, styles.titre, { color: couleurs.encre }]}>
+        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, ligne(styles.titre), { color: couleurs.encre }]}>
           {t('accueil.ecoute')}
         </Text>
-        <Text numberOfLines={1} maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.detail, { color: couleurs.encre2 }]}>
+        <Text numberOfLines={1} maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, ligne(styles.detail), { color: couleurs.encre2 }]}>
           {detail}
         </Text>
       </View>

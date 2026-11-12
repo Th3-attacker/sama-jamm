@@ -31,7 +31,7 @@ export default function Accueil() {
   const defilement = useRef<ComponentRef<typeof ScrollView>>(null);
   useScrollToTop(defilement);
   const { t, i18n } = useTranslation();
-  const { couleurs, espace, rayon, typographie, latin } = useTheme();
+  const { couleurs, espace, rayon, typographie, latin, ligne } = useTheme();
   const marge = useMargeBasse();
   const { styleColonne: colonne, largeur } = useLayout();
   const colonnesGrille = useColonnesGrille(largeur);
@@ -85,7 +85,7 @@ export default function Accueil() {
             </Text>
             <Text
               maxFontSizeMultiplier={echelleMax.courant}
-              style={[typographie.translitteration, styles.date, { color: couleurs.encre2 }]}>
+              style={[typographie.translitteration, ligne(styles.date), { color: couleurs.encre2 }]}>
               {hegirien ? t('accueil.date', { jour, hegirien }) : jour}
             </Text>
           </View>
@@ -120,7 +120,7 @@ export default function Accueil() {
             borderRadius: rayon.rayonCarte,
             backgroundColor: couleurs.orDoux,
           }}>
-          <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, styles.etiquette, { color: couleurs.orTexte }]}>
+          <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, ligne(styles.etiquette), { color: couleurs.orTexte }]}>
             {t('accueil.sagesse')}
           </Text>
           <Text

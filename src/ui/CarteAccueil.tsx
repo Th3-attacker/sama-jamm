@@ -23,7 +23,7 @@ export type CarteAccueilProps = {
 
 /** Carte de la grille de l'Accueil : un titre avec son icône, un contenu court, un toucher qui ouvre l'écran. */
 export function CarteAccueil({ icone, titre, label, onPress, children, pied, ecart }: CarteAccueilProps) {
-  const { couleurs, espace, typographie } = useTheme();
+  const { couleurs, espace, typographie, ligne } = useTheme();
   return (
     <Pressable
       accessibilityRole="button"
@@ -44,7 +44,7 @@ export function CarteAccueil({ icone, titre, label, onPress, children, pied, eca
         <Text
           numberOfLines={2}
           maxFontSizeMultiplier={echelleMax.courant}
-          style={[typographie.corps, styles.titre, { color: couleurs.encre3 }]}>
+          style={[typographie.corps, ligne(styles.titre), { color: couleurs.encre3 }]}>
           {titre}
         </Text>
       </View>

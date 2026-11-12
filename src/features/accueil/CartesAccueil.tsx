@@ -28,7 +28,7 @@ import { espace, interlignes, tailles } from '@/theme/tokens.generated';
 /** Carte « Reprendre » : la sourate et le verset où la lecture s'est arrêtée. Sans lecture : invitation à Al-Fâtiha. */
 function CarteReprendre() {
   const { t } = useTranslation();
-  const { couleurs, typographie } = useTheme();
+  const { couleurs, typographie, ligne } = useTheme();
   const position = useLecture((s) => s.position);
   const reprise = position ? sourate(position.sourate) : undefined;
   return (
@@ -57,7 +57,7 @@ function CarteReprendre() {
         {reprise && position ? reprise.nom : t('accueil.premierJour')}
       </Text>
       {reprise && position ? (
-        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.detail, { color: couleurs.encre2 }]}>
+        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, ligne(styles.detail), { color: couleurs.encre2 }]}>
           {t('accueil.versetSur', { n: position.verset, total: reprise.versets })}
         </Text>
       ) : null}
@@ -68,7 +68,7 @@ function CarteReprendre() {
 /** Budget ouvert : le reste à vivre et les jours du cycle. Les montants suivent le masquage de l'œil du budget. */
 function CarteBudgetOuverte() {
   const { t } = useTranslation();
-  const { couleurs, typographie, latin } = useTheme();
+  const { couleurs, typographie, latin, ligne } = useTheme();
   const format = useFormatMontant();
   const etat = useBudget(async (depot, carnet) => ({ mois: await depot.mois(carnet) }));
   const ouvrir = () => router.push('/budget');
@@ -105,10 +105,10 @@ function CarteBudgetOuverte() {
           <FiletProgres ton="emeraude" valeur={part} label={titre} detail={t('accueil.budgetJours', { count: jours })} />
         ) : undefined
       }>
-      <Text maxFontSizeMultiplier={echelleMax.grand} style={[latin.titre3, styles.montant, { color: couleurs.encre }]}>
+      <Text maxFontSizeMultiplier={echelleMax.grand} style={[latin.titre3, ligne(styles.montant), { color: couleurs.encre }]}>
         {format(reste, etat.carnet.devise)}
       </Text>
-      <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.detail, { color: couleurs.encre2 }]}>
+      <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, ligne(styles.detail), { color: couleurs.encre2 }]}>
         {t('accueil.budgetJours', { count: jours })}
       </Text>
     </CarteAccueil>
@@ -136,7 +136,7 @@ function CarteBudget() {
 
 function CarteDhikr() {
   const { t } = useTranslation();
-  const { couleurs, espace, typographie } = useTheme();
+  const { couleurs, espace, typographie, ligne } = useTheme();
   const formule = useDhikr((s) => s.formule);
   const compte = useDhikr((s) => s.comptes[s.formule] ?? 0);
   const objectifChoisi = useDhikr((s) => s.objectifs[s.formule]);
@@ -154,12 +154,12 @@ function CarteDhikr() {
         )}
         <View style={styles.dhikrTextes}>
           {objectif ? (
-            <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.detail, { color: couleurs.encre2 }]}>
+            <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, ligne(styles.detail), { color: couleurs.encre2 }]}>
               {t('accueil.dhikrSur', { objectif })}
             </Text>
           ) : null}
           {f ? (
-            <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.detail, { color: couleurs.encre2 }]}>
+            <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, ligne(styles.detail), { color: couleurs.encre2 }]}>
               {f.translitteration}
             </Text>
           ) : null}
@@ -204,7 +204,7 @@ function CarteKhatmVide({ ouvrir, message }: { ouvrir: () => void; message: stri
 /** Khatm lu : carte au nom du khatm, la grille des 30 juz et l'avancée du premier khatm de la liste. */
 function CarteKhatmLu({ id, ouvrir }: { id: string; ouvrir: () => void }) {
   const { t } = useTranslation();
-  const { couleurs, espace, typographie } = useTheme();
+  const { couleurs, espace, typographie, ligne } = useTheme();
   const moi = useSession((s) => s.session?.user.id ?? null);
   const { etat } = useKhatm(id);
   if (etat.etat !== 'pret') return <CarteKhatmVide ouvrir={ouvrir} message={t('accueil.khatmAucun')} />;
@@ -218,7 +218,7 @@ function CarteKhatmLu({ id, ouvrir }: { id: string; ouvrir: () => void }) {
       onPress={ouvrir}
       ecart={espace.espace2}
       pied={
-        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.detail, { color: couleurs.encre2 }]}>
+        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, ligne(styles.detail), { color: couleurs.encre2 }]}>
           {bilan}
         </Text>
       }>

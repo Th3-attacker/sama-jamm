@@ -38,7 +38,7 @@ function separerDelai(dans: string): { valeur: string; unite: string | null } {
 /** Carte héros de l'Accueil : la prochaine prière, le délai, l'heure, la frise du jour et les cinq prières (passées atténuées). */
 export function CarteHeros({ nom, heure, dans, prieres, maintenant }: Props) {
   const { t } = useTranslation();
-  const { couleurs, espace, typographie } = useTheme();
+  const { couleurs, espace, typographie, ligne } = useTheme();
   const surEmeraude = couleurs.surEmeraude;
   const { valeur, unite } = separerDelai(dans);
 
@@ -54,15 +54,15 @@ export function CarteHeros({ nom, heure, dans, prieres, maintenant }: Props) {
       accessibilityLabel={`${t('accueil.avant', { priere: nom })}, ${t('accueil.a', { heure })}, ${dans}`}
       onPress={() => router.push('/priere')}
       style={[styles.carte, { gap: espace.espace3, padding: espace.espace4, backgroundColor: couleurs.emeraudeAplat }]}>
-      <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.libelle, { color: surEmeraude }]}>
+      <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, ligne(styles.libelle), { color: surEmeraude }]}>
         {t('accueil.prochaine', { priere: nom })}
       </Text>
       <View style={[styles.ligne, { gap: espace.espace2 }]}>
-        <Text maxFontSizeMultiplier={echelleMax.grand} style={[typographie.chiffre, styles.delai, { color: surEmeraude }]}>
+        <Text maxFontSizeMultiplier={echelleMax.grand} style={[typographie.chiffre, ligne(styles.delai), { color: surEmeraude }]}>
           {valeur}
         </Text>
         {unite ? (
-          <Text maxFontSizeMultiplier={echelleMax.grand} style={[typographie.corps, styles.unite, { color: surEmeraude }]}>
+          <Text maxFontSizeMultiplier={echelleMax.grand} style={[typographie.corps, ligne(styles.unite), { color: surEmeraude }]}>
             {unite}
           </Text>
         ) : null}
@@ -91,7 +91,7 @@ export function CarteHeros({ nom, heure, dans, prieres, maintenant }: Props) {
         {prieres.map((p) => {
           const style = [
             p.etat === 'prochaine' ? typographie.libelle : typographie.legende,
-            styles.nom,
+            ligne(styles.nom),
             { color: surEmeraude },
           ];
           return (

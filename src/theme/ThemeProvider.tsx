@@ -1,9 +1,10 @@
 import { StatusBar } from 'expo-status-bar';
 import * as SystemUI from 'expo-system-ui';
 import { createContext, useEffect, useMemo, type ReactNode } from 'react';
-import { useColorScheme } from 'react-native';
+import { useColorScheme, type TextStyle } from 'react-native';
 
 import { cible, espace, rayon, themes, type Couleurs, type NomTheme, type Ombres } from './tokens.generated';
+import { interligneAdapte } from '@/lib/interligne';
 import { typographie, typographieArabe, type Typographie } from './typographie';
 import { themeCourant, type ChoixTheme } from './choixTheme';
 
@@ -18,6 +19,10 @@ export type Theme = {
   typographie: Typographie;
   /** Styles latins, pour les formules wolof et les noms propres en interface arabe. */
   latin: typeof typographie;
+  /** Interface en arabe. */
+  arabe: boolean;
+  /** Style local `{ fontSize, lineHeight }` dont l'interligne est élargi en interface arabe. */
+  ligne: <T extends TextStyle>(style: T) => T;
 };
 
 export const ThemeContext = createContext<Theme | null>(null);
@@ -34,7 +39,14 @@ export function ThemeProvider({ children, choix = 'auto', interfaceArabe = false
   const nom = themeCourant({ choix, systeme });
 
   const theme = useMemo<Theme>(
-    () => ({ nom, ...themes[nom], espace, rayon, cible, typographie: interfaceArabe ? typographieArabe : typographie, latin: typographie }),
+    () => ({ nom, ...themes[nom], espace, rayon, cible, typographie: interfaceArabe ? typographieArabe : typographie,
+      latin: typographie,
+      arabe: interfaceArabe,
+      ligne: (st) =>
+        st.fontSize !== undefined && st.lineHeight !== undefined
+          ? { ...st, lineHeight: interligneAdapte(st.fontSize, st.lineHeight, interfaceArabe) }
+          : st,
+    }),
     [nom, interfaceArabe]
   );
 
