@@ -498,7 +498,10 @@
       "silencieux": "Silencieux",
       "rappels": "Rappels",
       "fajr": "Fajr",
-      "makkah": "De Dhuhr à Isha"
+      "makkah": "De Dhuhr à Isha",
+      "khatm": "Khatm",
+      "lecture": "Lecture en cours",
+      "telechargements": "Téléchargements"
     }
   },
   "qibla": {

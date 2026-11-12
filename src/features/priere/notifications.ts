@@ -65,6 +65,11 @@ export function sonDeNotification(son: Son, priere: NomPriere): boolean | string
 
 /** Canal Android des rappels doux (avant la prière, zakat). */
 export const CANAL_RAPPELS = 'rappels-v1';
+/** Rappel de fin de khatm (canal propre : l'utilisateur peut le couper sans toucher aux prières). */
+export const CANAL_KHATM = 'khatm-v1';
+/** Silencieux : la carte de lecture et la fin d'un téléchargement ne doivent jamais sonner. */
+export const CANAL_LECTURE = 'lecture-v1';
+export const CANAL_TELECHARGEMENTS = 'telechargements-v1';
 const ANCIENS_CANAUX = [
   'priere-defaut',
   ...['v1', 'v2'].flatMap((v) => ['complet', 'court', 'doux', 'vibration', 'silencieux'].map((son) => `priere-${v}-${son}`)),
@@ -106,6 +111,22 @@ export async function creerCanaux(): Promise<void> {
     name: t('notifications.canaux.rappels'),
     importance: AndroidImportance.DEFAULT,
   });
+  await Notifications.setNotificationChannelAsync(CANAL_KHATM, {
+    name: t('notifications.canaux.khatm'),
+    importance: AndroidImportance.DEFAULT,
+  });
+  await Notifications.setNotificationChannelAsync(CANAL_LECTURE, {
+    name: t('notifications.canaux.lecture'),
+    importance: AndroidImportance.LOW,
+    sound: SON_MUET,
+    enableVibrate: false,
+  });
+  await Notifications.setNotificationChannelAsync(CANAL_TELECHARGEMENTS, {
+    name: t('notifications.canaux.telechargements'),
+    importance: AndroidImportance.LOW,
+    sound: SON_MUET,
+    enableVibrate: false,
+  });
   for (const ancien of ANCIENS_CANAUX) await Notifications.deleteNotificationChannelAsync(ancien);
 }
 
@@ -126,6 +147,8 @@ function contenu(n: Planifiee): Notifications.NotificationContentInput {
     title: t('notifications.appelTitre', { priere, heure: formatHeure(n.date, fuseauDuLieu(useReglages.getState().lieu)) }),
     body: n.priere === 'fajr' ? t('notifications.fajrTexte') : t('notifications.appelTexte'),
     sound: sonDeNotification(n.son, n.priere),
+    // iPhone : l'appel passe à travers un mode Concentration (capacité « Time Sensitive Notifications »).
+    interruptionLevel: 'timeSensitive',
     data: { url: URL_PRIERE },
   };
 }
