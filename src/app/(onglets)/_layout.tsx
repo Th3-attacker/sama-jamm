@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Platform, View } from 'react-native';
 
 import { ErreurDeRoute } from '@/features/erreur/ErreurDeRoute';
-import { MiniLecteur } from '@/features/ecouter/MiniLecteur';
+import { MiniLecteur, MiniLecteurAccessoire } from '@/features/ecouter/MiniLecteur';
 import {
   ACCESSOIRE_NATIF,
   useDecalageBandeau,
@@ -104,7 +104,7 @@ export default function OngletsLayout() {
         </NativeTabs.Trigger>
         {ACCESSOIRE_NATIF && miniVisible ? (
           <NativeTabs.BottomAccessory>
-            <MiniLecteur />
+            <MiniLecteurAccessoire />
           </NativeTabs.BottomAccessory>
         ) : null}
       </NativeTabs>
