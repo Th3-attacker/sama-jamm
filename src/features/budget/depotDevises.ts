@@ -1,6 +1,7 @@
 // Devises du budget : liste, devise personnelle, changement de devise du carnet avec conversion par un taux.
 import type { Devise } from '../../lib/montant.ts';
 import type { Carnet } from './depot.ts';
+import { cycleDe } from './cycle.ts';
 import { SaisieInvalide, type Contexte } from './depotCommun.ts';
 import {
   convertirMontant,
@@ -75,6 +76,64 @@ export function methodesDevises({ sql, outils }: Contexte) {
         devise.sousUnites,
       );
       return devise;
+    },
+
+    /**
+     * Ouvre un nouveau carnet dans une autre devise, sans convertir ni toucher à l'ancien (« Ouvrir un nouveau carnet »).
+     * Il reprend le nom, le jour de paie, le compte « Espèces » et les enveloppes de l'ancien, plafonds à zéro ; l'ancien
+     * carnet et toutes ses données restent enregistrés. Le carnet actif est le dernier créé (voir `carnetActif`).
+     */
+    async ouvrirNouveauCarnet(carnet: Carnet, code: string): Promise<string> {
+      if (code === carnet.devise.code) throw new SaisieInvalide('memeDevise');
+      if (!(await sql.premier<LigneDevise>(`${SELECT_DEVISE} WHERE code = ?`, code))) throw new SaisieInvalide('deviseInconnue');
+      const ancienCompte = await sql.premier<{ nom: string }>(
+        "SELECT nom FROM comptes WHERE carnet_id = ? AND type = 'especes' ORDER BY rowid LIMIT 1",
+        carnet.id,
+      );
+      const enveloppes = await sql.tous<{ nom: string; icone: string; fixe: number }>(
+        'SELECT nom, icone, fixe FROM enveloppes WHERE carnet_id = ? AND archivee = 0 ORDER BY ordre',
+        carnet.id,
+      );
+      const carnetId = outils.nouvelId();
+      const compteId = outils.nouvelId();
+      const cycleId = outils.nouvelId();
+      const bornes = cycleDe(outils.aujourdhui(), carnet.jourPaie);
+      await sql.transaction(async () => {
+        await sql.executer(
+          'INSERT INTO carnets (id, nom, devise_code, jour_paie) VALUES (?, ?, ?, ?)',
+          carnetId,
+          carnet.nom,
+          code,
+          carnet.jourPaie,
+        );
+        await sql.executer(
+          "INSERT INTO comptes (id, carnet_id, nom, type, solde_initial) VALUES (?, ?, ?, 'especes', 0)",
+          compteId,
+          carnetId,
+          ancienCompte?.nom ?? 'Espèces',
+        );
+        await sql.executer(
+          'INSERT INTO cycles (id, carnet_id, debut, fin, clos) VALUES (?, ?, ?, ?, 0)',
+          cycleId,
+          carnetId,
+          bornes.debut,
+          bornes.fin,
+        );
+        for (const [ordre, e] of enveloppes.entries()) {
+          const id = outils.nouvelId();
+          await sql.executer(
+            'INSERT INTO enveloppes (id, carnet_id, nom, icone, fixe, ordre, archivee) VALUES (?, ?, ?, ?, ?, ?, 0)',
+            id,
+            carnetId,
+            e.nom,
+            e.icone,
+            e.fixe,
+            ordre,
+          );
+          await sql.executer('INSERT INTO plafonds (cycle_id, enveloppe_id, montant, report) VALUES (?, ?, 0, 0)', cycleId, id);
+        }
+      });
+      return carnetId;
     },
 
     /**

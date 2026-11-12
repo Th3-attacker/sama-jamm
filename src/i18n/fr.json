@@ -1184,11 +1184,16 @@
     "taux": "1 {{de}} = ? {{vers}}",
     "intro": "Choisissez la monnaie de votre budget, ou ajoutez la vôtre.",
     "personnelle": "Devise personnalisée",
-    "note": "Un carnet de budget garde une seule devise. En changer convertit tous les montants déjà saisis avec le taux que vous indiquez.",
+    "note": "Un carnet de budget garde une seule devise. En changer convertit les montants déjà saisis avec le taux que vous indiquez ; vous pouvez aussi ouvrir un nouveau carnet, sans conversion.",
     "changer": "Convertir et changer",
     "changee": "Budget passé en {{devise}}",
     "tauxInvalide": "Indiquez un taux positif, avec 6 décimales au plus.",
-    "conversionNote": "Tous les montants du budget seront convertis et arrondis à l’unité la plus proche : les totaux peuvent varier très légèrement."
+    "conversionNote": "Tous les montants du budget seront convertis et arrondis à l’unité la plus proche : les totaux peuvent varier très légèrement.",
+    "nouveauCarnet": "Ouvrir un nouveau carnet",
+    "nouveauTitre": "Ouvrir un nouveau carnet ?",
+    "nouveauTexte": "Un carnet neuf en {{devise}} reprend vos enveloppes, à zéro. Votre carnet actuel reste enregistré sur ce téléphone, sans conversion, mais il ne s’affiche plus.",
+    "nouveauConfirmer": "Ouvrir le carnet",
+    "nouveauFait": "Nouveau carnet en {{devise}}"
   },
   "etats": {
     "horsLigne": "Hors ligne",

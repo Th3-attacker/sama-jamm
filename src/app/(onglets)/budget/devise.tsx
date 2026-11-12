@@ -13,6 +13,7 @@ import { useTheme } from '@/theme/useTheme';
 import { Banner } from '@/ui/Banner';
 import { BottomSheet } from '@/ui/BottomSheet';
 import { Button } from '@/ui/Button';
+import { Dialog } from '@/ui/Dialog';
 import { TextField } from '@/ui/TextField';
 import { useToast } from '@/ui/Toast';
 import { EnteteRetour } from '@/ui/EnteteRetour';
@@ -33,6 +34,7 @@ export default function EcranDevise() {
   const [saisieTaux, setSaisieTaux] = useState('');
   const [envoi, setEnvoi] = useState(false);
   const [echec, setEchec] = useState(false);
+  const [confirmerNouveau, setConfirmerNouveau] = useState(false);
 
   if (etat.etat !== 'pret') {
     return <EcranBudgetIncomplet titre={t('devise.titre')} etat={etat} />;
@@ -59,6 +61,26 @@ export default function EcranDevise() {
       afficher({ texte: t('devise.changee', { devise: libelle(feuille.cible).nom }), icone: 'check' });
     } catch (erreur: unknown) {
       if (!(erreur instanceof SaisieInvalide)) console.error('Devise non changée', erreur);
+      setEchec(true);
+    } finally {
+      setEnvoi(false);
+    }
+  };
+
+  const ouvrirNouveau = async () => {
+    if (feuille?.mode !== 'taux' || envoi) return;
+    const cible = feuille.cible;
+    setEnvoi(true);
+    setEchec(false);
+    try {
+      await depot.ouvrirNouveauCarnet(carnet, cible.code);
+      setConfirmerNouveau(false);
+      setFeuille(null);
+      budgetModifie();
+      afficher({ texte: t('devise.nouveauFait', { devise: libelle(cible).nom }), icone: 'check' });
+    } catch (erreur: unknown) {
+      if (!(erreur instanceof SaisieInvalide)) console.error('Nouveau carnet non ouvert', erreur);
+      setConfirmerNouveau(false);
       setEchec(true);
     } finally {
       setEnvoi(false);
@@ -172,9 +194,21 @@ export default function EcranDevise() {
             <Button pleineLargeur disabled={!taux || envoi} onPress={changer}>
               {t('devise.changer')}
             </Button>
+            <Button variant="secondaire" pleineLargeur disabled={envoi} onPress={() => setConfirmerNouveau(true)}>
+              {t('devise.nouveauCarnet')}
+            </Button>
           </>
         ) : null}
       </BottomSheet>
+      <Dialog
+        ouvert={confirmerNouveau && feuille?.mode === 'taux'}
+        titre={t('devise.nouveauTitre')}
+        confirmer={t('devise.nouveauConfirmer')}
+        annuler={t('commun.annuler')}
+        onConfirmer={ouvrirNouveau}
+        onAnnuler={() => setConfirmerNouveau(false)}>
+        {feuille?.mode === 'taux' ? t('devise.nouveauTexte', { devise: libelle(feuille.cible).nom }) : ''}
+      </Dialog>
     </View>
   );
 }

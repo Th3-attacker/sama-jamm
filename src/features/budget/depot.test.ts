@@ -1154,6 +1154,47 @@ test('changer de devise : même devise, taux ou devise refusés, rien n’est mo
   assert.equal((await depot.mois(carnet)).recu, 350_000);
 });
 
+test('nouveau carnet de devise : l’ancien reste intact, le nouveau reprend enveloppes et compte à zéro', async () => {
+  const { sql, depot } = monde();
+  const ancien = await carnetExemple(depot);
+  const avant = await sql.tous<{ montant: number }>('SELECT montant FROM operations ORDER BY rowid');
+
+  const nouveauId = await depot.ouvrirNouveauCarnet(ancien, 'MRU');
+
+  // Le nouveau carnet est l'actif, dans la nouvelle devise, avec le même nom et jour de paie.
+  const actif = await depot.carnetActif();
+  assert.equal(actif?.id, nouveauId);
+  assert.equal(actif?.devise.code, 'MRU');
+  assert.equal(actif?.nom, ancien.nom);
+  assert.equal(actif?.jourPaie, ancien.jourPaie);
+  // Mêmes enveloppes, plafonds à zéro, aucun revenu ni opération reprise.
+  const enveloppes = await sql.tous<{ nom: string }>('SELECT nom FROM enveloppes WHERE carnet_id = ? ORDER BY ordre', nouveauId);
+  assert.deepEqual(enveloppes.map((e) => e.nom), ['Dépense quotidienne', 'Loyer', 'Transport']);
+  const plafonds = await sql.tous<{ montant: number }>(
+    'SELECT p.montant FROM plafonds p JOIN enveloppes e ON e.id = p.enveloppe_id WHERE e.carnet_id = ?',
+    nouveauId,
+  );
+  assert.deepEqual(plafonds.map((p) => p.montant), [0, 0, 0]);
+  assert.equal((await depot.mois(actif ?? ancien)).recu, 0);
+  const comptes = await depot.comptes(nouveauId);
+  assert.deepEqual(comptes.map((c) => c.nom), ['Espèces']);
+  // L'ancien carnet : devise, opérations et plafonds inchangés.
+  const ancienApres = await sql.premier<{ devise_code: string }>('SELECT devise_code FROM carnets WHERE id = ?', ancien.id);
+  assert.equal(ancienApres?.devise_code, 'XOF');
+  const apres = await sql.tous<{ montant: number }>('SELECT montant FROM operations WHERE carnet_id = ? ORDER BY rowid', ancien.id);
+  assert.deepEqual(apres.map((o) => o.montant), avant.map((o) => o.montant));
+});
+
+test('nouveau carnet de devise : même devise ou devise inconnue refusées, rien n’est créé', async () => {
+  const { sql, depot } = monde();
+  const carnet = await carnetExemple(depot);
+  const refus = (cle: string) => (e: unknown) => e instanceof SaisieInvalide && e.cle === cle;
+  await assert.rejects(depot.ouvrirNouveauCarnet(carnet, 'XOF'), refus('memeDevise'));
+  await assert.rejects(depot.ouvrirNouveauCarnet(carnet, 'INCONNUE'), refus('deviseInconnue'));
+  const n = await sql.premier<{ n: number }>('SELECT count(*) AS n FROM carnets');
+  assert.equal(n?.n, 1);
+});
+
 test('export : opérations du carnet avec enveloppe et compte, dans l’ordre', async () => {
   const { depot } = monde();
   const carnet = await carnetExemple(depot);

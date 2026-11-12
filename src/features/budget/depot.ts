@@ -238,11 +238,11 @@ export function creerDepot(sql: Sql, outils: Outils) {
   return enFileUnique({
     cycleCourant,
 
-    /** Premier carnet du téléphone, ou null avant le premier budget. */
+    /** Carnet actif : le dernier créé (un « nouveau carnet » de devise prend la place de l'ancien, qui reste en base) ; null avant le premier budget. */
     async carnetActif(): Promise<Carnet | null> {
       const l = await sql.premier<LigneCarnet>(
         `SELECT c.id, c.nom, c.jour_paie, d.code, d.nom AS dnom, d.symbole, d.position, d.decimales, d.sous_unites, d.personnelle
-         FROM carnets c JOIN devises d ON d.code = c.devise_code ORDER BY c.rowid LIMIT 1`,
+         FROM carnets c JOIN devises d ON d.code = c.devise_code ORDER BY c.rowid DESC LIMIT 1`,
       );
       if (!l) return null;
       return {
