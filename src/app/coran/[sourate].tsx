@@ -1,5 +1,5 @@
 import { router, useLocalSearchParams } from 'expo-router';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FlatList, I18nManager, Pressable, StyleSheet, Text, View, type LayoutRectangle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -32,6 +32,7 @@ import { Reglette } from '@/ui/Reglette';
 import type { IconName } from '@/ui/types';
 import { Medaillon } from '@/ui/Medaillon';
 import { TranslitVerset } from '@/features/lire/TranslitVerset';
+import { apresEchec, DELAI_SUCCES_MS, decalageEstime } from '@/features/lire/positionVerset';
 import { cleVerset, useFavoris } from '@/stores/favoris';
 import { usePleinEcran } from '@/stores/pleinEcran';
 import { useLecture, type ModeLecture } from '@/stores/lecture';
@@ -110,7 +111,8 @@ function LectureSourate({
   const { couleurs, ombres, espace, rayon, cible, typographie } = useTheme();
   // La pilule d'outils est l'outil fixe du bas : la pile la compte, le contenu lui laisse sa place.
   const dessous = useDessousOutil();
-  useEffect(() => {
+  // Avant la première image : la pile du bas compte la pilule dès l'ouverture, elle ne se décale pas ensuite.
+  useLayoutEffect(() => {
     usePlaceBas.setState({ outil: 'pilule' });
     return () => usePlaceBas.setState({ outil: 'aucun', hauteurOutil: 0 });
   }, []);
@@ -179,8 +181,16 @@ function LectureSourate({
     () => enregistrerPosition({ sourate: s.n, verset: versetVisible.current, mode: 'verset' }),
     [enregistrerPosition, s.n],
   );
+  // Ouverture sur un verset (reprise, début d'un juz) : état du positionnement, voir plus bas.
+  const [pret, setPret] = useState(modeInitial === 'page' || versetInitial <= 1);
+  const positionne = useRef(modeInitial === 'page' || versetInitial <= 1);
+  const essai = useRef(0);
+  const echec = useRef(false);
+  const succes = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   // Doit rester stable : la FlatList refuse un rappel qui change entre deux rendus.
   const surVisibles = useCallback(({ viewableItems }: { viewableItems: { item: { n: number } }[] }) => {
+    // Pendant le positionnement sur le verset d'ouverture, les versets rendus un instant ne comptent pas.
+    if (!positionne.current) return;
     const premier = viewableItems[0];
     if (premier) {
       versetVisible.current = premier.item.n;
@@ -195,12 +205,31 @@ function LectureSourate({
     if (debut) enregistrerPosition({ sourate: debut.sourate, verset: debut.verset, mode: 'page' });
   }, [modePage, page, enregistrerPosition]);
 
-  // Reprise en lecture verset par verset : on se place sur le verset enregistré.
+  // Ouverture sur un verset (reprise, début d'un juz) : la liste reste invisible le temps de s'y placer, en quelques
+  // essais (les versets lointains ne sont pas encore mesurés), puis apparaît une seule fois, déjà bien placée.
+  const terminerPositionnement = useCallback(() => {
+    clearTimeout(succes.current);
+    positionne.current = true;
+    setPret(true);
+  }, []);
+  const essayerDeSePlacer = useCallback(() => {
+    essai.current += 1;
+    echec.current = false;
+    liste.current?.scrollToIndex({ index: versetInitial - 1, animated: false });
+    // Aucun échec signalé peu après : le verset est atteint.
+    clearTimeout(succes.current);
+    succes.current = setTimeout(() => {
+      if (!echec.current) terminerPositionnement();
+    }, DELAI_SUCCES_MS);
+  }, [versetInitial, terminerPositionnement]);
   useEffect(() => {
-    if (modePage || versetInitial <= 1) return;
-    const minuteur = setTimeout(() => liste.current?.scrollToIndex({ index: versetInitial - 1, animated: false }), 0);
-    return () => clearTimeout(minuteur);
-  }, [modePage, versetInitial]);
+    if (positionne.current) return;
+    const depart = setTimeout(essayerDeSePlacer, 0);
+    return () => {
+      clearTimeout(depart);
+      clearTimeout(succes.current);
+    };
+  }, [essayerDeSePlacer]);
   const legende = [typographie.legende, { color: couleurs.encre3, textAlign: 'center' as const }];
 
   const basculerMode = () => {
@@ -369,12 +398,16 @@ function LectureSourate({
         onViewableItemsChanged={surVisibles}
         onScrollEndDrag={enregistrerVerset}
         onMomentumScrollEnd={enregistrerVerset}
-        onScrollToIndexFailed={({ index, averageItemLength }) => {
-          // Verset pas encore mesuré : on s'en approche, puis on réessaie.
-          liste.current?.scrollToOffset({ offset: averageItemLength * index, animated: false });
+        onScrollToIndexFailed={({ averageItemLength, index }) => {
+          // Verset pas encore mesuré : on s'en approche, puis on réessaie (jusqu'à ESSAIS_MAX fois).
+          echec.current = true;
+          liste.current?.scrollToOffset({ offset: decalageEstime(index, averageItemLength), animated: false });
+          const suite = apresEchec(essai.current);
           clearTimeout(reessai.current);
-          reessai.current = setTimeout(() => liste.current?.scrollToIndex({ index, animated: false }), 100);
+          if (suite.reessayer) reessai.current = setTimeout(essayerDeSePlacer, suite.delai);
+          else terminerPositionnement();
         }}
+        style={{ opacity: pret ? 1 : 0 }}
         keyExtractor={(v) => String(v.n)}
         ListHeaderComponent={<Entete sourate={s.n} />}
         renderItem={({ item }) => {
