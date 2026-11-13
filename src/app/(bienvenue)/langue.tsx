@@ -17,6 +17,7 @@ import { interlignes, tailles } from '@/theme/tokens.generated';
 // Noms des langues dans leur propre langue : ils ne se traduisent pas.
 const OPTIONS: { id: Langue; label: string; arabe?: boolean }[] = [
   { id: "fr", label: "Français" },
+  { id: "en", label: "English" },
   { id: "ar", label: "العربية", arabe: true },
 ];
 

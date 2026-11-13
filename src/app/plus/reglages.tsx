@@ -31,6 +31,7 @@ const NOMS_LANGUES: Record<Langue, string> = {
   ar: "العربية",
   wo: "Wolof",
   fr: "Français",
+  en: "English",
 };
 const THEMES: readonly ChoixTheme[] = ["auto", "jour", "nuit"];
 

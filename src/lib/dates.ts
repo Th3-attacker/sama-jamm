@@ -38,7 +38,7 @@ export function formatDuree(minutes: number): string {
   return chiffresAffiches(`${Math.floor(m / 60)} h ${deux(m % 60)}`);
 }
 
-const LOCALES: Record<string, string> = { fr: 'fr-FR', ar: 'ar', wo: 'fr-SN' };
+const LOCALES: Record<string, string> = { fr: 'fr-FR', en: 'en-GB', ar: 'ar', wo: 'fr-SN' };
 
 /** « Jeudi 29 octobre ». Le wolof utilise le français en attendant une version validée. */
 export function formatJour(date: Date, langue: string): string {

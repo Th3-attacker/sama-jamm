@@ -6,6 +6,7 @@ import { chiffresAffiches, chiffresIndiensActifs, definirChiffresIndiens } from 
 import { useReglages } from '@/stores/reglages';
 
 import ar from './ar.json';
+import en from './en.json';
 import fr from './fr.json';
 import { estLangueProposee, type Langue } from './langues';
 import wo from './wo.json';
@@ -30,7 +31,7 @@ brancherPlugin(initReactI18next)
   .use(POST_CHIFFRES)
   .init({
     postProcess: ['chiffres'],
-    resources: { fr: { translation: fr }, wo: { translation: wo }, ar: { translation: ar } },
+    resources: { fr: { translation: fr }, en: { translation: en }, wo: { translation: wo }, ar: { translation: ar } },
     lng: useReglages.getState().langue ?? langueDuTelephone(),
     fallbackLng: 'fr',
     interpolation: { escapeValue: false },
