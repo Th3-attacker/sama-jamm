@@ -470,7 +470,11 @@
     "positionRefusee": "Position refusée",
     "positionRefuseeTexte": "Choisissez votre ville : les horaires et la qibla seront calculés pour elle.",
     "villes": "Villes",
-    "villesNote": "Vous pourrez autoriser la position plus tard dans les réglages du téléphone.",
+    "villesNote": "Vous pourrez utiliser votre position plus tard : touchez le lieu en haut de l’écran Prière.",
+    "utiliserPosition": "Utiliser ma position",
+    "utiliserPositionAide": "Les horaires et la qibla suivent votre position. Elle ne quitte jamais ce téléphone.",
+    "changerLieu": "Changer de lieu",
+    "lieuTitre": "Lieu",
     "chercherVille": "Chercher une ville",
     "maPosition": "Ma position",
     "son": "Son de l’appel"

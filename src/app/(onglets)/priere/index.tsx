@@ -1,9 +1,10 @@
 import { router, useScrollToTop } from 'expo-router';
-import { ComponentRef, useMemo, useRef } from 'react';
+import { ComponentRef, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { ChoixVille } from '@/features/priere/ChoixVille';
+import { FeuilleLieu, UtiliserMaPosition } from '@/features/priere/FeuilleLieu';
 import { calculerHoraires, prochainePriere } from '@/features/priere/horaires';
 import { fuseauDuLieu } from '@/features/priere/villes';
 import { useOptionsCalcul } from '@/features/priere/useOptionsCalcul';
@@ -35,7 +36,7 @@ export default function Priere() {
   const defilement = useRef<ComponentRef<typeof ScrollView>>(null);
   useScrollToTop(defilement);
   const { t, i18n } = useTranslation();
-  const { couleurs, espace, rayon, typographie, ligne } = useTheme();
+  const { couleurs, espace, rayon, cible, typographie, ligne } = useTheme();
   const marge = useMargeBasse();
   const { styleColonne: colonne } = useLayout();
   const maintenant = useMaintenant();
@@ -46,6 +47,7 @@ export default function Priere() {
   const rappels = useReglages((s) => s.rappels);
   const definirRappel = useReglages((s) => s.definirRappel);
   const definirLieu = useReglages((s) => s.definirLieu);
+  const [lieuOuvert, setLieuOuvert] = useState(false);
   const tAr = i18n.getFixedT('ar');
 
   const donnees = useMemo(() => {
@@ -80,14 +82,24 @@ export default function Priere() {
             <Banner ton="erreur" titre={t('priere.positionRefusee')}>
               {t('priere.positionRefuseeTexte')}
             </Banner>
+            <UtiliserMaPosition onFait={() => undefined} />
             <ChoixVille apresRefus onChoisir={(v) => definirLieu({ type: 'ville', id: v.id, nom: v.nom, latitude: v.lat, longitude: v.lon })} />
           </>
         ) : (
           <>
             {/* Jamais d'heures sans le lieu de calcul. */}
-            <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, ligne(styles.lieu), { color: couleurs.encre2 }]}>
-              {`${nomLieu} · ${formatJour(maintenant, i18n.language)}`}
-            </Text>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={`${nomLieu}. ${t('priere.changerLieu')}`}
+              onPress={() => setLieuOuvert(true)}
+              style={[styles.ligneLieu, { minHeight: cible.cibleIos }]}>
+              <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, ligne(styles.lieu), { color: couleurs.encre2 }]}>
+                {`${nomLieu} · ${formatJour(maintenant, i18n.language)}`}
+              </Text>
+              <View style={{ marginStart: espace.espace2 }}>
+                <Icon name="chevron-down" size={16} color={couleurs.encre2} />
+              </View>
+            </Pressable>
             {/* Planche : l'arc du jour seul, sans texte au-dessus ; les horaires sont dans la liste. */}
             <View style={{ paddingVertical: espace.espace6, paddingHorizontal: espace.espace4 }}>
               <DayArc
@@ -172,6 +184,7 @@ export default function Priere() {
           </>
         )}
       </ScrollView>
+      <FeuilleLieu ouvert={lieuOuvert} onFermer={() => setLieuOuvert(false)} />
     </View>
   );
 }
@@ -179,6 +192,7 @@ export default function Priere() {
 const styles = StyleSheet.create({
   ecran: { flex: 1 },
   lieu: { fontSize: tailles.t14, lineHeight: interlignes.l20 },
+  ligneLieu: { flexDirection: 'row', alignItems: 'center' },
   tuiles: { flexDirection: 'row' },
   tuile: { flex: 1, flexDirection: 'row', alignItems: 'center', borderWidth: 1 },
   tuileTextes: { flex: 1, minWidth: 0 },
