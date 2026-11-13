@@ -2,6 +2,7 @@
 // iPhone : une frise d'entrées (une par prière à venir). Android : un seul état (`updateSnapshot`, « Asr 16:35 »),
 // rafraîchi à chaque replanification. Chaque widget a un fichier par plateforme (`X.tsx`, `X.android.tsx`).
 // Rien du budget ici, jamais.
+import { requireOptionalNativeModule } from 'expo';
 import { Platform } from 'react-native';
 
 import { sourate } from '@/features/lire/coran';
@@ -26,16 +27,24 @@ let widgets: Promise<Widgets | null> | null = null;
  * une fois et les mises à jour de widgets sont ignorées.
  */
 function chargerWidgets(): Promise<Widgets | null> {
+  // Le module natif est testé avant tout import : importer `expo-widgets` sans lui lève une erreur au chargement.
+  if (!requireOptionalNativeModule('ExpoWidgets')) {
+    widgets ??= Promise.resolve(null).then((rien) => {
+      console.warn('Widgets indisponibles : module natif absent (Expo Go ou ancien client de développement)');
+      return rien;
+    });
+    return widgets;
+  }
   widgets ??= Promise.all([
     import('@/widgets/CinqPrieres'),
     import('@/widgets/ProchainePriere'),
     import('@/widgets/Reprendre'),
   ])
-    .then(([cinq, prochaine, reprendre]) => ({
-      CinqPrieres: cinq.default,
-      ProchainePriere: prochaine.default,
-      Reprendre: reprendre.default,
-    }))
+    .then(([cinq, prochaine, reprendre]) => {
+      // Un import qui a échoué peut rendre un module vide : sans widget utilisable, on ignore les mises à jour.
+      if (!cinq.default || !prochaine.default || !reprendre.default) throw new Error('Widget non enregistré');
+      return { CinqPrieres: cinq.default, ProchainePriere: prochaine.default, Reprendre: reprendre.default };
+    })
     .catch((erreur: unknown) => {
       console.warn('Widgets indisponibles : module natif absent (Expo Go ou ancien client de développement)', erreur);
       return null;
