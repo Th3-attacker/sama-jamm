@@ -8,6 +8,7 @@ import { nombreDePages, pageDe, sourate, sourates, versetsDePage } from '@/featu
 import { stockage } from '@/stores/stockage';
 
 import { versetAuTemps } from './durees';
+import { sourateSuivante } from './enchainement';
 import { dureesDe } from './dureesDonnees';
 import { rejouerVerset, resteMinuterie, type Minuterie, type RepetitionVerset } from './minuterie';
 import { positionValide, recitateur, RECITATEURS, pistesDePages, type Position } from './recitateurs';
@@ -247,6 +248,16 @@ function surChangementDePiste({ previousIndex, currentIndex }: { previousIndex: 
     f.pistes.push(...suite);
     f.dernierePage += 1;
     ajouterPistes(suite, f.recitateur);
+  }
+  // Écoute par sourate : la sourate suivante entre dans la file avant la fin de la dernière (jusqu'à la 114).
+  if (f.mode === 'sourate') {
+    const { repeterSourate, minuterie } = useLecteur.getState();
+    const suivante = sourateSuivante({ pistes: f.pistes, index: currentIndex, repeterSourate, minuterie });
+    if (suivante !== null) {
+      const suite: Position[] = Array.from({ length: VERSETS[suivante - 1] ?? 0 }, (_, i) => ({ sourate: suivante, verset: i + 1 }));
+      f.pistes.push(...suite);
+      ajouterPistes(suite, f.recitateur);
+    }
   }
 }
 
