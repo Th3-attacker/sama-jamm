@@ -5,8 +5,6 @@ Réponse à « Information Needed – New App Submission ». Le texte anglais ci
 ## À faire avant de coller (par le propriétaire)
 
 - Filmer la vidéo sur un **iPhone réel**, dernier iOS, depuis le **lancement de l'app** : bienvenue, lecture et écoute, horaires de prière, budget, **création de compte, khatm, blocage et signalement d'un membre, suppression du compte**. Mettre le lien de la vidéo à l'endroit indiqué (Drive ou YouTube non répertorié).
-- Vérifier la mention **xassaid.com** : elle figure dans l'écran À propos mais le code ne l'appelle pas. Ne la garder que si elle est utilisée.
-- Pouvoir produire, si Apple le demande, l'**autorisation écrite** des récitateurs ou ayants droit pour les récitations et l'adhan. Rien dans le dépôt ne la prouve.
 - Le build soumis doit contenir le **blocage d'un membre** et le lien « Écrire à l'équipe » dans la fiche d'un khatm (nouveau build).
 
 ## Texte à coller
