@@ -59,11 +59,7 @@ export function useReplanification(): void {
     const majReprendre = () => {
       if (minuterieReprendre) clearTimeout(minuterieReprendre);
       minuterieReprendre = setTimeout(() => {
-        try {
-          mettreAJourReprendre();
-        } catch (erreur: unknown) {
-          console.warn('Widget Reprendre non mis à jour', erreur);
-        }
+        mettreAJourReprendre().catch((erreur: unknown) => console.warn('Widget Reprendre non mis à jour', erreur));
       }, DELAI_REPRENDRE);
     };
     majReprendre();

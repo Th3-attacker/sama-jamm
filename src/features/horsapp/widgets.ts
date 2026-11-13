@@ -11,9 +11,37 @@ import i18n from '@/i18n';
 import { formatHeure } from '@/lib/dates';
 import { useLecture } from '@/stores/lecture';
 import { useReglages, type NomPriere } from '@/stores/reglages';
-import CinqPrieres from '@/widgets/CinqPrieres';
-import ProchainePriere from '@/widgets/ProchainePriere';
-import Reprendre from '@/widgets/Reprendre';
+
+type Widgets = {
+  CinqPrieres: (typeof import('@/widgets/CinqPrieres'))['default'];
+  ProchainePriere: (typeof import('@/widgets/ProchainePriere'))['default'];
+  Reprendre: (typeof import('@/widgets/Reprendre'))['default'];
+};
+
+let widgets: Promise<Widgets | null> | null = null;
+
+/**
+ * Charge les widgets à la demande. `expo-widgets` est du code natif : Expo Go et les clients de développement
+ * construits avant son ajout ne l'ont pas, et l'importer au démarrage ferait planter l'app. Absent : on le signale
+ * une fois et les mises à jour de widgets sont ignorées.
+ */
+function chargerWidgets(): Promise<Widgets | null> {
+  widgets ??= Promise.all([
+    import('@/widgets/CinqPrieres'),
+    import('@/widgets/ProchainePriere'),
+    import('@/widgets/Reprendre'),
+  ])
+    .then(([cinq, prochaine, reprendre]) => ({
+      CinqPrieres: cinq.default,
+      ProchainePriere: prochaine.default,
+      Reprendre: reprendre.default,
+    }))
+    .catch((erreur: unknown) => {
+      console.warn('Widgets indisponibles : module natif absent (Expo Go ou ancien client de développement)', erreur);
+      return null;
+    });
+  return widgets;
+}
 
 /** Nombre de prières à venir mises dans la frise (environ deux jours). */
 const ENTREES = 10;
@@ -26,6 +54,8 @@ const ORDRE: readonly NomPriere[] = ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha'];
 export async function mettreAJourWidgets(): Promise<void> {
   const { lieu, methode, ecoleAsr, ajustements } = useReglages.getState();
   if (!lieu) return;
+  const w = await chargerWidgets();
+  if (!w) return;
   const options = { methode, ecoleAsr, ajustements };
   const t = i18n.t.bind(i18n);
   const fuseau = fuseauDuLieu(lieu);
@@ -52,22 +82,24 @@ export async function mettreAJourWidgets(): Promise<void> {
     instant = new Date(prochaine.heure.getTime() + 1000);
   }
   if (Platform.OS === 'ios') {
-    ProchainePriere.updateTimeline(prochaines);
-    CinqPrieres.updateTimeline(cinq);
+    w.ProchainePriere.updateTimeline(prochaines);
+    w.CinqPrieres.updateTimeline(cinq);
   } else {
     // Android : l'état de maintenant seulement ; il est refait à chaque replanification (ouverture, retour, fond).
-    ProchainePriere.updateSnapshot(prochaines[0].props);
-    CinqPrieres.updateSnapshot(cinq[0].props);
+    w.ProchainePriere.updateSnapshot(prochaines[0].props);
+    w.CinqPrieres.updateSnapshot(cinq[0].props);
   }
 }
 
 /** Met à jour le widget « Reprendre » : sourate et verset de la dernière lecture (Al-Fâtiha sans lecture). */
-export function mettreAJourReprendre(): void {
+export async function mettreAJourReprendre(): Promise<void> {
+  const w = await chargerWidgets();
+  if (!w) return;
   const t = i18n.t.bind(i18n);
   const position = useLecture.getState().position;
   const meta = sourate(position?.sourate ?? 1);
   if (!meta) return;
-  Reprendre.updateSnapshot({
+  w.Reprendre.updateSnapshot({
     titre: t('accueil.reprendreLibelle'),
     sourate: meta.nom,
     detail: t('accueil.versetSur', { n: position?.verset ?? 1, total: meta.versets }),
