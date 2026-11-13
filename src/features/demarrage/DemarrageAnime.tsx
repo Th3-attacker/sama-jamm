@@ -1,5 +1,5 @@
 // Démarrage animé (maquettes « Démarrage animé » et « étape par étape ») : relais du démarrage natif, signature,
-// puis fondu vers l'app. Moins d'une seconde ; l'app se charge dessous, l'animation ne la retarde jamais.
+// puis fondu vers l'app. Environ 2,1 s ; l'app se charge dessous, l'animation ne la retarde jamais.
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, useColorScheme } from 'react-native';
@@ -21,10 +21,10 @@ import { Logo } from '@/ui/Logo';
 const LARGEUR_IMAGE = 120;
 const RELAIS_MS = 150;
 const SIGNATURE_MS = 500;
-/** Pause marque et signature en place, avant le fondu : assez pour les lire (total d'environ 1,4 s). */
-const PAUSE_MS = 500;
+/** Pause marque et signature en place, avant le fondu : assez pour les lire (total d'environ 2,1 s). */
+const PAUSE_MS = 1200;
 /** « Réduire les animations » : pas de mouvement, la marque reste en place un peu plus longtemps. */
-const PAUSE_REDUITE_MS = 600;
+const PAUSE_REDUITE_MS = 1300;
 const FONDU_MS = 250;
 const COURBE = Easing.bezier(0.2, 0.8, 0.2, 1);
 
@@ -43,7 +43,7 @@ export function DemarrageAnime({ onFin }: { onFin: () => void }) {
   const ecran = useSharedValue(1);
 
   useEffect(() => {
-    // 0 à 150 ms : relais ; 150 à 650 ms : signature ; 650 à 1150 ms : pause ; 1150 à 1400 ms : fondu vers l'app.
+    // 0 à 150 ms : relais ; 150 à 650 ms : signature ; 650 à 1850 ms : pause ; 1850 à 2100 ms : fondu vers l'app.
     // « Réduire les animations » : pas de mouvement, la marque reste en place, pause puis fondu.
     const anim = (duree: number) => ({ duration: duree, easing: COURBE });
     const signatureMs = reduit ? 0 : SIGNATURE_MS;
