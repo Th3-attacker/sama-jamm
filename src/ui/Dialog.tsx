@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AccessibilityInfo, Modal, StyleSheet, Text, View, type TextInstance } from 'react-native';
 
+import { useSens } from '@/i18n/useSens';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 
@@ -31,6 +32,7 @@ export function Dialog({ ouvert, titre, children, confirmer, annuler, danger = f
   const { t } = useTranslation();
   const { couleurs, espace, rayon, typographie } = useTheme();
   const refTitre = useRef<TextInstance>(null);
+  const sens = useSens();
 
   return (
     <Modal
@@ -43,7 +45,7 @@ export function Dialog({ ouvert, titre, children, confirmer, annuler, danger = f
       onShow={() => {
         if (refTitre.current) AccessibilityInfo.sendAccessibilityEvent(refTitre.current, 'focus');
       }}>
-      <View style={[styles.voile, { backgroundColor: couleurs.voile, padding: espace.espace6 }]}>
+      <View style={[styles.voile, { backgroundColor: couleurs.voile, padding: espace.espace6, direction: sens }]}>
         <View
           accessibilityViewIsModal
           style={[

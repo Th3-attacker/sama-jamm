@@ -1,6 +1,8 @@
 import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { I18nManager, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+
+import { useSens } from '@/i18n/useSens';
 import Svg, { Circle, Line } from 'react-native-svg';
 
 import { echelleMax } from '@/theme/typographie';
@@ -38,6 +40,7 @@ function separerDelai(dans: string): { valeur: string; unite: string | null } {
 /** Carte héros de l'Accueil : la prochaine prière, le délai, l'heure, la frise du jour et les cinq prières (passées atténuées). */
 export function CarteHeros({ nom, heure, dans, prieres, maintenant }: Props) {
   const { t } = useTranslation();
+  const rtl = useSens() === 'rtl';
   const { couleurs, espace, typographie, ligne } = useTheme();
   const surEmeraude = couleurs.surEmeraude;
   const { valeur, unite } = separerDelai(dans);
@@ -70,7 +73,7 @@ export function CarteHeros({ nom, heure, dans, prieres, maintenant }: Props) {
           {heure}
         </Text>
       </View>
-      <View importantForAccessibility="no-hide-descendants" accessibilityElementsHidden style={I18nManager.isRTL ? styles.miroir : undefined}>
+      <View importantForAccessibility="no-hide-descendants" accessibilityElementsHidden style={rtl ? styles.miroir : undefined}>
         <Svg width="100%" height={20} viewBox={`0 0 ${LARGEUR} 20`}>
           <Line x1={xPriere(0)} y1={10} x2={xPriere(4)} y2={10} stroke={surEmeraude} strokeWidth={1.5} strokeDasharray="2 5" />
           <Line x1={xPriere(0)} y1={10} x2={finTrait} y2={10} stroke={surEmeraude} strokeWidth={2.5} strokeLinecap="round" />

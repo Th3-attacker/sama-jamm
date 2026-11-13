@@ -18,6 +18,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 
+import { useSens } from '@/i18n/useSens';
+
 import { IconButton } from './IconButton';
 
 import { espace } from '@/theme/tokens.generated';
@@ -61,6 +63,7 @@ export function BottomSheet({ ouvert, titre, onFermer, children }: BottomSheetPr
   const insets = useSafeAreaInsets();
   const { couleurs, espace, rayon, typographie } = useTheme();
   const clavier = useHauteurClavier();
+  const sens = useSens();
   // La fenêtre reste montée le temps de l'animation de fermeture.
   const [monte, setMonte] = useState(ouvert);
   const [progres] = useState(() => new Animated.Value(ouvert ? 1 : 0));
@@ -90,7 +93,7 @@ export function BottomSheet({ ouvert, titre, onFermer, children }: BottomSheetPr
 
   return (
     <Modal transparent statusBarTranslucent animationType="none" visible onRequestClose={onFermer}>
-      <View style={styles.fenetre}>
+      <View style={[styles.fenetre, { direction: sens }]}>
         <Animated.View style={[StyleSheet.absoluteFill, { opacity: progres, backgroundColor: couleurs.voile }]}>
           <Pressable
             accessibilityRole="button"

@@ -1,4 +1,6 @@
-import { I18nManager, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+
+import { useSens } from '@/i18n/useSens';
 import Svg, { Circle, Line, Path, Polygon } from 'react-native-svg';
 
 import { echelleMax } from '@/theme/typographie';
@@ -43,6 +45,7 @@ function etoile(cx: number, cy: number, R: number): string {
 
 export function DayArc({ lever, coucher, maintenant, prieres, dans, avant, a, description, simple = false }: DayArcProps) {
   const { couleurs, espace, typographie } = useTheme();
+  const rtl = useSens() === 'rtl';
 
   const pos = (m: number): [number, number] => {
     if (m >= lever && m <= coucher) {
@@ -81,7 +84,7 @@ export function DayArc({ lever, coucher, maintenant, prieres, dans, avant, a, de
         accessible
         accessibilityRole="image"
         accessibilityLabel={description}
-        style={[styles.conteneur, I18nManager.isRTL ? styles.miroir : undefined]}>
+        style={[styles.conteneur, rtl ? styles.miroir : undefined]}>
         <Svg width="100%" height="100%" viewBox={`0 0 ${W} ${HAUTEUR_VUE}`}>
           <Line x1={0} y1={HZ} x2={W} y2={HZ} stroke={couleurs.ligne} strokeWidth={1.5} />
           <Path d={`M ${X0} ${HZ} A ${RX} ${RY} 0 0 1 ${X1} ${HZ}`} fill="none" stroke={couleurs.ligne} strokeWidth={2} />

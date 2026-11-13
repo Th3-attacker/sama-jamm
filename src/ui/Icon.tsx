@@ -5,7 +5,7 @@ import {
   SkipForward, Settings, SlidersHorizontal, Sun, Target, Trash2, TriangleAlert, Type, User, Users, Wallet, X, Zap,
   type LucideIcon,
 } from 'lucide-react-native';
-import { I18nManager } from 'react-native';
+import { useSens } from '@/i18n/useSens';
 
 import { Kaaba } from './icones/kaaba';
 import type { IconName } from './types';
@@ -39,7 +39,8 @@ type Props = {
 };
 
 export function Icon({ name, color, size = 20, filled = false }: Props) {
-  const style = I18nManager.isRTL && SENS.has(name) ? { transform: [{ scaleX: -1 }] } : undefined;
+  const rtl = useSens() === 'rtl';
+  const style = rtl && SENS.has(name) ? { transform: [{ scaleX: -1 }] } : undefined;
 
   if (name === 'kaaba') return <Kaaba size={size} color={color} strokeWidth={TRAIT} />;
 

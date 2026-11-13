@@ -1,16 +1,14 @@
 import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { appliquerSensEtRecharger, sensChange } from "@/features/bienvenue/sensDeLecture";
+import { appliquerSensLecture } from "@/features/bienvenue/sensDeLecture";
 import { estLangueProposee, type Langue } from "@/i18n/langues";
 import { useReglages } from "@/stores/reglages";
 import { echelleMax } from "@/theme/typographie";
 import { useTheme } from "@/theme/useTheme";
-import { Banner } from "@/ui/Banner";
 import { themes } from "@/theme/tokens.generated";
 import { Logo } from "@/ui/Logo";
 import { PageDots } from "@/ui/PageDots";
@@ -27,8 +25,6 @@ export default function EcranLangue() {
   const { couleurs, espace, rayon, typographie, latin } = useTheme();
   const langueEnregistree = useReglages((s) => s.langue);
   const definirLangue = useReglages((s) => s.definirLangue);
-  // Vrai après un changement de sens de lecture : la mise en page s'applique à la prochaine ouverture.
-  const [sensDiffere, setSensDiffere] = useState(false);
 
   const choisie: Langue =
     langueEnregistree ?? (estLangueProposee(i18n.language) ? i18n.language : "fr");
@@ -39,8 +35,8 @@ export default function EcranLangue() {
 
   const choisir = (langue: Langue) => {
     definirLangue(langue);
-    // La langue change tout de suite ; si le sens change, l'app se recharge pour l'appliquer.
-    void appliquerSensEtRecharger(langue).then((recharge) => setSensDiffere(!recharge && sensChange(langue)));
+    // La langue et le sens de lecture suivent tout de suite (i18n) ; le sens natif est enregistré pour le prochain lancement.
+    appliquerSensLecture(langue);
   };
 
   const continuer = () => {
@@ -148,12 +144,6 @@ export default function EcranLangue() {
           );
         })}
       </View>
-
-      {sensDiffere ? (
-        <View style={{ marginTop: espace.espace4 }}>
-          <Banner ton="info">{t("bienvenue.sensProchaineOuverture")}</Banner>
-        </View>
-      ) : null}
 
       <View style={[styles.bas, { marginTop: espace.espace8 }]}>
         <PageDots total={3} actif={0} surEmeraude />

@@ -6,7 +6,7 @@ import * as Notifications from 'expo-notifications';
 import * as SplashScreen from 'expo-splash-screen';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Modal } from 'react-native';
+import { Modal, View } from 'react-native';
 
 import { useReplanification } from '@/features/priere/useReplanification';
 import { useSurveillanceVerrou } from '@/features/budget/verrou';
@@ -15,6 +15,7 @@ import { ErreurDeRoute } from '@/features/erreur/ErreurDeRoute';
 import { installerJournalGlobal } from '@/features/erreur/journal';
 import { EcranMiseAJour } from '@/features/miseAJour/EcranMiseAJour';
 import { useMiseAJour } from '@/features/miseAJour/useMiseAJour';
+import { sensDeLangue } from '@/i18n/sens';
 import { useReglages } from '@/stores/reglages';
 import { polices } from '@/theme/polices';
 import { ThemeProvider } from '@/theme/ThemeProvider';
@@ -48,6 +49,7 @@ export default function RootLayout() {
   const [demarrage, setDemarrage] = useState(() => Notifications.getLastNotificationResponse() === null);
   const finDemarrage = useCallback(() => setDemarrage(false), []);
   const pret = policesChargees || erreurPolices !== null;
+  const racine = { flex: 1, direction: sensDeLangue(i18n.language) } as const;
 
   useEffect(() => {
     if (erreurPolices) console.error('Polices non chargées : repli sur les polices du système', erreurPolices);
@@ -61,6 +63,8 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider choix={theme} interfaceArabe={i18n.language === 'ar'}>
+      {/* Sens de lecture : il suit la langue (i18n) sans recharger l'app. Les fenêtres modales le reprennent seules. */}
+      <View style={racine}>
       <ToastProvider>
         <Stack screenOptions={{ headerShown: false }}>
           {/* Ajout de dépense : page ouverte en modale, fermée par la flèche de retour. */}
@@ -70,9 +74,10 @@ export default function RootLayout() {
         </Stack>
       </ToastProvider>
       {demarrage ? <DemarrageAnime onFin={finDemarrage} /> : null}
+      </View>
       {/* Version trop ancienne : fenêtre bloquante au-dessus de la navigation (le retour Android ne la ferme pas). */}
       <Modal visible={miseAJour !== null} animationType="none" onRequestClose={() => undefined}>
-        {miseAJour ? <EcranMiseAJour consigne={miseAJour} /> : null}
+        {miseAJour ? <View style={racine}><EcranMiseAJour consigne={miseAJour} /></View> : null}
       </Modal>
     </ThemeProvider>
   );

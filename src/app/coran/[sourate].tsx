@@ -1,7 +1,7 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, Animated, FlatList, I18nManager, Pressable, StyleSheet, Text, View, type LayoutRectangle } from 'react-native';
+import { ActivityIndicator, Animated, FlatList, Pressable, StyleSheet, Text, View, type LayoutRectangle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { BasculeMode } from '@/features/lire/BasculeMode';
@@ -26,6 +26,7 @@ import { SondeBarre } from '@/features/ecouter/SondeBarre';
 import { PartageVerset, type VersetAPartager } from '@/features/lire/PartageVerset';
 import { translitSansBalises } from '@/features/lire/reperes';
 import { ReglagesLecture } from '@/features/lire/ReglagesLecture';
+import { useSens } from '@/i18n/useSens';
 import { enChiffresArabes } from '@/lib/chiffres';
 import { Etoile } from '@/ui/Etoile';
 import type { IconName } from '@/ui/types';
@@ -108,6 +109,7 @@ function LectureSourate({
   modeInitial: ModeLecture;
 }) {
   const { t, i18n } = useTranslation();
+  const sens = useSens();
   const { couleurs, ombres, espace, rayon, cible, typographie, ligne } = useTheme();
   // La pilule d'outils est l'outil fixe du bas : la pile la compte, le contenu lui laisse sa place.
   const dessous = useDessousOutil();
@@ -307,7 +309,7 @@ function LectureSourate({
               horizontal
               pagingEnabled
               // Comme un mushaf : la page suivante arrive par la gauche. En arabe, la liste s'inverse déjà seule.
-              inverted={!I18nManager.isRTL}
+              inverted={sens !== 'rtl'}
               showsHorizontalScrollIndicator={false}
               initialScrollIndex={pageDepart - 1}
               getItemLayout={(_, index) => ({ length: zone.width, offset: zone.width * index, index })}

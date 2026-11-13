@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
-import { appliquerSensEtRecharger, sensChange } from "@/features/bienvenue/sensDeLecture";
+import { appliquerSensLecture } from "@/features/bienvenue/sensDeLecture";
 import { authentifier, verrouPossible } from "@/features/budget/verrou";
 import { depotBudget } from "@/features/budget/useBudget";
 import { EtatAutorisations } from "@/features/autorisation/EtatAutorisations";
@@ -89,8 +89,6 @@ export default function Reglages() {
     });
   };
   const [feuilleLangue, setFeuilleLangue] = useState(false);
-  // Vrai après un changement de sens de lecture : la mise en page s'applique à la prochaine ouverture.
-  const [sensDiffere, setSensDiffere] = useState(false);
 
   const langue: Langue =
     langueEnregistree ?? (estLangueProposee(i18n.language) ? i18n.language : "fr");
@@ -104,10 +102,10 @@ export default function Reglages() {
       setFeuilleLangue(false);
       return;
     }
-    // La langue change tout de suite ; si le sens change, l'app se recharge pour l'appliquer.
+    // La langue et le sens de lecture suivent tout de suite (i18n) ; le sens natif est enregistré pour le prochain lancement.
     setFeuilleLangue(false);
     appliquerLangue(id);
-    void appliquerSensEtRecharger(id).then((recharge) => setSensDiffere(!recharge && sensChange(id)));
+    appliquerSensLecture(id);
   };
 
   return (
@@ -120,10 +118,6 @@ export default function Reglages() {
           gap: espace.espace6,
         }}
       >
-        {sensDiffere ? (
-          <Banner ton="info">{t("bienvenue.sensProchaineOuverture")}</Banner>
-        ) : null}
-
         <View style={{ gap: espace.espace3 }}>
           {/* Trois cartes : chacune montre le thème qu'elle applique. */}
           <View accessibilityRole="radiogroup" accessibilityLabel={t("reglages.theme")} style={[styles.themes, { gap: espace.espace2 }]}>
