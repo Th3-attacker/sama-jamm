@@ -520,6 +520,8 @@
     "fajrTexte": "Waxtu julli jot na. الصلاة خير من النوم.",
     "rappelTitre": "{{priere}} بعد {{minutes}} دقائق",
     "rappelTexte": "استعد في سلام.",
+    "relanceTitre": "افتح سما جام",
+    "relanceTexte": "لتواصل تلقي الأذان، افتح التطبيق اليوم. لن يستغرق الأمر سوى ثانية.",
     "khatmTitre": "جزؤك ينتظرك",
     "khatmTexte": "تنتهي ختمة «{{nom}}» في {{date}}.",
     "zakatTitre": "مرّت سنة قمرية",

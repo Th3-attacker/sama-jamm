@@ -4,7 +4,7 @@ import { test } from 'node:test';
 
 import type { NomPriere, Son } from '@/stores/reglages';
 
-import { construireFenetre, PLACES } from './fenetre.ts';
+import { construireFenetre, dateRelance, PLACES, type Planifiee } from './fenetre.ts';
 import { calculerHoraires, OPTIONS_PAR_DEFAUT } from './horaires.ts';
 
 // Fuseau fixé : Dakar (UTC+0, sans heure d'été), pour que les dates locales soient identiques partout.
@@ -76,4 +76,25 @@ test('identifiants stables : deux calculs à quelques minutes d’écart donnent
   const a = construireFenetre(entree()).map((n) => n.id);
   const b = construireFenetre(entree({ depuis: new Date(2026, 2, 15, 12, 5) })).map((n) => n.id);
   assert.deepEqual(a, b);
+});
+
+const planifiee = (date: Date): Planifiee => ({ id: 'priere-x', type: 'appel', priere: 'fajr', date, son: 'complet' });
+
+test('relance : 24 h avant la dernière notification de la fenêtre', () => {
+  const fin = planifiee(new Date(2026, 2, 22, 15, 30));
+  assert.deepEqual(dateRelance([planifiee(new Date(2026, 2, 16, 5, 0)), fin], new Date(2026, 2, 15, 12, 0)), new Date(2026, 2, 21, 15, 30));
+});
+
+test('relance : jamais la nuit, ramenée à 9 h', () => {
+  const maintenant = new Date(2026, 2, 15, 12, 0);
+  // 24 h avant 05:10 = 05:10 la veille : trop tôt, 9 h le même jour.
+  assert.deepEqual(dateRelance([planifiee(new Date(2026, 2, 22, 5, 10))], maintenant), new Date(2026, 2, 21, 9, 0));
+  // 24 h avant 21:30 = 21:30 la veille : trop tard, 9 h le lendemain (donc le jour de la dernière).
+  assert.deepEqual(dateRelance([planifiee(new Date(2026, 2, 22, 21, 30))], maintenant), new Date(2026, 2, 22, 9, 0));
+});
+
+test('relance : rien sans fenêtre, ni si la date est dans moins d’une heure', () => {
+  const maintenant = new Date(2026, 2, 15, 12, 0);
+  assert.equal(dateRelance([], maintenant), null);
+  assert.equal(dateRelance([planifiee(new Date(2026, 2, 16, 12, 30))], maintenant), null);
 });

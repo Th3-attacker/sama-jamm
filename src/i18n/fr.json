@@ -484,6 +484,8 @@
     "fajrTexte": "Waxtu julli jot na. La prière vaut mieux que le sommeil.",
     "rappelTitre": "{{priere}} dans {{minutes}} minutes",
     "rappelTexte": "Préparez-vous en paix.",
+    "relanceTitre": "Ouvrez Sama Jàmm",
+    "relanceTexte": "Pour continuer à recevoir l’appel à la prière, ouvrez l’app aujourd’hui. Cela prend une seconde.",
     "khatmTitre": "Votre juz vous attend",
     "khatmTexte": "Le khatm « {{nom}} » se termine le {{date}}.",
     "zakatTitre": "Une année lunaire est passée",

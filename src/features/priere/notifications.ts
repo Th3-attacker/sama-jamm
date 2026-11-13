@@ -13,7 +13,7 @@ import { useReglages, type NomPriere, type Son } from '@/stores/reglages';
 import { stockage } from '@/stores/stockage';
 
 import { comparerFenetre } from './comparaison';
-import { construireFenetre, type Planifiee } from './fenetre';
+import { construireFenetre, dateRelance, type Planifiee } from './fenetre';
 import { mettreAJourWidgets } from '@/features/horsapp/widgets';
 
 import { fuseauDuLieu } from './villes';
@@ -185,6 +185,34 @@ function ecrireEmpreintes(empreintes: Record<string, string>): void {
   }
 }
 
+/** Identifiant de la relance « ouvrez l'app » : hors du préfixe des prières, elle est gérée à part de la fenêtre. */
+const ID_RELANCE = 'relance-fenetre';
+
+/**
+ * Une seule relance, 24 h avant la fin de la fenêtre : si l'app n'est pas rouverte d'ici là, plus aucun appel ne sonne.
+ * Elle est refaite à chaque replanification, donc elle recule tant que l'app est ouverte régulièrement.
+ */
+async function programmerRelance(fenetre: Planifiee[]): Promise<void> {
+  try {
+    await Notifications.cancelScheduledNotificationAsync(ID_RELANCE);
+    const date = dateRelance(fenetre, new Date());
+    if (!date) return;
+    await Notifications.scheduleNotificationAsync({
+      identifier: ID_RELANCE,
+      content: {
+        title: i18n.t('notifications.relanceTitre'),
+        body: i18n.t('notifications.relanceTexte'),
+        sound: true,
+        data: { url: URL_PRIERE },
+      },
+      trigger: { type: SchedulableTriggerInputTypes.DATE, date, channelId: CANAL_RAPPELS },
+    });
+  } catch (erreur: unknown) {
+    // La relance est un confort : son échec ne doit pas empêcher la programmation des appels.
+    console.warn('Relance non programmée', erreur);
+  }
+}
+
 async function executerReplanification(): Promise<number> {
   const permission = await Notifications.getPermissionsAsync();
   const existantes = await Notifications.getAllScheduledNotificationsAsync();
@@ -227,6 +255,7 @@ async function executerReplanification(): Promise<number> {
     });
   }
   ecrireEmpreintes(Object.fromEntries(aProgrammer.map((x) => [x.n.id, x.empreinte])));
+  await programmerRelance(fenetre);
   // Le widget suit les mêmes horaires ; son échec ne doit pas faire échouer la replanification.
   await mettreAJourWidgets().catch((erreur: unknown) => console.warn('Widget non mis à jour', erreur));
   return aProgrammer.length;

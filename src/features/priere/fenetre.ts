@@ -3,8 +3,8 @@ import type { NomPriere, OptionsCalcul, Son } from '@/stores/reglages';
 
 import { calculerHoraires } from './horaires.ts';
 
-/** iOS garde 64 notifications programmées par app ; 4 places restent pour le khatm, la zakat et la régularité. */
-export const PLACES = 60;
+/** iOS garde 64 notifications programmées par app ; 5 places restent pour la relance, le khatm, la zakat et la régularité. */
+export const PLACES = 59;
 export const JOURS_MAX = 12;
 
 const ORDRE: readonly NomPriere[] = ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha'];
@@ -36,7 +36,7 @@ export function construireFenetre({ lieu, options, rappels, sons, rappelAvant, d
   const parJour = ORDRE.reduce((n, p) => n + (rappels[p] ? 1 + (rappelAvant[p] ? 1 : 0) : 0), 0);
   if (parJour === 0) return [];
   // Un jour de plus que nécessaire : le premier jour est souvent entamé.
-  const jours = Math.min(JOURS_MAX, Math.floor(PLACES / parJour)) + 1;
+  const jours = Math.min(JOURS_MAX, Math.ceil(PLACES / parJour)) + 1;
 
   const liste: Planifiee[] = [];
   for (let i = 0; i < jours; i++) {
@@ -58,4 +58,27 @@ export function construireFenetre({ lieu, options, rappels, sons, rappelAvant, d
     .filter((n) => n.date > depuis)
     .sort((a, b) => a.date.getTime() - b.date.getTime())
     .slice(0, PLACES);
+}
+
+const HEURE_RELANCE_DEBUT = 8;
+const HEURE_RELANCE_FIN = 21;
+const HEURE_RELANCE_DEFAUT = 9;
+const AVANT_FIN_MS = 24 * 3_600_000;
+const MARGE_MS = 3_600_000;
+
+/**
+ * Quand rappeler d'ouvrir l'app : 24 h avant la dernière notification de la fenêtre, car passé cette date plus rien
+ * ne sonne tant que l'app n'est pas rouverte. Ramenée à 9 h si elle tombe la nuit (avant 8 h ou à partir de 21 h).
+ * Null sans fenêtre, ou si la date est dans moins d'une heure.
+ */
+export function dateRelance(fenetre: readonly Planifiee[], maintenant: Date): Date | null {
+  const derniere = fenetre[fenetre.length - 1];
+  if (!derniere) return null;
+  const date = new Date(derniere.date.getTime() - AVANT_FIN_MS);
+  const heure = date.getHours();
+  if (heure < HEURE_RELANCE_DEBUT || heure >= HEURE_RELANCE_FIN) {
+    if (heure >= HEURE_RELANCE_FIN) date.setDate(date.getDate() + 1);
+    date.setHours(HEURE_RELANCE_DEFAUT, 0, 0, 0);
+  }
+  return date.getTime() > maintenant.getTime() + MARGE_MS ? date : null;
 }
