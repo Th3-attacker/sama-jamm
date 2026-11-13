@@ -8,6 +8,7 @@ Sama Jàmm est gratuite et sans publicité. Elle n'utilise aucun outil de mesure
 ## 1. Ce qui reste sur votre téléphone
 - **Budget du foyer** : revenus, dépenses, enveloppes, dettes, épargne, zakat. Ils sont stockés dans une base chiffrée sur l'appareil et ne sont jamais envoyés. Vous pouvez en exporter une copie vous-même (sauvegarde chiffrée ou fichier CSV) ; son partage dépend de vous.
 - **Position** : utilisée seulement quand l'app est ouverte, pour les horaires de prière et la qibla. Le calcul se fait sur le téléphone ; la position n'est pas envoyée. Vous pouvez aussi choisir votre ville à la main.
+- **Membres bloqués** : si vous bloquez un membre d’un khatm, son identifiant est gardé sur votre téléphone seulement, pour masquer son prénom. Il n’est envoyé nulle part, et le membre n’en est pas informé.
 - **Réglages, lecture, favoris, dhikr, progression, téléchargements** : stockés sur l'appareil.
 - **Verrou du budget** : Face ID, empreinte ou code gérés par le système ; l'app ne reçoit pas vos données biométriques.
 - **Rappels de prière** : notifications programmées sur le téléphone, sans serveur de notifications.
