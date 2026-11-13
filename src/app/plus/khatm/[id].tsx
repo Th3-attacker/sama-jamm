@@ -19,6 +19,7 @@ import { resumeKhatm, vuePart, type VuePart } from '@/features/khatm/logique';
 import { copierCode, inviter } from '@/features/khatm/partager';
 import { reperes } from '@/features/lire/coran';
 import { useParametre } from '@/hooks/useParametre';
+import { useBloques } from '@/stores/bloques';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { KhatmGrid, type EtatJuz } from '@/ui/KhatmGrid';
@@ -40,6 +41,8 @@ export default function EcranKhatm() {
   const { couleurs, espace, rayon, typographie, latin, ligne } = useTheme();
   const id = useParametre('id');
   const moi = useSession((s) => s.session?.user.id ?? null);
+  const bloques = useBloques((b) => b.membres);
+  const basculerBloque = useBloques((b) => b.basculer);
   const { etat, relire } = useKhatm(id);
   const [message, setMessage] = useState<string | null>(null);
   const [feuilleInviter, setFeuilleInviter] = useState(false);
@@ -86,6 +89,13 @@ export default function EcranKhatm() {
               setMessage(t('etats.erreurTexte'));
             }),
       },
+    ]);
+
+  // Bloquer masque le prénom du membre sur ce téléphone ; il reste dans le groupe. Débloquer est immédiat.
+  const bloquer = (cible: Membre) =>
+    Alert.alert(t('khatm.bloquerTitre'), t('khatm.bloquerTexte'), [
+      { text: t('commun.annuler'), style: 'cancel' },
+      { text: t('khatm.bloquerAction'), style: 'destructive', onPress: () => basculerBloque(cible.user_id) },
     ]);
 
   const retirer = (cible: Membre) =>
@@ -282,11 +292,21 @@ export default function EcranKhatm() {
           </Text>
           {membres.map((m) => {
             const estMoi = m.user_id === moi;
+            const estBloque = bloques.includes(m.user_id);
             return (
               <View key={m.user_id} style={[styles.ligneMembre, { gap: espace.espace2 }]}>
                 <Text style={[typographie.corps, styles.nomMembre, { color: couleurs.encre }]} numberOfLines={1}>
-                  {estMoi ? t('khatm.moi') : (m.prenom ?? t('khatm.membreAnonyme'))}
+                  {estMoi ? t('khatm.moi') : estBloque ? t('khatm.membreMasque') : (m.prenom ?? t('khatm.membreAnonyme'))}
                 </Text>
+                {!estMoi ? (
+                  <Pressable
+                    accessibilityRole="button"
+                    accessibilityLabel={estBloque ? t('khatm.debloquer') : t('khatm.bloquer')}
+                    onPress={() => (estBloque ? basculerBloque(m.user_id) : bloquer(m))}
+                    hitSlop={8}>
+                    <Text style={[typographie.legende, { color: couleurs.emeraude }]}>{estBloque ? t('khatm.debloquer') : t('khatm.bloquer')}</Text>
+                  </Pressable>
+                ) : null}
                 {!estMoi ? (
                   <Pressable accessibilityRole="button" accessibilityLabel={t('khatm.signaler')} onPress={() => signaler(m)} hitSlop={8}>
                     <Text style={[typographie.legende, { color: couleurs.emeraude }]}>{t('khatm.signaler')}</Text>
@@ -322,6 +342,10 @@ export default function EcranKhatm() {
             ])
           }>
           {t('khatm.quitter')}
+        </Button>
+        {/* Contact : joignable depuis la fiche d'un khatm (contenu des membres), comme l'exige l'App Review. */}
+        <Button variant="discret" pleineLargeur onPress={() => router.push('/plus/aide')}>
+          {t('khatm.contact')}
         </Button>
       </ScrollView>
     </View>
