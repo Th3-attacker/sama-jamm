@@ -4,7 +4,7 @@ import { Trans, useTranslation } from 'react-i18next';
 import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { useSession } from '@/features/compte/compte';
-import { apercuKhatm, rejoindreKhatm, type Apercu } from '@/features/khatm/depot';
+import { apercuKhatm, estTropDeTentatives, rejoindreKhatm, type Apercu } from '@/features/khatm/depot';
 import { lireCode } from '@/features/khatm/logique';
 import { useParametre } from '@/hooks/useParametre';
 import { echelleMax } from '@/theme/typographie';
@@ -21,7 +21,16 @@ export default function Invitation() {
   const code = lireCode(useParametre('code'));
   const connecte = useSession((s) => s.session !== null);
   const [apercu, setApercu] = useState<Apercu | null | 'chargement'>('chargement');
-  const [erreur, setErreur] = useState(false);
+  /** `quota` : plus de 30 essais de code dans l'heure (limite du serveur). */
+  const [erreur, setErreur] = useState<'aucune' | 'generique' | 'quota'>('aucune');
+  /** Adhésion en cours : bloque le double appui (chaque appui consomme une tentative côté serveur). */
+  const [envoi, setEnvoi] = useState(false);
+  // Nouveau code (autre lien ouvert) : l'erreur du code précédent ne vaut plus.
+  const [codeVu, setCodeVu] = useState(code);
+  if (codeVu !== code) {
+    setCodeVu(code);
+    setErreur('aucune');
+  }
 
   useEffect(() => {
     if (!connecte || !code) return;
@@ -29,19 +38,25 @@ export default function Invitation() {
       .then(setApercu)
       .catch((e: unknown) => {
         console.warn('Invitation illisible', e);
+        if (estTropDeTentatives(e)) setErreur('quota');
         setApercu(null);
       });
   }, [connecte, code]);
 
   const rejoindre = async () => {
-    if (!code) return;
-    setErreur(false);
+    if (!code || envoi) return;
+    setEnvoi(true);
+    setErreur('aucune');
     try {
       const id = await rejoindreKhatm(code);
-      router.replace({ pathname: '/plus/khatm/[id]', params: { id } });
+      // Code devenu inconnu entre l'aperçu et l'adhésion (khatm supprimé) : même écran que le lien expiré.
+      if (id === null) setApercu(null);
+      else router.replace({ pathname: '/plus/khatm/[id]', params: { id } });
     } catch (e: unknown) {
       console.warn('Khatm non rejoint', e);
-      setErreur(true);
+      setErreur(estTropDeTentatives(e) ? 'quota' : 'generique');
+    } finally {
+      setEnvoi(false);
     }
   };
 
@@ -115,10 +130,14 @@ export default function Invitation() {
                   .join(' · ')}
               </Text>
             </View>
-            {erreur ? <Banner ton="erreur">{t('etats.erreurTexte')}</Banner> : null}
+            {erreur === 'quota' ? (
+              <Banner ton="erreur">{t('khatm.tropDeTentatives')}</Banner>
+            ) : erreur === 'generique' ? (
+              <Banner ton="erreur">{t('etats.erreurTexte')}</Banner>
+            ) : null}
             {/* Pied de page collé en bas, comme la planche. */}
             <View style={[styles.pied, { gap: espace.espace2 }]}>
-              <Button grand pleineLargeur onPress={rejoindre}>
+              <Button grand pleineLargeur disabled={envoi} onPress={rejoindre}>
                 {t('khatm.rejoindre')}
               </Button>
               <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, styles.regulier, styles.centre, { color: couleurs.encre3 }]}>
@@ -126,6 +145,8 @@ export default function Invitation() {
               </Text>
             </View>
           </>
+        ) : erreur === 'quota' ? (
+          <Banner ton="erreur">{t('khatm.tropDeTentatives')}</Banner>
         ) : (
           <Banner ton="attention" titre={t('khatm.lienExpire')}>
             {t('khatm.lienExpireTexte')}

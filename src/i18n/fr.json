@@ -263,6 +263,7 @@
     "creer": "Créer et inviter",
     "lienExpire": "Ce lien n’est plus valable",
     "lienExpireTexte": "Le khatm est terminé ou l’invitation a expiré. Demandez un nouveau lien.",
+    "tropDeTentatives": "Trop de tentatives. Réessayez dans une heure.",
     "invitSalut": "Assalamou alaykoum,",
     "invitCorps": "Vous êtes invité(e) au khatm « {{nom}} » sur Sama Jàmm : chacun lit un juz, et le Coran s’achève ensemble.",
     "invitRejoindre": "Pour rejoindre : ouvrez Sama Jàmm, puis Plus › Khatm collectif › Rejoindre avec un code, et saisissez {{code}}.",

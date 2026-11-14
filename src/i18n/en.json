@@ -263,6 +263,7 @@
     "creer": "Create and invite",
     "lienExpire": "This link is no longer valid",
     "lienExpireTexte": "The khatm is finished or the invitation has expired. Ask for a new link.",
+    "tropDeTentatives": "Too many attempts. Please try again in an hour.",
     "invitSalut": "Assalamu alaykum,",
     "invitCorps": "You are invited to the khatm “{{nom}}” on Sama Jàmm: everyone reads one juz, and the Quran is completed together.",
     "invitRejoindre": "To join: open Sama Jàmm, then More › Group khatm › Join with a code, and enter {{code}}.",

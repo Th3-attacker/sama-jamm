@@ -17,6 +17,7 @@ import { decisionRappel, ID_RAPPEL_QUOTIDIEN } from './rappelQuotidien';
 import { estApercu, estKhatm, estMembre, estPart, lireListe, type Apercu, type Khatm, type Membre } from './lignes';
 
 export type { Apercu, Khatm, Membre } from './lignes';
+export { estTropDeTentatives } from './erreurs';
 
 /**
  * Un seul canal temps réel par khatm, partagé par tous les écrans qui le lisent : en rouvrir un sous le même nom
@@ -59,11 +60,16 @@ export async function apercuKhatm(code: string): Promise<Apercu | null> {
   return lignes[0] ?? null;
 }
 
-export async function rejoindreKhatm(code: string): Promise<string> {
+/**
+ * Identifiant du khatm rejoint, ou null si le code n'existe plus (le serveur renvoie null depuis 010).
+ * Au-delà de 30 essais de code par heure, l'erreur levée est reconnue par `estTropDeTentatives`.
+ */
+export async function rejoindreKhatm(code: string): Promise<string | null> {
   const { data, error } = await supabase.rpc('rejoindre_khatm', { p_code: code });
   if (error) throw error;
+  if (typeof data !== 'string' || data === '') return null;
   void actualiserKhatmsEnCours();
-  return String(data);
+  return data;
 }
 
 async function action(
