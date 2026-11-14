@@ -35,7 +35,7 @@
         "serviceAccountKeyPath": "./google-service-account.json"
       },
       "ios": {
-        "ascAppId": "REMPLACER_PAR_ID_APP_STORE_CONNECT"
+        "ascAppId": "6834012757"
       }
     }
   }
