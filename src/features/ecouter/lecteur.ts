@@ -11,6 +11,7 @@ import { versetAuTemps } from './durees';
 import { sourateSuivante } from './enchainement';
 import { dureesDe } from './dureesDonnees';
 import { ecoutesALArrivee, rejouerVerset, resteMinuterie, type Minuterie, type RepetitionVerset } from './minuterie';
+import { chargerPochette, pochette } from './pochette';
 import { positionValide, recitateur, RECITATEURS, pistesDePages, type Position } from './recitateurs';
 import { erreurDuStatut, indexDuStatut, pisteSaine, sauteSansLecture } from './statut';
 import { sourceVerset } from './telechargements';
@@ -103,7 +104,24 @@ export const enEcoute = (s: EtatLecteur): boolean => s.position !== null;
 
 function metadonnees(p: Position) {
   const r = recitateur(useLecteur.getState().recitateur);
-  return { title: `${sourate(p.sourate)?.nom ?? ''} · ${p.verset}`, artist: r?.nom ?? '' };
+  const artworkUrl = pochette();
+  return {
+    title: `${sourate(p.sourate)?.nom ?? ''} · ${p.verset}`,
+    artist: r?.nom ?? '',
+    // Logo de l'app sur l'écran verrouillé, dès que son fichier est prêt.
+    ...(artworkUrl ? { artworkUrl } : {}),
+  };
+}
+
+/** Le logo arrive après le début de l'écoute : l'écran verrouillé est mis à jour avec le verset en cours. */
+function afficherPochette(): void {
+  if (pochette()) return;
+  chargerPochette()
+    .then((adresse) => {
+      const p = useLecteur.getState().position;
+      if (adresse && p && liste && !listeCassee) liste.updateLockScreenMetadata(metadonnees(p));
+    })
+    .catch((erreur: unknown) => console.warn('Illustration du lecteur non affichée', erreur));
 }
 
 /** État et titre de l'écran verrouillé pour la piste `index` de la file, ou null si elle n'existe pas. */
@@ -353,6 +371,7 @@ function lire(nouvelleFile: FileCoran | null, index: number, depuis = 0, relance
     l.play();
     if (depuis > 0) l.seekTo(depuis).catch((erreur: unknown) => console.warn('Reprise non placée', erreur));
     l.setActiveForLockScreen(true, demandee.titre);
+    afficherPochette();
   } catch (erreur: unknown) {
     console.error('Piste non chargée', erreur);
     useLecteur.setState({ erreur: true, chargement: false, enLecture: false });
