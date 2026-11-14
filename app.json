@@ -2,7 +2,7 @@
   "expo": {
     "name": "Sama Jamm",
     "slug": "sama-jamm",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "runtimeVersion": {
       "policy": "appVersion"
     },
@@ -35,9 +35,7 @@
       },
       "predictiveBackGestureEnabled": false,
       "package": "com.samajamm.app",
-      "permissions": [
-        "android.permission.SCHEDULE_EXACT_ALARM"
-      ],
+      "permissions": ["android.permission.SCHEDULE_EXACT_ALARM"],
       "blockedPermissions": [
         "android.permission.READ_MEDIA_IMAGES",
         "android.permission.READ_EXTERNAL_STORAGE",
@@ -143,9 +141,7 @@
               "displayName": "Les cinq prières",
               "description": "Les heures des cinq prières du jour.",
               "ios": {
-                "supportedFamilies": [
-                  "systemMedium"
-                ]
+                "supportedFamilies": ["systemMedium"]
               },
               "android": {
                 "targetCellWidth": 4,
@@ -158,9 +154,7 @@
               "displayName": "Reprendre",
               "description": "La sourate et le verset où la lecture s'est arrêtée.",
               "ios": {
-                "supportedFamilies": [
-                  "systemSmall"
-                ]
+                "supportedFamilies": ["systemSmall"]
               },
               "android": {
                 "targetCellWidth": 2,
