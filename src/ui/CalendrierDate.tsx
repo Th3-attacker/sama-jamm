@@ -18,6 +18,8 @@ export type CalendrierDateProps = {
   /** Reçoit « jj/mm/aaaa », ou une chaîne vide pour effacer la date. */
   onChange: (texte: string) => void;
   placeholder?: string;
+  /** Texte d'aide sous le champ, remplacé par l'erreur s'il y en a une (comme TextField). */
+  aide?: string;
   erreur?: string;
 };
 
@@ -33,7 +35,7 @@ function versTexte(date: Date): string {
 }
 
 /** Champ de date : affiche la date choisie et ouvre un calendrier mensuel dans une feuille du bas. Semaine du lundi. */
-export function CalendrierDate({ label, valeur, onChange, placeholder, erreur }: CalendrierDateProps) {
+export function CalendrierDate({ label, valeur, onChange, placeholder, aide, erreur }: CalendrierDateProps) {
   const { t, i18n } = useTranslation();
   const { couleurs, espace, rayon, cible, typographie } = useTheme();
   const langue = i18n.language;
@@ -121,6 +123,10 @@ export function CalendrierDate({ label, valeur, onChange, placeholder, erreur }:
           maxFontSizeMultiplier={echelleMax.courant}
           style={[typographie.legende, { color: couleurs.erreur }]}>
           {erreur}
+        </Text>
+      ) : aide ? (
+        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre3 }]}>
+          {aide}
         </Text>
       ) : null}
 

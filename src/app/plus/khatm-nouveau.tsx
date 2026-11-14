@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import { lireSaisieDate, masqueDate } from '@/features/budget/dettes';
+import { lireSaisieDate } from '@/features/budget/dettes';
 import { creerKhatm } from '@/features/khatm/depot';
 import { inviter } from '@/features/khatm/partager';
 import { supabase } from '@/services/supabase/client';
@@ -11,6 +11,7 @@ import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { Banner } from '@/ui/Banner';
 import { Button } from '@/ui/Button';
+import { CalendrierDate } from '@/ui/CalendrierDate';
 import { ListGroup } from '@/ui/ListGroup';
 import { ListItem } from '@/ui/ListItem';
 import { TextField } from '@/ui/TextField';
@@ -82,12 +83,11 @@ export default function NouveauKhatm() {
             placeholder={t('khatm.intentionExemple')}
             aide={t('khatm.intentionAide')}
           />
-          <TextField
+          <CalendrierDate
             label={t('khatm.echeance')}
             valeur={echeance}
-            onChange={(v) => setEcheance(masqueDate(v))}
-            clavier="number-pad"
-            placeholder="06/11/2026"
+            onChange={setEcheance}
+            placeholder={t('dettes.datePlaceholder')}
             aide={t('khatm.echeanceAide')}
             erreur={dateOk ? undefined : t('khatm.dateInvalide')}
           />
