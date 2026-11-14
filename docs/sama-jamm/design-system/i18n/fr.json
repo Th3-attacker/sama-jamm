@@ -174,7 +174,17 @@
     "echeance": "À terminer avant le",
     "creer": "Créer et inviter",
     "lienExpire": "Ce lien n'est plus valable",
-    "lienExpireTexte": "Le khatm est terminé ou l'invitation a expiré. Demandez un nouveau lien."
+    "lienExpireTexte": "Le khatm est terminé ou l'invitation a expiré. Demandez un nouveau lien.",
+    "rappelTitre": "Rappel quotidien du khatm",
+    "rappelAide": "Une seule notification par jour, pour tous vos khatms.",
+    "rappelHeure": "Heure du rappel",
+    "rappelDesactive": "Désactivé",
+    "rappelChaqueJour": "Chaque jour à {{heure}}",
+    "rappelSansJuz": "Le rappel reste silencieux tant que vous n'avez aucun juz en cours.",
+    "rappelTermine": "Aucun rappel : tous vos khatms sont terminés.",
+    "rappelHorsLigne": "Le rappel fonctionne sans connexion.",
+    "rappelRefuseTitre": "Notifications désactivées",
+    "rappelRefuseTexte": "Autorisez-les dans les réglages du téléphone pour recevoir ce rappel."
   },
   "ecouter": {
     "titre": "Écouter",
@@ -275,6 +285,8 @@
     "rappelTexte": "Préparez-vous en paix.",
     "khatmTitre": "Votre juz vous attend",
     "khatmTexte": "Le khatm « {{nom}} » se termine le {{date}}.",
+    "khatmQuotidienTitre": "Votre khatm vous attend",
+    "khatmQuotidienTexte": "Quelques versets suffisent, à votre rythme.",
     "zakatTitre": "Une année lunaire est passée",
     "zakatTexte": "Vérifiez si une zakat est due sur votre épargne.",
     "canaux": {

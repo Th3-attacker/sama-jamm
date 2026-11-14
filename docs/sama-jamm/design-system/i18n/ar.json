@@ -194,7 +194,17 @@
     "echeance": "تُتمّ قبل",
     "creer": "إنشاء ودعوة",
     "lienExpire": "هذا الرابط لم يعد صالحًا",
-    "lienExpireTexte": "انتهت الختمة أو انتهت صلاحية الدعوة. اطلب رابطًا جديدًا."
+    "lienExpireTexte": "انتهت الختمة أو انتهت صلاحية الدعوة. اطلب رابطًا جديدًا.",
+    "rappelTitre": "تذكير يومي بالختمة",
+    "rappelAide": "إشعار واحد في اليوم لجميع ختماتك.",
+    "rappelHeure": "وقت التذكير",
+    "rappelDesactive": "معطّل",
+    "rappelChaqueJour": "كل يوم في {{heure}}",
+    "rappelSansJuz": "يبقى التذكير صامتًا ما دام ليس لديك جزء قيد القراءة.",
+    "rappelTermine": "لا تذكير: جميع ختماتك مكتملة.",
+    "rappelHorsLigne": "يعمل التذكير بدون اتصال.",
+    "rappelRefuseTitre": "الإشعارات معطّلة",
+    "rappelRefuseTexte": "اسمح بها من إعدادات الهاتف لتصلك هذه التذكيرات."
   },
   "ecouter": {
     "titre": "استمع",
@@ -299,6 +309,8 @@
     "rappelTexte": "استعد في سلام.",
     "khatmTitre": "جزؤك ينتظرك",
     "khatmTexte": "تنتهي ختمة « {{nom}} » في {{date}}.",
+    "khatmQuotidienTitre": "ختمتك بانتظارك",
+    "khatmQuotidienTexte": "ولو بآيات قليلة، على مهلك.",
     "zakatTitre": "مرّت سنة قمرية",
     "zakatTexte": "تحقّق إن كانت الزكاة واجبة على مدّخراتك.",
     "canaux": {

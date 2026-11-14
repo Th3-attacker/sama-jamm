@@ -7,6 +7,7 @@ Ce que l'utilisateur voit de Sama Jàmm quand l'app est fermée : notifications,
 - Le système dessine ces surfaces : la police est celle du téléphone (SF Pro, Roboto). Nos couleurs s'appliquent seulement aux fonds et accents que le système laisse choisir.
 - Mêmes mots que dans l'app. Le wolof d'abord pour l'appel : « Waxtu julli jot na », puis la prière et l'heure.
 - Jamais de reproche, de série ni de compte de prières manquées. Une prière passée ne déclenche rien.
+- Rappel de khatm : jamais de compteur de jours manqués, de série, de nom de khatm ni de texte sacré.
 - Rien sur le budget hors de l'app : ni montant dans une notification, ni widget de budget. Le rappel d'une dette dit seulement « Une échéance de dette approche. », sauf si l'utilisateur a demandé les détails.
 - Le texte sacré n'apparaît pas tronqué : un widget ou une notification affiche le nom de la sourate et le numéro du verset, pas un extrait coupé.
 
@@ -16,7 +17,10 @@ Ce que l'utilisateur voit de Sama Jàmm quand l'app est fermée : notifications,
 | --- | --- | --- | --- |
 | Heure de la prière | Waxtu julli jot na · Asr | 16:35 · Nouakchott | Android : « Arrêter l'appel », « Couper pour Asr » |
 | Rappel avant | Asr dans 10 minutes | Pour se préparer sans se presser. | — |
-| Khatm | Khatm de la famille | Il reste votre juz 12, à terminer avant vendredi 6 novembre. | — |
+| Khatm (deux jours avant la fin) | Khatm de la famille | Il reste votre juz 12, à terminer avant vendredi 6 novembre. | — |
+| Khatm (quotidien) | Votre khatm vous attend | Quelques versets suffisent, à votre rythme. | — |
+
+- Rappel quotidien du khatm : facultatif, désactivé par défaut, une seule notification par jour pour tous les khatms (un déclencheur quotidien, une place sur les 64 d'iOS), à l'heure choisie (20:00 par défaut). Réglage dans Prière › Appel et rappels. Il ne part que s'il y a au moins un juz en cours. Quand il est actif, le rappel « deux jours avant la fin » n'est plus planifié.
 | Téléchargement (Android) | Yā-Sīn · Mishary Al-Afasy | 38 Mo sur 120 Mo · reprend si le réseau coupe | Barre de progression |
 
 - Icône de notification Android : `assets/Icônes/notification-icon.png` (silhouette blanche), couleur d'accent `marque-emeraude`.
@@ -29,7 +33,7 @@ Ce que l'utilisateur voit de Sama Jàmm quand l'app est fermée : notifications,
 | --- | --- | --- | --- |
 | Prières | Haute | Appel choisi | Heure de chaque prière |
 | Rappels avant la prière | Normale | Son discret | 5 à 30 minutes avant |
-| Khatm | Normale | Par défaut | La veille et deux jours avant la fin |
+| Khatm | Normale | Par défaut | Rappel quotidien (facultatif) ou, sans lui, deux jours avant la fin |
 | Lecture en cours | Basse | Silencieux | Commandes de la récitation |
 | Téléchargements | Basse | Silencieux | Progression |
 
