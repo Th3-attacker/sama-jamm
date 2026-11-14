@@ -323,7 +323,17 @@
     "rejoindreLien": "Rejoindre par le lien",
     "rejoindreLienAide": "Toute personne qui reçoit le lien peut prendre un juz",
     "rappelParticipants": "Rappel aux participants",
-    "rappelParticipantsAide": "Deux jours avant la fin, sur le téléphone de chacun, s’il n’a pas terminé"
+    "rappelParticipantsAide": "Deux jours avant la fin, sur le téléphone de chacun, s’il n’a pas terminé",
+    "rappelTitre": "Rappel quotidien du khatm",
+    "rappelAide": "Une seule notification par jour, pour tous vos khatms.",
+    "rappelHeure": "Heure du rappel",
+    "rappelDesactive": "Désactivé",
+    "rappelChaqueJour": "Chaque jour à {{heure}}",
+    "rappelSansJuz": "Le rappel reste silencieux tant que vous n'avez aucun juz en cours.",
+    "rappelTermine": "Aucun rappel : tous vos khatms sont terminés.",
+    "rappelHorsLigne": "Le rappel fonctionne sans connexion.",
+    "rappelRefuseTitre": "Notifications désactivées",
+    "rappelRefuseTexte": "Autorisez-les dans les réglages du téléphone pour recevoir ce rappel."
   },
   "ecouter": {
     "titre": "Écouter",
@@ -502,7 +512,9 @@
       "khatm": "Khatm",
       "lecture": "Lecture en cours",
       "telechargements": "Téléchargements"
-    }
+    },
+    "khatmQuotidienTitre": "Votre khatm vous attend",
+    "khatmQuotidienTexte": "Quelques versets suffisent, à votre rythme."
   },
   "qibla": {
     "schemaDroite": "La qibla est à {{degres}} degrés à droite du nord",

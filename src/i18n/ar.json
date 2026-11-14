@@ -347,7 +347,17 @@
     "rejoindreLien": "الانضمام عبر الرابط",
     "rejoindreLienAide": "كل من يتلقى الرابط يمكنه أخذ جزء",
     "rappelParticipants": "تذكير المشاركين",
-    "rappelParticipantsAide": "قبل يومين من النهاية، على هاتف كل واحد إن لم ينتهِ"
+    "rappelParticipantsAide": "قبل يومين من النهاية، على هاتف كل واحد إن لم ينتهِ",
+    "rappelTitre": "تذكير يومي بالختمة",
+    "rappelAide": "إشعار واحد في اليوم لجميع ختماتك.",
+    "rappelHeure": "وقت التذكير",
+    "rappelDesactive": "معطّل",
+    "rappelChaqueJour": "كل يوم في {{heure}}",
+    "rappelSansJuz": "يبقى التذكير صامتًا ما دام ليس لديك جزء قيد القراءة.",
+    "rappelTermine": "لا تذكير: جميع ختماتك مكتملة.",
+    "rappelHorsLigne": "يعمل التذكير بدون اتصال.",
+    "rappelRefuseTitre": "الإشعارات معطّلة",
+    "rappelRefuseTexte": "اسمح بها من إعدادات الهاتف لتصلك هذه التذكيرات."
   },
   "ecouter": {
     "titre": "الاستماع",
@@ -538,7 +548,9 @@
       "khatm": "الختمة",
       "lecture": "التشغيل الجاري",
       "telechargements": "التنزيلات"
-    }
+    },
+    "khatmQuotidienTitre": "ختمتك بانتظارك",
+    "khatmQuotidienTexte": "ولو بآيات قليلة، على مهلك."
   },
   "qibla": {
     "schemaDroite": "القبلة: {{degres}}° إلى يمين الشمال",

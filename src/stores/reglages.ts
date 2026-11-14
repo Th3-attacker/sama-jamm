@@ -24,6 +24,9 @@ export type Lieu =
   | { type: 'position'; latitude: number; longitude: number }
   | { type: 'ville'; id: string; nom: string; latitude: number; longitude: number };
 
+export const heuresRappelKhatm = [8, 12, 18, 20] as const;
+export type HeureRappelKhatm = (typeof heuresRappelKhatm)[number];
+
 type ParPriere<T> = Record<NomPriere, T>;
 
 type Donnees = {
@@ -55,6 +58,11 @@ type Donnees = {
   verrouBudget: boolean;
   /** Montants du budget remplacés par « ••• » à l'ouverture de l'app. */
   masquerMontants: boolean;
+  /** Rappel quotidien du khatm : désactivé par défaut, une seule notification pour tous les khatms. */
+  khatmRappel: boolean;
+  khatmRappelHeure: HeureRappelKhatm;
+  /** Dernier nombre connu de khatms avec un juz non lu (null : inconnu). Gardé pour décider hors ligne. */
+  khatmEnCours: number | null;
 };
 
 type Actions = {
@@ -75,6 +83,9 @@ type Actions = {
   definirWifiSeulement: (actif: boolean) => void;
   definirVerrouBudget: (actif: boolean) => void;
   definirMasquerMontants: (actif: boolean) => void;
+  definirKhatmRappel: (actif: boolean) => void;
+  definirKhatmRappelHeure: (heure: HeureRappelKhatm) => void;
+  definirKhatmEnCours: (nombre: number | null) => void;
 };
 
 export const AJUSTEMENT_MAX = 15;
@@ -99,6 +110,9 @@ const parDefaut: Donnees = {
   chiffresArabes: false,
   verrouBudget: false,
   masquerMontants: false,
+  khatmRappel: false,
+  khatmRappelHeure: 20,
+  khatmEnCours: null,
 };
 
 export const useReglages = create<Donnees & Actions>()(
@@ -128,6 +142,9 @@ export const useReglages = create<Donnees & Actions>()(
       definirChiffresArabes: (chiffresArabes) => set({ chiffresArabes }),
       definirVerrouBudget: (verrouBudget) => set({ verrouBudget }),
       definirMasquerMontants: (masquerMontants) => set({ masquerMontants }),
+      definirKhatmRappel: (khatmRappel) => set({ khatmRappel }),
+      definirKhatmRappelHeure: (khatmRappelHeure) => set({ khatmRappelHeure }),
+      definirKhatmEnCours: (khatmEnCours) => set({ khatmEnCours }),
     }),
     {
       name: 'reglages',
@@ -169,6 +186,9 @@ export const useReglages = create<Donnees & Actions>()(
         tailleLecture: s.tailleLecture,
         translitLecture: s.translitLecture,
         chiffresArabes: s.chiffresArabes,
+        khatmRappel: s.khatmRappel,
+        khatmRappelHeure: s.khatmRappelHeure,
+        khatmEnCours: s.khatmEnCours,
       }),
       onRehydrateStorage: () => (_etat, erreur) => {
         if (erreur) console.error('Réglages illisibles : valeurs par défaut', erreur);

@@ -8,9 +8,12 @@ import { useSession } from '@/features/compte/compte';
 import { CANAL_KHATM, creerCanaux } from '@/features/priere/notifications';
 import i18n from '@/i18n';
 import { supabase } from '@/services/supabase/client';
+import { useReglages } from '@/stores/reglages';
 
 import { creerRegistreCanaux } from './canaux';
 import type { Part } from './logique';
+import { actualiserKhatmsEnCours } from './enCours';
+import { decisionRappel, ID_RAPPEL_QUOTIDIEN } from './rappelQuotidien';
 import { estApercu, estKhatm, estMembre, estPart, lireListe, type Apercu, type Khatm, type Membre } from './lignes';
 
 export type { Apercu, Khatm, Membre } from './lignes';
@@ -59,6 +62,7 @@ export async function apercuKhatm(code: string): Promise<Apercu | null> {
 export async function rejoindreKhatm(code: string): Promise<string> {
   const { data, error } = await supabase.rpc('rejoindre_khatm', { p_code: code });
   if (error) throw error;
+  void actualiserKhatmsEnCours();
   return String(data);
 }
 
@@ -69,6 +73,7 @@ async function action(
 ): Promise<boolean> {
   const { data, error } = await supabase.rpc(nom, { p_khatm: khatm, p_juz: juz });
   if (error) throw error;
+  void actualiserKhatmsEnCours();
   return data === true;
 }
 /** Vrai si le juz était encore libre (un autre membre a pu le prendre juste avant). */
@@ -79,6 +84,7 @@ export const marquerJuzLu = (khatm: string, juz: number) => action('marquer_juz_
 export async function quitterKhatm(khatm: string): Promise<void> {
   const { error } = await supabase.rpc('quitter_khatm', { p_khatm: khatm });
   if (error) throw error;
+  void actualiserKhatmsEnCours();
 }
 
 /** Signale un autre membre pour examen (enregistré côté serveur, sans retrait automatique). */
@@ -147,6 +153,9 @@ export function useKhatm(id: string): { etat: EtatKhatm; relire: () => void } {
   return { etat, relire: () => setVersion((v) => v + 1) };
 }
 
+/** Ouvre la liste des khatms (le rappel quotidien ne vise aucun khatm en particulier). */
+export const URL_KHATMS = 'samajamm://plus/khatms';
+
 const idRappel = (khatm: string) => `khatm-${khatm}`;
 
 /**
@@ -155,6 +164,8 @@ const idRappel = (khatm: string) => `khatm-${khatm}`;
  */
 export async function programmerRappelKhatm(khatm: Khatm, juzEnCours: number | null): Promise<void> {
   await Notifications.cancelScheduledNotificationAsync(idRappel(khatm.id));
+  // Le rappel quotidien remplace celui de J-2 : une seule place iOS, pas de doublon.
+  if (useReglages.getState().khatmRappel) return;
   if (juzEnCours === null || !khatm.echeance) return;
   const [a, m, j] = khatm.echeance.split('-').map(Number);
   const date = new Date(a ?? 1970, (m ?? 1) - 1, (j ?? 1) - 2, 9, 0);
@@ -170,5 +181,47 @@ export async function programmerRappelKhatm(khatm: Khatm, juzEnCours: number | n
       data: { url: `samajamm://plus/khatm/${khatm.id}` },
     },
     trigger: { type: SchedulableTriggerInputTypes.DATE, date, channelId: CANAL_KHATM },
+  });
+}
+
+// Un seul passage à la fois : un appel lent ne doit pas reprogrammer ce qu'un appel plus récent vient d'annuler.
+let derniereQuotidienne: Promise<void> = Promise.resolve();
+
+/**
+ * Rappel quotidien doux, un seul pour tous les khatms (identifiant « khatm-quotidien », canal Khatm).
+ * Annule puis recrée selon les réglages et le dernier nombre connu de khatms en cours ; ne demande jamais
+ * l'autorisation (c'est l'écran Rappels qui le fait à l'activation). Actif, il remplace aussi les rappels J-2.
+ */
+export function replanifierRappelQuotidien(): Promise<void> {
+  const resultat = derniereQuotidienne.then(executerRappelQuotidien);
+  derniereQuotidienne = resultat.catch(() => undefined);
+  return resultat;
+}
+
+async function executerRappelQuotidien(): Promise<void> {
+  await Notifications.cancelScheduledNotificationAsync(ID_RAPPEL_QUOTIDIEN);
+  const permission = (await Notifications.getPermissionsAsync()).granted;
+  // Réglages lus après l'attente : c'est l'état le plus récent qui décide.
+  const { khatmRappel, khatmRappelHeure, khatmEnCours } = useReglages.getState();
+  if (khatmRappel) {
+    // Pas de doublon ni de place iOS perdue : les J-2 déjà programmés sont annulés tant que le quotidien est actif.
+    const programmees = await Notifications.getAllScheduledNotificationsAsync();
+    await Promise.all(
+      programmees
+        .filter((n) => n.identifier.startsWith('khatm-') && n.identifier !== ID_RAPPEL_QUOTIDIEN)
+        .map((n) => Notifications.cancelScheduledNotificationAsync(n.identifier)),
+    );
+  }
+  const decision = decisionRappel({ actif: khatmRappel, heure: khatmRappelHeure, enCours: khatmEnCours, permission });
+  if (!decision.programmer) return;
+  await creerCanaux();
+  await Notifications.scheduleNotificationAsync({
+    identifier: ID_RAPPEL_QUOTIDIEN,
+    content: {
+      title: i18n.t('notifications.khatmQuotidienTitre'),
+      body: i18n.t('notifications.khatmQuotidienTexte'),
+      data: { url: URL_KHATMS },
+    },
+    trigger: { type: SchedulableTriggerInputTypes.DAILY, hour: decision.heure, minute: decision.minute, channelId: CANAL_KHATM },
   });
 }

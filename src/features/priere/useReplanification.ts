@@ -4,6 +4,8 @@ import { useEffect } from 'react';
 import { AppState } from 'react-native';
 
 import { mettreAJourReprendre } from '@/features/horsapp/widgets';
+import { replanifierRappelQuotidien, URL_KHATMS } from '@/features/khatm/depot';
+import { actualiserKhatmsEnCours } from '@/features/khatm/enCours';
 import { useLecture } from '@/stores/lecture';
 import { useReglages } from '@/stores/reglages';
 
@@ -18,6 +20,9 @@ const DELAI = 500;
 const DELAI_REPRENDRE = 2000;
 
 function lancer() {
+  replanifierRappelQuotidien().catch((erreur: unknown) => {
+    console.error('Rappel quotidien du khatm impossible à programmer', erreur);
+  });
   replanifier().catch((erreur: unknown) => {
     console.error('Programmation des notifications impossible', erreur);
   });
@@ -51,7 +56,10 @@ export function useReplanification(): void {
         s.methode !== avant.methode ||
         s.ecoleAsr !== avant.ecoleAsr ||
         s.ajustements !== avant.ajustements ||
-        s.langue !== avant.langue;
+        s.langue !== avant.langue ||
+        s.khatmRappel !== avant.khatmRappel ||
+        s.khatmRappelHeure !== avant.khatmRappelHeure ||
+        s.khatmEnCours !== avant.khatmEnCours;
       if (change) differer();
     });
     // Widget « Reprendre » : suit la position de lecture (légèrement différé, la position change au fil du défilement).
@@ -67,13 +75,18 @@ export function useReplanification(): void {
       if (s.position !== avant.position) majReprendre();
     });
     const premierPlan = AppState.addEventListener('change', (etat) => {
-      if (etat === 'active') differer();
+      if (etat === 'active') {
+        differer();
+        // Un juz lu ou un khatm quitté ailleurs ne doit pas laisser un rappel périmé.
+        actualiserKhatmsEnCours().catch((erreur: unknown) => console.warn('Khatms en cours inaccessibles', erreur));
+      }
     });
     const toucher = Notifications.addNotificationResponseReceivedListener((reponse) => {
       const url = reponse.notification.request.content.data?.url;
       if (url === URL_PRIERE) router.push('/priere');
       // Rappel de zakat (features/budget/rappelZakat) : l'écran reste derrière le verrou du budget.
       else if (url === URL_ZAKAT) router.push('/budget/zakat');
+      else if (url === URL_KHATMS) router.push('/plus/khatms');
       else if (typeof url === 'string' && url.startsWith('samajamm://plus/khatm/'))
         router.push({ pathname: '/plus/khatm/[id]', params: { id: url.slice('samajamm://plus/khatm/'.length) } });
     });

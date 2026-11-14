@@ -2,13 +2,13 @@ import * as Notifications from 'expo-notifications';
 import { router } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Linking, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { calculerHoraires } from '@/features/priere/horaires';
 import { useOptionsCalcul } from '@/features/priere/useOptionsCalcul';
 import { fuseauDuLieu } from '@/features/priere/villes';
 import { formatHeure } from '@/lib/dates';
-import { prieres, sons, useReglages, type NomPriere } from '@/stores/reglages';
+import { heuresRappelKhatm, prieres, sons, useReglages, type NomPriere } from '@/stores/reglages';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { Banner } from '@/ui/Banner';
@@ -30,6 +30,15 @@ export default function AppelEtRappels() {
   const definirSon = useReglages((s) => s.definirSon);
   const [ouverte, setOuverte] = useState<NomPriere | null>(null);
   const [alarmesRefusees, setAlarmesRefusees] = useState(false);
+  const khatmRappel = useReglages((s) => s.khatmRappel);
+  const khatmHeure = useReglages((s) => s.khatmRappelHeure);
+  const khatmEnCours = useReglages((s) => s.khatmEnCours);
+  const definirKhatmRappel = useReglages((s) => s.definirKhatmRappel);
+  const definirKhatmHeure = useReglages((s) => s.definirKhatmRappelHeure);
+  const [feuilleHeure, setFeuilleHeure] = useState(false);
+  const [khatmRefuse, setKhatmRefuse] = useState(false);
+  const [khatmErreur, setKhatmErreur] = useState(false);
+  const [demande, setDemande] = useState(false);
   const lieu = useReglages((s) => s.lieu);
   const fuseau = fuseauDuLieu(lieu);
   const methode = useReglages((s) => s.methode);
@@ -51,6 +60,31 @@ export default function AppelEtRappels() {
       .then((p) => setAlarmesRefusees(!p.granted))
       .catch((erreur: unknown) => console.warn('Réglage des alarmes exactes inaccessible', erreur));
   };
+
+  // Activation : l'autorisation est demandée ici ; en cas de refus ou d'échec, l'interrupteur reste éteint.
+  const basculerKhatm = (actif: boolean) => {
+    setKhatmRefuse(false);
+    setKhatmErreur(false);
+    if (!actif) {
+      definirKhatmRappel(false);
+      return;
+    }
+    setDemande(true);
+    Notifications.getPermissionsAsync()
+      .then((p) => (p.granted ? p : Notifications.requestPermissionsAsync()))
+      .then((p) => {
+        if (p.granted) definirKhatmRappel(true);
+        else setKhatmRefuse(true);
+      })
+      .catch((erreur: unknown) => {
+        console.warn('Autorisation des notifications inaccessible', erreur);
+        setKhatmErreur(true);
+      })
+      .finally(() => setDemande(false));
+  };
+
+  const heureKhatm = (h: number) => `${String(h).padStart(2, '0')}:00`;
+  const aideKhatm = !khatmRappel ? null : khatmEnCours === 0 ? t('khatm.rappelSansJuz') : null;
 
   // Feuille réduite, identique sur iOS et Android : trois sons, sans essai ni rappel avant.
   const sonsFeuille = sons.filter((s) => s === 'court' || s === 'vibration' || s === 'silencieux');
@@ -102,6 +136,41 @@ export default function AppelEtRappels() {
             );
           })}
         </View>
+        {/* Rappel quotidien du khatm : une seule notification pour tous les khatms, désactivée par défaut. */}
+        <View style={[styles.carte, { backgroundColor: couleurs.surface, borderColor: couleurs.ligne, borderRadius: rayon.rayonCarte }]}>
+          <View style={[styles.ligne, { gap: espace.espace3, paddingVertical: espace.espace3, paddingHorizontal: espace.espace4 }]}>
+            <View style={[styles.textes, { gap: espace.espace1 }]}>
+              <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, typographie.libelle, { color: couleurs.encre }]}>
+                {t('khatm.rappelTitre')}
+              </Text>
+              <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, ligne(styles.sonTexte), { color: couleurs.encre2 }]}>
+                {aideKhatm ?? t('khatm.rappelAide')}
+              </Text>
+            </View>
+            <Switch label={t('khatm.rappelTitre')} active={khatmRappel} onChange={demande ? () => undefined : basculerKhatm} />
+          </View>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={`${t('khatm.rappelHeure')}, ${heureKhatm(khatmHeure)}`}
+            accessibilityState={{ disabled: !khatmRappel }}
+            disabled={!khatmRappel}
+            onPress={() => setFeuilleHeure(true)}
+            style={[styles.ligne, styles.filet, { gap: espace.espace3, paddingHorizontal: espace.espace4, borderTopColor: couleurs.ligne }]}>
+            <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.textes, { color: khatmRappel ? couleurs.encre : couleurs.encre3 }]}>
+              {t('khatm.rappelHeure')}
+            </Text>
+            <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, { color: couleurs.encre3 }]}>
+              {heureKhatm(khatmHeure)}
+            </Text>
+            <Icon name="chevron-right" size={14} color={couleurs.encre3} />
+          </Pressable>
+        </View>
+        {khatmRefuse ? (
+          <Banner ton="info" titre={t('khatm.rappelRefuseTitre')} action={{ label: t('autorisations.ouvrirReglages'), onPress: () => void Linking.openSettings() }}>
+            {t('khatm.rappelRefuseTexte')}
+          </Banner>
+        ) : null}
+        {khatmErreur ? <Banner ton="erreur">{t('etats.erreurTexte')}</Banner> : null}
         <Pressable
           accessibilityRole="button"
           onPress={() => router.push('/priere/methode')}
@@ -147,6 +216,20 @@ export default function AppelEtRappels() {
             />
           </>
         ) : null}
+      </BottomSheet>
+
+      <BottomSheet ouvert={feuilleHeure} titre={t('khatm.rappelHeure')} onFermer={() => setFeuilleHeure(false)}>
+        <RadioGroup
+          label={t('khatm.rappelHeure')}
+          options={heuresRappelKhatm.map((h) => ({ id: String(h), label: heureKhatm(h) }))}
+          encadre={false}
+          valeur={String(khatmHeure)}
+          onChange={(id) => {
+            const h = heuresRappelKhatm.find((x) => String(x) === id);
+            if (h !== undefined) definirKhatmHeure(h);
+            setFeuilleHeure(false);
+          }}
+        />
       </BottomSheet>
     </View>
   );

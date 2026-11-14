@@ -20,6 +20,7 @@ import { copierCode, inviter } from '@/features/khatm/partager';
 import { reperes } from '@/features/lire/coran';
 import { useParametre } from '@/hooks/useParametre';
 import { useBloques } from '@/stores/bloques';
+import { useReglages } from '@/stores/reglages';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { KhatmGrid, type EtatJuz } from '@/ui/KhatmGrid';
@@ -44,6 +45,8 @@ export default function EcranKhatm() {
   const bloques = useBloques((b) => b.membres);
   const basculerBloque = useBloques((b) => b.basculer);
   const { etat, relire } = useKhatm(id);
+  const rappelActif = useReglages((s) => s.khatmRappel);
+  const rappelHeure = useReglages((s) => s.khatmRappelHeure);
   const [message, setMessage] = useState<string | null>(null);
   const [feuilleInviter, setFeuilleInviter] = useState(false);
   const [codeCopie, setCodeCopie] = useState(false);
@@ -285,6 +288,15 @@ export default function EcranKhatm() {
         ) : (
           <Banner ton="info">{t('khatm.toucherLibre')}</Banner>
         )}
+        {/* Entrée vers le réglage du rappel quotidien (écran Rappels) : n'active rien elle-même. */}
+        <ListGroup>
+          <ListItem
+            icone="bell"
+            titre={t('khatm.rappelTitre')}
+            sousTitre={rappelActif ? t('khatm.rappelChaqueJour', { heure: `${String(rappelHeure).padStart(2, '0')}:00` }) : t('khatm.rappelDesactive')}
+            onPress={() => router.push('/priere/rappels')}
+          />
+        </ListGroup>
         {/* Membres : chacun peut signaler un autre membre ; le créateur peut en retirer un. */}
         <View style={{ gap: espace.espace2 }}>
           <Text accessibilityRole="header" style={[typographie.libelle, { color: couleurs.encre2 }]}>
