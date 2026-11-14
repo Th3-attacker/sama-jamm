@@ -52,7 +52,7 @@ export default function Dhikr() {
 
   const unGrain = () => {
     vibrerLeger();
-    const n = compter();
+    const n = compter(objectif);
     if (objectif !== null && n === objectif) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch((erreur: unknown) => {
         console.warn('Retour haptique indisponible', erreur);

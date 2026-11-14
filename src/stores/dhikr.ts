@@ -2,6 +2,8 @@
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
+import { prochainCompte } from '@/features/dhikr/compteur';
+
 import { stockage } from './stockage';
 
 type Donnees = {
@@ -14,7 +16,8 @@ type Donnees = {
 
 type Actions = {
   choisirFormule: (id: string) => void;
-  compter: () => number;
+  /** Ajoute un grain ; à l'objectif atteint, le grain suivant repart à 1 (null = libre, sans fin). */
+  compter: (objectif: number | null) => number;
   remettreAZero: () => void;
   definirObjectif: (objectif: number | null) => void;
 };
@@ -26,9 +29,9 @@ export const useDhikr = create<Donnees & Actions>()(
       comptes: {},
       objectifs: {},
       choisirFormule: (formule) => set({ formule }),
-      compter: () => {
+      compter: (objectif) => {
         const { formule, comptes } = get();
-        const n = (comptes[formule] ?? 0) + 1;
+        const n = prochainCompte(comptes[formule] ?? 0, objectif);
         set({ comptes: { ...comptes, [formule]: n } });
         return n;
       },
