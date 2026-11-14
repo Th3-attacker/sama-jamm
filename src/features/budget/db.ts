@@ -8,6 +8,7 @@ import { defaultDatabaseDirectory, deleteDatabaseAsync, openDatabaseAsync, type 
 import { devisesIntegrees } from '@/lib/montant';
 
 import { ChiffrementIndisponible, verifierChiffrement } from './chiffrement';
+import { nettoyerExportsCsv } from './exports';
 import { migrations, VERSION_SCHEMA } from './schema';
 
 const NOM_BASE = 'budget.db';
@@ -86,6 +87,8 @@ async function ouvrir(): Promise<SQLiteDatabase> {
   await db.execAsync('PRAGMA foreign_keys = ON');
   await appliquerMigrations(db);
   await semerDevises(db);
+  // Un export CSV en clair resté dans le cache (partage Android) disparaît à l'ouverture suivante du budget.
+  nettoyerExportsCsv();
   return db;
 }
 

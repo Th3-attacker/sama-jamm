@@ -4,10 +4,13 @@
 import * as DocumentPicker from 'expo-document-picker';
 import { File, Paths } from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
+import { Platform } from 'react-native';
 
 import { cleJour } from '@/lib/dates';
 
 import { budgetDb, cheminDansDossierBase, cleDuBudget, remplacerBudget } from './db';
+import { effacerFichierCache } from './exports';
+import { nomExportCsv } from './nomsExportCsv';
 import { VERSION_SCHEMA } from './schema';
 
 export const MOT_DE_PASSE_MIN = 8;
@@ -45,11 +48,19 @@ async function partager(f: File, mimeType: string, titre: string): Promise<void>
   await Sharing.shareAsync(f.uri, { mimeType, dialogTitle: titre });
 }
 
-/** Écrit le CSV dans le cache et ouvre la feuille de partage du téléphone. */
+/**
+ * Écrit le CSV dans le cache et ouvre la feuille de partage du téléphone.
+ * Copie en clair : effacée après le partage sur iOS. Sur Android, le partage rend la main dès que la feuille
+ * s'ouvre et l'application choisie lit encore le fichier ensuite : il est effacé à la prochaine ouverture du budget.
+ */
 export async function partagerCsv(contenu: string, titre: string): Promise<void> {
-  const f = fichierNeuf(`sama-jamm-budget-${cleJour(new Date())}.csv`);
-  await f.write(contenu);
-  await partager(f, 'text/csv', titre);
+  const f = fichierNeuf(nomExportCsv(new Date()));
+  try {
+    await f.write(contenu);
+    await partager(f, 'text/csv', titre);
+  } finally {
+    if (Platform.OS === 'ios') effacerFichierCache(f);
+  }
 }
 
 /** Copie chiffrée du budget avec `motDePasse`, puis feuille de partage (fichier, messagerie, Drive…). */
