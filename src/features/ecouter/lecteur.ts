@@ -12,7 +12,7 @@ import { sourateSuivante } from './enchainement';
 import { dureesDe } from './dureesDonnees';
 import { rejouerVerset, resteMinuterie, type Minuterie, type RepetitionVerset } from './minuterie';
 import { positionValide, recitateur, RECITATEURS, pistesDePages, type Position } from './recitateurs';
-import { erreurDuStatut, indexDuStatut } from './statut';
+import { erreurDuStatut, indexDuStatut, pisteSaine, sauteSansLecture } from './statut';
 import { sourceVerset } from './telechargements';
 
 const VERSETS = sourates.map((s) => s.versets);
@@ -85,6 +85,8 @@ let abonnements: { remove: () => void }[] = [];
 let listeCassee = false;
 /** Piste en cours dans la file, pour reprendre au même endroit après un échec. */
 let indexCourant = 0;
+/** La piste en cours a été chargée ou lue : son remplacement par la suivante est alors une vraie fin de verset. */
+let pisteChargee = false;
 /** Relances automatiques après un échec pendant une écoute continue (coupure réseau brève). */
 const RELANCES_AUTO = 1;
 let relances = 0;
@@ -143,13 +145,24 @@ function echecLecture(raison: string, index: number): void {
   useLecteur.setState({ erreur: true, enLecture: false, chargement: false });
 }
 
+/**
+ * iPhone : la file native saute sans erreur un fichier injoignable, puis tous les suivants. Elle est jetée tout de
+ * suite pour arrêter la cascade ; la position reste sur le verset qui n'a pas été lu.
+ */
+function versetSaute(index: number): void {
+  jeterListe();
+  echecLecture('Verset sauté sans avoir été lu', index);
+}
+
 function surStatut(statut: AudioPlaylistStatus): void {
   const erreurNative = erreurDuStatut(statut);
   if (erreurNative !== null) {
     echecLecture(erreurNative, indexDuStatut(statut, indexCourant));
     return;
   }
-  if (statut.playing && !statut.isBuffering) relances = 0;
+  if (pisteSaine(statut) && indexDuStatut(statut, indexCourant) === indexCourant) pisteChargee = true;
+  // Le compte des relances ne repart que si le son avance vraiment, sinon un fichier injoignable relancerait sans fin.
+  if (statut.playing && !statut.isBuffering && statut.currentTime > 0) relances = 0;
   // Le temps écoulé dans le verset sert au temps de la sourate.
   useLecteur.setState({
     enLecture: statut.playing,
@@ -170,8 +183,8 @@ function surStatut(statut: AudioPlaylistStatus): void {
 
 // --- Répétition et minuterie ---------------------------------------------------------------------
 let ecoutesDuVerset = 1;
-/** Saut demandé (suivant, précédent, nouvelle écoute) : ce n'est pas la fin naturelle d'un verset. */
-let sautManuel = false;
+/** Piste visée par un saut demandé (suivant, précédent, nouvelle écoute) : y arriver n'est pas la fin d'un verset. */
+let sautVers: number | null = null;
 let minuteur: ReturnType<typeof setTimeout> | undefined;
 
 function appliquerBoucle(): void {
@@ -216,16 +229,24 @@ function ajouterPistes(pistes: Position[], idRecitateur: string): void {
 function surChangementDePiste({ previousIndex, currentIndex }: { previousIndex: number; currentIndex: number }): void {
   const f = enFile;
   if (!f) return;
+  const saine = pisteChargee;
+  const vise = sautVers;
+  pisteChargee = false;
+  sautVers = null;
+  if (sauteSansLecture({ previousIndex, currentIndex, sautVers: vise, saine })) {
+    // Saut demandé pas encore arrivé : la file sautait déjà des pistes, l'échec vaut pour la piste demandée.
+    versetSaute(vise ?? previousIndex);
+    return;
+  }
   indexCourant = currentIndex;
   const p = f.pistes[currentIndex];
   if (!p) return;
-  const manuel = sautManuel;
-  sautManuel = false;
+  const manuel = vise === currentIndex;
   if (!manuel && currentIndex === previousIndex + 1) {
     // Fin naturelle d'un verset : répétition demandée, puis minuterie « fin de la sourate » en écoute par page.
     if (rejouerVerset(useLecteur.getState().repetitionVerset, ecoutesDuVerset)) {
       ecoutesDuVerset += 1;
-      sautManuel = true;
+      sautVers = previousIndex;
       liste?.skipTo(previousIndex);
       return;
     }
@@ -314,7 +335,8 @@ function lire(nouvelleFile: FileCoran | null, index: number, depuis = 0, relance
     }
     const demandee = enFile ? pisteDeFile(enFile, index) : null;
     if (!demandee) return;
-    sautManuel = true;
+    sautVers = index;
+    pisteChargee = false;
     ecoutesDuVerset = 1;
     lectureDemandee = true;
     indexCourant = index;
@@ -388,14 +410,15 @@ export function basculer(): void {
 export function suivant(): void {
   if (!enEcoute(useLecteur.getState())) return;
   if (listeCassee) return lire(null, indexCourant + 1);
-  sautManuel = true;
+  // Sur la dernière piste, la file ne bouge pas : aucun saut à attendre.
+  sautVers = indexCourant + 1 < (enFile?.pistes.length ?? 0) ? indexCourant + 1 : null;
   liste?.next();
 }
 
 export function precedent(): void {
   if (!enEcoute(useLecteur.getState())) return;
   if (listeCassee) return lire(null, Math.max(0, indexCourant - 1));
-  sautManuel = true;
+  sautVers = indexCourant > 0 ? indexCourant - 1 : null;
   liste?.previous();
 }
 
