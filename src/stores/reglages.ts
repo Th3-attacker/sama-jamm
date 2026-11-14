@@ -96,7 +96,7 @@ const parDefaut: Donnees = {
   langue: null,
   lieu: null,
   rappels: tout(true),
-  sons: tout<Son>('court'),
+  sons: tout<Son>('complet'),
   rappelAvant: tout<number | null>(null),
   methode: 'mwl',
   ecoleAsr: 'standard',

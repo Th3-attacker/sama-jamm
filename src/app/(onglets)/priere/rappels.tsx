@@ -86,8 +86,8 @@ export default function AppelEtRappels() {
   const heureKhatm = (h: number) => `${String(h).padStart(2, '0')}:00`;
   const aideKhatm = !khatmRappel ? null : khatmEnCours === 0 ? t('khatm.rappelSansJuz') : null;
 
-  // Feuille réduite, identique sur iOS et Android : trois sons, sans essai ni rappel avant.
-  const sonsFeuille = sons.filter((s) => s === 'court' || s === 'vibration' || s === 'silencieux');
+  // Feuille réduite, identique sur iOS et Android : appel complet ou court, vibration, silence ; sans essai ni rappel avant.
+  const sonsFeuille = sons.filter((s) => s === 'complet' || s === 'court' || s === 'vibration' || s === 'silencieux');
 
   const resume = (p: NomPriere) => t(`priere.sons.${sonsChoisis[p]}`);
 
