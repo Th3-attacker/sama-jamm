@@ -42,6 +42,20 @@ export function useBottomStack(): PileBas {
 }
 
 /**
+ * Pile du bas d'un écran hors des onglets (lecture d'une sourate) : pas de barre d'onglets, la zone de sécurité du
+ * bas en tient lieu sur iOS comme sur Android, et le mini-lecteur de l'écran est posé dessus, sans écart.
+ */
+export function useBottomStackHorsOnglets(): PileBas {
+  const { height } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
+  const miniActif = useEcouteActive();
+  const miniMesure = usePlaceBas((s) => s.hauteurMini);
+  const outil = usePlaceBas((s) => s.outil);
+  const outilMesure = usePlaceBas((s) => s.hauteurOutil);
+  return calculerPile({ hauteurFenetre: height, hauteurBarre: insets.bottom, miniActif, outil, miniMesure, outilMesure, accessoireNatif: true });
+}
+
+/**
  * Part de la pile que le contenu doit laisser libre : sur Android, expo-router applique déjà la barre d'onglets,
  * on la retire ; sur iOS le contenu passe sous la barre, on la garde.
  */

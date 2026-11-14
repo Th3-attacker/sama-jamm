@@ -46,7 +46,8 @@ import { Icon } from '@/ui/Icon';
 import { useToast } from '@/ui/Toast';
 import { Button } from '@/ui/Button';
 import { TopBar } from '@/ui/TopBar';
-import { useDessousOutil } from '@/features/ecouter/placeMiniLecteur';
+import { MiniLecteur } from '@/features/ecouter/MiniLecteur';
+import { useBottomStackHorsOnglets } from '@/features/ecouter/placeMiniLecteur';
 import { usePlaceBas } from '@/stores/placeBas';
 import { espace, interlignes, miseEnPage, rayon, tailles } from '@/theme/tokens.generated';
 
@@ -112,7 +113,9 @@ function LectureSourate({
   const sens = useSens();
   const { couleurs, ombres, espace, rayon, cible, typographie, ligne } = useTheme();
   // La pilule d'outils est l'outil fixe du bas : la pile la compte, le contenu lui laisse sa place.
-  const dessous = useDessousOutil();
+  // Cet écran est hors des onglets : sous la pilule, la zone de sécurité du bas et, pendant une écoute, le mini-lecteur.
+  const pileBas = useBottomStackHorsOnglets();
+  const miniVisible = pileBas.mini > 0;
   // Avant la première image : la pile du bas compte la pilule dès l'ouverture, elle ne se décale pas ensuite.
   useLayoutEffect(() => {
     usePlaceBas.setState({ outil: 'pilule' });
@@ -542,8 +545,8 @@ function LectureSourate({
           {
             gap: espace.espace2,
             marginHorizontal: espace.espace6,
-            // La pilule flotte à 16 au-dessus de la couche du dessous (barre d'onglets, mini-lecteur).
-            marginBottom: miseEnPage.margeContenuBas + dessous,
+            // La pilule flotte à 16 au-dessus de la couche du dessous : le mini-lecteur, sinon la zone de sécurité.
+            marginBottom: miseEnPage.margeContenuBas + (miniVisible ? 0 : pileBas.barre),
             paddingHorizontal: espace.espace3,
             paddingVertical: espace.espace2,
             borderColor: couleurs.ligne,
@@ -599,6 +602,12 @@ function LectureSourate({
           }}
         />
       </View>
+      {/* Planche « Pendant la récitation » : le mini-lecteur en bas, sur un fond qui descend jusqu'au bord de l'écran. */}
+      {miniVisible ? (
+        <View style={{ backgroundColor: couleurs.surface, paddingBottom: pileBas.barre }}>
+          <MiniLecteur />
+        </View>
+      ) : null}
       <PartageVerset verset={aPartager} onFermer={() => setAPartager(null)} />
       <ReglagesLecture ouvert={reglagesOuverts} onFermer={() => setReglagesOuverts(false)} />
     </View>
