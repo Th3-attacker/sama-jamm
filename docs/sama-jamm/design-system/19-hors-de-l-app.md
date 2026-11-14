@@ -25,7 +25,7 @@ Ce que l'utilisateur voit de Sama Jàmm quand l'app est fermée : notifications,
 
 - Icône de notification Android : `assets/Icônes/notification-icon.png` (silhouette blanche), couleur d'accent `marque-emeraude`.
 - iPhone : l'appel est un extrait de moins de 30 secondes (`aiff`, `wav` ou `caf`) ; au-delà, iOS joue le son par défaut. Niveau « sensible au facteur temps » pour l'appel, avec la capacité Time Sensitive Notifications.
-- Android : l'appel complet est le son du canal « Prières ». Un canal par son, car le son d'un canal ne change plus après sa création.
+- Android : l'appel complet est le son du canal « Prières ». Un canal par son, car le son d'un canal ne change plus après sa création. L'adhan (complet et court) sonne au volume de l'alarme (canaux `priere-v4-…`).
 
 ## Catégories Android
 

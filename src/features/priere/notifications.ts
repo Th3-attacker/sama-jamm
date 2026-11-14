@@ -2,7 +2,7 @@
 import * as BackgroundTask from 'expo-background-task';
 import Constants, { ExecutionEnvironment } from 'expo-constants';
 import * as Notifications from 'expo-notifications';
-import { AndroidImportance, SchedulableTriggerInputTypes } from 'expo-notifications';
+import { AndroidAudioContentType, AndroidAudioUsage, AndroidImportance, SchedulableTriggerInputTypes } from 'expo-notifications';
 import * as TaskManager from 'expo-task-manager';
 import { Platform } from 'react-native';
 
@@ -25,6 +25,7 @@ const TACHE = 'replanifier-prieres';
 
 // Le son d'un canal ne change plus après sa création : identifiants versionnés pour pouvoir les remplacer.
 // v3 : deux appels, Fajr et Makkah (Dhuhr, Asr, Maghrib, Isha), chacun en version complète et courte.
+// v4 : l'adhan (complet et court) sonne au volume de l'alarme ; les autres sons restent en v3.
 type Appel = 'fajr' | 'makkah';
 const APPELS: readonly Appel[] = ['fajr', 'makkah'];
 const appelDe = (priere: NomPriere): Appel => (priere === 'fajr' ? 'fajr' : 'makkah');
@@ -32,7 +33,7 @@ const avecAdhan = (son: Son): son is 'complet' | 'court' => son === 'complet' ||
 
 /** Identifiant du canal Android : un canal par appel pour l'adhan, un seul pour les autres sons. */
 function canal(son: Son, priere: NomPriere): string {
-  return avecAdhan(son) ? `priere-v3-${son}-${appelDe(priere)}` : `priere-v3-${son}`;
+  return avecAdhan(son) ? `priere-v4-${son}-${appelDe(priere)}` : `priere-v3-${son}`;
 }
 /** Fichiers de `assets/sons`, copiés dans les ressources Android par le plugin (nom avec l'extension). */
 const SONS_ANDROID: Record<'complet' | 'court', Record<Appel, string>> = {
@@ -74,6 +75,7 @@ export const CANAL_LECTURE = 'lecture-v1';
 export const CANAL_TELECHARGEMENTS = 'telechargements-v1';
 const ANCIENS_CANAUX = [
   'priere-defaut',
+  ...(['complet', 'court'] as const).flatMap((son) => APPELS.map((appel) => `priere-v3-${son}-${appel}`)),
   ...['v1', 'v2'].flatMap((v) => ['complet', 'court', 'doux', 'vibration', 'silencieux'].map((son) => `priere-${v}-${son}`)),
 ];
 
@@ -84,9 +86,11 @@ export async function creerCanaux(): Promise<void> {
   // Complet et court : l'adhan de Fajr et celui de Makkah ; doux : le son par défaut du téléphone.
   for (const son of ['complet', 'court'] as const) {
     for (const appel of APPELS) {
-      await Notifications.setNotificationChannelAsync(`priere-v3-${son}-${appel}`, {
+      await Notifications.setNotificationChannelAsync(`priere-v4-${son}-${appel}`, {
         name: `${t(`notifications.canaux.${son}`)} · ${t(`notifications.canaux.${appel}`)}`,
         importance: AndroidImportance.HIGH,
+        // Volume de l'alarme (et non des notifications) : l'appel doit s'entendre.
+        audioAttributes: { usage: AndroidAudioUsage.ALARM, contentType: AndroidAudioContentType.SONIFICATION },
         // Dans Expo Go, un fichier inconnu fait échouer la création du canal : son par défaut.
         sound: DANS_EXPO_GO ? 'default' : SONS_ANDROID[son][appel],
       });
