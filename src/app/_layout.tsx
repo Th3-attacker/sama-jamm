@@ -13,6 +13,7 @@ import { useSurveillanceVerrou } from '@/features/budget/verrou';
 import { DemarrageAnime } from '@/features/demarrage/DemarrageAnime';
 import { ErreurDeRoute } from '@/features/erreur/ErreurDeRoute';
 import { installerJournalGlobal } from '@/features/erreur/journal';
+import { BanniereMiseAJour } from '@/features/miseAJour/BanniereMiseAJour';
 import { EcranMiseAJour } from '@/features/miseAJour/EcranMiseAJour';
 import { useMiseAJour } from '@/features/miseAJour/useMiseAJour';
 import { sensDeLangue } from '@/i18n/sens';
@@ -89,6 +90,7 @@ export default function RootLayout() {
           <Stack.Screen name="lecteur" options={{ presentation: 'modal' }} />
         </Stack>
       </ToastProvider>
+      <BanniereMiseAJour />
       {demarrage ? <DemarrageAnime onFin={finDemarrage} /> : null}
       </View>
       {/* Version trop ancienne : fenêtre bloquante au-dessus de la navigation (le retour Android ne la ferme pas). */}

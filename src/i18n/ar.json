@@ -1253,6 +1253,9 @@
     "erreurCode": "الرمز الذي تعطيه للدعم: {{code}}",
     "miseAJourNote": "ميزانيتك ومفضلاتك وتنزيلاتك محفوظة.",
     "miseAJourVersions": "الإصدار المثبّت {{installee}} · الحد الأدنى {{minimum}}",
+    "otaTitre": "التحديث جاهز",
+    "otaTexte": "تحسينات جاهزة. ستُطبَّق أيضًا عند الفتح القادم.",
+    "otaRedemarrer": "إعادة التشغيل",
     "erreurTitreWo": "Dafa jàpp.",
     "erreurBloque": "حدث عائق ما."
   },

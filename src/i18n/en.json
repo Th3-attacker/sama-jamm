@@ -1189,6 +1189,9 @@
     "erreurCode": "Code to give to support: {{code}}",
     "miseAJourNote": "Your budget, your favorites and your downloads are kept.",
     "miseAJourVersions": "Installed version {{installee}} · minimum {{minimum}}",
+    "otaTitre": "Update ready",
+    "otaTexte": "Improvements are ready. They will also apply the next time you open the app.",
+    "otaRedemarrer": "Restart",
     "erreurTitreWo": "Dafa jàpp.",
     "erreurBloque": "Something got stuck."
   },

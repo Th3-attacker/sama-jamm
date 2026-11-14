@@ -1189,6 +1189,9 @@
     "erreurCode": "Code à donner au support : {{code}}",
     "miseAJourNote": "Votre budget, vos favoris et vos téléchargements sont conservés.",
     "miseAJourVersions": "Version installée {{installee}} · minimum {{minimum}}",
+    "otaTitre": "Mise à jour prête",
+    "otaTexte": "Des améliorations sont prêtes. Elles s’appliqueront aussi à la prochaine ouverture.",
+    "otaRedemarrer": "Redémarrer",
     "erreurTitreWo": "Dafa jàpp.",
     "erreurBloque": "Quelque chose a bloqué."
   },
