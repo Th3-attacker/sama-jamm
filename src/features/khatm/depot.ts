@@ -183,7 +183,8 @@ export async function programmerRappelKhatm(khatm: Khatm, juzEnCours: number | n
     identifier: idRappel(khatm.id),
     content: {
       title: i18n.t('notifications.khatmTitre'),
-      body: i18n.t('notifications.khatmTexte', { nom: khatm.nom, date: fin }),
+      // Pas de nom de khatm : il serait lisible sur l'écran verrouillé.
+      body: i18n.t('notifications.khatmTexte', { date: fin }),
       data: { url: `samajamm://plus/khatm/${khatm.id}` },
     },
     trigger: { type: SchedulableTriggerInputTypes.DATE, date, channelId: CANAL_KHATM },

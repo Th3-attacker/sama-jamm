@@ -21,6 +21,17 @@ test('fichier de version : seules les consignes valides sont gardées', () => {
   assert.deepEqual(lireFichierVersion({ android: { minimum: 'beta', magasin: MAGASIN } }), {});
   assert.deepEqual(lireFichierVersion({ ios: { minimum: '1.0.0', magasin: 'http://x' } }), {});
   assert.deepEqual(lireFichierVersion(null), {});
+});
+
+test('le lien du magasin doit être celui de la plateforme, en https', () => {
+  const ios = 'https://apps.apple.com/app/id123456789';
+  assert.deepEqual(lireFichierVersion({ ios: { minimum: '1.0.0', magasin: ios } }), { ios: { minimum: '1.0.0', magasin: ios } });
+  // Mauvais magasin pour la plateforme, faux sous-domaine, identifiant glissé avant l'hôte, autre site.
+  assert.deepEqual(lireFichierVersion({ android: { minimum: '1.0.0', magasin: ios } }), {});
+  assert.deepEqual(lireFichierVersion({ ios: { minimum: '1.0.0', magasin: MAGASIN } }), {});
+  assert.deepEqual(lireFichierVersion({ android: { minimum: '1.0.0', magasin: 'https://play.google.com.exemple.fr/x' } }), {});
+  assert.deepEqual(lireFichierVersion({ android: { minimum: '1.0.0', magasin: 'https://play.google.com@exemple.fr/x' } }), {});
+  assert.deepEqual(lireFichierVersion({ android: { minimum: '1.0.0', magasin: 'https://exemple.fr/hameconnage' } }), {});
   assert.deepEqual(lireFichierVersion('texte'), {});
 });
 

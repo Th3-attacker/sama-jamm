@@ -130,7 +130,8 @@ export default function EcranSauvegarde() {
       if (e instanceof MotDePasseIncorrect) setErreur('motDePasse');
       else if (e instanceof SauvegardeIncompatible) setErreur('incompatible');
       else {
-        console.error('Sauvegarde ou restauration impossible', e);
+        // Ni le message ni l'instruction SQL : ils pourraient contenir le mot de passe de la sauvegarde.
+        console.error('Sauvegarde ou restauration impossible', e instanceof Error ? e.name : typeof e);
         setErreur('generale');
       }
     } finally {

@@ -498,7 +498,7 @@
     "relanceTitre": "Ouvrez Sama Jàmm",
     "relanceTexte": "Pour continuer à recevoir l’appel à la prière, ouvrez l’app aujourd’hui. Cela prend une seconde.",
     "khatmTitre": "Votre juz vous attend",
-    "khatmTexte": "Le khatm « {{nom}} » se termine le {{date}}.",
+    "khatmTexte": "Un de vos khatms se termine le {{date}}.",
     "zakatTitre": "Une année lunaire est passée",
     "zakatTexte": "Vérifiez si une zakat est due sur votre épargne.",
     "canaux": {
