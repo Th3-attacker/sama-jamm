@@ -7,12 +7,13 @@ import { ListeCategories } from '@/features/invocations/ListeCategories';
 import { usePremierKhatm } from '@/features/khatm/premier';
 import { CarteSourate } from '@/features/lire/CarteSourate';
 import { sourate, sourates, type Sourate } from '@/features/lire/coran';
-import { ecouter } from '@/features/ecouter/lecteur';
+import { ecouter, useLecteur } from '@/features/ecouter/lecteur';
 import { ContenuEcouter } from '@/features/ecouter/ContenuEcouter';
 import { juzParSourate } from '@/features/lire/decoupageJuz';
 import { ListeJuz } from '@/features/lire/ListeJuz';
 import { InterrupteurLireEcouter, type ModeLire } from '@/features/lire/InterrupteurLireEcouter';
 import { ongletPourMode, type OngletBibliotheque } from '@/features/lire/ongletMode';
+import { versetDOuverture } from '@/features/lire/ouverture';
 import { useParametre } from '@/hooks/useParametre';
 import { useLecture } from '@/stores/lecture';
 import { echelleMax } from '@/theme/typographie';
@@ -26,7 +27,9 @@ import { ListeRecitateurs } from '@/features/ecouter/ListeRecitateurs';
 
 import { espace, interlignes, rayon, tailles } from '@/theme/tokens.generated';
 function ouvrirSourate(n: number) {
-  router.push({ pathname: '/coran/[sourate]', params: { sourate: n } });
+  // Récitation en cours dans cette sourate : la lecture s'ouvre sur le verset récité, sinon au début.
+  const verset = versetDOuverture(n, useLecteur.getState().position);
+  router.push({ pathname: '/coran/[sourate]', params: verset === undefined ? { sourate: n } : { sourate: n, verset } });
 }
 
 export default function Lire() {
@@ -162,7 +165,12 @@ export default function Lire() {
                     onPress={() =>
                       router.push({
                         pathname: '/coran/[sourate]',
-                        params: { sourate: repris.n, verset: position.verset, mode: position.mode },
+                        // Récitation en cours dans cette sourate : le verset récité passe avant le repère de lecture.
+                        params: {
+                          sourate: repris.n,
+                          verset: versetDOuverture(repris.n, useLecteur.getState().position, position.verset),
+                          mode: position.mode,
+                        },
                       })
                     }
                     style={[styles.repriseLien, { gap: espace.espace3 }]}>

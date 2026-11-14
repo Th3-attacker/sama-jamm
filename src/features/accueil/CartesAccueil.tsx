@@ -10,7 +10,9 @@ import { useSession } from '@/features/compte/compte';
 import { formules } from '@/features/dhikr/formules';
 import { mesKhatms, useKhatm } from '@/features/khatm/depot';
 import { resumeKhatm, vuePart, type Part } from '@/features/khatm/logique';
+import { useLecteur } from '@/features/ecouter/lecteur';
 import { sourate } from '@/features/lire/coran';
+import { versetDOuverture } from '@/features/lire/ouverture';
 import { cleJour } from '@/lib/dates';
 import { useDhikr } from '@/stores/dhikr';
 import { useLecture } from '@/stores/lecture';
@@ -49,7 +51,12 @@ function CarteReprendre() {
         position && reprise
           ? router.push({
               pathname: '/coran/[sourate]',
-              params: { sourate: reprise.n, verset: position.verset, mode: position.mode },
+              // Récitation en cours dans cette sourate : le verset récité passe avant le repère de lecture.
+              params: {
+                sourate: reprise.n,
+                verset: versetDOuverture(reprise.n, useLecteur.getState().position, position.verset),
+                mode: position.mode,
+              },
             })
           : router.push({ pathname: '/coran/[sourate]', params: { sourate: 1 } })
       }>
