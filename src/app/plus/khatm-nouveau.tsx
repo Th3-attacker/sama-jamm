@@ -23,13 +23,15 @@ import { interlignes, tailles } from '@/theme/tokens.generated';
 export default function NouveauKhatm() {
   const { t } = useTranslation();
   const { couleurs, espace, typographie, latin, ligne } = useTheme();
-  const [nom, setNom] = useState(t('khatm.nomDefaut'));
+  // Champ vide au départ : « Pour la famille » est l'exemple, et le nom retenu si rien n'est écrit.
+  const [nom, setNom] = useState('');
   const [intention, setIntention] = useState('');
   const [echeance, setEcheance] = useState('');
   const [envoi, setEnvoi] = useState(false);
   const [erreur, setErreur] = useState(false);
 
-  const nomOk = nom.trim().length >= 1 && nom.trim().length <= 60;
+  const nomFinal = nom.trim() || t('khatm.nomDefaut');
+  const nomOk = nomFinal.length <= 60;
   const jour = echeance.trim() === '' ? null : lireSaisieDate(echeance);
   const dateOk = echeance.trim() === '' || jour !== null;
 
@@ -38,10 +40,10 @@ export default function NouveauKhatm() {
     setEnvoi(true);
     setErreur(false);
     try {
-      const id = await creerKhatm(nom.trim(), intention.trim() || null, jour);
+      const id = await creerKhatm(nomFinal, intention.trim() || null, jour);
       const { data } = await supabase.from('khatms').select('code').eq('id', id).single();
       const code: unknown = data?.code;
-      if (typeof code === 'string') await inviter(nom.trim(), intention.trim() || null, code);
+      if (typeof code === 'string') await inviter(nomFinal, intention.trim() || null, code);
       router.replace({ pathname: '/plus/khatm/[id]', params: { id } });
     } catch (e: unknown) {
       console.warn('Khatm non créé', e);
@@ -74,7 +76,7 @@ export default function NouveauKhatm() {
           <Text accessibilityLanguage="wo" maxFontSizeMultiplier={echelleMax.courant} style={[latin.translitteration, ligne(styles.phrase), { color: couleurs.encre2 }]}>
             {t('khatm.nouveauTexte')}
           </Text>
-          <TextField label={t('khatm.nom')} valeur={nom} onChange={setNom} maxLength={60} />
+          <TextField label={t('khatm.nom')} valeur={nom} onChange={setNom} maxLength={60} placeholder={t('khatm.nomDefaut')} />
           <TextField
             label={t('khatm.intention')}
             valeur={intention}
