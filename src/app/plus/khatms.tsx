@@ -13,6 +13,7 @@ import { Banner } from '@/ui/Banner';
 import { Button } from '@/ui/Button';
 import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 import { EmptyState } from '@/ui/EmptyState';
+import { EvitementClavier } from '@/ui/EvitementClavier';
 import { ListGroup } from '@/ui/ListGroup';
 import { ListItem } from '@/ui/ListItem';
 import { TextField } from '@/ui/TextField';
@@ -49,70 +50,74 @@ export default function MesKhatms() {
   return (
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
       <TopBar retour titre={t('khatm.titre')} />
-      <ScrollView
-        keyboardShouldPersistTaps="handled"
-        contentContainerStyle={{
-          ...colonne,
-          paddingBottom: espace.espace8 + marge,
-          gap: espace.espace6,
-        }}>
-        <View>
-          <Text
-            accessibilityLanguage="wo"
-            maxFontSizeMultiplier={echelleMax.courant}
-            style={[typographie.titre3, { color: couleurs.emeraude }]}>
-            {t('formules.entraide')}
-          </Text>
-          <Text
-            maxFontSizeMultiplier={echelleMax.courant}
-            style={[typographie.translitteration, { color: couleurs.encre2 }]}>
-            {t('formules.entraideTrad')}
-          </Text>
-        </View>
-        {!connecte ? (
-          <Banner
-            ton="info"
-            action={{ label: t('compte.connexionTitre'), onPress: () => router.push('/plus/connexion') }}>
-            {t('khatm.compteNecessaire')}
-          </Banner>
-        ) : (
-          <>
-            {erreur ? <Banner ton="erreur">{t('etats.erreurTexte')}</Banner> : null}
-            {liste && liste.length > 0 ? (
-              <ListGroup>
-                {liste.map((k) => (
-                  <ListItem
-                    key={k.id}
-                    icone="users"
-                    titre={k.nom}
-                    sousTitre={k.intention ?? undefined}
-                    onPress={() => router.push({ pathname: '/plus/khatm/[id]', params: { id: k.id } })}
-                  />
-                ))}
-              </ListGroup>
-            ) : liste ? (
-              <EmptyState icone="users" lang="fr" titre={t('khatm.aucun')} texte={t('khatm.aucunTexte')} />
-            ) : null}
-            <Button icone="plus" pleineLargeur onPress={() => router.push('/plus/khatm-nouveau')}>
-              {t('khatm.nouveau')}
-            </Button>
-            <TextField
-              label={t('khatm.rejoindreCode')}
-              valeur={code}
-              onChange={(v) => setCode(saisieCodeKhatm(v))}
-              placeholder="ABCD2345"
-              majuscules
-            />
-            <Button
-              variant="secondaire"
-              pleineLargeur
-              disabled={!codeOk}
-              onPress={() => codeOk && router.push({ pathname: '/khatm/[code]', params: { code: codeOk } })}>
-              {t('khatm.rejoindre')}
-            </Button>
-          </>
-        )}
-      </ScrollView>
+      {/* Le champ du code est en bas de l'écran : sans cela, le clavier le recouvre (iPhone et Android). */}
+      <EvitementClavier style={styles.ecran} androidSeulement>
+        <ScrollView
+          keyboardShouldPersistTaps="handled"
+          automaticallyAdjustKeyboardInsets
+          contentContainerStyle={{
+            ...colonne,
+            paddingBottom: espace.espace8 + marge,
+            gap: espace.espace6,
+          }}>
+          <View>
+            <Text
+              accessibilityLanguage="wo"
+              maxFontSizeMultiplier={echelleMax.courant}
+              style={[typographie.titre3, { color: couleurs.emeraude }]}>
+              {t('formules.entraide')}
+            </Text>
+            <Text
+              maxFontSizeMultiplier={echelleMax.courant}
+              style={[typographie.translitteration, { color: couleurs.encre2 }]}>
+              {t('formules.entraideTrad')}
+            </Text>
+          </View>
+          {!connecte ? (
+            <Banner
+              ton="info"
+              action={{ label: t('compte.connexionTitre'), onPress: () => router.push('/plus/connexion') }}>
+              {t('khatm.compteNecessaire')}
+            </Banner>
+          ) : (
+            <>
+              {erreur ? <Banner ton="erreur">{t('etats.erreurTexte')}</Banner> : null}
+              {liste && liste.length > 0 ? (
+                <ListGroup>
+                  {liste.map((k) => (
+                    <ListItem
+                      key={k.id}
+                      icone="users"
+                      titre={k.nom}
+                      sousTitre={k.intention ?? undefined}
+                      onPress={() => router.push({ pathname: '/plus/khatm/[id]', params: { id: k.id } })}
+                    />
+                  ))}
+                </ListGroup>
+              ) : liste ? (
+                <EmptyState icone="users" lang="fr" titre={t('khatm.aucun')} texte={t('khatm.aucunTexte')} />
+              ) : null}
+              <Button icone="plus" pleineLargeur onPress={() => router.push('/plus/khatm-nouveau')}>
+                {t('khatm.nouveau')}
+              </Button>
+              <TextField
+                label={t('khatm.rejoindreCode')}
+                valeur={code}
+                onChange={(v) => setCode(saisieCodeKhatm(v))}
+                placeholder="ABCD2345"
+                majuscules
+              />
+              <Button
+                variant="secondaire"
+                pleineLargeur
+                disabled={!codeOk}
+                onPress={() => codeOk && router.push({ pathname: '/khatm/[code]', params: { code: codeOk } })}>
+                {t('khatm.rejoindre')}
+              </Button>
+            </>
+          )}
+        </ScrollView>
+      </EvitementClavier>
     </View>
   );
 }
