@@ -24,6 +24,14 @@ export function rejouerVerset(repetition: RepetitionVerset, ecoutes: number): bo
   return repetition === 0 || ecoutes < repetition;
 }
 
+/**
+ * Compte des écoutes à l'arrivée sur une piste : il continue si c'est le retour au verset demandé par la
+ * répétition, il repart à 1 pour toute autre arrivée (verset suivant, saut, nouvelle écoute).
+ */
+export function ecoutesALArrivee(ecoutes: number, retourDeRepetition: boolean): number {
+  return retourDeRepetition ? ecoutes : 1;
+}
+
 /** « 12:05 » pour 725 000 ms : affichage du temps restant. */
 export function formatReste(ms: number): string {
   const secondes = Math.ceil(ms / 1000);

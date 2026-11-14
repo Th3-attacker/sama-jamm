@@ -10,7 +10,7 @@ import { stockage } from '@/stores/stockage';
 import { versetAuTemps } from './durees';
 import { sourateSuivante } from './enchainement';
 import { dureesDe } from './dureesDonnees';
-import { rejouerVerset, resteMinuterie, type Minuterie, type RepetitionVerset } from './minuterie';
+import { ecoutesALArrivee, rejouerVerset, resteMinuterie, type Minuterie, type RepetitionVerset } from './minuterie';
 import { positionValide, recitateur, RECITATEURS, pistesDePages, type Position } from './recitateurs';
 import { erreurDuStatut, indexDuStatut, pisteSaine, sauteSansLecture } from './statut';
 import { sourceVerset } from './telechargements';
@@ -185,6 +185,8 @@ function surStatut(statut: AudioPlaylistStatus): void {
 let ecoutesDuVerset = 1;
 /** Piste visée par un saut demandé (suivant, précédent, nouvelle écoute) : y arriver n'est pas la fin d'un verset. */
 let sautVers: number | null = null;
+/** Le saut demandé est le retour au verset que la répétition rejoue : le compte de ses écoutes continue. */
+let retourRepetition = false;
 let minuteur: ReturnType<typeof setTimeout> | undefined;
 
 function appliquerBoucle(): void {
@@ -231,8 +233,10 @@ function surChangementDePiste({ previousIndex, currentIndex }: { previousIndex: 
   if (!f) return;
   const saine = pisteChargee;
   const vise = sautVers;
+  const retour = retourRepetition;
   pisteChargee = false;
   sautVers = null;
+  retourRepetition = false;
   if (sauteSansLecture({ previousIndex, currentIndex, sautVers: vise, saine })) {
     // Saut demandé pas encore arrivé : la file sautait déjà des pistes, l'échec vaut pour la piste demandée.
     versetSaute(vise ?? previousIndex);
@@ -247,6 +251,7 @@ function surChangementDePiste({ previousIndex, currentIndex }: { previousIndex: 
     if (rejouerVerset(useLecteur.getState().repetitionVerset, ecoutesDuVerset)) {
       ecoutesDuVerset += 1;
       sautVers = previousIndex;
+      retourRepetition = true;
       liste?.skipTo(previousIndex);
       return;
     }
@@ -256,7 +261,7 @@ function surChangementDePiste({ previousIndex, currentIndex }: { previousIndex: 
       return;
     }
   }
-  ecoutesDuVerset = 1;
+  ecoutesDuVerset = ecoutesALArrivee(ecoutesDuVerset, retour && manuel);
   useLecteur.setState({
     position: p,
     derniere: p,
@@ -336,6 +341,7 @@ function lire(nouvelleFile: FileCoran | null, index: number, depuis = 0, relance
     const demandee = enFile ? pisteDeFile(enFile, index) : null;
     if (!demandee) return;
     sautVers = index;
+    retourRepetition = false;
     pisteChargee = false;
     ecoutesDuVerset = 1;
     lectureDemandee = true;
