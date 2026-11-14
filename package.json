@@ -1,6 +1,6 @@
 {
   "name": "sama-jamm",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "main": "expo-router/entry",
   "dependencies": {
     "@expo-google-fonts/amiri": "^0.4.1",
