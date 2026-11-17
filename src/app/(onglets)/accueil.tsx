@@ -1,7 +1,7 @@
 import { router, useScrollToTop } from 'expo-router';
 import { ComponentRef, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { proverbeDuJour } from '@/features/accueil/sagesse';
 import { useSession } from '@/features/compte/compte';
@@ -17,6 +17,7 @@ import { useTheme } from '@/theme/useTheme';
 import { Banner } from '@/ui/Banner';
 import type { PriereArc } from '@/ui/DayArc';
 import { TopBar } from '@/ui/TopBar';
+import { ACCESSOIRE_NATIF } from '@/theme/layout';
 import { useMargeBasse, useMiniLecteurVisible } from '@/features/ecouter/placeMiniLecteur';
 import { BandeEcoute } from '@/features/accueil/BandeEcoute';
 import { CarteHeros } from '@/features/accueil/CarteHeros';
@@ -93,9 +94,9 @@ export default function Accueil() {
           </View>
         }
         actions={[
-          // Planche A1 « MajGlassAccueil » : sur iPhone, la recherche est dans la barre d'onglets,
-          // le bouton Compte prend la place de la loupe. Android garde la loupe.
-          Platform.OS === 'ios'
+          // Planche A1 « MajGlassAccueil » : sur iOS 26 et plus, la recherche est dans la barre d'onglets,
+          // le bouton Compte prend la place de la loupe. Android et iOS 18 gardent la loupe.
+          ACCESSOIRE_NATIF
             ? { icone: 'user', label: t('menuPlus.compte'), onPress: () => router.push(connecte ? '/plus/compte' : '/plus/connexion') }
             : { icone: 'search', label: t('menuPlus.rechercher'), onPress: () => router.push('/plus/recherche') },
         ]}
