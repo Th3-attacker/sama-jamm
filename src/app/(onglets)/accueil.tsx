@@ -69,13 +69,17 @@ export default function Accueil() {
 
 
   const connecte = useSession((s) => s.session !== null);
+  // Badge du bouton Plus (iOS 26) : dernier nombre relu par la barre d'onglets (`useKhatmsEnCours`, sans seconde
+  // requête), jamais affiché sans session.
+  const khatmsEnCours = useReglages((s) => s.khatmEnCours);
+  const badgePlus = connecte && khatmsEnCours !== null && khatmsEnCours > 0;
   const jour = formatJour(maintenant, i18n.language);
   const sagesse = proverbeDuJour(maintenant);
   const hegirien = formatHegirien(maintenant, i18n.language);
 
   return (
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
-      {/* Planche : titre et date à gauche, Compte (iPhone) ou loupe (Android) à droite sur la même rangée. */}
+      {/* Planche : titre et date à gauche, Plus (iOS 26 et plus) ou loupe à droite sur la même rangée. */}
       <TopBar
         gauche={
           <View>
@@ -95,10 +99,16 @@ export default function Accueil() {
           </View>
         }
         actions={[
-          // Planche A1 « MajGlassAccueil » : sur iOS 26 et plus, la recherche est dans la barre d'onglets,
-          // le bouton Compte prend la place de la loupe. Android et iOS 18 gardent la loupe.
+          // iOS 26 et plus : la recherche est dans la barre d'onglets et Plus n'y est plus ; le bouton Plus prend la
+          // place de la loupe, avec le badge des khatms en cours (écart à la planche A1, voir ECARTS.md). Le Compte
+          // reste dans l'écran Plus. Android et iOS 18 gardent la loupe.
           ACCESSOIRE_NATIF
-            ? { icone: 'user', label: t('menuPlus.compte'), onPress: () => router.push(connecte ? '/plus/compte' : '/plus/connexion') }
+            ? {
+                icone: 'more',
+                label: badgePlus ? `${t('onglets.plus')}, ${t('menuPlus.enCours', { count: khatmsEnCours ?? 0 })}` : t('onglets.plus'),
+                badge: badgePlus ? String(khatmsEnCours) : undefined,
+                onPress: () => router.push('/plus/menu'),
+              }
             : { icone: 'search', label: t('menuPlus.rechercher'), onPress: () => router.push('/plus/recherche') },
         ]}
       />
