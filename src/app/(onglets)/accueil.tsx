@@ -1,9 +1,10 @@
 import { router, useScrollToTop } from 'expo-router';
 import { ComponentRef, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { proverbeDuJour } from '@/features/accueil/sagesse';
+import { useSession } from '@/features/compte/compte';
 import { calculerHoraires, prochainePriere } from '@/features/priere/horaires';
 import { useOptionsCalcul } from '@/features/priere/useOptionsCalcul';
 import { fuseauDuLieu } from '@/features/priere/villes';
@@ -66,13 +67,14 @@ export default function Accueil() {
   }, [lieu, maintenant, options, t]);
 
 
+  const connecte = useSession((s) => s.session !== null);
   const jour = formatJour(maintenant, i18n.language);
   const sagesse = proverbeDuJour(maintenant);
   const hegirien = formatHegirien(maintenant, i18n.language);
 
   return (
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
-      {/* Planche : titre et date à gauche, loupe à droite sur la même rangée. */}
+      {/* Planche : titre et date à gauche, Compte (iPhone) ou loupe (Android) à droite sur la même rangée. */}
       <TopBar
         gauche={
           <View>
@@ -90,7 +92,13 @@ export default function Accueil() {
             </Text>
           </View>
         }
-        actions={[{ icone: 'search', label: t('menuPlus.rechercher'), onPress: () => router.push('/plus/recherche') }]}
+        actions={[
+          // Planche A1 « MajGlassAccueil » : sur iPhone, la recherche est dans la barre d'onglets,
+          // le bouton Compte prend la place de la loupe. Android garde la loupe.
+          Platform.OS === 'ios'
+            ? { icone: 'user', label: t('menuPlus.compte'), onPress: () => router.push(connecte ? '/plus/compte' : '/plus/connexion') }
+            : { icone: 'search', label: t('menuPlus.rechercher'), onPress: () => router.push('/plus/recherche') },
+        ]}
       />
       <ScrollView ref={defilement}
         contentContainerStyle={{
