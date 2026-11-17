@@ -102,6 +102,18 @@ export default function OngletsLayout() {
           </NativeTabs.Trigger.Label>
           <NativeTabs.Trigger.Badge hidden={!khatmsEnCours}>{String(khatmsEnCours ?? 0)}</NativeTabs.Trigger.Badge>
         </NativeTabs.Trigger>
+        {/* iPhone seulement : bouton de recherche séparé, à droite de la barre en verre d'iOS 26. Android reste à
+            cinq onglets (limite de Material, `role="search"` non documenté) et garde la loupe vers /plus/recherche.
+            Platform.OS ne change jamais en cours d'exécution : le rôle n'est pas modifié à chaud. Insets automatiques :
+            l'écran a une barre de navigation native et une liste qui se décale seule. */}
+        {Platform.OS === 'ios' ? (
+          <NativeTabs.Trigger name='recherche' role='search' contentStyle={contentStyle}>
+            <NativeTabs.Trigger.Icon sf='magnifyingglass' md='search' />
+            <NativeTabs.Trigger.Label>
+              {t('onglets.recherche')}
+            </NativeTabs.Trigger.Label>
+          </NativeTabs.Trigger>
+        ) : null}
         {ACCESSOIRE_NATIF && miniVisible ? (
           <NativeTabs.BottomAccessory>
             <MiniLecteurAccessoire />
