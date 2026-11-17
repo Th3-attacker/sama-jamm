@@ -34,7 +34,7 @@ export type EcranRechercheProps = {
 
 /** Contenu de la recherche (filtres, sourates, versets, états vides), partagé par la modale et l'onglet iPhone. */
 export function EcranRecherche({ requete, onRequete, mode }: EcranRechercheProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { couleurs, espace, rayon, typographie, ligne } = useTheme();
   const insets = useSafeAreaInsets();
   const [filtre, setFiltre] = useState<Filtre>('tout');
@@ -155,7 +155,7 @@ export function EcranRecherche({ requete, onRequete, mode }: EcranRechercheProps
             <Text
               accessibilityRole="header"
               maxFontSizeMultiplier={echelleMax.courant}
-              style={[typographie.libelle, styles.titreSection, { color: couleurs.encre3, paddingTop: espace.espace2, paddingBottom: espace.espace4 }]}>
+              style={[typographie.libelle, styles.titreSection, i18n.language === 'ar' ? styles.sansInterlettrage : null, { color: couleurs.encre3, paddingTop: espace.espace2, paddingBottom: espace.espace4 }]}>
               {section.titre}
             </Text>
           )}
@@ -183,7 +183,8 @@ export function EcranRecherche({ requete, onRequete, mode }: EcranRechercheProps
               />
             )
           }
-          contentContainerStyle={{ paddingHorizontal: espace.espace6, paddingBottom: espace.espace8 }}
+          // Planche : 20 de marge de chaque côté, comme les filtres et l'en-tête.
+          contentContainerStyle={{ paddingHorizontal: espace.espace5, paddingBottom: espace.espace8 }}
         />
       )}
     </View>
@@ -193,9 +194,12 @@ export function EcranRecherche({ requete, onRequete, mode }: EcranRechercheProps
 const styles = StyleSheet.create({
   ecran: { flex: 1 },
   entete: { flexDirection: 'row', alignItems: 'center' },
-  champ: { flex: 1 },
+  // minWidth 0 : le champ rétrécit au lieu de pousser « Fermer » hors de l'écran (texte agrandi).
+  champ: { flex: 1, minWidth: 0 },
   filtres: { flexDirection: 'row', flexWrap: 'wrap' },
-  fermer: { fontSize: tailles.t16, lineHeight: interlignes.l24, paddingHorizontal: espace.espace2 },
+  fermer: { flexShrink: 0, fontSize: tailles.t16, lineHeight: interlignes.l24, paddingHorizontal: espace.espace2 },
   aide: { fontSize: tailles.t14, lineHeight: interlignes.l20 },
   titreSection: { textTransform: 'uppercase', letterSpacing: 0.84 },
+  // L'espacement des lettres casse la jointure de l'arabe.
+  sansInterlettrage: { letterSpacing: 0 },
 });
