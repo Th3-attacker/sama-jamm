@@ -41,7 +41,7 @@ function separerDelai(dans: string): { valeur: string; unite: string | null } {
 export function CarteHeros({ nom, heure, dans, prieres, maintenant }: Props) {
   const { t } = useTranslation();
   const rtl = useSens() === 'rtl';
-  const { couleurs, espace, typographie, ligne } = useTheme();
+  const { couleurs, espace, rayon, typographie, ligne } = useTheme();
   const surEmeraude = couleurs.surEmeraude;
   const { valeur, unite } = separerDelai(dans);
 
@@ -56,7 +56,8 @@ export function CarteHeros({ nom, heure, dans, prieres, maintenant }: Props) {
       accessibilityRole="button"
       accessibilityLabel={`${t('accueil.avant', { priere: nom })}, ${t('accueil.a', { heure })}, ${dans}`}
       onPress={() => router.push('/priere')}
-      style={[styles.carte, { gap: espace.espace3, padding: espace.espace4, backgroundColor: couleurs.emeraudeAplat }]}>
+      // Planche : rayon 26 et remplissage 18, hors jetons : rayon 20 (rayonFeuille) et remplissage 16.
+      style={{ gap: espace.espace3, padding: espace.espace4, borderRadius: rayon.rayonFeuille, backgroundColor: couleurs.emeraudeAplat }}>
       <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, ligne(styles.libelle), { color: surEmeraude }]}>
         {t('accueil.prochaine', { priere: nom })}
       </Text>
@@ -98,11 +99,13 @@ export function CarteHeros({ nom, heure, dans, prieres, maintenant }: Props) {
             { color: surEmeraude },
           ];
           return (
+            // Plafond 1,3 (et non 2) : cinq colonnes de 56 au moins (largeur 360) ; « Maghrib » en 12 × 1,3 ≈ 55 de
+            // large y tient sur une ligne, en 12 × 2 (≈ 84) il se coupait au milieu du mot.
             <View key={p.nom} style={styles.priere}>
-              <Text maxFontSizeMultiplier={echelleMax.courant} style={style}>
+              <Text maxFontSizeMultiplier={echelleMax.grand} style={style}>
                 {p.nom}
               </Text>
-              <Text maxFontSizeMultiplier={echelleMax.courant} style={style}>
+              <Text maxFontSizeMultiplier={echelleMax.grand} style={style}>
                 {p.heure}
               </Text>
             </View>
@@ -114,10 +117,10 @@ export function CarteHeros({ nom, heure, dans, prieres, maintenant }: Props) {
 }
 
 const styles = StyleSheet.create({
-  // Planche : rayon 24.
-  carte: { borderRadius: 24 },
+  // Planche : libellé en 15, ramené à 14/20.
   libelle: { fontSize: tailles.t14, lineHeight: interlignes.l20 },
-  ligne: { flexDirection: 'row', alignItems: 'baseline' },
+  // Retour à la ligne permis : un long délai (« 13 h 20 ») et l'heure au plafond de taille ne débordent pas.
+  ligne: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'baseline' },
   // Planche : 56/60 pour le chiffre, 18/24 pour l'unité.
   delai: { fontSize: tailles.t56, lineHeight: interlignes.l60, fontVariant: ['tabular-nums'] },
   unite: { fontSize: tailles.t18, lineHeight: interlignes.l24 },
@@ -125,5 +128,6 @@ const styles = StyleSheet.create({
   miroir: { transform: [{ scaleX: -1 }] },
   prieres: { flexDirection: 'row' },
   priere: { flex: 1 },
+  // Planche : 13/18, hors échelle : ramené à 12/16.
   nom: { fontSize: tailles.t12, lineHeight: interlignes.l16, textAlign: 'center', fontVariant: ['tabular-nums'] },
 });
