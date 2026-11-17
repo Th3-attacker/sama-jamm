@@ -26,6 +26,8 @@ export type TopBarAction = {
   /** Le texte est un libellé (« Remettre à zéro ») : 16 gras émeraude, largeur automatique. */
   libelle?: boolean;
   desactive?: boolean;
+  /** Pastille or sur l'icône (voir `IconButton`) ; le `label` dit déjà le nombre. */
+  badge?: string;
 };
 
 export type TopBarProps = {
@@ -130,7 +132,7 @@ export function TopBar({
               </Text>
             </Pressable>
           ) : (
-            <IconButton key={a.label} icone={a.icone} label={a.label} actif={a.actif} couleur={a.couleur} onPress={a.onPress} />
+            <IconButton key={a.label} icone={a.icone} label={a.label} actif={a.actif} couleur={a.couleur} badge={a.badge} onPress={a.onPress} />
           ),
         )}
         {casque ? (

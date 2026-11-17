@@ -20,13 +20,15 @@ import { useWindowClass } from '@/theme/useWindowClass';
 export const ErrorBoundary = ErreurDeRoute;
 
 /**
- * Cinq onglets natifs (barre en verre sur iOS 26, barre Material sur Android) : le système dessine la barre,
+ * Onglets natifs : cinq sur Android et iOS 18 (Accueil, Lire, Prière, Budget, Plus) ; sur iOS 26 et plus, quatre
+ * plus la Recherche séparée, Plus s'ouvrant en haut de l'Accueil. Le système dessine la barre,
  * l'onglet actif prend la teinte émeraude. Écouter est un mode de Lire. Le mini-lecteur est l'accessoire du bas.
  */
 export default function OngletsLayout() {
   const { t } = useTranslation();
   const { couleurs, nom } = useTheme();
-  // Badge de Plus : khatms en cours (masqué hors connexion ou sans khatm).
+  // Badge de Plus : khatms en cours (masqué hors connexion ou sans khatm). Appelé sur toutes les plateformes : il
+  // tient aussi à jour le nombre gardé pour le rappel quotidien et pour le badge du bouton Plus de l'Accueil (iOS 26).
   const khatmsEnCours = useKhatmsEnCours();
   const pleinEcran = usePleinEcran((s) => s.actif);
   const miniVisible = useMiniLecteurVisible();
@@ -95,13 +97,17 @@ export default function OngletsLayout() {
             {t('onglets.budget')}
           </NativeTabs.Trigger.Label>
         </NativeTabs.Trigger>
-        <NativeTabs.Trigger name='plus' contentStyle={contentStyle} disableAutomaticContentInsets={manuel}>
-          <NativeTabs.Trigger.Icon sf='square.grid.2x2.fill' md='apps' />
-          <NativeTabs.Trigger.Label>
-            {t('onglets.plus')}
-          </NativeTabs.Trigger.Label>
-          <NativeTabs.Trigger.Badge hidden={!khatmsEnCours}>{String(khatmsEnCours ?? 0)}</NativeTabs.Trigger.Badge>
-        </NativeTabs.Trigger>
+        {/* iOS 26 et plus : pas d'onglet Plus, il s'ouvre par le bouton en haut de l'Accueil (/plus/menu, badge compris).
+            Ni `hidden` ni une route sans déclencheur ne la laissent atteignable : expo-router redirige vers l'accueil. */}
+        {ACCESSOIRE_NATIF ? null : (
+          <NativeTabs.Trigger name='plus' contentStyle={contentStyle} disableAutomaticContentInsets={manuel}>
+            <NativeTabs.Trigger.Icon sf='square.grid.2x2.fill' md='apps' />
+            <NativeTabs.Trigger.Label>
+              {t('onglets.plus')}
+            </NativeTabs.Trigger.Label>
+            <NativeTabs.Trigger.Badge hidden={!khatmsEnCours}>{String(khatmsEnCours ?? 0)}</NativeTabs.Trigger.Badge>
+          </NativeTabs.Trigger>
+        )}
         {/* iOS 26 et plus seulement : bouton de recherche séparé, à droite de la barre en verre. Android et iOS 18 restent à
             cinq onglets (limite de Material et de la barre compacte iOS, `role="search"` non documenté) et gardent la loupe
             vers /plus/recherche.
