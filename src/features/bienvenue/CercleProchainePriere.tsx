@@ -8,6 +8,10 @@ import { useTheme } from '@/theme/useTheme';
 
 // Planche « Bienvenue · position » : cercle de 200 × 200. L'écart de 2 entre les lignes (hors échelle) est
 // remplacé par les interlignes seuls ; « 30/34 » et « 13/18 » de la planche deviennent 30/36 et 12/16 (ECARTS.md).
+// Tenue dans le cercle : toutes les lignes plafonnées à echelleMax.grand (1,3). Hauteur au plafond : 127 en latin,
+// 156 en arabe (interlignes élargis) ; la ligne du haut et celle du bas commencent alors à 64 (latin) ou 78 (arabe)
+// du centre, où la corde mesure 154 ou 125. La marge de 24 de chaque côté (espace6) borne les lignes à 152, la
+// corde à 64 du centre ; les textes les plus larges (« الصلاة القادمة », environ 106) tiennent sur une ligne.
 const DIAMETRE = 200;
 // Planche : textes secondaires à 85 % d'opacité sur l'aplat.
 const ATTENUE = 0.85;
@@ -26,8 +30,8 @@ export function CercleProchainePriere() {
       accessible
       accessibilityRole="image"
       accessibilityLabel={t('bienvenue.cercleExemple')}
-      style={[styles.cercle, { marginTop: espace.espace2, backgroundColor: couleurs.emeraudeAplat }]}>
-      <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, arabe ? styles.centre : ligne(styles.surtitre), couleur, styles.attenue]}>
+      style={[styles.cercle, { marginTop: espace.espace2, paddingHorizontal: espace.espace6, backgroundColor: couleurs.emeraudeAplat }]}>
+      <Text maxFontSizeMultiplier={echelleMax.grand} style={[typographie.legende, arabe ? styles.centre : ligne(styles.surtitre), couleur, styles.attenue]}>
         {t('bienvenue.prochaine')}
       </Text>
       <Text maxFontSizeMultiplier={echelleMax.grand} style={[typographie.titre1, styles.centre, couleur]}>
@@ -36,7 +40,7 @@ export function CercleProchainePriere() {
       <Text maxFontSizeMultiplier={echelleMax.grand} style={[typographie.chiffre, ligne(styles.heure), couleur]}>
         {chiffresAffiches(HEURE_EXEMPLE)}
       </Text>
-      <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, styles.centre, couleur, styles.attenue]}>
+      <Text maxFontSizeMultiplier={echelleMax.grand} style={[typographie.legende, styles.centre, couleur, styles.attenue]}>
         {t('bienvenue.dansMinutes', { minutes: MINUTES_EXEMPLE })}
       </Text>
     </View>
