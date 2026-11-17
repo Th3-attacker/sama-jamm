@@ -3,8 +3,8 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Text, View } from 'react-native';
 
-import { ArcIllustration } from '@/features/bienvenue/ArcIllustration';
 import { decisionPosition, obtenirPosition } from '@/features/bienvenue/autorisations';
+import { CercleProchainePriere } from '@/features/bienvenue/CercleProchainePriere';
 import { etapePosition } from '@/features/bienvenue/etapes';
 import { MiseEnPage } from '@/features/bienvenue/MiseEnPage';
 import { ChoixVille } from '@/features/priere/ChoixVille';
@@ -95,9 +95,9 @@ export default function Position() {
           </Button>
         </>
       }>
-      {/* Planche : illustration, 32, titre, 16, texte, 12, texte. */}
+      {/* Planche : cercle « Prochaine prière » (8 sous le retour), 32, titre, 16, texte, 12, texte. */}
       <View>
-        <ArcIllustration />
+        <CercleProchainePriere />
         <Text
           accessibilityRole="header"
           maxFontSizeMultiplier={echelleMax.grand}
