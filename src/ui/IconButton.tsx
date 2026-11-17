@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: espace.espace1,
     end: espace.espace1,
-    minWidth: interlignes.l16,
+    minWidth: espace.espace4,
     paddingHorizontal: espace.espace1,
     alignItems: 'center',
     justifyContent: 'center',

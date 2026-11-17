@@ -141,6 +141,7 @@
     }
   },
   "accueil": {
+    "plusEnCours": "{{plus}}, {{enCours}}",
     "date": "{{jour}} · {{hegirien}}",
     "avant": "avant {{priere}}",
     "prochaine": "Prochaine prière · {{priere}}",
