@@ -50,12 +50,12 @@
   },
   "menuPlus": {
     "rechercher": "بحث",
-    "enCours_zero": "قيد التنزيل: {{count}}",
-    "enCours_one": "قيد التنزيل: {{count}}",
-    "enCours_two": "قيد التنزيل: {{count}}",
-    "enCours_few": "قيد التنزيل: {{count}}",
-    "enCours_many": "قيد التنزيل: {{count}}",
-    "enCours_other": "قيد التنزيل: {{count}}",
+    "enCours_zero": "قيد القراءة: {{count}}",
+    "enCours_one": "قيد القراءة: {{count}}",
+    "enCours_two": "قيد القراءة: {{count}}",
+    "enCours_few": "قيد القراءة: {{count}}",
+    "enCours_many": "قيد القراءة: {{count}}",
+    "enCours_other": "قيد القراءة: {{count}}",
     "favoris": "المفضلة",
     "telechargements": "التنزيلات",
     "reglages": "الإعدادات",
@@ -145,6 +145,7 @@
     }
   },
   "accueil": {
+    "plusEnCours": "{{plus}}، {{enCours}}",
     "date": "{{jour}} · {{hegirien}}",
     "avant": "قبل {{priere}}",
     "prochaine": "الصلاة القادمة · {{priere}}",

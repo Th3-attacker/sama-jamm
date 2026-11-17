@@ -105,7 +105,7 @@ export default function Accueil() {
           ACCESSOIRE_NATIF
             ? {
                 icone: 'more',
-                label: badgePlus ? `${t('onglets.plus')}, ${t('menuPlus.enCours', { count: khatmsEnCours ?? 0 })}` : t('onglets.plus'),
+                label: badgePlus ? t('accueil.plusEnCours', { plus: t('onglets.plus'), enCours: t('menuPlus.enCours', { count: khatmsEnCours ?? 0 }) }) : t('onglets.plus'),
                 badge: badgePlus ? String(khatmsEnCours) : undefined,
                 onPress: () => router.push('/plus/menu'),
               }
