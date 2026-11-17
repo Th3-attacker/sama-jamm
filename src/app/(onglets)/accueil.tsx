@@ -76,16 +76,17 @@ export default function Accueil() {
       <TopBar
         gauche={
           <View>
+            {/* Planche : titre en 40/44 (style display, plafonné comme les grands titres des autres onglets). */}
             <Text
               accessibilityRole="header"
               accessibilityLanguage="wo"
-              maxFontSizeMultiplier={echelleMax.courant}
-              style={[latin.titre1, { color: couleurs.emeraude, writingDirection: 'ltr' }]}>
+              maxFontSizeMultiplier={echelleMax.grand}
+              style={[latin.display, { color: couleurs.emeraude, writingDirection: 'ltr' }]}>
               {t('formules.saluer')}
             </Text>
             <Text
               maxFontSizeMultiplier={echelleMax.courant}
-              style={[typographie.translitteration, ligne(styles.date), { color: couleurs.encre2 }]}>
+              style={[typographie.translitteration, ligne(styles.italique), { color: couleurs.encre2 }]}>
               {hegirien ? t('accueil.date', { jour, hegirien }) : jour}
             </Text>
           </View>
@@ -118,7 +119,8 @@ export default function Accueil() {
           style={{
             gap: espace.espace1,
             padding: espace.espace4,
-            borderRadius: rayon.rayonCarte,
+            // Planche : rayon 20, comme les quatre cartes.
+            borderRadius: rayon.rayonFeuille,
             backgroundColor: couleurs.orDoux,
           }}>
           <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, ligne(styles.etiquette), { color: couleurs.orTexte }]}>
@@ -132,7 +134,7 @@ export default function Accueil() {
           </Text>
           <Text
             maxFontSizeMultiplier={echelleMax.courant}
-            style={[typographie.translitteration, { color: couleurs.encre2 }]}>
+            style={[typographie.translitteration, ligne(styles.italique), { color: couleurs.encre2 }]}>
             {t(`formules.${sagesse}Trad`)}
           </Text>
         </View>
@@ -144,8 +146,9 @@ export default function Accueil() {
 
 const styles = StyleSheet.create({
   ecran: { flex: 1 },
-  // Planche : date en italique 14/20.
-  date: { fontSize: tailles.t14, lineHeight: interlignes.l20 },
-  // Planche : « WAX JU RAFET » en 12/16, majuscules, interlettrage 0,06 em.
+  // Planche : date et traduction du proverbe en italique 15/22, hors échelle : ramenées à 14/20.
+  italique: { fontSize: tailles.t14, lineHeight: interlignes.l20 },
+  // Planche : « WAX JU RAFET » en 13, majuscules : ramené à 12/16 ; interlettrage 0,06 em comme les autres
+  // étiquettes en majuscules de l'app (la planche dit 0,12 em, noté dans ECARTS.md).
   etiquette: { fontSize: tailles.t12, lineHeight: interlignes.l16, textTransform: 'uppercase', letterSpacing: 0.72 },
 });
