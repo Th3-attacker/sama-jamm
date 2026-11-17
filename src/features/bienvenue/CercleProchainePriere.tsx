@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View } from 'react-native';
 
+import { chiffresAffiches } from '@/lib/chiffres';
 import { interlignes, rayon, tailles } from '@/theme/tokens.generated';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
@@ -17,7 +18,7 @@ const MINUTES_EXEMPLE = 42;
 /** Illustration de l'étape « position » : la prochaine prière dans un cercle émeraude (exemple fixe). */
 export function CercleProchainePriere() {
   const { t } = useTranslation();
-  const { couleurs, espace, typographie, ligne } = useTheme();
+  const { couleurs, espace, typographie, ligne, arabe } = useTheme();
   const couleur = { color: couleurs.surEmeraude };
 
   return (
@@ -26,14 +27,14 @@ export function CercleProchainePriere() {
       accessibilityRole="image"
       accessibilityLabel={t('bienvenue.cercleExemple')}
       style={[styles.cercle, { marginTop: espace.espace2, backgroundColor: couleurs.emeraudeAplat }]}>
-      <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, ligne(styles.surtitre), couleur, styles.attenue]}>
+      <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, arabe ? styles.centre : ligne(styles.surtitre), couleur, styles.attenue]}>
         {t('bienvenue.prochaine')}
       </Text>
       <Text maxFontSizeMultiplier={echelleMax.grand} style={[typographie.titre1, styles.centre, couleur]}>
         {t('priere.noms.asr')}
       </Text>
       <Text maxFontSizeMultiplier={echelleMax.grand} style={[typographie.chiffre, ligne(styles.heure), couleur]}>
-        {HEURE_EXEMPLE}
+        {chiffresAffiches(HEURE_EXEMPLE)}
       </Text>
       <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, styles.centre, couleur, styles.attenue]}>
         {t('bienvenue.dansMinutes', { minutes: MINUTES_EXEMPLE })}
@@ -53,7 +54,7 @@ const styles = StyleSheet.create({
   },
   centre: { textAlign: 'center' },
   attenue: { opacity: ATTENUE },
-  // Planche : 12/16, majuscules, espacement 0,06 em.
+  // Planche : 12/16, majuscules, espacement 0,06 em. En arabe : legendeAr (13/20) sans espacement des lettres.
   surtitre: { fontSize: tailles.t12, lineHeight: interlignes.l16, textTransform: 'uppercase', letterSpacing: 0.72, textAlign: 'center' },
   // Planche : 24/30, 600, chiffres tabulaires (le style chiffre les porte déjà).
   heure: { fontSize: tailles.t24, lineHeight: interlignes.l30, textAlign: 'center' },
