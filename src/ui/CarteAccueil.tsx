@@ -23,7 +23,7 @@ export type CarteAccueilProps = {
 
 /** Carte de la grille de l'Accueil : un titre avec son icône, un contenu court, un toucher qui ouvre l'écran. */
 export function CarteAccueil({ icone, titre, label, onPress, children, pied, ecart }: CarteAccueilProps) {
-  const { couleurs, espace, typographie, ligne } = useTheme();
+  const { couleurs, espace, rayon, typographie, ligne } = useTheme();
   return (
     <Pressable
       accessibilityRole="button"
@@ -34,13 +34,13 @@ export function CarteAccueil({ icone, titre, label, onPress, children, pied, eca
         {
           gap: ecart ?? espace.espace1,
           padding: espace.espace4,
-          borderRadius: 16,
+          borderRadius: rayon.rayonFeuille,
           backgroundColor: pressed ? couleurs.surfaceCreux : couleurs.surface,
           borderColor: couleurs.ligne,
         },
       ]}>
       <View style={[styles.entete, { gap: espace.espace2 }]}>
-        <Icon name={icone} size={16} color={couleurs.encre3} />
+        <Icon name={icone} size={18} color={couleurs.encre3} />
         <Text
           numberOfLines={2}
           maxFontSizeMultiplier={echelleMax.courant}
@@ -55,8 +55,9 @@ export function CarteAccueil({ icone, titre, label, onPress, children, pied, eca
 }
 
 const styles = StyleSheet.create({
-  // Planche : rayon 16, hauteur minimale 124, libellé 14/20 normal.
-  carte: { flex: 1, borderWidth: 1, minHeight: 124 },
+  // Planche : rayon 20 (rayonFeuille), hauteur minimale 128 (valeur de l'échelle d'espace, sans jeton nommé),
+  // icône 18 ; libellé en 15 ramené à 14/20, écart de 6 sous l'en-tête ramené à 4.
+  carte: { flex: 1, borderWidth: 1, minHeight: 128 },
   pied: { marginTop: 'auto' },
   entete: { flexDirection: 'row', alignItems: 'center' },
   titre: { flex: 1, fontSize: tailles.t14, lineHeight: interlignes.l20 },

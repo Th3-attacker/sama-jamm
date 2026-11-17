@@ -47,7 +47,7 @@ Un écart trouvé entre deux sources, ou entre une source et le code, se note da
 - Deux thèmes : jour et nuit. La nuit a l'apparence atténuée de l'ancienne Veille et suit le mode sombre du téléphone ou le choix de l'utilisateur. Plus de Veille ni de bascule automatique entre Isha et Fajr (décision du 12 novembre 2026).
 - Les grandes surfaces vertes (bouton principal, carte de la prochaine prière, compteur, écrans Bienvenue) prennent `emeraudeAplat`, jamais `emeraude` (qui devient vert clair la nuit). Texte dessus : `surEmeraude`. La nuit, `surEmeraude2` et `orSurEmeraude` sur cet aplat sont réservés aux textes de 18 px et plus.
 - Échelles fermées : texte latin 12/16, 14/20, 16/24, 18/24, 24/30, 30/36, 40/44, 44/48, 56/60 ; arabe 22, 28, 34 ; espaces 0, 4, 8, 12, 16, 20, 24, 32, 40, 48, 56, 64, 80, 96, 128.
-- Onglets : `NativeTabs` d'Expo Router (Accueil, Lire, Prière, Budget, Plus). Pas de barre dessinée à la main. Écouter vit dans Lire.
+- Onglets : `NativeTabs` d'Expo Router (Accueil, Lire, Prière, Budget, Plus). Sur iPhone (iOS 26) seulement, un sixième onglet Recherche (`role="search"`) s'ajoute à droite de la barre (décision du 17 novembre 2026) ; Android reste à cinq onglets. Pas de barre dessinée à la main. Écouter vit dans Lire.
 
 ### Technique
 
