@@ -49,7 +49,7 @@ type Donnees = {
   wifiSeulement: boolean;
   theme: ChoixTheme;
   bienvenueTerminee: boolean;
-  /** Échelon de taille du texte de lecture, de 1 à 4, niveaux 2 à 5 (voir `features/lire/BarreTaille` et `stores/tailleMigration`). */
+  /** Échelon de taille du texte de lecture, de 1 à 3, niveaux 2 à 4 (voir `features/lire/BarreTaille` et `stores/tailleMigration`). */
   tailleLecture: number;
   /** Translittération sous le texte arabe (Tanzil, en caractères latins). Désactivée par défaut. */
   translitLecture: boolean;
@@ -149,7 +149,7 @@ export const useReglages = create<Donnees & Actions>()(
     }),
     {
       name: 'reglages',
-      version: 10,
+      version: 11,
       storage: createJSONStorage(() => stockage),
       // v1 → v2 : réglages de prière ; v2 → v3 : vibrations. Valeurs par défaut pour les clés absentes.
       // v3 → v4 : la taille de lecture par défaut passe du 3e au 2e cran ; une autre taille choisie est gardée.
@@ -167,8 +167,9 @@ export const useReglages = create<Donnees & Actions>()(
         if (version < 8) retirerTraduction(migre);
         // v8 → v9 : plus de Veille ; le thème « veille » enregistré passe à « nuit », ses réglages sont effacés.
         if (version < 9) retirerVeille(migre);
-        // v9 → v10 : taille de l'écriture limitée aux niveaux 2 à 5 ; un échelon hors plage est ramené au bord.
-        if (version < 10) limiterTaille(migre);
+        // v9 → v10 : taille de l'écriture limitée aux niveaux 2 à 5 ; v10 → v11 : aux niveaux 2 à 4. Un échelon hors plage
+        // est ramené au bord.
+        if (version < 11) limiterTaille(migre);
         return migre;
       },
       partialize: (s) => ({
