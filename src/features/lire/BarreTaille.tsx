@@ -91,7 +91,7 @@ export function BarreTaille() {
  */
 function CurseurTaille() {
   const { t } = useTranslation();
-  const { couleurs, espace, rayon, ombres } = useTheme();
+  const { nom, couleurs, espace, rayon, ombres } = useTheme();
   const rtl = useSens() === 'rtl';
   const echelon = useReglages((s) => s.tailleLecture);
   const definir = useReglages((s) => s.definirTailleLecture);
@@ -129,7 +129,8 @@ function CurseurTaille() {
           <View
             style={[
               styles.pouce,
-              { backgroundColor: couleurs.surface, borderRadius: rayon.rayonPastille, start: positionDeFraction(fraction, largeur, rtl) - POUCE / 2 },
+              // Jour : rond blanc avec ombre (planche). Nuit : `surface` serait sombre sur une carte sombre et sans ombre, donc invisible.
+              { backgroundColor: nom === 'jour' ? couleurs.surface : couleurs.encre, borderRadius: rayon.rayonPastille, start: positionDeFraction(fraction, largeur, rtl) - POUCE / 2 },
               ombres.ombre1 !== 'none' ? { boxShadow: ombres.ombre1 } : null,
             ]}
           />
