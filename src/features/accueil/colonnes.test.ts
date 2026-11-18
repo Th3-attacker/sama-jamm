@@ -16,3 +16,11 @@ test('grille : texte agrandi, une colonne en compacte et deux ailleurs (limite 1
   assert.equal(colonnesGrille('compacte', 2), 1);
   assert.equal(colonnesGrille('moyenne', 2), 2);
 });
+
+test('grille : largeur utile sous 640 (barre latérale de l\'iPad), 2 colonnes même en classe moyenne', () => {
+  assert.equal(colonnesGrille('moyenne', 1, 536), 2);
+  assert.equal(colonnesGrille('moyenne', 1, 640), 4);
+  assert.equal(colonnesGrille('etendue', 1, 760), 4);
+  assert.equal(colonnesGrille('compacte', 1, 350), 2);
+  assert.equal(colonnesGrille('moyenne', 2, 536), 2);
+});

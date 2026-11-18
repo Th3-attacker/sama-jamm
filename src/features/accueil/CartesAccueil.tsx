@@ -263,14 +263,18 @@ function CarteKhatm() {
  * Grille des cartes : 2×2 en classe compacte, une colonne quand le texte est très agrandi (aucune carte tronquée),
  * quatre sur une ligne dès la classe moyenne.
  */
-export function GrilleAccueil({ colonnes }: { colonnes: 1 | 2 | 4 }) {
+export function GrilleAccueil({ largeur }: { largeur: ClasseLargeur }) {
   const { espace } = useTheme();
+  const { fontScale } = useWindowDimensions();
+  // Largeur réelle de la grille : la barre latérale de l'iPad retire une part de la fenêtre.
+  const [largeurUtile, setLargeurUtile] = useState<number | undefined>(undefined);
+  const colonnes = colonnesGrille(largeur, fontScale, largeurUtile);
   const cartes = [<CarteReprendre key="r" />, <CarteKhatm key="k" />, <CarteBudget key="b" />, <CarteDhikr key="d" />];
   const taille = colonnes;
   const lignes: (typeof cartes)[] = [];
   for (let i = 0; i < cartes.length; i += taille) lignes.push(cartes.slice(i, i + taille));
   return (
-    <View style={{ gap: espace.espace3 }}>
+    <View style={{ gap: espace.espace3 }} onLayout={(e) => setLargeurUtile(e.nativeEvent.layout.width)}>
       {lignes.map((l, i) => (
         <View key={i} style={[styles.ligne, { gap: espace.espace3 }]}>
           {l}
@@ -278,12 +282,6 @@ export function GrilleAccueil({ colonnes }: { colonnes: 1 | 2 | 4 }) {
       ))}
     </View>
   );
-}
-
-/** Colonnes de la grille pour la fenêtre courante (classe de largeur et échelle de texte du téléphone). */
-export function useColonnesGrille(largeur: ClasseLargeur) {
-  const { fontScale } = useWindowDimensions();
-  return colonnesGrille(largeur, fontScale);
 }
 
 const styles = StyleSheet.create({

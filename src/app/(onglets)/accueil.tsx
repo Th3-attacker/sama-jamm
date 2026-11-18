@@ -21,7 +21,7 @@ import { ACCESSOIRE_NATIF } from '@/theme/layout';
 import { useMargeBasse, useMiniLecteurVisible } from '@/features/ecouter/placeMiniLecteur';
 import { BandeEcoute } from '@/features/accueil/BandeEcoute';
 import { CarteHeros } from '@/features/accueil/CarteHeros';
-import { GrilleAccueil, useColonnesGrille } from '@/features/accueil/CartesAccueil';
+import { GrilleAccueil } from '@/features/accueil/CartesAccueil';
 import { enEcoute as ecouteEnCours, useLecteur } from '@/features/ecouter/lecteur';
 import { SondeBarre } from '@/features/ecouter/SondeBarre';
 
@@ -36,7 +36,6 @@ export default function Accueil() {
   const { couleurs, espace, rayon, typographie, latin, ligne } = useTheme();
   const marge = useMargeBasse();
   const { styleColonne: colonne, largeur } = useLayout();
-  const colonnesGrille = useColonnesGrille(largeur);
   const miniVisible = useMiniLecteurVisible();
   const enEcoute = useLecteur(ecouteEnCours);
   const bandeEcoute = enEcoute && !miniVisible;
@@ -135,7 +134,7 @@ export default function Accueil() {
           </View>
         )}
 
-        <GrilleAccueil colonnes={colonnesGrille} />
+        <GrilleAccueil largeur={largeur} />
 
         {/* Écoute reprise : seulement quand le mini-lecteur est rangé (plafond de la pile) ou absent. */}
         {bandeEcoute ? <BandeEcoute /> : null}
