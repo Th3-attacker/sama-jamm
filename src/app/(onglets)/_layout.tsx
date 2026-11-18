@@ -57,6 +57,8 @@ export default function OngletsLayout() {
         minimizeBehavior="never"
         sidebarAdaptable={barreLaterale}
         indicatorColor={couleurs.emeraudeDoux}
+        // Android : le nom de chaque onglet reste visible (le mode « auto » de Material ne garde que celui de l'onglet actif à 5 onglets).
+        labelVisibilityMode="labeled"
         // Android : onde tactile aux couleurs de la pastille, à la place du violet par défaut de Material.
         rippleColor={couleurs.emeraudeDoux}
         iconColor={{ default: couleurs.encre2, selected: couleurs.emeraude }}
