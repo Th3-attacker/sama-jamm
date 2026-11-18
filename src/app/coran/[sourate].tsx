@@ -443,6 +443,9 @@ function LectureSourate({
           ref={liste}
           data={versets}
           viewabilityConfig={CONFIG_VISIBILITE}
+          // Les hauteurs des versets sont estimées puis mesurées au fil du défilement : sans ancrage, chaque mesure
+          // déplace les versets visibles et la liste balance d'un verset à l'autre (surtout après un changement de taille).
+          maintainVisibleContentPosition={{ minIndexForVisible: 0 }}
           onViewableItemsChanged={surVisibles}
           onScrollEndDrag={enregistrerVerset}
           onMomentumScrollEnd={enregistrerVerset}
