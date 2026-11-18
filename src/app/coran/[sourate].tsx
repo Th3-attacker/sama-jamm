@@ -32,7 +32,8 @@ import { Etoile } from '@/ui/Etoile';
 import type { IconName } from '@/ui/types';
 import { Medaillon } from '@/ui/Medaillon';
 import { TranslitVerset } from '@/features/lire/TranslitVerset';
-import { apresEchec, DELAI_SUCCES_MS, decalageEstime, DUREE_MAX_MS, resteAvantMasquage } from '@/features/lire/positionVerset';
+import { apresEchec, DELAI_ESSAI_MS, DELAI_SUCCES_MS, decalageEstime, DUREE_MAX_MS, resteAvantMasquage } from '@/features/lire/positionVerset';
+import { versetASuivre } from '@/features/lire/suiviVerset';
 import { cleVerset, useFavoris } from '@/stores/favoris';
 import { usePleinEcran } from '@/stores/pleinEcran';
 import { useLecture, type ModeLecture } from '@/stores/lecture';
@@ -192,6 +193,16 @@ function LectureSourate({
   const succes = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   // Verset à retrouver après un changement de taille d'écriture ; non nul pendant le recalage.
   const cibleRecalage = useRef<number | null>(null);
+  // Suivi de la récitation : versets visibles, dernier geste du lecteur, verset visé et défilement lancé par le code.
+  const plageVisible = useRef<{ premier: number; dernier: number } | null>(null);
+  const dernierGeste = useRef(0);
+  const cibleSuivi = useRef<number | null>(null);
+  const essaiSuivi = useRef(0);
+  const defilementCode = useRef(false);
+  const noterGeste = useCallback(() => {
+    // Le défilement animé du suivi se termine aussi par « fin d'élan » : ce n'est pas un geste du lecteur.
+    if (!defilementCode.current) dernierGeste.current = Date.now();
+  }, []);
   // Doit rester stable : la FlatList refuse un rappel qui change entre deux rendus.
   const surVisibles = useCallback(({ viewableItems }: { viewableItems: { item: { n: number } }[] }) => {
     // Pendant le positionnement sur le verset d'ouverture, les versets rendus un instant ne comptent pas.
@@ -199,7 +210,9 @@ function LectureSourate({
     // Pendant un recalage lancé par le code (taille d'écriture), les versets entrevus en route ne comptent pas.
     if (cibleRecalage.current !== null) return;
     const premier = viewableItems[0];
-    if (premier) {
+    const dernier = viewableItems[viewableItems.length - 1];
+    if (premier && dernier) {
+      plageVisible.current = { premier: premier.item.n, dernier: dernier.item.n };
       versetVisible.current = premier.item.n;
       setVersetHaut(premier.item.n);
     }
@@ -280,6 +293,29 @@ function LectureSourate({
       clearTimeout(limite);
     };
   }, [tailleArabe.fontSize, modePage, essayerDeSePlacer, finirRecalage]);
+  // Suivi de la récitation en lecture verset par verset (le mode page a le sien) : quand le verset récité sort de
+  // l'écran, la liste le ramène vers le haut, sauf pendant la pause qui suit un geste du lecteur.
+  const allerAuVerset = useCallback(() => {
+    const cible = cibleSuivi.current;
+    if (cible === null) return;
+    // Animé au premier essai ; ensuite sans animation (verset pas encore mesuré, on s'en approche puis on réessaie).
+    liste.current?.scrollToIndex({ index: cible - 1, viewPosition: 0.25, animated: essaiSuivi.current === 0 });
+  }, []);
+  useEffect(() => {
+    if (modePage || !positionne.current || cibleRecalage.current !== null) return;
+    const cible = versetASuivre({ recite: versetEcoute, plage: plageVisible.current, dernierGeste: dernierGeste.current, maintenant: Date.now() });
+    if (cible === null) return;
+    cibleSuivi.current = cible;
+    essaiSuivi.current = 0;
+    defilementCode.current = true;
+    allerAuVerset();
+    // Fin du suivi pour ce verset : la fin d'élan du défilement animé n'est plus prise pour un geste.
+    const fin = setTimeout(() => {
+      cibleSuivi.current = null;
+      defilementCode.current = false;
+    }, 900);
+    return () => clearTimeout(fin);
+  }, [versetEcoute, modePage, allerAuVerset]);
   const legende = [typographie.legende, { color: couleurs.encre3, textAlign: 'center' as const }];
 
   // iOS : feuille native ; Android : la feuille maison, montée plus bas.
@@ -444,9 +480,24 @@ function LectureSourate({
           // déplace les versets visibles et la liste balance d'un verset à l'autre (surtout après un changement de taille).
           maintainVisibleContentPosition={{ minIndexForVisible: 0 }}
           onViewableItemsChanged={surVisibles}
-          onScrollEndDrag={enregistrerVerset}
-          onMomentumScrollEnd={enregistrerVerset}
+          onScrollBeginDrag={noterGeste}
+          onScrollEndDrag={() => {
+            noterGeste();
+            enregistrerVerset();
+          }}
+          onMomentumScrollEnd={() => {
+            noterGeste();
+            enregistrerVerset();
+          }}
           onScrollToIndexFailed={({ averageItemLength, index }) => {
+            if (cibleSuivi.current !== null) {
+              // Suivi de la récitation : verset pas encore mesuré, on s'en approche puis on réessaie.
+              liste.current?.scrollToOffset({ offset: decalageEstime(index, averageItemLength), animated: false });
+              essaiSuivi.current += 1;
+              if (apresEchec(essaiSuivi.current).reessayer) setTimeout(allerAuVerset, DELAI_ESSAI_MS);
+              else cibleSuivi.current = null;
+              return;
+            }
             // Verset pas encore mesuré : on s'en approche, puis on réessaie (jusqu'à ESSAIS_MAX fois).
             echec.current = true;
             liste.current?.scrollToOffset({ offset: decalageEstime(index, averageItemLength), animated: false });
