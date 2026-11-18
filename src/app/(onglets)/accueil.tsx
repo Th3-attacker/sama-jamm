@@ -104,7 +104,7 @@ export default function Accueil() {
           // reste dans l'écran Plus. Android et iOS 18 gardent la loupe.
           ACCESSOIRE_NATIF
             ? {
-                icone: 'more',
+                icone: 'grid',
                 label: badgePlus ? t('accueil.plusEnCours', { plus: t('onglets.plus'), enCours: t('menuPlus.enCours', { count: khatmsEnCours ?? 0 }) }) : t('onglets.plus'),
                 badge: badgePlus ? String(khatmsEnCours) : undefined,
                 onPress: () => router.push('/plus/menu'),
@@ -122,9 +122,17 @@ export default function Accueil() {
         {arc ? (
           <CarteHeros nom={arc.nom} heure={arc.heure} dans={arc.dans} prieres={arc.liste} maintenant={arc.maintenantMin} />
         ) : (
-          <Banner ton="info" action={{ label: t('bienvenue.positionVille'), onPress: () => router.push('/position') }}>
-            {t('priere.positionRefuseeTexte')}
-          </Banner>
+          // Planche « ville à choisir » : le bandeau, puis la carte avec « -- : -- » et des points vides.
+          <View style={{ gap: espace.espace3 }}>
+            <Banner
+              ton="attention"
+              icone="pin"
+              titre={t('accueil.villeTitre')}
+              action={{ label: t('bienvenue.positionVille'), onPress: () => router.push('/position') }}>
+              {t('accueil.villeTexte')}
+            </Banner>
+            <CarteHeros sansVille prieres={prieres.map((p) => ({ nom: t(`priere.noms.${p}`), heure: '--:--', minutes: 0, etat: 'a-venir' }))} />
+          </View>
         )}
 
         <GrilleAccueil colonnes={colonnesGrille} />
