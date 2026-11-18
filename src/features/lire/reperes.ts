@@ -35,6 +35,16 @@ export function creerReperes(d: DonneesReperes) {
       for (let i = 0; i < debutsJuz.length; i++) if ((debutsJuz[i] ?? 0) <= k) juz = i + 1;
       return juz;
     },
+    /** Hizb (1 à 60) qui contient le verset : le quart de hizb le plus récent, divisé par quatre. */
+    hizbDe(s: number, v: number): number {
+      const k = cle(s, v);
+      let quart = 0;
+      for (let i = 0; i < d.quartsHizb.length; i++) {
+        const q = d.quartsHizb[i];
+        if (q && cle(q[0], q[1]) <= k) quart = i;
+      }
+      return Math.floor(quart / 4) + 1;
+    },
     /** Repère qui commence à ce verset : un début de juz l'emporte sur le quart de hizb qui y commence aussi. */
     repereDe(s: number, v: number): Repere | null {
       const k = cle(s, v);
