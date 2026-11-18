@@ -77,6 +77,8 @@ export function TopBar({
     <View
       style={{
         paddingTop: insets.top,
+        // Un titre sous la barre (logo, grand titre) ne colle pas au premier bloc de l'écran : 16, comme la maquette.
+        paddingBottom: gauche || grand ? espace.espace4 : 0,
         paddingHorizontal: espace.espace2,
         backgroundColor: transparent ? 'transparent' : couleurs.fond,
       }}>
@@ -140,7 +142,7 @@ export function TopBar({
         ) : null}
       </View>
       {grand && titre ? (
-        <View style={{ paddingHorizontal: espace.espace3, paddingBottom: espace.espace3 }}>
+        <View style={{ paddingHorizontal: espace.espace3 }}>
           <Text
             accessibilityRole="header"
             accessibilityLanguage={lang}
