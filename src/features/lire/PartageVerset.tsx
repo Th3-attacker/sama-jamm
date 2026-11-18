@@ -21,7 +21,8 @@ type Fond = 'emeraude' | 'nuit' | 'ivoire';
 type Format = 'carre' | 'story';
 export type VersetAPartager = { sourate: number; nomSourate: string; n: number; texte: string; translit?: string };
 
-const FONDS: readonly Fond[] = ['emeraude', 'nuit', 'ivoire'];
+// Ordre de la planche « Partager un verset » : Ivoire, Émeraude, Nuit (le style par défaut reste Émeraude).
+const FONDS: readonly Fond[] = ['ivoire', 'emeraude', 'nuit'];
 /** Côté de l'image exportée : 1080 de large, carré ou story (1080 × 1920). */
 const EXPORT = { largeur: 1080, hauteur: { carre: 1080, story: 1920 } } as const;
 

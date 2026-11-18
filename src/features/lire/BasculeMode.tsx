@@ -29,6 +29,8 @@ export function BasculeMode({ label, options, valeur, onChange }: Props) {
             accessibilityRole="radio"
             accessibilityState={{ checked: on }}
             onPress={() => onChange(o.id)}
+            // Case de 36 dans une piste de 44 : la zone touchable monte à 44.
+            hitSlop={{ top: 4, bottom: 4 }}
             style={[
               styles.option,
               { borderRadius: rayon.rayonPastille, paddingHorizontal: espace.espace3 },
