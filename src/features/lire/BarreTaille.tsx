@@ -29,7 +29,7 @@ export function useTaillesLecture() {
   };
 }
 
-/** Barre pour réduire ou agrandir l'écriture : A−, piste à quatre échelons (niveaux 2 à 5), A+. */
+/** Barre pour réduire ou agrandir l'écriture : A−, piste à trois échelons (niveaux 2 à 4), A+. */
 export function BarreTaille() {
   const { t } = useTranslation();
   const { couleurs, espace, rayon, cible } = useTheme();

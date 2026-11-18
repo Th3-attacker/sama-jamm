@@ -50,7 +50,8 @@ export function CarteInvocation({ invocation, source, termine, onChoisir, onPart
         <Text
           accessibilityLanguage="ar"
           maxFontSizeMultiplier={echelleMax.grand}
-          style={[typographie.coran, tailleArabe, styles.arabe, { color: couleurs.encre }]}>
+          // Marge de côté : les voyelles et ligatures dépassent de la boîte du texte et seraient rognées à grande taille.
+          style={[typographie.coran, tailleArabe, styles.arabe, { color: couleurs.encre, paddingHorizontal: espace.espace1 }]}>
           {invocation.arabe}
         </Text>
         {translitActive ? (

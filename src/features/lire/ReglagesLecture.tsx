@@ -49,7 +49,7 @@ export function ContenuReglagesLecture({ modePage = false, verre = false }: { mo
         }}>
         <Text
           accessibilityLanguage="ar"
-          style={[typographie.coran, modePage ? null : tailleArabe, { color: couleurs.encre, textAlign: 'right', writingDirection: 'rtl' }]}>
+          style={[typographie.coran, modePage ? null : tailleArabe, { color: couleurs.encre, textAlign: 'right', writingDirection: 'rtl', paddingHorizontal: espace.espace1 }]}>
           {`إِنَّ مَعَ ٱلْعُسْرِ يُسْرًا ${chiffres ? '﴿٦﴾' : '﴿6﴾'}`}
         </Text>
         {translit ? (
