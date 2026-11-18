@@ -16,7 +16,11 @@ import { Switch } from '@/ui/Switch';
 import { ReglageTaille, useTaillesLecture } from './BarreTaille';
 
 import { interlignes, tailles } from '@/theme/tokens.generated';
-export function ReglagesLecture({ ouvert, onFermer }: { ouvert: boolean; onFermer: () => void }) {
+/**
+ * Feuille « Lecture ». `modePage` : ouverte depuis la vue page, où l'écriture s'ajuste à l'écran ; la taille ne vaut que
+ * pour la lecture verset par verset, sa ligne et son effet sur l'aperçu disparaissent.
+ */
+export function ReglagesLecture({ ouvert, onFermer, modePage = false }: { ouvert: boolean; onFermer: () => void; modePage?: boolean }) {
   const { t } = useTranslation();
   const { couleurs, espace, rayon, typographie, ligne } = useTheme();
   const { tailleArabe } = useTaillesLecture();
@@ -43,7 +47,7 @@ export function ReglagesLecture({ ouvert, onFermer }: { ouvert: boolean; onFerme
         }}>
         <Text
           accessibilityLanguage="ar"
-          style={[typographie.coran, tailleArabe, { color: couleurs.encre, textAlign: 'right', writingDirection: 'rtl' }]}>
+          style={[typographie.coran, modePage ? null : tailleArabe, { color: couleurs.encre, textAlign: 'right', writingDirection: 'rtl' }]}>
           {`إِنَّ مَعَ ٱلْعُسْرِ يُسْرًا ${chiffres ? '﴿٦﴾' : '﴿6﴾'}`}
         </Text>
         {translit ? (
@@ -52,9 +56,11 @@ export function ReglagesLecture({ ouvert, onFermer }: { ouvert: boolean; onFerme
           </Text>
         ) : null}
       </View>
-      <ListGroup>
-        <ReglageTaille />
-      </ListGroup>
+      {modePage ? null : (
+        <ListGroup>
+          <ReglageTaille />
+        </ListGroup>
+      )}
       <ListGroup>
         <ListItem
           titre={t('reglages.translit')}
