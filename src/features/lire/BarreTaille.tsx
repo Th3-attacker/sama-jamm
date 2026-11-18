@@ -2,19 +2,19 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { useReglages } from '@/stores/reglages';
+import { borneTaille, TAILLE_MAX, TAILLE_MIN } from '@/stores/tailleMigration';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 
 import { interlignes, tailles } from '@/theme/tokens.generated';
 /** Coefficients de taille du texte, du plus petit au plus grand ; l'échelon 2 (1) est la taille d'origine, le 1 (0,9) le défaut. */
 export const ECHELONS_TAILLE = [0.8, 0.9, 1, 1.15, 1.3, 1.5, 1.75] as const;
-const MAX = ECHELONS_TAILLE.length - 1;
 
 /** Styles de taille (arabe et translittération) selon l'échelon choisi, à ajouter après la typographie de base. */
 export function useTaillesLecture() {
   const { typographie } = useTheme();
   const echelon = useReglages((s) => s.tailleLecture);
-  const coef = ECHELONS_TAILLE[Math.max(0, Math.min(MAX, echelon))] ?? 1;
+  const coef = ECHELONS_TAILLE[borneTaille(echelon)] ?? 1;
   const mise = (base: { fontSize?: number; lineHeight?: number }, defaut: number, ligne: number) => ({
     fontSize: (base.fontSize ?? defaut) * coef,
     lineHeight: (base.lineHeight ?? ligne) * coef,
@@ -25,7 +25,7 @@ export function useTaillesLecture() {
   };
 }
 
-/** Barre pour réduire ou agrandir l'écriture : A−, piste à sept échelons, A+. */
+/** Barre pour réduire ou agrandir l'écriture : A−, piste à quatre échelons (niveaux 2 à 5), A+. */
 export function BarreTaille() {
   const { t } = useTranslation();
   const { couleurs, espace, rayon, cible } = useTheme();
@@ -36,42 +36,45 @@ export function BarreTaille() {
     <View
       accessibilityRole="adjustable"
       accessibilityLabel={t('lire.tailleArabe')}
-      accessibilityValue={{ min: 0, max: MAX, now: echelon }}
+      accessibilityValue={{ min: TAILLE_MIN, max: TAILLE_MAX, now: echelon }}
       accessibilityActions={[{ name: 'increment' }, { name: 'decrement' }]}
       onAccessibilityAction={(e) => definir(echelon + (e.nativeEvent.actionName === 'increment' ? 1 : -1))}
       style={[styles.barre, { gap: espace.espace2 }]}>
       <Pressable
         accessibilityRole="button"
         accessibilityLabel={t('lire.reduireTexte')}
-        disabled={echelon <= 0}
+        disabled={echelon <= TAILLE_MIN}
         hitSlop={8}
         onPress={() => definir(echelon - 1)}
-        style={[styles.bouton, { minWidth: cible.cibleIos, opacity: echelon <= 0 ? 0.4 : 1 }]}>
+        style={[styles.bouton, { minWidth: cible.cibleIos, opacity: echelon <= TAILLE_MIN ? 0.4 : 1 }]}>
         <Text accessibilityLanguage="ar" style={{ color: couleurs.emeraude, fontSize: tailles.t14 }}>أ</Text>
       </Pressable>
 
       <View style={styles.piste}>
-        {ECHELONS_TAILLE.map((_, i) => (
-          <Pressable key={i} accessible={false} onPress={() => definir(i)} style={styles.cran}>
-            <View
-              style={{
-                width: i === echelon ? 16 : 8,
-                height: i === echelon ? 16 : 8,
-                borderRadius: rayon.rayonPastille,
-                backgroundColor: i <= echelon ? couleurs.emeraudeAplat : couleurs.ligne,
-              }}
-            />
-          </Pressable>
-        ))}
+        {ECHELONS_TAILLE.slice(TAILLE_MIN, TAILLE_MAX + 1).map((_, k) => {
+          const i = TAILLE_MIN + k;
+          return (
+            <Pressable key={i} accessible={false} onPress={() => definir(i)} style={styles.cran}>
+              <View
+                style={{
+                  width: i === echelon ? 16 : 8,
+                  height: i === echelon ? 16 : 8,
+                  borderRadius: rayon.rayonPastille,
+                  backgroundColor: i <= echelon ? couleurs.emeraudeAplat : couleurs.ligne,
+                }}
+              />
+            </Pressable>
+          );
+        })}
       </View>
 
       <Pressable
         accessibilityRole="button"
         accessibilityLabel={t('lire.agrandirTexte')}
-        disabled={echelon >= MAX}
+        disabled={echelon >= TAILLE_MAX}
         hitSlop={8}
         onPress={() => definir(echelon + 1)}
-        style={[styles.bouton, { minWidth: cible.cibleIos, opacity: echelon >= MAX ? 0.4 : 1 }]}>
+        style={[styles.bouton, { minWidth: cible.cibleIos, opacity: echelon >= TAILLE_MAX ? 0.4 : 1 }]}>
         <Text accessibilityLanguage="ar" style={{ color: couleurs.emeraude, fontSize: tailles.t24 }}>أ</Text>
       </Pressable>
     </View>

@@ -191,10 +191,14 @@ function LectureSourate({
   const essai = useRef(0);
   const echec = useRef(false);
   const succes = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  // Verset à retrouver après un changement de taille d'écriture ; non nul pendant le recalage.
+  const cibleRecalage = useRef<number | null>(null);
   // Doit rester stable : la FlatList refuse un rappel qui change entre deux rendus.
   const surVisibles = useCallback(({ viewableItems }: { viewableItems: { item: { n: number } }[] }) => {
     // Pendant le positionnement sur le verset d'ouverture, les versets rendus un instant ne comptent pas.
     if (!positionne.current) return;
+    // Pendant un recalage lancé par le code (taille d'écriture), les versets entrevus en route ne comptent pas.
+    if (cibleRecalage.current !== null) return;
     const premier = viewableItems[0];
     if (premier) {
       versetVisible.current = premier.item.n;
@@ -229,16 +233,26 @@ function LectureSourate({
     );
     return () => clearTimeout(attente);
   }, [pret, fondu, debutChargement]);
+  // Fin du recalage : le verset retrouvé redevient le verset courant (l'en-tête et le Juz le suivent).
+  const finirRecalage = useCallback(() => {
+    const cible = cibleRecalage.current;
+    if (cible === null) return;
+    cibleRecalage.current = null;
+    versetVisible.current = cible;
+    setVersetHaut(cible);
+  }, []);
   const essayerDeSePlacer = useCallback(() => {
     essai.current += 1;
     echec.current = false;
-    liste.current?.scrollToIndex({ index: versetInitial - 1, animated: false });
+    liste.current?.scrollToIndex({ index: (cibleRecalage.current ?? versetInitial) - 1, animated: false });
     // Aucun échec signalé peu après : le verset est atteint.
     clearTimeout(succes.current);
     succes.current = setTimeout(() => {
-      if (!echec.current) terminerPositionnement();
+      if (echec.current) return;
+      terminerPositionnement();
+      finirRecalage();
     }, DELAI_SUCCES_MS);
-  }, [versetInitial, terminerPositionnement]);
+  }, [versetInitial, terminerPositionnement, finirRecalage]);
   useEffect(() => {
     if (positionne.current) return;
     const depart = setTimeout(essayerDeSePlacer, 0);
@@ -250,6 +264,23 @@ function LectureSourate({
       clearTimeout(succes.current);
     };
   }, [essayerDeSePlacer, terminerPositionnement]);
+  // Changement de taille d'écriture : les hauteurs des versets changent, la liste garde l'ancien décalage et saute.
+  // On retient le verset lu, puis un seul recalage sans animation une fois la liste redessinée.
+  const taillePrecedente = useRef(tailleArabe.fontSize);
+  useEffect(() => {
+    if (taillePrecedente.current === tailleArabe.fontSize) return;
+    taillePrecedente.current = tailleArabe.fontSize;
+    if (modePage || !positionne.current) return;
+    cibleRecalage.current = versetVisible.current;
+    essai.current = 0;
+    const image = requestAnimationFrame(essayerDeSePlacer);
+    // Jamais de blocage : passé ce délai, la liste reprend la main là où elle est.
+    const limite = setTimeout(finirRecalage, DUREE_MAX_MS);
+    return () => {
+      cancelAnimationFrame(image);
+      clearTimeout(limite);
+    };
+  }, [tailleArabe.fontSize, modePage, essayerDeSePlacer, finirRecalage]);
   const legende = [typographie.legende, { color: couleurs.encre3, textAlign: 'center' as const }];
 
   const basculerMode = () => {
@@ -412,6 +443,9 @@ function LectureSourate({
           ref={liste}
           data={versets}
           viewabilityConfig={CONFIG_VISIBILITE}
+          // Les hauteurs des versets sont estimées puis mesurées au fil du défilement : sans ancrage, chaque mesure
+          // déplace les versets visibles et la liste balance d'un verset à l'autre (surtout après un changement de taille).
+          maintainVisibleContentPosition={{ minIndexForVisible: 0 }}
           onViewableItemsChanged={surVisibles}
           onScrollEndDrag={enregistrerVerset}
           onMomentumScrollEnd={enregistrerVerset}
@@ -422,7 +456,10 @@ function LectureSourate({
             const suite = apresEchec(essai.current);
             clearTimeout(reessai.current);
             if (suite.reessayer) reessai.current = setTimeout(essayerDeSePlacer, suite.delai);
-            else terminerPositionnement();
+            else {
+              terminerPositionnement();
+              finirRecalage();
+            }
           }}
           style={{ opacity: pret ? 1 : 0 }}
           keyExtractor={(v) => String(v.n)}
@@ -488,7 +525,8 @@ function LectureSourate({
             </View>
             );
           }}
-          extraData={[translits, versetEcoute, chiffresArabes]}
+          // La taille est dans extraData : sans elle, les lignes déjà dessinées gardent l'ancienne taille.
+          extraData={[translits, versetEcoute, chiffresArabes, tailleArabe.fontSize]}
           contentContainerStyle={{
             paddingHorizontal: espace.espace6,
             paddingBottom: espace.espace8,
