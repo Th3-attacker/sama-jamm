@@ -79,7 +79,7 @@ export function EcranRecherche({ requete, onRequete, mode }: EcranRechercheProps
         <TopBar grand titre={t('recherche.titre')} />
       ) : null}
       {mode === 'modale' ? (
-        <View style={[styles.entete, { paddingTop: espace.espace2, paddingHorizontal: espace.espace5, gap: espace.espace2 }]}>
+        <View style={[styles.entete, { paddingHorizontal: espace.espace5, gap: espace.espace2 }]}>
           <View style={styles.champ}>
             <SearchField autoFocus placeholder={t('recherche.placeholder')} valeur={requete} onChange={onRequete} />
           </View>
