@@ -1,5 +1,4 @@
 import { Stack } from 'expo-router';
-import { useTranslation } from 'react-i18next';
 
 import { useTheme } from '@/theme/useTheme';
 
@@ -8,19 +7,11 @@ import { useTheme } from '@/theme/useTheme';
  * le champ natif (`Stack.SearchBar`) trouve sa place dans la barre de navigation ou, sur iOS 26, en bas.
  */
 export default function RechercheLayout() {
-  const { t } = useTranslation();
   const { couleurs } = useTheme();
   return (
     <Stack
-      screenOptions={{
-        headerShown: true,
-        title: t('recherche.titre'),
-        headerShadowVisible: false,
-        headerStyle: { backgroundColor: couleurs.fond },
-        headerTintColor: couleurs.emeraude,
-        headerTitleStyle: { color: couleurs.encre },
-        contentStyle: { backgroundColor: couleurs.fond },
-      }}
+      // Pas d'en-tête natif : le titre et la marge du haut viennent de TopBar (EcranRecherche). Le champ du système reste.
+      screenOptions={{ headerShown: false, contentStyle: { backgroundColor: couleurs.fond } }}
     />
   );
 }

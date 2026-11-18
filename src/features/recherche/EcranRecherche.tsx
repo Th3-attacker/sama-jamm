@@ -73,14 +73,34 @@ export function EcranRecherche({ requete, onRequete, mode }: EcranRechercheProps
     },
   ].filter((s) => s.data.length > 0);
 
+  // Les états (vide, attente, saisie courte, aucun résultat, invocations) vivent dans la liste : elle défile, donc glisser
+  // un doigt ferme le clavier, même celui du champ natif de l'onglet iPhone.
+  const etat =
+    filtre === 'invocations' ? (
+      <EmptyState icone="search" lang="fr" titre={t(`lire.${filtre}`)} texte={t('lire.invocationsAVenir')} />
+    ) : enAttente ? (
+      <ActivityIndicator accessibilityLabel={t('recherche.titre')} color={couleurs.emeraude} style={{ marginTop: espace.espace6 }} />
+    ) : tropCourte ? (
+      <EmptyState icone="search" lang="fr" titre={t('recherche.videTitre')} texte={t('recherche.tropCourt')} />
+    ) : aucun ? (
+      <EmptyState
+        icone="search"
+        titre={t('recherche.aucun', { terme: requeteDiffree.trim() })}
+        lang="fr"
+        texte={t('recherche.aucunTexte')}
+      />
+    ) : !recherche ? (
+      <EmptyState icone="search" lang="fr" titre={t('recherche.videTitre')} texte={t('recherche.aide')} />
+    ) : undefined;
+  const lignes = filtre === 'invocations' || enAttente || tropCourte || aucun ? [] : sections;
+
   return (
     // Android bord à bord : le clavier ne redimensionne plus la fenêtre, ce rembourrage remonte la liste au-dessus de lui.
     <EvitementClavier androidSeulement style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
+      {/* Planche : titre « Recherche » en haut, dans les deux modes (l'onglet iPhone n'a pas d'en-tête natif visible).
+          TopBar gère la zone de sécurité du haut comme les autres écrans. */}
+      <TopBar grand titre={t('recherche.titre')} />
       {/* Modale : champ de recherche et « Fermer ». L'onglet iPhone a le champ du système dans sa barre. */}
-      {mode === 'modale' ? (
-        // Planche : titre « Recherche » en haut. TopBar gère la zone de sécurité du haut comme les autres écrans.
-        <TopBar grand titre={t('recherche.titre')} />
-      ) : null}
       {mode === 'modale' ? (
         <View style={[styles.entete, { paddingTop: espace.espace2, paddingHorizontal: espace.espace5, gap: espace.espace2 }]}>
           <View style={styles.champ}>
@@ -101,31 +121,8 @@ export function EcranRecherche({ requete, onRequete, mode }: EcranRechercheProps
         ))}
       </View>
 
-      {filtre === 'invocations' ? (
-        <EmptyState
-          icone="search"
-          lang="fr"
-          titre={t(`lire.${filtre}`)}
-          texte={t('lire.invocationsAVenir')}
-        />
-      ) : enAttente ? (
-        <ActivityIndicator
-          accessibilityLabel={t('recherche.titre')}
-          color={couleurs.emeraude}
-          style={{ marginTop: espace.espace6 }}
-        />
-      ) : tropCourte ? (
-        <EmptyState icone="search" lang="fr" titre={t('recherche.videTitre')} texte={t('recherche.tropCourt')} />
-      ) : aucun ? (
-        <EmptyState
-          icone="search"
-          titre={t('recherche.aucun', { terme: requeteDiffree.trim() })}
-          lang="fr"
-          texte={t('recherche.aucunTexte')}
-        />
-      ) : (
         <SectionList
-          sections={sections}
+          sections={lignes}
           keyboardShouldPersistTaps="handled"
           keyboardDismissMode="on-drag"
           // iPhone : le défilement amène la liste au-dessus du clavier (voir EvitementClavier pour Android).
@@ -135,7 +132,7 @@ export function EcranRecherche({ requete, onRequete, mode }: EcranRechercheProps
           // Onglet iPhone : le système décale la liste sous la barre d'onglets en verre et le champ du bas.
           contentInsetAdjustmentBehavior={mode === 'onglet' ? 'automatic' : undefined}
           ListFooterComponent={
-            recherche && sections.length > 0 ? (
+            recherche && lignes.length > 0 ? (
               <View
                 style={{
                   marginTop: espace.espace2,
@@ -158,11 +155,8 @@ export function EcranRecherche({ requete, onRequete, mode }: EcranRechercheProps
               </View>
             ) : undefined
           }
-          ListEmptyComponent={
-            recherche ? undefined : (
-              <EmptyState icone="search" lang="fr" titre={t('recherche.videTitre')} texte={t('recherche.aide')} />
-            )
-          }
+          ListEmptyComponent={etat}
+          alwaysBounceVertical
           renderSectionHeader={({ section }) => (
             <Text
               accessibilityRole="header"
@@ -198,7 +192,6 @@ export function EcranRecherche({ requete, onRequete, mode }: EcranRechercheProps
           // Planche : 20 de marge de chaque côté, comme les filtres et l'en-tête.
           contentContainerStyle={{ paddingHorizontal: espace.espace5, paddingBottom: espace.espace8 }}
         />
-      )}
     </EvitementClavier>
   );
 }
