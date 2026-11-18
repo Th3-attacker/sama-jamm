@@ -87,6 +87,11 @@ export default function RootLayout() {
           <Stack.Screen name="budget-ajout" options={{ presentation: 'modal' }} />
           {/* Lecteur audio : modale plein écran ouverte depuis le mini-lecteur ou une lecture. */}
           <Stack.Screen name="lecteur" options={{ presentation: 'modal' }} />
+          {/* Réglages de lecture (iOS) : feuille native à mi-hauteur et pleine hauteur, avec poignée. */}
+          <Stack.Screen
+            name="reglages-lecture"
+            options={{ presentation: 'formSheet', sheetAllowedDetents: [0.55, 1], sheetGrabberVisible: true }}
+          />
         </Stack>
       </ToastProvider>
       {demarrage ? <DemarrageAnime onFin={finDemarrage} /> : null}

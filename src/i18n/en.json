@@ -2,6 +2,7 @@
   "commun": {
     "retour": "Back",
     "fermer": "Close",
+    "valider": "Confirm",
     "effacer": "Clear",
     "choisirDate": "Choose a date",
     "moisPrecedent": "Previous month",
