@@ -49,6 +49,11 @@ export type TopBarProps = {
   gauche?: ReactNode;
   /** Titre centré (lecteur de sourate). */
   centre?: boolean;
+  /**
+   * Écran racine d'un onglet : marge de 20 de chaque côté et 16 d'espace avant le premier bloc (règle d'en-tête).
+   * Par défaut vrai avec `grand`, ou avec `gauche` sans flèche de retour ; à passer à la main pour une barre sans titre (Budget).
+   */
+  racine?: boolean;
 };
 
 export function TopBar({
@@ -62,6 +67,7 @@ export function TopBar({
   transparent = false,
   gauche,
   centre = false,
+  racine,
 }: TopBarProps) {
   const { t } = useTranslation();
   const router = useRouter();
@@ -72,12 +78,15 @@ export function TopBar({
   const { miniRange } = useBottomStack();
   const casque = montrerCasque({ enEcoute, miniRange, chemin, casqueDejaPresent: actions?.some((a) => a.icone === 'headphones') ?? false });
   const avecRetour = retour !== undefined && retour !== false;
+  const enracine = racine ?? (grand || (gauche !== undefined && !avecRetour));
 
   return (
     <View
       style={{
         paddingTop: insets.top,
-        paddingHorizontal: espace.espace2,
+        paddingHorizontal: enracine ? espace.espace5 : espace.espace2,
+        // Règle d'en-tête : 16 exactement entre la barre et le premier bloc de l'écran.
+        paddingBottom: enracine ? espace.espace4 : 0,
         backgroundColor: transparent ? 'transparent' : couleurs.fond,
       }}>
       <View style={[styles.rangee, { gap: espace.espace1 }]}>
@@ -90,7 +99,7 @@ export function TopBar({
             onPress={onRetour ?? (() => router.back())}
           />
         ) : null}
-        <View style={[styles.titres, { paddingHorizontal: avecRetour ? 0 : espace.espace3 }]}>
+        <View style={[styles.titres, { paddingHorizontal: avecRetour || enracine ? 0 : espace.espace3 }]}>
           {gauche}
           {!grand && titre ? (
             <Text
@@ -140,7 +149,7 @@ export function TopBar({
         ) : null}
       </View>
       {grand && titre ? (
-        <View style={{ paddingHorizontal: espace.espace3, paddingBottom: espace.espace3 }}>
+        <View style={enracine ? undefined : { paddingHorizontal: espace.espace3, paddingBottom: espace.espace3 }}>
           <Text
             accessibilityRole="header"
             accessibilityLanguage={lang}
