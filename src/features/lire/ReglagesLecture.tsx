@@ -17,10 +17,12 @@ import { ReglageTaille, useTaillesLecture } from './BarreTaille';
 
 import { interlignes, tailles } from '@/theme/tokens.generated';
 /**
- * Feuille « Lecture ». `modePage` : ouverte depuis la vue page, où l'écriture s'ajuste à l'écran ; la taille ne vaut que
- * pour la lecture verset par verset, sa ligne et son effet sur l'aperçu disparaissent.
+ * Contenu de la feuille « Lecture » (aperçu, taille, translittération, chiffres, récitateur), partagé entre la feuille
+ * maison (Android) et l'écran en feuille native (iOS). `modePage` : ouverte depuis la vue page, où l'écriture s'ajuste à
+ * l'écran ; la taille ne vaut que pour la lecture verset par verset, sa ligne et son effet sur l'aperçu disparaissent.
+ * `verre` : piste de taille de la planche « Feuille à mi-hauteur » (iOS).
  */
-export function ReglagesLecture({ ouvert, onFermer, modePage = false }: { ouvert: boolean; onFermer: () => void; modePage?: boolean }) {
+export function ContenuReglagesLecture({ modePage = false, verre = false }: { modePage?: boolean; verre?: boolean }) {
   const { t } = useTranslation();
   const { couleurs, espace, rayon, typographie, ligne } = useTheme();
   const { tailleArabe } = useTaillesLecture();
@@ -33,7 +35,7 @@ export function ReglagesLecture({ ouvert, onFermer, modePage = false }: { ouvert
   const [recitateursOuverts, setRecitateursOuverts] = useState(false);
 
   return (
-    <BottomSheet ouvert={ouvert} titre={t('lire.reglagesLecture')} onFermer={onFermer}>
+    <>
       {/* Aperçu : Ash-Sharh, verset 6 ; carte de 16 de rayon, texte arabe à droite. */}
       <View
         style={{
@@ -58,7 +60,7 @@ export function ReglagesLecture({ ouvert, onFermer, modePage = false }: { ouvert
       </View>
       {modePage ? null : (
         <ListGroup>
-          <ReglageTaille />
+          <ReglageTaille verre={verre} />
         </ListGroup>
       )}
       <ListGroup>
@@ -92,6 +94,16 @@ export function ReglagesLecture({ ouvert, onFermer, modePage = false }: { ouvert
           ))}
         </ListGroup>
       ) : null}
+    </>
+  );
+}
+
+/** Feuille « Lecture » maison (Android) ; sur iOS le lecteur ouvre l'écran en feuille native `reglages-lecture`. */
+export function ReglagesLecture({ ouvert, onFermer, modePage = false }: { ouvert: boolean; onFermer: () => void; modePage?: boolean }) {
+  const { t } = useTranslation();
+  return (
+    <BottomSheet ouvert={ouvert} titre={t('lire.reglagesLecture')} onFermer={onFermer}>
+      <ContenuReglagesLecture modePage={modePage} />
     </BottomSheet>
   );
 }

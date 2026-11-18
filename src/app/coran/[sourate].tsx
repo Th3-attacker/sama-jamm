@@ -1,7 +1,7 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, Animated, FlatList, Pressable, StyleSheet, Text, View, type LayoutRectangle } from 'react-native';
+import { ActivityIndicator, Animated, FlatList, Platform, Pressable, StyleSheet, Text, View, type LayoutRectangle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { BasculeMode } from '@/features/lire/BasculeMode';
@@ -282,6 +282,11 @@ function LectureSourate({
   }, [tailleArabe.fontSize, modePage, essayerDeSePlacer, finirRecalage]);
   const legende = [typographie.legende, { color: couleurs.encre3, textAlign: 'center' as const }];
 
+  // iOS : feuille native ; Android : la feuille maison, montée plus bas.
+  const ouvrirReglages = () => {
+    if (Platform.OS === 'ios') router.push({ pathname: '/reglages-lecture', params: { mode: modePage ? 'page' : 'verset' } });
+    else setReglagesOuverts(true);
+  };
   const basculerMode = () => {
     if (modePage) {
       // On reste sur le verset qui ouvre la page : la lecture verset par verset s'y place.
@@ -322,7 +327,7 @@ function LectureSourate({
               { icone: 'list', label: t('lire.modeVerset'), couleur: couleurs.emeraude, onPress: basculerMode },
               { icone: 'headphones', label: t('ecouter.ecouterPage'), onPress: () => ecouterPage(page) },
             ]
-          : [{ icone: 'type', texte: 'Aa', label: t('lire.reglagesLecture'), onPress: () => setReglagesOuverts(true) }]
+          : [{ icone: 'type', texte: 'Aa', label: t('lire.reglagesLecture'), onPress: ouvrirReglages }]
       }
     />
   );
@@ -393,7 +398,7 @@ function LectureSourate({
             <View style={styles.outilsPage}>
               {[
                 { icone: 'headphones', libelle: t('commun.ecouter'), onPress: () => ecouterPage(page) },
-                { icone: 'type', libelle: t('lire.affichageOutil'), onPress: () => setReglagesOuverts(true) },
+                { icone: 'type', libelle: t('lire.affichageOutil'), onPress: ouvrirReglages },
                 { icone: 'search', libelle: t('lire.chercher'), onPress: () => router.push('/plus/recherche') },
               ].map((o) => (
                 <Pressable key={o.libelle} accessibilityRole="button" accessibilityLabel={o.libelle} onPress={o.onPress} style={styles.outilPage}>

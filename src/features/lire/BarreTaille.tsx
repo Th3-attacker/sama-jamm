@@ -1,10 +1,14 @@
+import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
+import { useSens } from '@/i18n/useSens';
 import { useReglages } from '@/stores/reglages';
 import { borneTaille, TAILLE_MAX, TAILLE_MIN } from '@/stores/tailleMigration';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
+
+import { pageDePosition, positionDeFraction } from './reglette';
 
 import { interlignes, tailles } from '@/theme/tokens.generated';
 /** Coefficients de taille du texte, du plus petit au plus grand ; l'échelon 2 (1) est la taille d'origine, le 1 (0,9) le défaut. */
@@ -82,10 +86,66 @@ export function BarreTaille() {
 }
 
 /**
+ * Piste de taille de la planche « Feuille à mi-hauteur » (iOS) : petit « ا », piste fine à quatre crans, grand « ا »,
+ * curseur rond qui se déplace au toucher et au glissement. Mêmes niveaux 2 à 5 que `BarreTaille`.
+ */
+function CurseurTaille() {
+  const { t } = useTranslation();
+  const { nom, couleurs, espace, rayon, ombres } = useTheme();
+  const rtl = useSens() === 'rtl';
+  const echelon = useReglages((s) => s.tailleLecture);
+  const definir = useReglages((s) => s.definirTailleLecture);
+  const [largeur, setLargeur] = useState(0);
+  const crans = TAILLE_MAX - TAILLE_MIN + 1;
+  const viser = (x: number) => definir(TAILLE_MIN + pageDePosition(x, largeur, crans, rtl) - 1);
+  const fraction = (echelon - TAILLE_MIN) / (crans - 1);
+
+  return (
+    <View
+      accessible
+      accessibilityRole="adjustable"
+      accessibilityLabel={t('lire.tailleArabe')}
+      accessibilityValue={{ min: TAILLE_MIN, max: TAILLE_MAX, now: echelon }}
+      accessibilityActions={[{ name: 'increment' }, { name: 'decrement' }]}
+      onAccessibilityAction={(e) => definir(echelon + (e.nativeEvent.actionName === 'increment' ? 1 : -1))}
+      style={[styles.barre, { gap: espace.espace3 }]}>
+      <Text accessibilityLanguage="ar" importantForAccessibility="no" style={{ color: couleurs.encre, fontSize: tailles.t14 }}>ا</Text>
+      <View
+        onLayout={(e) => setLargeur(e.nativeEvent.layout.width)}
+        onStartShouldSetResponder={() => true}
+        onMoveShouldSetResponder={() => true}
+        onResponderTerminationRequest={() => false}
+        onResponderGrant={(e) => viser(e.nativeEvent.locationX)}
+        onResponderMove={(e) => viser(e.nativeEvent.locationX)}
+        style={styles.zoneCurseur}>
+        <View pointerEvents="none" style={styles.dessinCurseur}>
+          <View style={[styles.pisteVerre, { backgroundColor: couleurs.ligne, borderRadius: rayon.rayonPastille }]} />
+          {Array.from({ length: crans - 1 }, (_, k) => (
+            <View
+              key={k}
+              style={[styles.repere, { backgroundColor: couleurs.ligneForte, borderRadius: rayon.rayonPastille, start: ((k + 1) / (crans - 1)) * largeur - 2 }]}
+            />
+          ))}
+          <View
+            style={[
+              styles.pouce,
+              // Jour : rond blanc avec ombre (planche). Nuit : `surface` serait sombre sur une carte sombre et sans ombre, donc invisible.
+              { backgroundColor: nom === 'jour' ? couleurs.surface : couleurs.encre, borderRadius: rayon.rayonPastille, start: positionDeFraction(fraction, largeur, rtl) - POUCE / 2 },
+              ombres.ombre1 !== 'none' ? { boxShadow: ombres.ombre1 } : null,
+            ]}
+          />
+        </View>
+      </View>
+      <Text accessibilityLanguage="ar" importantForAccessibility="no" style={{ color: couleurs.encre, fontSize: tailles.t24 }}>ا</Text>
+    </View>
+  );
+}
+
+/**
  * Réglage « Taille de l'écriture » : libellé et niveau, barre, puis l'aide (planche « Réglages de lecture »).
  * Il sert à la lecture verset par verset ; en mode page, l'écriture s'ajuste à l'écran.
  */
-export function ReglageTaille() {
+export function ReglageTaille({ verre = false }: { verre?: boolean }) {
   const { t } = useTranslation();
   const { couleurs, espace, typographie, ligne } = useTheme();
   const echelon = useReglages((s) => s.tailleLecture);
@@ -100,15 +160,24 @@ export function ReglageTaille() {
           {t('reglages.niveau', { n: echelon + 1 })}
         </Text>
       </View>
-      <BarreTaille />
-      <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, ligne(styles.aide), { color: couleurs.encre3 }]}>
-        {t('reglages.tailleAide')}
-      </Text>
+      {verre ? <CurseurTaille /> : <BarreTaille />}
+      {verre ? null : (
+        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, ligne(styles.aide), { color: couleurs.encre3 }]}>
+          {t('reglages.tailleAide')}
+        </Text>
+      )}
     </View>
   );
 }
 
+const POUCE = 28;
 const styles = StyleSheet.create({
+  // Planche « Feuille à mi-hauteur » : piste de 6, repères de 4, curseur rond de 28 ; zone touchable de 44.
+  zoneCurseur: { flex: 1, height: 44, justifyContent: 'center' },
+  dessinCurseur: { height: POUCE },
+  pisteVerre: { position: 'absolute', start: 0, end: 0, top: 11, height: 6 },
+  repere: { position: 'absolute', top: 12, width: 4, height: 4 },
+  pouce: { position: 'absolute', top: 0, width: POUCE, height: POUCE },
   entete: { flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between' },
   niveau: { fontSize: tailles.t14, lineHeight: interlignes.l20, fontVariant: ['tabular-nums'] },
   aide: { fontSize: tailles.t14, lineHeight: interlignes.l20 },
