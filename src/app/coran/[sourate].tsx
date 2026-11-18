@@ -25,7 +25,6 @@ import { ecouter, ecouterPage, useLecteur } from '@/features/ecouter/lecteur';
 import { SondeBarre } from '@/features/ecouter/SondeBarre';
 import { PartageVerset, type VersetAPartager } from '@/features/lire/PartageVerset';
 import { translitSansBalises } from '@/features/lire/reperes';
-import { ReglettePage } from '@/features/lire/ReglettePage';
 import { ReglagesLecture } from '@/features/lire/ReglagesLecture';
 import { useSens } from '@/i18n/useSens';
 import { enChiffresArabes } from '@/lib/chiffres';
@@ -367,7 +366,7 @@ function LectureSourate({
             />
           ) : null}
         </View>
-        {/* Planche « Mode page, réglette » : en bas, juz et page, réglette pour aller à une page, quatre outils. */}
+        {/* Planche « Mode page » : en bas, juz, hizb et page, puis les trois outils (plus de réglette). */}
         {barres ? (
           <View
             style={[
@@ -391,13 +390,6 @@ function LectureSourate({
                 {t('lire.pageSurTotal', { n: page, total: nombreDePages })}
               </Text>
             </View>
-            <ReglettePage
-              label={t('lire.reglettePage')}
-              page={page}
-              total={nombreDePages}
-              // Saut sans animation : la réglette suit le doigt, la page affichée la rattrape.
-              onChange={(p) => listePages.current?.scrollToIndex({ index: p - 1, animated: false })}
-            />
             <View style={styles.outilsPage}>
               {[
                 { icone: 'headphones', libelle: t('commun.ecouter'), onPress: () => ecouterPage(page) },
