@@ -189,7 +189,13 @@ function GrilleJuz({ parts, moi }: { parts: readonly Part[]; moi: string | null 
             : vue === 'leVotre'
               ? { backgroundColor: couleurs.emeraudeAplat }
               : { borderWidth: 1, borderColor: vue === 'enCours' ? couleurs.emeraude : couleurs.ligneForte };
-        return <View key={p.juz} style={[styles.juz, style]} />;
+        // Repère en plus de la couleur (planche Android) : coche pour un juz lu, point pour le vôtre.
+        return (
+          <View key={p.juz} style={[styles.juz, style]}>
+            {vue === 'lu' ? <View style={[styles.coche, { borderColor: couleurs.surEmeraudeDoux }]} /> : null}
+            {vue === 'leVotre' ? <View style={[styles.point, { backgroundColor: couleurs.surEmeraude }]} /> : null}
+          </View>
+        );
       })}
     </View>
   );
@@ -290,5 +296,8 @@ const styles = StyleSheet.create({
   dhikrTextes: { flex: 1 },
   // 30 carrés de 10, dix par rangée, écart 4 (136 de large).
   grilleJuz: { flexDirection: 'row', flexWrap: 'wrap', gap: espace.espace1, width: 136 },
-  juz: { width: 10, height: 10, borderRadius: 3 },
+  juz: { width: 10, height: 10, borderRadius: 3, alignItems: 'center', justifyContent: 'center' },
+  // Coche de 3 × 6 (trait de 1,5) et point de 4 : dessinés dans une case de 10, hors échelle d'espaces.
+  coche: { width: 3, height: 6, borderEndWidth: 1.5, borderBottomWidth: 1.5, transform: [{ translateY: -1 }, { rotate: '45deg' }] },
+  point: { width: 4, height: 4, borderRadius: 2 },
 });

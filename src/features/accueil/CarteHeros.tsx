@@ -14,11 +14,13 @@ import type { PriereArc } from '@/ui/DayArc';
 import { interlignes, tailles } from '@/theme/tokens.generated';
 type Props = {
   /** Nom de la prochaine prière. */
-  nom: string;
+  nom?: string;
   /** Heure de la prochaine prière, déjà formatée. */
-  heure: string;
+  heure?: string;
   /** Délai déjà formaté (« 42 min », « 1 h 05 »). */
-  dans: string;
+  dans?: string;
+  /** Aucune ville choisie : « -- : -- », points vides et « --:-- » (planche « ville à choisir »). */
+  sansVille?: boolean;
   prieres: readonly PriereArc[];
   /** Heure actuelle en minutes depuis minuit : le petit cercle « maintenant » entre deux prières. */
   maintenant?: number;
@@ -38,28 +40,28 @@ function separerDelai(dans: string): { valeur: string; unite: string | null } {
 }
 
 /** Carte héros de l'Accueil : la prochaine prière, le délai, l'heure, la frise du jour et les cinq prières (passées atténuées). */
-export function CarteHeros({ nom, heure, dans, prieres, maintenant }: Props) {
+export function CarteHeros({ nom = '', heure = '', dans = '', sansVille = false, prieres, maintenant }: Props) {
   const { t } = useTranslation();
   const rtl = useSens() === 'rtl';
   const { couleurs, espace, rayon, typographie, ligne } = useTheme();
   const surEmeraude = couleurs.surEmeraude;
-  const { valeur, unite } = separerDelai(dans);
+  const { valeur, unite } = sansVille ? { valeur: '-- : --', unite: null } : separerDelai(dans);
 
   const indiceSuivante = prieres.findIndex((p) => p.etat === 'prochaine');
   // Trait plein jusqu'à la prochaine prière ; toutes passées : jusqu'au dernier point.
   const finTrait = xPriere(indiceSuivante >= 0 ? indiceSuivante : prieres.length - 1);
-  const segment = maintenant === undefined ? null : segmentMaintenant(maintenant, prieres.map((p) => p.minutes));
+  const segment = sansVille || maintenant === undefined ? null : segmentMaintenant(maintenant, prieres.map((p) => p.minutes));
   const xMaintenant = segment ? xPriere(segment.indice) + (xPriere(segment.indice + 1) - xPriere(segment.indice)) * segment.fraction : null;
 
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={`${t('accueil.avant', { priere: nom })}, ${t('accueil.a', { heure })}, ${dans}`}
+      accessibilityLabel={sansVille ? t('accueil.horairesIndisponibles') : `${t('accueil.avant', { priere: nom })}, ${t('accueil.a', { heure })}, ${dans}`}
       onPress={() => router.push('/priere')}
       // Planche : rayon 26 et remplissage 18, hors jetons : rayon 20 (rayonFeuille) et remplissage 16.
       style={{ gap: espace.espace3, padding: espace.espace4, borderRadius: rayon.rayonFeuille, backgroundColor: couleurs.emeraudeAplat }}>
       <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, ligne(styles.libelle), { color: surEmeraude }]}>
-        {t('accueil.prochaine', { priere: nom })}
+        {sansVille ? t('priere.prochaine') : t('accueil.prochaine', { priere: nom })}
       </Text>
       <View style={[styles.ligne, { gap: espace.espace2 }]}>
         <Text maxFontSizeMultiplier={echelleMax.grand} style={[typographie.chiffre, ligne(styles.delai), { color: surEmeraude }]}>
@@ -70,14 +72,16 @@ export function CarteHeros({ nom, heure, dans, prieres, maintenant }: Props) {
             {unite}
           </Text>
         ) : null}
-        <Text maxFontSizeMultiplier={echelleMax.grand} style={[typographie.titre1, styles.heure, { color: surEmeraude }]}>
-          {heure}
-        </Text>
+        {sansVille ? null : (
+          <Text maxFontSizeMultiplier={echelleMax.grand} style={[typographie.titre1, styles.heure, { color: surEmeraude }]}>
+            {heure}
+          </Text>
+        )}
       </View>
       <View importantForAccessibility="no-hide-descendants" accessibilityElementsHidden style={rtl ? styles.miroir : undefined}>
         <Svg width="100%" height={20} viewBox={`0 0 ${LARGEUR} 20`}>
           <Line x1={xPriere(0)} y1={10} x2={xPriere(4)} y2={10} stroke={surEmeraude} strokeWidth={1.5} strokeDasharray="2 5" />
-          <Line x1={xPriere(0)} y1={10} x2={finTrait} y2={10} stroke={surEmeraude} strokeWidth={2.5} strokeLinecap="round" />
+          {sansVille ? null : <Line x1={xPriere(0)} y1={10} x2={finTrait} y2={10} stroke={surEmeraude} strokeWidth={2.5} strokeLinecap="round" />}
           {prieres.map((p, i) => {
             const cx = xPriere(i);
             // Fond de la carte = émeraude : la prochaine prière est un grand cercle creux, les passées sont pleines.
