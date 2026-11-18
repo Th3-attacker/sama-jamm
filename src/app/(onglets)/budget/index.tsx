@@ -123,7 +123,7 @@ export default function Budget() {
 
   return (
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
-      <TopBar actions={[oeil]} />
+      <TopBar racine actions={[oeil]} />
       <ScrollView ref={defilement}
         contentContainerStyle={{
           ...colonne,
