@@ -1,6 +1,7 @@
 import { router, Stack, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, useColorScheme, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ContenuReglagesLecture } from '@/features/lire/ReglagesLecture';
 import { ACCESSOIRE_NATIF } from '@/theme/layout';
@@ -15,17 +16,22 @@ import { IconButton } from '@/ui/IconButton';
  */
 export default function ReglagesLectureFeuille() {
   const { t } = useTranslation();
-  const { couleurs, espace, rayon, typographie, cible } = useTheme();
+  const { nom, couleurs, espace, rayon, typographie, cible } = useTheme();
+  const insets = useSafeAreaInsets();
+  const systeme = useColorScheme();
+  // Le verre suit le mode du téléphone, pas le thème de l'app : s'ils diffèrent (thème « Nuit » sur un téléphone clair),
+  // le titre et les icônes posés sur le verre seraient illisibles. Alors un aplat aux couleurs du thème.
+  const verreLisible = ACCESSOIRE_NATIF && nom === (systeme === 'dark' ? 'nuit' : 'jour');
   const { mode } = useLocalSearchParams<{ mode?: string }>();
   const fermer = () => router.back();
 
   return (
     <View style={styles.ecran}>
-      {/* iOS 26 : fond transparent, le système dessine le verre ; avant, un aplat aux couleurs du thème. */}
-      <Stack.Screen options={{ contentStyle: { backgroundColor: ACCESSOIRE_NATIF ? 'transparent' : couleurs.fond } }} />
+      {/* iOS 26 avec un thème qui suit le téléphone : fond transparent, le système dessine le verre ; sinon un aplat. */}
+      <Stack.Screen options={{ contentStyle: { backgroundColor: verreLisible ? 'transparent' : couleurs.fond } }} />
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
-        contentContainerStyle={{ paddingHorizontal: espace.espace5, paddingTop: espace.espace3, paddingBottom: espace.espace8, gap: espace.espace3 }}>
+        contentContainerStyle={{ paddingHorizontal: espace.espace5, paddingTop: espace.espace3, paddingBottom: espace.espace8 + insets.bottom, gap: espace.espace3 }}>
         <View style={styles.entete}>
           <IconButton icone="close" label={t('commun.fermer')} onPress={fermer} />
           <Text accessibilityRole="header" maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, { color: couleurs.encre }]}>
