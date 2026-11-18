@@ -261,6 +261,7 @@
     "khatmCourt": "ختمة {{lus}}/30",
     "ecouterNom": "استمع إلى {{nom}}",
     "pageSurTotal": "صفحة {{n}} من {{total}}",
+    "reglettePage": "الصفحة",
     "page": "الصفحة",
     "affichageOutil": "العرض",
     "chercher": "بحث",

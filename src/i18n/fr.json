@@ -241,6 +241,7 @@
     "khatmCourt": "Khatm {{lus}}/30",
     "ecouterNom": "Écouter {{nom}}",
     "pageSurTotal": "Page {{n}} sur {{total}}",
+    "reglettePage": "Page",
     "page": "Page",
     "affichageOutil": "Affichage",
     "chercher": "Chercher",

@@ -25,6 +25,7 @@ import { ecouter, ecouterPage, useLecteur } from '@/features/ecouter/lecteur';
 import { SondeBarre } from '@/features/ecouter/SondeBarre';
 import { PartageVerset, type VersetAPartager } from '@/features/lire/PartageVerset';
 import { translitSansBalises } from '@/features/lire/reperes';
+import { ReglettePage } from '@/features/lire/ReglettePage';
 import { ReglagesLecture } from '@/features/lire/ReglagesLecture';
 import { useSens } from '@/i18n/useSens';
 import { enChiffresArabes } from '@/lib/chiffres';
@@ -352,13 +353,20 @@ function LectureSourate({
             <View style={styles.infosPage}>
               <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre3 }]}>
                 {premierSegment
-                  ? t('lire.juz', { n: reperes().juzDe(premierSegment.sourate, premierSegment.versets[0]?.verset ?? 1) })
+                  ? `${t('lire.juz', { n: reperes().juzDe(premierSegment.sourate, premierSegment.versets[0]?.verset ?? 1) })} · ${t('lire.hizb', { n: reperes().hizbDe(premierSegment.sourate, premierSegment.versets[0]?.verset ?? 1) })}`
                   : ''}
               </Text>
               <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre }]}>
                 {t('lire.pageSurTotal', { n: page, total: nombreDePages })}
               </Text>
             </View>
+            <ReglettePage
+              label={t('lire.reglettePage')}
+              page={page}
+              total={nombreDePages}
+              // Saut sans animation : la réglette suit le doigt, la page affichée la rattrape.
+              onChange={(p) => listePages.current?.scrollToIndex({ index: p - 1, animated: false })}
+            />
             <View style={styles.outilsPage}>
               {[
                 { icone: 'headphones', libelle: t('commun.ecouter'), onPress: () => ecouterPage(page) },
