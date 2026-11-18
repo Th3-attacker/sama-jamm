@@ -631,6 +631,8 @@
     "resultats_other": "{{count}} résultats",
     "aucun": "Aucun résultat pour « {{terme}} »",
     "aucunTexte": "Essayez un autre mot, ou le nom d’une sourate : « kahf », « yasin ».",
+    "tropCourt": "Saisissez au moins 2 lettres pour lancer la recherche.",
+    "limite": "{{affiches}} premiers versets affichés sur {{total}}. Précisez votre recherche pour voir les autres.",
     "sourates": "Sourates",
     "versets": "Versets",
     "videTitre": "Cherchez comme vous parlez",

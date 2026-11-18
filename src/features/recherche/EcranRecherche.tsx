@@ -6,13 +6,14 @@ import { ActivityIndicator, Pressable, SectionList, StyleSheet, Text, View } fro
 import { contientArabe } from '@/features/recherche/normaliser';
 import { CarteSourate } from '@/features/lire/CarteSourate';
 import { CarteVerset } from '@/features/lire/CarteVerset';
-import { indexPret, preparerIndex, rechercher, VIDE, type ResultatVerset } from '@/features/recherche/recherche';
+import { indexPret, preparerIndex, rechercher, requeteTropCourte, VIDE, type ResultatVerset } from '@/features/recherche/recherche';
 import type { Sourate } from '@/features/lire/coran';
 import { useReglages } from '@/stores/reglages';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { Chip } from '@/ui/Chip';
 import { EmptyState } from '@/ui/EmptyState';
+import { EvitementClavier } from '@/ui/EvitementClavier';
 import { SearchField } from '@/ui/SearchField';
 import { TopBar } from '@/ui/TopBar';
 
@@ -60,7 +61,8 @@ export function EcranRecherche({ requete, onRequete, mode }: EcranRechercheProps
   const resultats = useMemo(() => (pret ? rechercher(requeteDiffree) : VIDE), [pret, requeteDiffree]);
   const enAttente = !pret && requeteDiffree.trim().length > 0;
   const recherche = requeteDiffree.trim().length > 0;
-  const aucun = pret && recherche && resultats.sourates.length === 0 && resultats.versets.length === 0;
+  const tropCourte = requeteTropCourte(requeteDiffree);
+  const aucun = pret && recherche && !tropCourte && resultats.sourates.length === 0 && resultats.versets.length === 0;
 
   const sections: { cle: string; titre: string; data: Ligne[] }[] = [
     { cle: 'sourates', titre: t('recherche.sourates'), data: resultats.sourates },
@@ -72,7 +74,8 @@ export function EcranRecherche({ requete, onRequete, mode }: EcranRechercheProps
   ].filter((s) => s.data.length > 0);
 
   return (
-    <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
+    // Android bord à bord : le clavier ne redimensionne plus la fenêtre, ce rembourrage remonte la liste au-dessus de lui.
+    <EvitementClavier androidSeulement style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
       {/* Modale : champ de recherche et « Fermer ». L'onglet iPhone a le champ du système dans sa barre. */}
       {mode === 'modale' ? (
         // Planche : titre « Recherche » en haut. TopBar gère la zone de sécurité du haut comme les autres écrans.
@@ -81,7 +84,7 @@ export function EcranRecherche({ requete, onRequete, mode }: EcranRechercheProps
       {mode === 'modale' ? (
         <View style={[styles.entete, { paddingTop: espace.espace2, paddingHorizontal: espace.espace5, gap: espace.espace2 }]}>
           <View style={styles.champ}>
-            <SearchField autoFocus placeholder={t('recherche.placeholder')} valeur={requete} onChange={onRequete} />
+            <SearchField placeholder={t('recherche.placeholder')} valeur={requete} onChange={onRequete} />
           </View>
           <Pressable accessibilityRole="button" accessibilityLabel={t('commun.fermer')} hitSlop={8} onPress={() => router.back()}>
             <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, ligne(styles.fermer), { color: couleurs.encre }]}>
@@ -111,6 +114,8 @@ export function EcranRecherche({ requete, onRequete, mode }: EcranRechercheProps
           color={couleurs.emeraude}
           style={{ marginTop: espace.espace6 }}
         />
+      ) : tropCourte ? (
+        <EmptyState icone="search" lang="fr" titre={t('recherche.videTitre')} texte={t('recherche.tropCourt')} />
       ) : aucun ? (
         <EmptyState
           icone="search"
@@ -122,6 +127,9 @@ export function EcranRecherche({ requete, onRequete, mode }: EcranRechercheProps
         <SectionList
           sections={sections}
           keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="on-drag"
+          // iPhone : le défilement amène la liste au-dessus du clavier (voir EvitementClavier pour Android).
+          automaticallyAdjustKeyboardInsets
           keyExtractor={(ligne) => ('versets' in ligne ? `s${ligne.n}` : `v${ligne.sourate}:${ligne.verset}`)}
           stickySectionHeadersEnabled={false}
           // Onglet iPhone : le système décale la liste sous la barre d'onglets en verre et le champ du bas.
@@ -142,6 +150,11 @@ export function EcranRecherche({ requete, onRequete, mode }: EcranRechercheProps
                 <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, ligne(styles.aide), { color: couleurs.encre2 }]}>
                   {t('recherche.aide')}
                 </Text>
+                {resultats.totalVersets > resultats.versets.length ? (
+                  <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, ligne(styles.aide), { color: couleurs.encre2 }]}>
+                    {t('recherche.limite', { affiches: resultats.versets.length, total: resultats.totalVersets })}
+                  </Text>
+                ) : null}
               </View>
             ) : undefined
           }
@@ -186,7 +199,7 @@ export function EcranRecherche({ requete, onRequete, mode }: EcranRechercheProps
           contentContainerStyle={{ paddingHorizontal: espace.espace5, paddingBottom: espace.espace8 }}
         />
       )}
-    </View>
+    </EvitementClavier>
   );
 }
 

@@ -4,7 +4,7 @@ import { test } from 'node:test';
 
 import type { Sourate } from '@/features/lire/coran';
 
-import { chercher, LIMITE_VERSETS, nomNormalise, versetsNormalises, VIDE, type Index, type Textes } from './moteur.ts';
+import { chercher, LIMITE_VERSETS, nomNormalise, requeteTropCourte, versetsNormalises, VIDE, type Index, type Textes } from './moteur.ts';
 
 // Mini-Coran de test : trois sourates.
 const SOURATES: Sourate[] = [
@@ -94,4 +94,14 @@ test('liste coupée à LIMITE_VERSETS, mais le total compte tous les versets', (
   assert.equal(r.versets.length, LIMITE_VERSETS);
   assert.equal(r.totalVersets, nombre);
   assert.equal(r.versets.at(-1)?.verset, LIMITE_VERSETS);
+});
+
+test('une lettre seule, ou des mots d\'une lettre, ne lancent pas la recherche', () => {
+  assert.equal(chercher(IDX, 'a b', textes), VIDE);
+  assert.equal(requeteTropCourte('a'), true);
+  assert.equal(requeteTropCourte('a b'), true);
+  assert.equal(requeteTropCourte('   '), false);
+  assert.equal(requeteTropCourte('kahf'), false);
+  assert.equal(requeteTropCourte('و'), true);
+  assert.equal(requeteTropCourte('و الله'), false);
 });

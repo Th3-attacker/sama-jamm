@@ -631,6 +631,8 @@
     "resultats_other": "{{count}} results",
     "aucun": "No results for “{{terme}}”",
     "aucunTexte": "Try another word, or the name of a surah: “kahf”, “yasin”.",
+    "tropCourt": "Type at least 2 letters to start searching.",
+    "limite": "First {{affiches}} verses shown out of {{total}}. Narrow your search to see the others.",
     "sourates": "Surahs",
     "versets": "Verses",
     "videTitre": "Search the way you speak",

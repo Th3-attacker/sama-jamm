@@ -7,7 +7,7 @@ import { parPaquets } from '@/lib/paquets';
 
 import { chercher, nomNormalise, versetsNormalises, type Index, type Resultats } from './moteur';
 
-export { LIMITE_VERSETS, VIDE, type ResultatVerset, type Resultats } from './moteur';
+export { LIMITE_VERSETS, requeteTropCourte, VIDE, type ResultatVerset, type Resultats } from './moteur';
 
 let indexEnMemoire: Index | undefined;
 let preparation: Promise<void> | undefined;

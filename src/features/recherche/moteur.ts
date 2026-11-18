@@ -46,11 +46,23 @@ export const versetsNormalises = (arabe: readonly string[], translit: readonly s
 /** Tous les mots de la requête doivent se trouver dans le texte. */
 const contientTout = (texte: string, mots: string[]) => mots.every((m) => texte.includes(m));
 
-export function chercher(idx: Index, requete: string, textes: Textes): Resultats {
+/**
+ * Mots à chercher. En lettres latines, un mot d'une seule lettre est ignoré (« a b » trouverait presque tout) ;
+ * en arabe, une lettre seule est un vrai mot (« و »). Vide quand la saisie est trop courte pour chercher.
+ */
+function analyser(requete: string) {
   const arabe = contientArabe(requete);
   const norm = arabe ? normaliserArabe(requete) : normaliserLatin(requete);
-  if (norm.replace(/ /g, '').length < LONGUEUR_MINI) return VIDE;
-  const mots = norm.split(' ');
+  if (norm.replace(/ /g, '').length < LONGUEUR_MINI) return { arabe, norm, mots: [] as string[] };
+  return { arabe, norm, mots: norm.split(' ').filter((m) => m !== '' && (arabe || m.length >= LONGUEUR_MINI)) };
+}
+
+/** Vrai quand la saisie n'est pas vide mais trop courte pour lancer la recherche (l'écran le dit au lieu de « aucun résultat »). */
+export const requeteTropCourte = (requete: string) => requete.trim() !== '' && analyser(requete).mots.length === 0;
+
+export function chercher(idx: Index, requete: string, textes: Textes): Resultats {
+  const { arabe, norm, mots } = analyser(requete);
+  if (mots.length === 0) return VIDE;
 
   // Noms de sourates : « kahf » trouve Al-Kahf, « yasin » trouve Yâ-Sîn.
   const souratesTrouvees = idx.noms
