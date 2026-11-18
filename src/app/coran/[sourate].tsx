@@ -731,8 +731,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  textes: { flex: 1, gap: espace.espace1 },
-  arabe: { textAlign: 'right', writingDirection: 'rtl' },
+  // `minWidth: 0` : la colonne peut rétrécir, un mot long passe à la ligne au lieu de déborder ; la marge de côté laisse
+  // la place aux voyelles et aux ligatures de la police, qui dépassent de la boîte du texte et seraient rognées.
+  textes: { flex: 1, minWidth: 0, gap: espace.espace1 },
+  arabe: { textAlign: 'right', writingDirection: 'rtl', paddingHorizontal: espace.espace1 },
   actions: { flexDirection: 'row', justifyContent: 'flex-end' },
   repere: { textAlign: 'center' },
   barreFlottante: { position: 'absolute', top: 0, left: 0, right: 0, borderBottomWidth: StyleSheet.hairlineWidth },
