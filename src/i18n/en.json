@@ -618,7 +618,12 @@
     "totalInvocations_one": "{{count}} supplication in total",
     "totalInvocations_other": "{{count}} supplications in total",
     "fois_one": "once",
-    "fois_other": "{{count}} times"
+    "fois_other": "{{count}} times",
+    "ecouter": "Listen",
+    "ecouterInvocation": "Listen to the invocation",
+    "pauseEcoute": "Pause listening",
+    "avancementEcoute": "Listening progress",
+    "audioHorsLigne": "No connection: this invocation is not on your phone yet."
   },
   "recherche": {
     "titre": "Search",
