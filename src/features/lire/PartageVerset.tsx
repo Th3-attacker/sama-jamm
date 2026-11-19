@@ -148,24 +148,16 @@ export function PartageVerset({ verset, onFermer }: { verset: VersetAPartager | 
                   {translit}
                 </Text>
               ) : null}
-              {invocation ? (
-                <>
-                  <Text allowFontScaling={false} style={[typographie.legende, styles.reference, taille(typographie.legende), { color: c.accent }]}>
-                    {reference}
-                  </Text>
-                  {/* Invocation : le logo de l'app et son nom en bas de l'image (planche « Invocations · partager »). */}
-                  <View style={[styles.marque, { gap: espace.espace1 }]}>
-                    <Logo taille={20} fond={fond === 'ivoire' ? 'clair' : 'sombre'} />
-                    <Text allowFontScaling={false} style={[typographie.legende, styles.reference, taille(typographie.legende), { color: c.accent }]}>
-                      {t('partage.marque')}
-                    </Text>
-                  </View>
-                </>
-              ) : (
+              {/* Verset et invocation : la référence (ou la source), puis le logo de l'app et son nom (planches « Partager »). */}
+              <Text allowFontScaling={false} style={[typographie.legende, styles.reference, taille(typographie.legende), { color: c.accent }]}>
+                {reference}
+              </Text>
+              <View style={[styles.marque, { gap: espace.espace1 }]}>
+                <Logo taille={20} fond={fond === 'ivoire' ? 'clair' : 'sombre'} />
                 <Text allowFontScaling={false} style={[typographie.legende, styles.reference, taille(typographie.legende), { color: c.accent }]}>
-                  {`${reference} · ${t('partage.marque')}`}
+                  {t('partage.marque')}
                 </Text>
-              )}
+              </View>
               </View>
             </View>
           </View>
