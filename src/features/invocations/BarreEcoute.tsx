@@ -1,5 +1,5 @@
 import { setAudioModeAsync, useAudioPlayer, useAudioPlayerStatus } from 'expo-audio';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
@@ -15,7 +15,8 @@ import { garderAudio, reseauDisponible, sourceAudio } from './audioLocal';
 type Props = { idInvocation: string };
 
 // Planche « Invocations · lecture » : bouton lecture rond, « Écouter », barre d'avancement et temps écoulé.
-// Une seule invocation à la fois ; l'écoute s'arrête quand on change d'invocation ou quand on quitte l'écran.
+// Une seule invocation à la fois : l'écran la monte avec `key` = identifiant, donc le lecteur est libéré (écoute arrêtée)
+// quand on change d'invocation ou qu'on quitte l'écran.
 export function BarreEcoute({ idInvocation }: Props) {
   const { t } = useTranslation();
   const { couleurs, espace, rayon, typographie, ligne } = useTheme();
@@ -23,12 +24,6 @@ export function BarreEcoute({ idInvocation }: Props) {
   const statut = useAudioPlayerStatus(lecteur);
   const [charge, setCharge] = useState<string | null>(null);
   const [horsLigne, setHorsLigne] = useState(false);
-
-  useEffect(() => {
-    lecteur.pause();
-    setCharge(null);
-    setHorsLigne(false);
-  }, [idInvocation, lecteur]);
 
   const basculer = async () => {
     if (statut.playing) {

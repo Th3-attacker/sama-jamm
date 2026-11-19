@@ -149,7 +149,7 @@ function Lecture({ inv, categorie, liste }: { inv: Invocation; categorie: Catego
           onPartager={partager}
         />
         {/* Planche : la barre « Écouter » sous la carte ; l'écoute s'arrête quand l'invocation change. */}
-        <BarreEcoute idInvocation={inv.id} />
+        <BarreEcoute key={inv.id} idInvocation={inv.id} />
       </ScrollView>
       <PartageVerset verset={aPartager} onFermer={() => setAPartager(null)} />
       <BarreCompteur
