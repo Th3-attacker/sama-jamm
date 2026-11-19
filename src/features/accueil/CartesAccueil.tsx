@@ -189,7 +189,13 @@ function GrilleJuz({ parts, moi }: { parts: readonly Part[]; moi: string | null 
             : vue === 'leVotre'
               ? { backgroundColor: couleurs.emeraudeAplat }
               : { borderWidth: 1, borderColor: vue === 'enCours' ? couleurs.emeraude : couleurs.ligneForte };
-        return <View key={p.juz} style={[styles.juz, style]} />;
+        // Repère en plus de la couleur (planche Android) : coche pour un juz lu, point pour le vôtre.
+        return (
+          <View key={p.juz} style={[styles.juz, style]}>
+            {vue === 'lu' ? <View style={[styles.coche, { borderColor: couleurs.surEmeraudeDoux }]} /> : null}
+            {vue === 'leVotre' ? <View style={[styles.point, { backgroundColor: couleurs.surEmeraude }]} /> : null}
+          </View>
+        );
       })}
     </View>
   );
@@ -257,14 +263,18 @@ function CarteKhatm() {
  * Grille des cartes : 2×2 en classe compacte, une colonne quand le texte est très agrandi (aucune carte tronquée),
  * quatre sur une ligne dès la classe moyenne.
  */
-export function GrilleAccueil({ colonnes }: { colonnes: 1 | 2 | 4 }) {
+export function GrilleAccueil({ largeur }: { largeur: ClasseLargeur }) {
   const { espace } = useTheme();
+  const { fontScale } = useWindowDimensions();
+  // Largeur réelle de la grille : la barre latérale de l'iPad retire une part de la fenêtre.
+  const [largeurUtile, setLargeurUtile] = useState<number | undefined>(undefined);
+  const colonnes = colonnesGrille(largeur, fontScale, largeurUtile);
   const cartes = [<CarteReprendre key="r" />, <CarteKhatm key="k" />, <CarteBudget key="b" />, <CarteDhikr key="d" />];
   const taille = colonnes;
   const lignes: (typeof cartes)[] = [];
   for (let i = 0; i < cartes.length; i += taille) lignes.push(cartes.slice(i, i + taille));
   return (
-    <View style={{ gap: espace.espace3 }}>
+    <View style={{ gap: espace.espace3 }} onLayout={(e) => setLargeurUtile(e.nativeEvent.layout.width)}>
       {lignes.map((l, i) => (
         <View key={i} style={[styles.ligne, { gap: espace.espace3 }]}>
           {l}
@@ -272,12 +282,6 @@ export function GrilleAccueil({ colonnes }: { colonnes: 1 | 2 | 4 }) {
       ))}
     </View>
   );
-}
-
-/** Colonnes de la grille pour la fenêtre courante (classe de largeur et échelle de texte du téléphone). */
-export function useColonnesGrille(largeur: ClasseLargeur) {
-  const { fontScale } = useWindowDimensions();
-  return colonnesGrille(largeur, fontScale);
 }
 
 const styles = StyleSheet.create({
@@ -290,5 +294,8 @@ const styles = StyleSheet.create({
   dhikrTextes: { flex: 1 },
   // 30 carrés de 10, dix par rangée, écart 4 (136 de large).
   grilleJuz: { flexDirection: 'row', flexWrap: 'wrap', gap: espace.espace1, width: 136 },
-  juz: { width: 10, height: 10, borderRadius: 3 },
+  juz: { width: 10, height: 10, borderRadius: 3, alignItems: 'center', justifyContent: 'center' },
+  // Coche de 3 × 6 (trait de 1,5) et point de 4 : dessinés dans une case de 10, hors échelle d'espaces.
+  coche: { width: 3, height: 6, borderEndWidth: 1.5, borderBottomWidth: 1.5, transform: [{ translateY: -1 }, { rotate: '45deg' }] },
+  point: { width: 4, height: 4, borderRadius: 2 },
 });

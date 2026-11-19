@@ -5,6 +5,7 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
 import { nombreDePages, pageDe, sourate, sourates, versetsDePage } from '@/features/lire/coran';
+import i18n from '@/i18n';
 import { stockage } from '@/stores/stockage';
 
 import { versetAuTemps } from './durees';
@@ -106,7 +107,8 @@ function metadonnees(p: Position) {
   const r = recitateur(useLecteur.getState().recitateur);
   const artworkUrl = pochette();
   return {
-    title: `${sourate(p.sourate)?.nom ?? ''} · ${p.verset}`,
+    // « Al-Kahf · verset 10 » : le mot « verset » est dans la langue de l'app.
+    title: i18n.t('ecouter.titreVerrouille', { nom: sourate(p.sourate)?.nom ?? '', n: p.verset }),
     artist: r?.nom ?? '',
     // Logo de l'app sur l'écran verrouillé, dès que son fichier est prêt.
     ...(artworkUrl ? { artworkUrl } : {}),

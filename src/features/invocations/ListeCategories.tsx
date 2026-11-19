@@ -1,7 +1,8 @@
 import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
+import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { ListGroup } from '@/ui/ListGroup';
 import { ListItem } from '@/ui/ListItem';
@@ -13,22 +14,19 @@ import { categories, invocationsDe } from './donnees';
 const ICONES: Record<string, IconName> = {
   morning: 'sun',
   evening: 'moon',
+  after_prayer: 'check-circle',
   sleep: 'moon',
-  night_prayer: 'moon',
   travel: 'compass',
-  home: 'home',
-  masjid: 'kaaba',
-  marriage: 'heart',
-  business: 'cart',
 };
 
-/** Bibliothèque des invocations : un seul bloc avec les 16 catégories. */
+/** Bibliothèque des invocations : un seul bloc avec les moments de la journée, puis le total (planche « Invocations · moments »). */
 export function ListeCategories() {
   const { t } = useTranslation();
-  const { espace } = useTheme();
+  const { couleurs, espace, typographie } = useTheme();
+  const total = categories().reduce((somme, c) => somme + invocationsDe(c.id).length, 0);
   return (
-    <View style={{ paddingTop: espace.espace3 }}>
-      <ListGroup titre={t('lire.invocations')}>
+    <View style={{ paddingTop: espace.espace3, gap: espace.espace3 }}>
+      <ListGroup titre={t('invocations.moments')}>
         {categories().map((c) => (
           <ListItem
             key={c.id}
@@ -40,6 +38,13 @@ export function ListeCategories() {
           />
         ))}
       </ListGroup>
+      <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, styles.total, { color: couleurs.encre3 }]}>
+        {t('invocations.totalInvocations', { count: total })}
+      </Text>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  total: { textAlign: 'center' },
+});

@@ -2,7 +2,6 @@ import { router } from 'expo-router';
 import { useDeferredValue, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Pressable, SectionList, StyleSheet, Text, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { contientArabe } from '@/features/recherche/normaliser';
 import { CarteSourate } from '@/features/lire/CarteSourate';
@@ -15,6 +14,7 @@ import { useTheme } from '@/theme/useTheme';
 import { Chip } from '@/ui/Chip';
 import { EmptyState } from '@/ui/EmptyState';
 import { SearchField } from '@/ui/SearchField';
+import { TopBar } from '@/ui/TopBar';
 
 import { espace, interlignes, tailles } from '@/theme/tokens.generated';
 type Ligne = Sourate | ResultatVerset;
@@ -34,9 +34,8 @@ export type EcranRechercheProps = {
 
 /** Contenu de la recherche (filtres, sourates, versets, états vides), partagé par la modale et l'onglet iPhone. */
 export function EcranRecherche({ requete, onRequete, mode }: EcranRechercheProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { couleurs, espace, rayon, typographie, ligne } = useTheme();
-  const insets = useSafeAreaInsets();
   const [filtre, setFiltre] = useState<Filtre>('tout');
   // La frappe reste fluide : la recherche suit avec un léger retard.
   const requeteDiffree = useDeferredValue(requete);
@@ -76,11 +75,11 @@ export function EcranRecherche({ requete, onRequete, mode }: EcranRechercheProps
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
       {/* Modale : champ de recherche et « Fermer ». L'onglet iPhone a le champ du système dans sa barre. */}
       {mode === 'modale' ? (
-        <View
-          style={[
-            styles.entete,
-            { paddingTop: insets.top + espace.espace3, paddingHorizontal: espace.espace5, gap: espace.espace2 },
-          ]}>
+        // Planche : titre « Recherche » en haut. TopBar gère la zone de sécurité du haut comme les autres écrans.
+        <TopBar grand titre={t('recherche.titre')} />
+      ) : null}
+      {mode === 'modale' ? (
+        <View style={[styles.entete, { paddingHorizontal: espace.espace5, gap: espace.espace2 }]}>
           <View style={styles.champ}>
             <SearchField autoFocus placeholder={t('recherche.placeholder')} valeur={requete} onChange={onRequete} />
           </View>
@@ -155,7 +154,7 @@ export function EcranRecherche({ requete, onRequete, mode }: EcranRechercheProps
             <Text
               accessibilityRole="header"
               maxFontSizeMultiplier={echelleMax.courant}
-              style={[typographie.libelle, styles.titreSection, { color: couleurs.encre3, paddingTop: espace.espace2, paddingBottom: espace.espace4 }]}>
+              style={[typographie.libelle, styles.titreSection, i18n.language === 'ar' ? styles.sansInterlettrage : null, { color: couleurs.encre3, paddingTop: espace.espace2, paddingBottom: espace.espace4 }]}>
               {section.titre}
             </Text>
           )}
@@ -183,7 +182,8 @@ export function EcranRecherche({ requete, onRequete, mode }: EcranRechercheProps
               />
             )
           }
-          contentContainerStyle={{ paddingHorizontal: espace.espace6, paddingBottom: espace.espace8 }}
+          // Planche : 20 de marge de chaque côté, comme les filtres et l'en-tête.
+          contentContainerStyle={{ paddingHorizontal: espace.espace5, paddingBottom: espace.espace8 }}
         />
       )}
     </View>
@@ -193,9 +193,12 @@ export function EcranRecherche({ requete, onRequete, mode }: EcranRechercheProps
 const styles = StyleSheet.create({
   ecran: { flex: 1 },
   entete: { flexDirection: 'row', alignItems: 'center' },
-  champ: { flex: 1 },
+  // minWidth 0 : le champ rétrécit au lieu de pousser « Fermer » hors de l'écran (texte agrandi).
+  champ: { flex: 1, minWidth: 0 },
   filtres: { flexDirection: 'row', flexWrap: 'wrap' },
-  fermer: { fontSize: tailles.t16, lineHeight: interlignes.l24, paddingHorizontal: espace.espace2 },
+  fermer: { flexShrink: 0, fontSize: tailles.t16, lineHeight: interlignes.l24, paddingHorizontal: espace.espace2 },
   aide: { fontSize: tailles.t14, lineHeight: interlignes.l20 },
   titreSection: { textTransform: 'uppercase', letterSpacing: 0.84 },
+  // L'espacement des lettres casse la jointure de l'arabe.
+  sansInterlettrage: { letterSpacing: 0 },
 });

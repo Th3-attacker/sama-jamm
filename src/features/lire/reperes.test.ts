@@ -41,3 +41,9 @@ test('translittération : balises de Tanzil en segments, texte intact', () => {
   ]);
   assert.equal(s[3]?.style, 'muet');
 });
+
+test('hizb : du début de la sourate Al-Fâtiha au dernier verset', () => {
+  assert.equal(r.hizbDe(1, 1), 1);
+  assert.equal(r.hizbDe(2, 75), 2);
+  assert.equal(r.hizbDe(114, 6), 60);
+});

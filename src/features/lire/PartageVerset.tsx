@@ -9,19 +9,24 @@ import { captureRef } from 'react-native-view-shot';
 
 import { themes } from '@/theme/tokens.generated';
 import { echelleSuivante } from './echelleCarte';
+import { texteACopier, texteInvocationACopier } from './texteVerset';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { BottomSheet } from '@/ui/BottomSheet';
 import { Button } from '@/ui/Button';
 import { Chip } from '@/ui/Chip';
 import { SegmentedControl } from '@/ui/SegmentedControl';
+import { Logo } from '@/ui/Logo';
 import { useToast } from '@/ui/Toast';
 
 type Fond = 'emeraude' | 'nuit' | 'ivoire';
 type Format = 'carre' | 'story';
 export type VersetAPartager = { sourate: number; nomSourate: string; n: number; texte: string; translit?: string };
+/** Invocation à partager : la source (recueil et numéro) remplace la référence de verset, le logo s'ajoute à l'image. */
+export type InvocationAPartager = { id: string; texte: string; translit?: string; source: string };
 
-const FONDS: readonly Fond[] = ['emeraude', 'nuit', 'ivoire'];
+// Ordre de la planche « Partager un verset » : Ivoire, Émeraude, Nuit (le style par défaut reste Émeraude).
+const FONDS: readonly Fond[] = ['ivoire', 'emeraude', 'nuit'];
 /** Côté de l'image exportée : 1080 de large, carré ou story (1080 × 1920). */
 const EXPORT = { largeur: 1080, hauteur: { carre: 1080, story: 1920 } } as const;
 
@@ -33,10 +38,9 @@ const CARTE: Record<Fond, { fond: string; texte: string; accent: string; bord: s
   ivoire: { fond: jour.marqueIvoire, texte: jour.encre, accent: jour.orTexte, bord: jour.ligne },
 };
 
-/** Lien public vers le verset (quran.com), ajouté au texte copié. */
-export const lienVerset = (sourate: number, verset: number) => `https://quran.com/${sourate}/${verset}`;
+export { lienVerset } from './texteVerset';
 
-export function PartageVerset({ verset, onFermer }: { verset: VersetAPartager | null; onFermer: () => void }) {
+export function PartageVerset({ verset, onFermer }: { verset: VersetAPartager | InvocationAPartager | null; onFermer: () => void }) {
   const { t } = useTranslation();
   const { couleurs, espace, rayon, typographie } = useTheme();
   const { afficher } = useToast();
@@ -46,7 +50,8 @@ export function PartageVerset({ verset, onFermer }: { verset: VersetAPartager | 
   const [avecTranslit, setAvecTranslit] = useState(false);
   const [envoi, setEnvoi] = useState(false);
   // Taille du texte : réduite tant qu'il ne tient pas dans la carte ; remise à 1 quand le contenu ou le format change.
-  const cleCarte = `${verset?.sourate}:${verset?.n}:${format}:${avecTranslit}`;
+  const invocation = verset !== null && 'source' in verset;
+  const cleCarte = `${verset === null ? '' : 'source' in verset ? verset.id : `${verset.sourate}:${verset.n}`}:${format}:${avecTranslit}`;
   const [reglage, setReglage] = useState({ cle: cleCarte, echelle: 1 });
   if (reglage.cle !== cleCarte) setReglage({ cle: cleCarte, echelle: 1 });
   // Hauteurs mesurées de la carte et de son contenu, dans n'importe quel ordre d'arrivée.
@@ -69,7 +74,7 @@ export function PartageVerset({ verset, onFermer }: { verset: VersetAPartager | 
     fontSize: (base.fontSize ?? 16) * echelle,
     lineHeight: (base.lineHeight ?? 24) * echelle,
   });
-  const reference = verset ? `${verset.nomSourate} · ${verset.sourate}:${verset.n}` : '';
+  const reference = verset === null ? '' : 'source' in verset ? verset.source : `${verset.nomSourate} · ${verset.sourate}:${verset.n}`;
 
   const partagerImage = async () => {
     if (!carte.current || envoi) return;
@@ -93,7 +98,7 @@ export function PartageVerset({ verset, onFermer }: { verset: VersetAPartager | 
 
   const copier = async () => {
     if (!verset) return;
-    const texte = [verset.texte, translit, reference, lienVerset(verset.sourate, verset.n)].filter(Boolean).join('\n\n');
+    const texte = 'source' in verset ? texteInvocationACopier(verset, avecTranslit) : texteACopier(verset, avecTranslit);
     try {
       await Clipboard.setStringAsync(texte);
       afficher({ texte: t('partage.copie'), icone: 'check' });
@@ -104,7 +109,7 @@ export function PartageVerset({ verset, onFermer }: { verset: VersetAPartager | 
   };
 
   return (
-    <BottomSheet ouvert={verset !== null} titre={t('partage.titreFeuille')} onFermer={onFermer}>
+    <BottomSheet ouvert={verset !== null} titre={t(invocation ? 'partage.titreInvocation' : 'partage.titreFeuille')} onFermer={onFermer}>
       {verset ? (
         <>
           {/* Carte capturée telle quelle en image : rien d'interactif à l'intérieur. */}
@@ -143,9 +148,16 @@ export function PartageVerset({ verset, onFermer }: { verset: VersetAPartager | 
                   {translit}
                 </Text>
               ) : null}
+              {/* Verset et invocation : la référence (ou la source), puis le logo de l'app et son nom (planches « Partager »). */}
               <Text allowFontScaling={false} style={[typographie.legende, styles.reference, taille(typographie.legende), { color: c.accent }]}>
-                {`${reference} · ${t('partage.marque')}`}
+                {reference}
               </Text>
+              <View style={[styles.marque, { gap: espace.espace1 }]}>
+                <Logo taille={20} fond={fond === 'ivoire' ? 'clair' : 'sombre'} />
+                <Text allowFontScaling={false} style={[typographie.legende, styles.reference, taille(typographie.legende), { color: c.accent }]}>
+                  {t('partage.marque')}
+                </Text>
+              </View>
               </View>
             </View>
           </View>
@@ -217,6 +229,7 @@ const styles = StyleSheet.create({
   arabe: { textAlign: 'center', writingDirection: 'rtl' },
   translit: { textAlign: 'center' },
   reference: { textAlign: 'center', letterSpacing: 0.9, textTransform: 'uppercase' },
+  marque: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center' },
   styles: { flexDirection: 'row', justifyContent: 'center' },
   style: { alignItems: 'center', minWidth: 48 },
   pastille: { width: 40, height: 40, borderRadius: 999 },

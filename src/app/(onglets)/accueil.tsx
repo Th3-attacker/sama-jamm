@@ -21,7 +21,7 @@ import { ACCESSOIRE_NATIF } from '@/theme/layout';
 import { useMargeBasse, useMiniLecteurVisible } from '@/features/ecouter/placeMiniLecteur';
 import { BandeEcoute } from '@/features/accueil/BandeEcoute';
 import { CarteHeros } from '@/features/accueil/CarteHeros';
-import { GrilleAccueil, useColonnesGrille } from '@/features/accueil/CartesAccueil';
+import { GrilleAccueil } from '@/features/accueil/CartesAccueil';
 import { enEcoute as ecouteEnCours, useLecteur } from '@/features/ecouter/lecteur';
 import { SondeBarre } from '@/features/ecouter/SondeBarre';
 
@@ -36,7 +36,6 @@ export default function Accueil() {
   const { couleurs, espace, rayon, typographie, latin, ligne } = useTheme();
   const marge = useMargeBasse();
   const { styleColonne: colonne, largeur } = useLayout();
-  const colonnesGrille = useColonnesGrille(largeur);
   const miniVisible = useMiniLecteurVisible();
   const enEcoute = useLecteur(ecouteEnCours);
   const bandeEcoute = enEcoute && !miniVisible;
@@ -69,13 +68,17 @@ export default function Accueil() {
 
 
   const connecte = useSession((s) => s.session !== null);
+  // Badge du bouton Plus (iOS 26) : dernier nombre relu par la barre d'onglets (`useKhatmsEnCours`, sans seconde
+  // requête), jamais affiché sans session.
+  const khatmsEnCours = useReglages((s) => s.khatmEnCours);
+  const badgePlus = connecte && khatmsEnCours !== null && khatmsEnCours > 0;
   const jour = formatJour(maintenant, i18n.language);
   const sagesse = proverbeDuJour(maintenant);
   const hegirien = formatHegirien(maintenant, i18n.language);
 
   return (
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
-      {/* Planche : titre et date à gauche, Compte (iPhone) ou loupe (Android) à droite sur la même rangée. */}
+      {/* Planche : titre et date à gauche, Plus (iOS 26 et plus) ou loupe à droite sur la même rangée. */}
       <TopBar
         gauche={
           <View>
@@ -95,10 +98,16 @@ export default function Accueil() {
           </View>
         }
         actions={[
-          // Planche A1 « MajGlassAccueil » : sur iOS 26 et plus, la recherche est dans la barre d'onglets,
-          // le bouton Compte prend la place de la loupe. Android et iOS 18 gardent la loupe.
+          // iOS 26 et plus : la recherche est dans la barre d'onglets et Plus n'y est plus ; le bouton Plus prend la
+          // place de la loupe, avec le badge des khatms en cours (écart à la planche A1, voir ECARTS.md). Le Compte
+          // reste dans l'écran Plus. Android et iOS 18 gardent la loupe.
           ACCESSOIRE_NATIF
-            ? { icone: 'user', label: t('menuPlus.compte'), onPress: () => router.push(connecte ? '/plus/compte' : '/plus/connexion') }
+            ? {
+                icone: 'grid',
+                label: badgePlus ? t('accueil.plusEnCours', { plus: t('onglets.plus'), enCours: t('menuPlus.enCours', { count: khatmsEnCours ?? 0 }) }) : t('onglets.plus'),
+                badge: badgePlus ? String(khatmsEnCours) : undefined,
+                onPress: () => router.push('/plus/menu'),
+              }
             : { icone: 'search', label: t('menuPlus.rechercher'), onPress: () => router.push('/plus/recherche') },
         ]}
       />
@@ -112,12 +121,20 @@ export default function Accueil() {
         {arc ? (
           <CarteHeros nom={arc.nom} heure={arc.heure} dans={arc.dans} prieres={arc.liste} maintenant={arc.maintenantMin} />
         ) : (
-          <Banner ton="info" action={{ label: t('bienvenue.positionVille'), onPress: () => router.push('/position') }}>
-            {t('priere.positionRefuseeTexte')}
-          </Banner>
+          // Planche « ville à choisir » : le bandeau, puis la carte avec « -- : -- » et des points vides.
+          <View style={{ gap: espace.espace3 }}>
+            <Banner
+              ton="attention"
+              icone="pin"
+              titre={t('accueil.villeTitre')}
+              action={{ label: t('bienvenue.positionVille'), onPress: () => router.push('/position') }}>
+              {t('accueil.villeTexte')}
+            </Banner>
+            <CarteHeros sansVille prieres={prieres.map((p) => ({ nom: t(`priere.noms.${p}`), heure: '--:--', minutes: 0, etat: 'a-venir' }))} />
+          </View>
         )}
 
-        <GrilleAccueil colonnes={colonnesGrille} />
+        <GrilleAccueil largeur={largeur} />
 
         {/* Écoute reprise : seulement quand le mini-lecteur est rangé (plafond de la pile) ou absent. */}
         {bandeEcoute ? <BandeEcoute /> : null}
