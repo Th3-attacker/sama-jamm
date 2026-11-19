@@ -298,7 +298,7 @@ export default function LecteurPleinEcran() {
               {/* Planche « Lecteur défilé » : sous les commandes, le verset en cours puis la suite. */}
               <View style={{ alignSelf: 'stretch', gap: espace.espace2, marginTop: espace.espace6 }}>
                 <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, styles.surtitre, { color: couleurs.encre3 }]}>
-                  {t('ecouter.versetEnCours')}
+                  {t('ecouter.versetEnCoursN', { n: position.verset })}
                 </Text>
               {texte ? (
                 <Text
