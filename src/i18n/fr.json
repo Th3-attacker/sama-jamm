@@ -609,23 +609,14 @@
     "categories": {
       "morning": "Adhkar du matin",
       "evening": "Adhkar du soir",
-      "wudu": "Ablutions et purification",
-      "prayer": "Pendant la prière",
       "after_prayer": "Après la prière",
       "sleep": "Sommeil et réveil",
-      "travel": "Voyage",
-      "home": "Maison",
-      "masjid": "Mosquée",
-      "illness": "Maladie et guérison",
-      "protection": "Protection",
-      "marriage": "Mariage et famille",
-      "grief": "Deuil et perte",
-      "business": "Commerce et subsistance",
-      "night_prayer": "Prière de la nuit",
-      "quran_recitation": "Récitation du Coran"
+      "travel": "Voyage"
     },
     "nbInvocations_one": "{{count}} invocation",
     "nbInvocations_other": "{{count}} invocations",
+    "totalInvocations_one": "{{count}} invocation au total",
+    "totalInvocations_other": "{{count}} invocations au total",
     "fois_one": "une fois",
     "fois_other": "{{count}} fois"
   },

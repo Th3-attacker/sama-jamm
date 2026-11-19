@@ -11,9 +11,9 @@ const { categories, duas }: { categories: Categorie[]; duas: Invocation[] } = JS
 // Textes qui sont des versets du Coran : arabe seul, sans traduction (AGENTS.md, contenu sacré).
 const CORANIQUES = ['d13', 'd19', 'd47', 'd59', 'd61', 'd92', 'd102', 'd124', 'd125'];
 
-test('16 catégories, 78 invocations, identifiants uniques', () => {
-  assert.equal(categories.length, 16);
-  assert.equal(duas.length, 78);
+test('5 catégories, 32 invocations, identifiants uniques', () => {
+  assert.equal(categories.length, 5);
+  assert.equal(duas.length, 32);
   assert.equal(new Set(duas.map((d) => d.id)).size, duas.length);
   assert.equal(new Set(categories.map((c) => c.id)).size, categories.length);
 });
