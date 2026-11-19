@@ -1,24 +1,13 @@
-// Invocations (UmmahAPI) : 78 invocations en 16 catégories, arabe, translittération, sens en français et source.
+// Invocations (UmmahAPI) : 32 invocations en 5 catégories (matin, soir, après la prière, sommeil, voyage), arabe, translittération, sens en français et source.
 // Les textes coraniques (Al-Fatiha, Ayat al-Kursi, derniers versets d'al-Baqara…) n'ont pas de sens : le Coran
 // s'affiche en arabe seul. Fonctions pures, données lues au premier besoin (fichier d'environ 55 Ko).
 
 export const CATEGORIES_IDS = [
   'morning',
   'evening',
-  'wudu',
-  'prayer',
   'after_prayer',
   'sleep',
   'travel',
-  'home',
-  'masjid',
-  'illness',
-  'protection',
-  'marriage',
-  'grief',
-  'business',
-  'night_prayer',
-  'quran_recitation',
 ] as const;
 export type CategorieId = (typeof CATEGORIES_IDS)[number];
 
