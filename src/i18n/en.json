@@ -623,7 +623,9 @@
     "ecouterInvocation": "Listen to the invocation",
     "pauseEcoute": "Pause listening",
     "avancementEcoute": "Listening progress",
-    "audioHorsLigne": "No connection: this invocation is not on your phone yet."
+    "audioHorsLigne": "No connection: this invocation is not on your phone yet.",
+    "chargementAudio": "Loading the audio",
+    "audioIndisponible": "The audio could not be loaded. Try again."
   },
   "recherche": {
     "titre": "Search",

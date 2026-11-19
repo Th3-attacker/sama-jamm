@@ -671,7 +671,9 @@
     "ecouterInvocation": "استمع إلى الذكر",
     "pauseEcoute": "إيقاف الاستماع مؤقتًا",
     "avancementEcoute": "تقدّم الاستماع",
-    "audioHorsLigne": "لا يوجد اتصال: هذا الذكر ليس محفوظًا على الهاتف بعد."
+    "audioHorsLigne": "لا يوجد اتصال: هذا الذكر ليس محفوظًا على الهاتف بعد.",
+    "chargementAudio": "جارٍ تحميل الصوت",
+    "audioIndisponible": "تعذّر تحميل الصوت. حاول مرة أخرى."
   },
   "recherche": {
     "titre": "بحث",

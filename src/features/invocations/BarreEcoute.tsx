@@ -1,7 +1,7 @@
 import { setAudioModeAsync, useAudioPlayer, useAudioPlayerStatus } from 'expo-audio';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { formatTemps } from '@/features/ecouter/temps';
 import { cible, espace as espaces, interlignes, rayon as rayons, tailles } from '@/theme/tokens.generated';
@@ -14,6 +14,9 @@ import { garderAudio, reseauDisponible, sourceAudio } from './audioLocal';
 
 type Props = { idInvocation: string };
 
+/** Au-delà, le chargement est abandonné avec un message (réseau très lent ou fichier introuvable). */
+const DELAI_CHARGEMENT_MS = 15000;
+
 // Planche « Invocations · lecture » : bouton lecture rond, « Écouter », barre d'avancement et temps écoulé.
 // Une seule invocation à la fois : l'écran la monte avec `key` = identifiant, donc le lecteur est libéré (écoute arrêtée)
 // quand on change d'invocation ou qu'on quitte l'écran.
@@ -24,8 +27,24 @@ export function BarreEcoute({ idInvocation }: Props) {
   const statut = useAudioPlayerStatus(lecteur);
   const [charge, setCharge] = useState<string | null>(null);
   const [horsLigne, setHorsLigne] = useState(false);
+  const [echec, setEchec] = useState(false);
+  const [demande, setDemande] = useState(false);
+  // Chargement : de l'appui jusqu'à ce que le fichier soit prêt dans le lecteur.
+  const enChargement = demande && !statut.isLoaded;
+
+  useEffect(() => {
+    if (!enChargement) return undefined;
+    const minuteur = setTimeout(() => {
+      lecteur.pause();
+      setCharge(null);
+      setDemande(false);
+      setEchec(true);
+    }, DELAI_CHARGEMENT_MS);
+    return () => clearTimeout(minuteur);
+  }, [enChargement, lecteur]);
 
   const basculer = async () => {
+    if (demande && enChargement) return;
     if (statut.playing) {
       lecteur.pause();
       return;
@@ -33,7 +52,10 @@ export function BarreEcoute({ idInvocation }: Props) {
     if (charge !== idInvocation) {
       const source = sourceAudio(idInvocation);
       if (!source) return;
+      setEchec(false);
+      setDemande(true);
       if (!source.local && !(await reseauDisponible())) {
+        setDemande(false);
         setHorsLigne(true);
         return;
       }
@@ -62,10 +84,11 @@ export function BarreEcoute({ idInvocation }: Props) {
         ]}>
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel={enLecture ? t('invocations.pauseEcoute') : t('invocations.ecouterInvocation')}
+          accessibilityLabel={enChargement ? t('invocations.chargementAudio') : enLecture ? t('invocations.pauseEcoute') : t('invocations.ecouterInvocation')}
+          accessibilityState={{ busy: enChargement }}
           onPress={() => void basculer()}
           style={[styles.lecture, { backgroundColor: couleurs.emeraudeAplat }]}>
-          <Icon name={enLecture ? 'pause' : 'play'} size={22} color={couleurs.surEmeraude} />
+          {enChargement ? <ActivityIndicator color={couleurs.surEmeraude} /> : <Icon name={enLecture ? 'pause' : 'play'} size={22} color={couleurs.surEmeraude} />}
         </Pressable>
         <View style={styles.milieu}>
           <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, ligne(styles.titre), { color: couleurs.encre }]}>
@@ -84,12 +107,12 @@ export function BarreEcoute({ idInvocation }: Props) {
           {formatTemps(temps)}
         </Text>
       </View>
-      {horsLigne ? (
+      {horsLigne || echec ? (
         <Text
           accessibilityRole="alert"
           maxFontSizeMultiplier={echelleMax.courant}
           style={[typographie.corps, ligne(styles.message), { color: couleurs.encre2 }]}>
-          {t('invocations.audioHorsLigne')}
+          {horsLigne ? t('invocations.audioHorsLigne') : t('invocations.audioIndisponible')}
         </Text>
       ) : null}
     </View>
