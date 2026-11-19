@@ -1,7 +1,8 @@
+import * as Clipboard from 'expo-clipboard';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, Animated, FlatList, Pressable, StyleSheet, Text, View, type LayoutRectangle } from 'react-native';
+import { ActivityIndicator, Animated, FlatList, Platform, Pressable, StyleSheet, Text, View, type LayoutRectangle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { BasculeMode } from '@/features/lire/BasculeMode';
@@ -23,7 +24,10 @@ import { PageMushaf } from '@/features/lire/PageMushaf';
 import { cleJour } from '@/lib/dates';
 import { ecouter, ecouterPage, useLecteur } from '@/features/ecouter/lecteur';
 import { SondeBarre } from '@/features/ecouter/SondeBarre';
+import { MenuVerset } from '@/features/lire/MenuVerset';
 import { PartageVerset, type VersetAPartager } from '@/features/lire/PartageVerset';
+import { texteACopier } from '@/features/lire/texteVerset';
+import { vibrerLeger } from '@/lib/haptique';
 import { translitSansBalises } from '@/features/lire/reperes';
 import { ReglagesLecture } from '@/features/lire/ReglagesLecture';
 import { useSens } from '@/i18n/useSens';
@@ -32,7 +36,8 @@ import { Etoile } from '@/ui/Etoile';
 import type { IconName } from '@/ui/types';
 import { Medaillon } from '@/ui/Medaillon';
 import { TranslitVerset } from '@/features/lire/TranslitVerset';
-import { apresEchec, DELAI_SUCCES_MS, decalageEstime, DUREE_MAX_MS, resteAvantMasquage } from '@/features/lire/positionVerset';
+import { apresEchec, DELAI_ESSAI_MS, DELAI_SUCCES_MS, decalageEstime, DUREE_MAX_MS, resteAvantMasquage } from '@/features/lire/positionVerset';
+import { versetASuivre } from '@/features/lire/suiviVerset';
 import { cleVerset, useFavoris } from '@/stores/favoris';
 import { usePleinEcran } from '@/stores/pleinEcran';
 import { useLecture, type ModeLecture } from '@/stores/lecture';
@@ -133,6 +138,8 @@ function LectureSourate({
   const { afficher } = useToast();
 
   const [aPartager, setAPartager] = useState<VersetAPartager | null>(null);
+  // Menu d'un verset (appui long).
+  const [menuVerset, setMenuVerset] = useState<VersetAPartager | null>(null);
   const [reglagesOuverts, setReglagesOuverts] = useState(false);
   const chiffresArabes = useReglages((st) => st.chiffresArabes);
   /** Verset en haut de l'écran : celui sur lequel agit la barre d'outils du bas. */
@@ -190,12 +197,28 @@ function LectureSourate({
   const essai = useRef(0);
   const echec = useRef(false);
   const succes = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  // Verset à retrouver après un changement de taille d'écriture ; non nul pendant le recalage.
+  const cibleRecalage = useRef<number | null>(null);
+  // Suivi de la récitation : versets visibles, dernier geste du lecteur, verset visé et défilement lancé par le code.
+  const plageVisible = useRef<{ premier: number; dernier: number } | null>(null);
+  const dernierGeste = useRef(0);
+  const cibleSuivi = useRef<number | null>(null);
+  const essaiSuivi = useRef(0);
+  const defilementCode = useRef(false);
+  const noterGeste = useCallback(() => {
+    // Le défilement animé du suivi se termine aussi par « fin d'élan » : ce n'est pas un geste du lecteur.
+    if (!defilementCode.current) dernierGeste.current = Date.now();
+  }, []);
   // Doit rester stable : la FlatList refuse un rappel qui change entre deux rendus.
   const surVisibles = useCallback(({ viewableItems }: { viewableItems: { item: { n: number } }[] }) => {
     // Pendant le positionnement sur le verset d'ouverture, les versets rendus un instant ne comptent pas.
     if (!positionne.current) return;
+    // Pendant un recalage lancé par le code (taille d'écriture), les versets entrevus en route ne comptent pas.
+    if (cibleRecalage.current !== null) return;
     const premier = viewableItems[0];
-    if (premier) {
+    const dernier = viewableItems[viewableItems.length - 1];
+    if (premier && dernier) {
+      plageVisible.current = { premier: premier.item.n, dernier: dernier.item.n };
       versetVisible.current = premier.item.n;
       setVersetHaut(premier.item.n);
     }
@@ -228,16 +251,26 @@ function LectureSourate({
     );
     return () => clearTimeout(attente);
   }, [pret, fondu, debutChargement]);
+  // Fin du recalage : le verset retrouvé redevient le verset courant (l'en-tête et le Juz le suivent).
+  const finirRecalage = useCallback(() => {
+    const cible = cibleRecalage.current;
+    if (cible === null) return;
+    cibleRecalage.current = null;
+    versetVisible.current = cible;
+    setVersetHaut(cible);
+  }, []);
   const essayerDeSePlacer = useCallback(() => {
     essai.current += 1;
     echec.current = false;
-    liste.current?.scrollToIndex({ index: versetInitial - 1, animated: false });
+    liste.current?.scrollToIndex({ index: (cibleRecalage.current ?? versetInitial) - 1, animated: false });
     // Aucun échec signalé peu après : le verset est atteint.
     clearTimeout(succes.current);
     succes.current = setTimeout(() => {
-      if (!echec.current) terminerPositionnement();
+      if (echec.current) return;
+      terminerPositionnement();
+      finirRecalage();
     }, DELAI_SUCCES_MS);
-  }, [versetInitial, terminerPositionnement]);
+  }, [versetInitial, terminerPositionnement, finirRecalage]);
   useEffect(() => {
     if (positionne.current) return;
     const depart = setTimeout(essayerDeSePlacer, 0);
@@ -249,8 +282,74 @@ function LectureSourate({
       clearTimeout(succes.current);
     };
   }, [essayerDeSePlacer, terminerPositionnement]);
+  // Changement de taille d'écriture : les hauteurs des versets changent, la liste garde l'ancien décalage et saute.
+  // On retient le verset lu, puis un seul recalage sans animation une fois la liste redessinée.
+  const taillePrecedente = useRef(tailleArabe.fontSize);
+  useEffect(() => {
+    if (taillePrecedente.current === tailleArabe.fontSize) return;
+    taillePrecedente.current = tailleArabe.fontSize;
+    if (modePage || !positionne.current) return;
+    cibleRecalage.current = versetVisible.current;
+    essai.current = 0;
+    const image = requestAnimationFrame(essayerDeSePlacer);
+    // Jamais de blocage : passé ce délai, la liste reprend la main là où elle est.
+    const limite = setTimeout(finirRecalage, DUREE_MAX_MS);
+    return () => {
+      cancelAnimationFrame(image);
+      clearTimeout(limite);
+    };
+  }, [tailleArabe.fontSize, modePage, essayerDeSePlacer, finirRecalage]);
+  // Appui long sur un verset : vibration légère, puis le menu (écouter, favori, copier, partager une image).
+  const ouvrirMenuVerset = (v: { n: number; texte: string }) => {
+    vibrerLeger();
+    setMenuVerset({
+      sourate: s.n,
+      nomSourate: s.nom,
+      n: v.n,
+      texte: v.texte,
+      translit: translitSansBalises(translitDe(s.n)[v.n - 1] ?? '') || undefined,
+    });
+  };
+  const copierVerset = async (v: VersetAPartager) => {
+    try {
+      // La translittération n'est copiée que si elle est activée dans les réglages de lecture.
+      await Clipboard.setStringAsync(texteACopier(v, translitActive));
+      afficher({ texte: t('partage.copie'), icone: 'check' });
+    } catch (erreur: unknown) {
+      console.error('Verset non copié', erreur);
+      afficher({ texte: t('etats.erreurTexte'), icone: 'alert' });
+    }
+  };
+  // Suivi de la récitation en lecture verset par verset (le mode page a le sien) : quand le verset récité sort de
+  // l'écran, la liste le ramène vers le haut, sauf pendant la pause qui suit un geste du lecteur.
+  const allerAuVerset = useCallback(() => {
+    const cible = cibleSuivi.current;
+    if (cible === null) return;
+    // Animé au premier essai ; ensuite sans animation (verset pas encore mesuré, on s'en approche puis on réessaie).
+    liste.current?.scrollToIndex({ index: cible - 1, viewPosition: 0.25, animated: essaiSuivi.current === 0 });
+  }, []);
+  useEffect(() => {
+    if (modePage || !positionne.current || cibleRecalage.current !== null) return;
+    const cible = versetASuivre({ recite: versetEcoute, plage: plageVisible.current, dernierGeste: dernierGeste.current, maintenant: Date.now() });
+    if (cible === null) return;
+    cibleSuivi.current = cible;
+    essaiSuivi.current = 0;
+    defilementCode.current = true;
+    allerAuVerset();
+    // Fin du suivi pour ce verset : la fin d'élan du défilement animé n'est plus prise pour un geste.
+    const fin = setTimeout(() => {
+      cibleSuivi.current = null;
+      defilementCode.current = false;
+    }, 900);
+    return () => clearTimeout(fin);
+  }, [versetEcoute, modePage, allerAuVerset]);
   const legende = [typographie.legende, { color: couleurs.encre3, textAlign: 'center' as const }];
 
+  // iOS : feuille native ; Android : la feuille maison, montée plus bas.
+  const ouvrirReglages = () => {
+    if (Platform.OS === 'ios') router.push({ pathname: '/reglages-lecture', params: { mode: modePage ? 'page' : 'verset' } });
+    else setReglagesOuverts(true);
+  };
   const basculerMode = () => {
     if (modePage) {
       // On reste sur le verset qui ouvre la page : la lecture verset par verset s'y place.
@@ -291,7 +390,7 @@ function LectureSourate({
               { icone: 'list', label: t('lire.modeVerset'), couleur: couleurs.emeraude, onPress: basculerMode },
               { icone: 'headphones', label: t('ecouter.ecouterPage'), onPress: () => ecouterPage(page) },
             ]
-          : [{ icone: 'type', texte: 'Aa', label: t('lire.reglagesLecture'), onPress: () => setReglagesOuverts(true) }]
+          : [{ icone: 'type', texte: 'Aa', label: t('lire.reglagesLecture'), onPress: ouvrirReglages }]
       }
     />
   );
@@ -335,7 +434,7 @@ function LectureSourate({
             />
           ) : null}
         </View>
-        {/* Planche « Mode page, réglette » : en bas, juz et page, réglette pour aller à une page, quatre outils. */}
+        {/* Planche « Mode page » : en bas, juz, hizb et page, puis les trois outils (plus de réglette). */}
         {barres ? (
           <View
             style={[
@@ -352,7 +451,7 @@ function LectureSourate({
             <View style={styles.infosPage}>
               <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre3 }]}>
                 {premierSegment
-                  ? t('lire.juz', { n: reperes().juzDe(premierSegment.sourate, premierSegment.versets[0]?.verset ?? 1) })
+                  ? `${t('lire.juz', { n: reperes().juzDe(premierSegment.sourate, premierSegment.versets[0]?.verset ?? 1) })} · ${t('lire.hizb', { n: reperes().hizbDe(premierSegment.sourate, premierSegment.versets[0]?.verset ?? 1) })}`
                   : ''}
               </Text>
               <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre }]}>
@@ -362,7 +461,7 @@ function LectureSourate({
             <View style={styles.outilsPage}>
               {[
                 { icone: 'headphones', libelle: t('commun.ecouter'), onPress: () => ecouterPage(page) },
-                { icone: 'type', libelle: t('lire.affichageOutil'), onPress: () => setReglagesOuverts(true) },
+                { icone: 'type', libelle: t('lire.affichageOutil'), onPress: ouvrirReglages },
                 { icone: 'search', libelle: t('lire.chercher'), onPress: () => router.push('/plus/recherche') },
               ].map((o) => (
                 <Pressable key={o.libelle} accessibilityRole="button" accessibilityLabel={o.libelle} onPress={o.onPress} style={styles.outilPage}>
@@ -383,7 +482,7 @@ function LectureSourate({
               { backgroundColor: couleurs.surface, borderBottomColor: couleurs.ligne, paddingBottom: espace.espace2 },
             ]}>{barre}</View> : null}
         {/* La feuille « Lecture » doit aussi être montée en mode page : l'outil Affichage l'ouvre. */}
-        <ReglagesLecture ouvert={reglagesOuverts} onFermer={() => setReglagesOuverts(false)} />
+        <ReglagesLecture ouvert={reglagesOuverts} onFermer={() => setReglagesOuverts(false)} modePage />
       </View>
     );
   }
@@ -404,17 +503,38 @@ function LectureSourate({
           ref={liste}
           data={versets}
           viewabilityConfig={CONFIG_VISIBILITE}
+          // Les hauteurs des versets sont estimées puis mesurées au fil du défilement : sans ancrage, chaque mesure
+          // déplace les versets visibles et la liste balance d'un verset à l'autre (surtout après un changement de taille).
+          maintainVisibleContentPosition={{ minIndexForVisible: 0 }}
           onViewableItemsChanged={surVisibles}
-          onScrollEndDrag={enregistrerVerset}
-          onMomentumScrollEnd={enregistrerVerset}
+          onScrollBeginDrag={noterGeste}
+          onScrollEndDrag={() => {
+            noterGeste();
+            enregistrerVerset();
+          }}
+          onMomentumScrollEnd={() => {
+            noterGeste();
+            enregistrerVerset();
+          }}
           onScrollToIndexFailed={({ averageItemLength, index }) => {
+            if (cibleSuivi.current !== null) {
+              // Suivi de la récitation : verset pas encore mesuré, on s'en approche puis on réessaie.
+              liste.current?.scrollToOffset({ offset: decalageEstime(index, averageItemLength), animated: false });
+              essaiSuivi.current += 1;
+              if (apresEchec(essaiSuivi.current).reessayer) setTimeout(allerAuVerset, DELAI_ESSAI_MS);
+              else cibleSuivi.current = null;
+              return;
+            }
             // Verset pas encore mesuré : on s'en approche, puis on réessaie (jusqu'à ESSAIS_MAX fois).
             echec.current = true;
             liste.current?.scrollToOffset({ offset: decalageEstime(index, averageItemLength), animated: false });
             const suite = apresEchec(essai.current);
             clearTimeout(reessai.current);
             if (suite.reessayer) reessai.current = setTimeout(essayerDeSePlacer, suite.delai);
-            else terminerPositionnement();
+            else {
+              terminerPositionnement();
+              finirRecalage();
+            }
           }}
           style={{ opacity: pret ? 1 : 0 }}
           keyExtractor={(v) => String(v.n)}
@@ -433,7 +553,10 @@ function LectureSourate({
                     : `۞ ${t(`lire.quartsHizb.${repere.quart}`, { n: repere.hizb })}`}
                 </Text>
               ) : null}
-            <View
+            <Pressable
+              // L'appui long ouvre le menu ; l'action est aussi offerte aux lecteurs d'écran (sur le texte du verset).
+              accessible={false}
+              onLongPress={() => ouvrirMenuVerset(item)}
               style={[
                 styles.verset,
                 // Planche : chaque verset est une carte de 12 de rayon, 12 / 8 de marge, sans filet.
@@ -455,6 +578,8 @@ function LectureSourate({
               <View style={styles.textes}>
                 <Text
                   accessibilityLanguage="ar"
+                  accessibilityActions={[{ name: 'menuVerset', label: t('lire.menuVerset') }]}
+                  onAccessibilityAction={() => ouvrirMenuVerset(item)}
                   maxFontSizeMultiplier={echelleMax.grand}
                   style={[
                     typographie.coran,
@@ -476,11 +601,12 @@ function LectureSourate({
                   </Text>
                 ) : null}
               </View>
-            </View>
+            </Pressable>
             </View>
             );
           }}
-          extraData={[translits, versetEcoute, chiffresArabes]}
+          // La taille est dans extraData : sans elle, les lignes déjà dessinées gardent l'ancienne taille.
+          extraData={[translits, versetEcoute, chiffresArabes, tailleArabe.fontSize]}
           contentContainerStyle={{
             paddingHorizontal: espace.espace6,
             paddingBottom: espace.espace8,
@@ -609,6 +735,19 @@ function LectureSourate({
         </View>
       ) : null}
       <PartageVerset verset={aPartager} onFermer={() => setAPartager(null)} />
+      <MenuVerset
+        verset={menuVerset}
+        favori={menuVerset ? favoris.includes(cleVerset(s.n, menuVerset.n)) : false}
+        onFermer={() => setMenuVerset(null)}
+        onEcouter={() => {
+          if (!menuVerset) return;
+          ecouter({ sourate: s.n, verset: menuVerset.n });
+          router.navigate('/lecteur');
+        }}
+        onFavori={() => menuVerset && basculerFavori(menuVerset.n)}
+        onCopier={() => menuVerset && copierVerset(menuVerset)}
+        onPartager={() => setAPartager(menuVerset)}
+      />
       <ReglagesLecture ouvert={reglagesOuverts} onFermer={() => setReglagesOuverts(false)} />
     </View>
   );
@@ -693,8 +832,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  textes: { flex: 1, gap: espace.espace1 },
-  arabe: { textAlign: 'right', writingDirection: 'rtl' },
+  // `minWidth: 0` : la colonne peut rétrécir, un mot long passe à la ligne au lieu de déborder ; la marge de côté laisse
+  // la place aux voyelles et aux ligatures de la police, qui dépassent de la boîte du texte et seraient rognées.
+  textes: { flex: 1, minWidth: 0, gap: espace.espace1 },
+  arabe: { textAlign: 'right', writingDirection: 'rtl', paddingHorizontal: espace.espace1 },
   actions: { flexDirection: 'row', justifyContent: 'flex-end' },
   repere: { textAlign: 'center' },
   barreFlottante: { position: 'absolute', top: 0, left: 0, right: 0, borderBottomWidth: StyleSheet.hairlineWidth },

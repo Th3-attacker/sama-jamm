@@ -72,7 +72,7 @@ export function CarteSourate({ sourate, onPress, plat = false, enCours = false, 
             {sourate.nom}
           </Text>
         )}
-        <Text numberOfLines={1} maxFontSizeMultiplier={echelleMax.courant} style={[plat ? typographie.corps : typographie.legende, plat ? ligne(styles.metaPlat) : null, { color: couleurs.encre3 }]}>
+        <Text numberOfLines={plat ? undefined : 1} maxFontSizeMultiplier={echelleMax.courant} style={[plat ? typographie.corps : typographie.legende, plat ? ligne(styles.metaPlat) : null, { color: couleurs.encre3 }]}>
           {meta}
         </Text>
       </View>
@@ -94,6 +94,6 @@ const styles = StyleSheet.create({
   metaPlat: { fontSize: tailles.t14, lineHeight: interlignes.l20 },
   arabePlat: { lineHeight: interlignes.l30 },
   titreArabe: { fontFamily: 'Amiri_700Bold', fontSize: tailles.t24, lineHeight: interlignes.l30, writingDirection: 'rtl', includeFontPadding: false, textAlignVertical: 'center' },
-  textes: { flex: 1 },
+  textes: { flex: 1, minWidth: 0 },
   arabe: { fontFamily: 'Amiri_400Regular', fontSize: tailles.t24, lineHeight: interlignes.l40, writingDirection: 'rtl', textAlign: 'right', includeFontPadding: false, textAlignVertical: 'center' },
 });

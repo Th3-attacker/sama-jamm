@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { proverbeDuJour } from '@/features/accueil/sagesse';
+import { useSession } from '@/features/compte/compte';
 import { calculerHoraires, prochainePriere } from '@/features/priere/horaires';
 import { useOptionsCalcul } from '@/features/priere/useOptionsCalcul';
 import { fuseauDuLieu } from '@/features/priere/villes';
@@ -16,10 +17,11 @@ import { useTheme } from '@/theme/useTheme';
 import { Banner } from '@/ui/Banner';
 import type { PriereArc } from '@/ui/DayArc';
 import { TopBar } from '@/ui/TopBar';
+import { ACCESSOIRE_NATIF } from '@/theme/layout';
 import { useMargeBasse, useMiniLecteurVisible } from '@/features/ecouter/placeMiniLecteur';
 import { BandeEcoute } from '@/features/accueil/BandeEcoute';
 import { CarteHeros } from '@/features/accueil/CarteHeros';
-import { GrilleAccueil, useColonnesGrille } from '@/features/accueil/CartesAccueil';
+import { GrilleAccueil } from '@/features/accueil/CartesAccueil';
 import { enEcoute as ecouteEnCours, useLecteur } from '@/features/ecouter/lecteur';
 import { SondeBarre } from '@/features/ecouter/SondeBarre';
 
@@ -34,7 +36,6 @@ export default function Accueil() {
   const { couleurs, espace, rayon, typographie, latin, ligne } = useTheme();
   const marge = useMargeBasse();
   const { styleColonne: colonne, largeur } = useLayout();
-  const colonnesGrille = useColonnesGrille(largeur);
   const miniVisible = useMiniLecteurVisible();
   const enEcoute = useLecteur(ecouteEnCours);
   const bandeEcoute = enEcoute && !miniVisible;
@@ -66,31 +67,49 @@ export default function Accueil() {
   }, [lieu, maintenant, options, t]);
 
 
+  const connecte = useSession((s) => s.session !== null);
+  // Badge du bouton Plus (iOS 26) : dernier nombre relu par la barre d'onglets (`useKhatmsEnCours`, sans seconde
+  // requête), jamais affiché sans session.
+  const khatmsEnCours = useReglages((s) => s.khatmEnCours);
+  const badgePlus = connecte && khatmsEnCours !== null && khatmsEnCours > 0;
   const jour = formatJour(maintenant, i18n.language);
   const sagesse = proverbeDuJour(maintenant);
   const hegirien = formatHegirien(maintenant, i18n.language);
 
   return (
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
-      {/* Planche : titre et date à gauche, loupe à droite sur la même rangée. */}
+      {/* Planche : titre et date à gauche, Plus (iOS 26 et plus) ou loupe à droite sur la même rangée. */}
       <TopBar
         gauche={
           <View>
+            {/* Planche : titre en 40/44 (style display, plafonné comme les grands titres des autres onglets). */}
             <Text
               accessibilityRole="header"
               accessibilityLanguage="wo"
-              maxFontSizeMultiplier={echelleMax.courant}
-              style={[latin.titre1, { color: couleurs.emeraude, writingDirection: 'ltr' }]}>
+              maxFontSizeMultiplier={echelleMax.grand}
+              style={[latin.display, { color: couleurs.emeraude, writingDirection: 'ltr' }]}>
               {t('formules.saluer')}
             </Text>
             <Text
               maxFontSizeMultiplier={echelleMax.courant}
-              style={[typographie.translitteration, ligne(styles.date), { color: couleurs.encre2 }]}>
+              style={[typographie.translitteration, ligne(styles.italique), { color: couleurs.encre2 }]}>
               {hegirien ? t('accueil.date', { jour, hegirien }) : jour}
             </Text>
           </View>
         }
-        actions={[{ icone: 'search', label: t('menuPlus.rechercher'), onPress: () => router.push('/plus/recherche') }]}
+        actions={[
+          // iOS 26 et plus : la recherche est dans la barre d'onglets et Plus n'y est plus ; le bouton Plus prend la
+          // place de la loupe, avec le badge des khatms en cours (écart à la planche A1, voir ECARTS.md). Le Compte
+          // reste dans l'écran Plus. Android et iOS 18 gardent la loupe.
+          ACCESSOIRE_NATIF
+            ? {
+                icone: 'grid',
+                label: badgePlus ? t('accueil.plusEnCours', { plus: t('onglets.plus'), enCours: t('menuPlus.enCours', { count: khatmsEnCours ?? 0 }) }) : t('onglets.plus'),
+                badge: badgePlus ? String(khatmsEnCours) : undefined,
+                onPress: () => router.push('/plus/menu'),
+              }
+            : { icone: 'search', label: t('menuPlus.rechercher'), onPress: () => router.push('/plus/recherche') },
+        ]}
       />
       <ScrollView ref={defilement}
         contentContainerStyle={{
@@ -102,12 +121,20 @@ export default function Accueil() {
         {arc ? (
           <CarteHeros nom={arc.nom} heure={arc.heure} dans={arc.dans} prieres={arc.liste} maintenant={arc.maintenantMin} />
         ) : (
-          <Banner ton="info" action={{ label: t('bienvenue.positionVille'), onPress: () => router.push('/position') }}>
-            {t('priere.positionRefuseeTexte')}
-          </Banner>
+          // Planche « ville à choisir » : le bandeau, puis la carte avec « -- : -- » et des points vides.
+          <View style={{ gap: espace.espace3 }}>
+            <Banner
+              ton="attention"
+              icone="pin"
+              titre={t('accueil.villeTitre')}
+              action={{ label: t('bienvenue.positionVille'), onPress: () => router.push('/position') }}>
+              {t('accueil.villeTexte')}
+            </Banner>
+            <CarteHeros sansVille prieres={prieres.map((p) => ({ nom: t(`priere.noms.${p}`), heure: '--:--', minutes: 0, etat: 'a-venir' }))} />
+          </View>
         )}
 
-        <GrilleAccueil colonnes={colonnesGrille} />
+        <GrilleAccueil largeur={largeur} />
 
         {/* Écoute reprise : seulement quand le mini-lecteur est rangé (plafond de la pile) ou absent. */}
         {bandeEcoute ? <BandeEcoute /> : null}
@@ -118,7 +145,8 @@ export default function Accueil() {
           style={{
             gap: espace.espace1,
             padding: espace.espace4,
-            borderRadius: rayon.rayonCarte,
+            // Planche : rayon 20, comme les quatre cartes.
+            borderRadius: rayon.rayonFeuille,
             backgroundColor: couleurs.orDoux,
           }}>
           <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, ligne(styles.etiquette), { color: couleurs.orTexte }]}>
@@ -132,7 +160,7 @@ export default function Accueil() {
           </Text>
           <Text
             maxFontSizeMultiplier={echelleMax.courant}
-            style={[typographie.translitteration, { color: couleurs.encre2 }]}>
+            style={[typographie.translitteration, ligne(styles.italique), { color: couleurs.encre2 }]}>
             {t(`formules.${sagesse}Trad`)}
           </Text>
         </View>
@@ -144,8 +172,9 @@ export default function Accueil() {
 
 const styles = StyleSheet.create({
   ecran: { flex: 1 },
-  // Planche : date en italique 14/20.
-  date: { fontSize: tailles.t14, lineHeight: interlignes.l20 },
-  // Planche : « WAX JU RAFET » en 12/16, majuscules, interlettrage 0,06 em.
+  // Planche : date et traduction du proverbe en italique 15/22, hors échelle : ramenées à 14/20.
+  italique: { fontSize: tailles.t14, lineHeight: interlignes.l20 },
+  // Planche : « WAX JU RAFET » en 13, majuscules : ramené à 12/16 ; interlettrage 0,06 em comme les autres
+  // étiquettes en majuscules de l'app (la planche dit 0,12 em, noté dans ECARTS.md).
   etiquette: { fontSize: tailles.t12, lineHeight: interlignes.l16, textTransform: 'uppercase', letterSpacing: 0.72 },
 });
