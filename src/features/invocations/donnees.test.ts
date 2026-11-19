@@ -8,12 +8,14 @@ const { categories, duas }: { categories: Categorie[]; duas: Invocation[] } = JS
   readFileSync(new URL('../../data/invocations/duas.json', import.meta.url), 'utf8'),
 );
 
-// Textes qui sont des versets du Coran : arabe seul, sans traduction (AGENTS.md, contenu sacré).
-const CORANIQUES = ['d13', 'd19', 'd47', 'd59', 'd61', 'd92', 'd102', 'd124', 'd125'];
-
-test('5 catégories, 32 invocations, identifiants uniques', () => {
+test('5 catégories, 83 invocations (24, 24, 8, 15, 12), identifiants uniques', () => {
   assert.equal(categories.length, 5);
-  assert.equal(duas.length, 32);
+  assert.equal(duas.length, 83);
+  const nb = (id: string) => duas.filter((d) => d.categorie === id).length;
+  assert.deepEqual(
+    ['morning', 'evening', 'after_prayer', 'sleep', 'travel'].map(nb),
+    [24, 24, 8, 15, 12],
+  );
   assert.equal(new Set(duas.map((d) => d.id)).size, duas.length);
   assert.equal(new Set(categories.map((c) => c.id)).size, categories.length);
 });
@@ -29,10 +31,11 @@ test('chaque invocation a une catégorie connue, un titre, de l’arabe, une sou
   for (const c of categories) assert.ok(duas.some((d) => d.categorie === c.id), `catégorie vide : ${c.id}`);
 });
 
-test('le Coran n’a pas de traduction : sens absent pour les textes coraniques, présent pour les autres', () => {
+test('le texte sacré s’affiche en arabe seul : aucun sens ni translittération inventés', () => {
   for (const d of duas) {
-    if (CORANIQUES.includes(d.id)) assert.equal(d.sens, null, `traduction du Coran : ${d.id}`);
-    else assert.ok(d.sens && d.sens.trim() !== '', `sens manquant : ${d.id}`);
+    assert.equal(d.sens, null, `sens présent : ${d.id}`);
+    assert.equal(d.translit, '', `translittération présente : ${d.id}`);
+    assert.match(d.source, /^Hisn al-Muslim · \d+\.\d+$/, `source inattendue : ${d.id}`);
   }
 });
 

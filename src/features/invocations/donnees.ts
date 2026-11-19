@@ -1,6 +1,6 @@
-// Invocations (UmmahAPI) : 32 invocations en 5 catégories (matin, soir, après la prière, sommeil, voyage), arabe, translittération, sens en français et source.
-// Les textes coraniques (Al-Fatiha, Ayat al-Kursi, derniers versets d'al-Baqara…) n'ont pas de sens : le Coran
-// s'affiche en arabe seul. Fonctions pures, données lues au premier besoin (fichier d'environ 55 Ko).
+// Invocations (Hisn al-Muslim) : 83 invocations en 5 moments (matin 24, soir 24, après la prière 8, sommeil 15, voyage 12),
+// arabe seul : ni sens ni translittération (absents de la source ; le texte sacré n'est jamais écrit de mémoire).
+// Fonctions pures, données lues au premier besoin (fichier d'environ 55 Ko).
 
 export const CATEGORIES_IDS = [
   'morning',
