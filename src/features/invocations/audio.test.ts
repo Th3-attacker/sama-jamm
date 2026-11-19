@@ -13,14 +13,14 @@ test('le numéro du fichier est le dernier nombre de l’identifiant', () => {
   assert.equal(numeroAudio('after_prayer-25-217'), 217);
   assert.equal(numeroAudio('d1'), null);
   assert.equal(numeroAudio('morning-27-'), null);
-  assert.equal(urlAudio('travel-95-100'), `${BASE_AUDIO}/100.mp3`);
+  assert.equal(urlAudio('sleep-28-100'), `${BASE_AUDIO}/100.mp3`);
   assert.equal(urlAudio('inconnu'), null);
 });
 
-test('chaque invocation a un fichier, 59 fichiers distincts, matin et soir identiques', () => {
+test('chaque invocation a un fichier, 47 fichiers distincts, matin et soir identiques', () => {
   const numeros = duas.map((d) => numeroAudio(d.id));
   assert.ok(numeros.every((n) => n !== null), 'identifiant sans numéro de fichier');
-  assert.equal(new Set(numeros).size, 59);
+  assert.equal(new Set(numeros).size, 47);
   const matin = duas.filter((d) => d.id.startsWith('morning-')).map((d) => numeroAudio(d.id));
   const soir = duas.filter((d) => d.id.startsWith('evening-')).map((d) => numeroAudio(d.id));
   assert.deepEqual(matin, soir);

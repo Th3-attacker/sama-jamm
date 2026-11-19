@@ -1,4 +1,4 @@
-// Invocations (Hisn al-Muslim) : 83 invocations en 5 moments (matin 24, soir 24, après la prière 8, sommeil 15, voyage 12),
+// Invocations (Hisn al-Muslim) : 71 invocations en 4 moments (matin 24, soir 24, après la prière 8, sommeil 15),
 // arabe seul : ni sens ni translittération (absents de la source ; le texte sacré n'est jamais écrit de mémoire).
 // Fonctions pures, données lues au premier besoin (fichier d'environ 55 Ko).
 
@@ -7,7 +7,6 @@ export const CATEGORIES_IDS = [
   'evening',
   'after_prayer',
   'sleep',
-  'travel',
 ] as const;
 export type CategorieId = (typeof CATEGORIES_IDS)[number];
 

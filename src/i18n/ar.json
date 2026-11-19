@@ -646,8 +646,7 @@
       "morning": "أذكار الصباح",
       "evening": "أذكار المساء",
       "after_prayer": "بعد الصلاة",
-      "sleep": "النوم والاستيقاظ",
-      "travel": "السفر"
+      "sleep": "النوم والاستيقاظ"
     },
     "nbInvocations_zero": "{{count}} ذكر",
     "nbInvocations_one": "ذكر واحد",

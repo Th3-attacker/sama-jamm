@@ -8,13 +8,13 @@ const { categories, duas }: { categories: Categorie[]; duas: Invocation[] } = JS
   readFileSync(new URL('../../data/invocations/duas.json', import.meta.url), 'utf8'),
 );
 
-test('5 catégories, 83 invocations (24, 24, 8, 15, 12), identifiants uniques', () => {
-  assert.equal(categories.length, 5);
-  assert.equal(duas.length, 83);
+test('4 catégories, 71 invocations (24, 24, 8, 15), identifiants uniques', () => {
+  assert.equal(categories.length, 4);
+  assert.equal(duas.length, 71);
   const nb = (id: string) => duas.filter((d) => d.categorie === id).length;
   assert.deepEqual(
-    ['morning', 'evening', 'after_prayer', 'sleep', 'travel'].map(nb),
-    [24, 24, 8, 15, 12],
+    ['morning', 'evening', 'after_prayer', 'sleep'].map(nb),
+    [24, 24, 8, 15],
   );
   assert.equal(new Set(duas.map((d) => d.id)).size, duas.length);
   assert.equal(new Set(categories.map((c) => c.id)).size, categories.length);
