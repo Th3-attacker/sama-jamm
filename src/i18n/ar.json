@@ -646,8 +646,7 @@
       "morning": "أذكار الصباح",
       "evening": "أذكار المساء",
       "after_prayer": "بعد الصلاة",
-      "sleep": "النوم والاستيقاظ",
-      "travel": "السفر"
+      "sleep": "النوم والاستيقاظ"
     },
     "nbInvocations_zero": "{{count}} ذكر",
     "nbInvocations_one": "ذكر واحد",
@@ -666,7 +665,14 @@
     "fois_two": "مرتان",
     "fois_few": "{{count}} مرات",
     "fois_many": "{{count}} مرة",
-    "fois_other": "{{count}} مرة"
+    "fois_other": "{{count}} مرة",
+    "ecouter": "استماع",
+    "ecouterInvocation": "استمع إلى الذكر",
+    "pauseEcoute": "إيقاف الاستماع مؤقتًا",
+    "avancementEcoute": "تقدّم الاستماع",
+    "audioHorsLigne": "لا يوجد اتصال: هذا الذكر ليس محفوظًا على الهاتف بعد.",
+    "chargementAudio": "جارٍ تحميل الصوت",
+    "audioIndisponible": "تعذّر تحميل الصوت. حاول مرة أخرى."
   },
   "recherche": {
     "titre": "بحث",

@@ -610,15 +610,21 @@
       "morning": "Morning adhkar",
       "evening": "Evening adhkar",
       "after_prayer": "After prayer",
-      "sleep": "Sleep and waking",
-      "travel": "Travel"
+      "sleep": "Sleep and waking"
     },
     "nbInvocations_one": "{{count}} supplication",
     "nbInvocations_other": "{{count}} supplications",
     "totalInvocations_one": "{{count}} supplication in total",
     "totalInvocations_other": "{{count}} supplications in total",
     "fois_one": "once",
-    "fois_other": "{{count}} times"
+    "fois_other": "{{count}} times",
+    "ecouter": "Listen",
+    "ecouterInvocation": "Listen to the invocation",
+    "pauseEcoute": "Pause listening",
+    "avancementEcoute": "Listening progress",
+    "audioHorsLigne": "No connection: this invocation is not on your phone yet.",
+    "chargementAudio": "Loading the audio",
+    "audioIndisponible": "The audio could not be loaded. Try again."
   },
   "recherche": {
     "titre": "Search",
