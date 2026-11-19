@@ -636,12 +636,12 @@
     "compteur": "{{n}} / {{total}}",
     "progressionJour": "{{n}} من {{total}} اليوم",
     "compterBouton": "عدّ · {{n}} / {{total}}",
+    "marquerLue": "تمّت القراءة",
     "precedente": "الذكر السابق",
     "suivante": "الذكر التالي",
     "termineeMoment": "أتممت الأذكار: {{moment}}.",
     "retourInvocations": "العودة إلى الأذكار",
     "compterAide": "المس للعدّ",
-    "terminee": "تمّ",
     "categories": {
       "morning": "أذكار الصباح",
       "evening": "أذكار المساء",

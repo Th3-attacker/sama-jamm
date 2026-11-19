@@ -17,6 +17,8 @@ type Props = {
   titre: string;
   /** Écriture du titre : en arabe, il se lit de droite à gauche. */
   arabe?: boolean;
+  /** Texte du grand bouton, à la place de « Compter · n / total » (une seule répétition : « Marquer comme lue »). */
+  libelle?: string;
   n: number;
   total: number;
   onCompter: () => void;
@@ -29,7 +31,7 @@ type Props = {
 };
 
 /** Compteur fixé au-dessus des onglets : l'invocation en cours et un grand bouton rond. */
-export function BarreCompteur({ titre, arabe = false, n, total, onCompter, onPrecedent, onSuivant, sansPrecedent = false, sansSuivant = false }: Props) {
+export function BarreCompteur({ titre, arabe = false, libelle, n, total, onCompter, onPrecedent, onSuivant, sansPrecedent = false, sansSuivant = false }: Props) {
   const { t } = useTranslation();
   const { couleurs, espace, rayon, typographie } = useTheme();
   const marge = useDessousOutil();
@@ -76,11 +78,11 @@ export function BarreCompteur({ titre, arabe = false, n, total, onCompter, onPre
         {fleche(t('invocations.precedente'), onPrecedent, sansPrecedent, true)}
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel={`${t('invocations.compterBouton', { n, total })}. ${t('invocations.compterAide')}`}
+          accessibilityLabel={`${libelle ?? t('invocations.compterBouton', { n, total })}. ${t('invocations.compterAide')}`}
           onPress={onCompter}
           style={[styles.compter, { backgroundColor: couleurs.emeraudeAplat, borderRadius: rayon.rayonPastille }]}>
           <Text maxFontSizeMultiplier={echelleMax.onglets} style={[typographie.titre3, styles.chiffres, { color: couleurs.surEmeraude }]}>
-            {t('invocations.compterBouton', { n, total })}
+            {libelle ?? t('invocations.compterBouton', { n, total })}
           </Text>
         </Pressable>
         {fleche(t('invocations.suivante'), onSuivant, sansSuivant, false)}
