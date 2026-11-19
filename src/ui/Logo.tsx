@@ -17,15 +17,20 @@ export type LogoProps = {
   selon?: 'theme' | 'telephone';
   /** `or` : marque or fixe, pour un fond émeraude (bienvenue). */
   variante?: 'or';
+  /**
+   * Force l'image selon le fond sur lequel elle est posée, quel que soit le thème : `clair` (marque émeraude, pour un
+   * fond ivoire) ou `sombre` (marque ivoire, pour un fond émeraude ou nuit). Carte de partage : couleurs de marque fixes.
+   */
+  fond?: 'clair' | 'sombre';
 };
 
-export function Logo({ taille, selon = 'theme', variante }: LogoProps) {
+export function Logo({ taille, selon = 'theme', variante, fond }: LogoProps) {
   const { nom } = useTheme();
   const telephoneSombre = useColorScheme() === 'dark';
-  const sombre = selon === 'telephone' ? telephoneSombre : nom !== 'jour';
+  const sombre = fond !== undefined ? fond === 'sombre' : selon === 'telephone' ? telephoneSombre : nom !== 'jour';
   return (
     <Image
-      source={variante === 'or' ? marqueOr : sombre ? (selon === 'telephone' ? marqueOr : marqueIvoire) : marqueClaire}
+      source={variante === 'or' ? marqueOr : sombre ? (selon === 'telephone' && fond === undefined ? marqueOr : marqueIvoire) : marqueClaire}
       accessibilityRole="image"
       accessibilityLabel="Sama Jàmm"
       style={{ width: taille, height: taille }}

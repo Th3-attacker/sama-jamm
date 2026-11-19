@@ -1,11 +1,12 @@
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ScrollView, Share, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { estCategorie, invocationsDe, type CategorieId, type Invocation } from '@/features/invocations/donnees';
 import { BarreCompteur } from '@/features/invocations/BarreCompteur';
 import { CarteInvocation } from '@/features/invocations/CarteInvocation';
+import { PartageVerset, type InvocationAPartager } from '@/features/lire/PartageVerset';
 import { useParametre } from '@/hooks/useParametre';
 import { cleJour } from '@/lib/dates';
 import { vibrerLeger } from '@/lib/haptique';
@@ -57,6 +58,7 @@ function Lecture({ inv, categorie, liste }: { inv: Invocation; categorie: Catego
   const { couleurs, espace, typographie, ligne } = useTheme();
   // Tout le moment est fini : l'écran « Terminé » remplace la lecture.
   const [termine, setTermine] = useState(false);
+  const [aPartager, setAPartager] = useState<InvocationAPartager | null>(null);
   // Lecture sans la barre d'onglets, comme la page du Coran.
   useEffect(() => {
     usePleinEcran.setState({ actif: true });
@@ -86,11 +88,8 @@ function Lecture({ inv, categorie, liste }: { inv: Invocation; categorie: Catego
   // « · 3 fois » seulement quand il y a plusieurs répétitions ; une seule : la source seule (planche).
   const sourceTexte = inv.repetitions > 1 ? `${inv.source} · ${t('invocations.fois', { count: inv.repetitions })}` : inv.source;
   const nomCategorie = t(`invocations.categories.${categorie}`);
-  // Partage en texte : titre, arabe, sens (sauf Coran) et source.
-  const partager = () => {
-    const message = [inv.titre, inv.arabe, inv.sens, inv.source].filter(Boolean).join('\n\n');
-    Share.share({ message }).catch((e: unknown) => console.warn('Invocation non partagée', e));
-  };
+  // Partage : la feuille des versets, pour une invocation (arabe seul sur l'image, source, logo).
+  const partager = () => setAPartager({ id: inv.id, texte: inv.arabe, translit: inv.translit || undefined, source: inv.source });
 
   if (termine) {
     return (
@@ -149,6 +148,7 @@ function Lecture({ inv, categorie, liste }: { inv: Invocation; categorie: Catego
           onPartager={partager}
         />
       </ScrollView>
+      <PartageVerset verset={aPartager} onFermer={() => setAPartager(null)} />
       <BarreCompteur
         titre={inv.titre}
         libelle={inv.repetitions === 1 ? t('invocations.marquerLue') : undefined}

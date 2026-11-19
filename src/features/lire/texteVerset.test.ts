@@ -2,7 +2,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { lienVerset, texteACopier } from './texteVerset.ts';
+import { lienVerset, texteACopier, texteInvocationACopier } from './texteVerset.ts';
 
 const verset = { sourate: 13, nomSourate: 'Ar-Raʿd', n: 28, texte: 'ٱلَّذِينَ ءَامَنُوا۟', translit: 'alladhina amanu' };
 
@@ -17,4 +17,11 @@ test('la translittération n\'est ajoutée que si elle est demandée et disponib
 
 test('le lien du verset', () => {
   assert.equal(lienVerset(2, 255), 'https://quran.com/2/255');
+});
+
+test('texte copié d\'une invocation : arabe et source, sans lien externe', () => {
+  const inv = { texte: 'اللَّهُمَّ', translit: 'allahumma', source: 'Sahih Muslim 4:2088' };
+  assert.equal(texteInvocationACopier(inv, false), 'اللَّهُمَّ\n\nSahih Muslim 4:2088');
+  assert.equal(texteInvocationACopier(inv, true), 'اللَّهُمَّ\n\nallahumma\n\nSahih Muslim 4:2088');
+  assert.equal(texteInvocationACopier({ ...inv, translit: undefined }, true), 'اللَّهُمَّ\n\nSahih Muslim 4:2088');
 });
