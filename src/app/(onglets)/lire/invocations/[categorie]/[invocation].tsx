@@ -5,6 +5,7 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { estCategorie, invocationsDe, type CategorieId, type Invocation } from '@/features/invocations/donnees';
 import { BarreCompteur } from '@/features/invocations/BarreCompteur';
+import { BarreEcoute } from '@/features/invocations/BarreEcoute';
 import { CarteInvocation } from '@/features/invocations/CarteInvocation';
 import { PartageVerset, type InvocationAPartager } from '@/features/lire/PartageVerset';
 import { useParametre } from '@/hooks/useParametre';
@@ -147,6 +148,8 @@ function Lecture({ inv, categorie, liste }: { inv: Invocation; categorie: Catego
           onChoisir={compter}
           onPartager={partager}
         />
+        {/* Planche : la barre « Écouter » sous la carte ; l'écoute s'arrête quand l'invocation change. */}
+        <BarreEcoute key={inv.id} idInvocation={inv.id} />
       </ScrollView>
       <PartageVerset verset={aPartager} onFermer={() => setAPartager(null)} />
       <BarreCompteur
