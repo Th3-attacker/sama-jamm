@@ -16,7 +16,6 @@ const ICONES: Record<string, IconName> = {
   evening: 'moon',
   after_prayer: 'check-circle',
   sleep: 'moon',
-  travel: 'compass',
 };
 
 /** Bibliothèque des invocations : un seul bloc avec les moments de la journée, puis le total (planche « Invocations · moments »). */

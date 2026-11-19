@@ -610,8 +610,7 @@
       "morning": "Adhkar du matin",
       "evening": "Adhkar du soir",
       "after_prayer": "Après la prière",
-      "sleep": "Sommeil et réveil",
-      "travel": "Voyage"
+      "sleep": "Sommeil et réveil"
     },
     "nbInvocations_one": "{{count}} invocation",
     "nbInvocations_other": "{{count}} invocations",
