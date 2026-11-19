@@ -9,6 +9,7 @@ import { captureRef } from 'react-native-view-shot';
 
 import { themes } from '@/theme/tokens.generated';
 import { echelleSuivante } from './echelleCarte';
+import { texteACopier } from './texteVerset';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { BottomSheet } from '@/ui/BottomSheet';
@@ -34,8 +35,7 @@ const CARTE: Record<Fond, { fond: string; texte: string; accent: string; bord: s
   ivoire: { fond: jour.marqueIvoire, texte: jour.encre, accent: jour.orTexte, bord: jour.ligne },
 };
 
-/** Lien public vers le verset (quran.com), ajouté au texte copié. */
-export const lienVerset = (sourate: number, verset: number) => `https://quran.com/${sourate}/${verset}`;
+export { lienVerset } from './texteVerset';
 
 export function PartageVerset({ verset, onFermer }: { verset: VersetAPartager | null; onFermer: () => void }) {
   const { t } = useTranslation();
@@ -94,7 +94,7 @@ export function PartageVerset({ verset, onFermer }: { verset: VersetAPartager | 
 
   const copier = async () => {
     if (!verset) return;
-    const texte = [verset.texte, translit, reference, lienVerset(verset.sourate, verset.n)].filter(Boolean).join('\n\n');
+    const texte = texteACopier(verset, avecTranslit);
     try {
       await Clipboard.setStringAsync(texte);
       afficher({ texte: t('partage.copie'), icone: 'check' });

@@ -55,7 +55,7 @@ export default function LecteurPleinEcran() {
   const { afficher } = useToast();
   const { couleurs, espace, rayon, cible, typographie, ligne } = useTheme();
   const insets = useSafeAreaInsets();
-  const { height } = useWindowDimensions();
+  const { height, fontScale } = useWindowDimensions();
   const position = useLecteur((s) => s.position ?? s.derniere);
   const enLecture = useLecteur((s) => s.enLecture);
   const chargement = useLecteur((s) => s.chargement);
@@ -94,8 +94,10 @@ export default function LecteurPleinEcran() {
   const texte = position ? arabes[position.verset - 1] : undefined;
   const apres = position ? arabes[position.verset] : undefined;
 
-  // Pochette : plus petite sur un écran bas.
-  const COTE_POCHETTE = height < 700 ? 170 : 260;
+  // Pochette : 240 (planche), plus petite sur un écran bas ; masquée avec le favori quand le texte système est très
+  // agrandi (planche « texte à 200 % »), pour laisser la place au titre et au verset.
+  const COTE_POCHETTE = height < 700 ? 170 : 240;
+  const texteTresGrand = fontScale >= 1.5;
   // Temps de la sourate d'après la durée des versets du récitateur ; sans durées, on garde « Verset N sur M ».
   const temps = useMemo(
     () => (position ? tempsSourate(dureesDe(idRecitateur), VERSETS_PAR_SOURATE, position.sourate, position.verset, tempsPiste) : null),
@@ -129,7 +131,7 @@ export default function LecteurPleinEcran() {
           styles.ecran,
           { backgroundColor: couleurs.fond, paddingTop: insets.top + espace.espace2, paddingBottom: Math.max(insets.bottom, espace.espace5) },
         ]}>
-        <View style={[styles.entete, { paddingHorizontal: espace.espace4 }]}>
+        <View style={[styles.entete, { paddingHorizontal: espace.espace5 }]}>
           <IconButton icone="chevron-down" label={t('ecouter.reduire')} onPress={() => router.back()} />
           <View style={styles.titres}>
             <Text
@@ -170,23 +172,26 @@ export default function LecteurPleinEcran() {
         {position && s ? (
           <>
             <ScrollView
-              contentContainerStyle={[styles.centreScroll, { paddingHorizontal: espace.espace6, paddingTop: espace.espace2 }]}>
+              // Règle d'en-tête : marge de 20, 16 d'espace entre l'en-tête et la pochette.
+              contentContainerStyle={[styles.centreScroll, { paddingHorizontal: espace.espace5, paddingTop: espace.espace4 }]}>
               {/* Planche « Lecteur audio » : pochette en vert plein avec le nom arabe, puis titre et récitateur. */}
-              <View
-                accessible={false}
-                style={[
-                  styles.pochette,
-                  { width: COTE_POCHETTE, height: COTE_POCHETTE, backgroundColor: couleurs.emeraudeAplat, borderRadius: rayon.rayonFeuille },
-                ]}>
-                <Text
-                  accessibilityLanguage="ar"
-                  allowFontScaling={false}
-                  style={[ligne(styles.nomPochette), { color: couleurs.orSurEmeraude }]}>
-                  {s.arabe}
-                </Text>
-              </View>
+              {texteTresGrand ? null : (
+                <View
+                  accessible={false}
+                  style={[
+                    styles.pochette,
+                    { width: COTE_POCHETTE, height: COTE_POCHETTE, backgroundColor: couleurs.emeraudeAplat, borderRadius: rayon.rayonFeuille },
+                  ]}>
+                  <Text
+                    accessibilityLanguage="ar"
+                    allowFontScaling={false}
+                    style={[ligne(styles.nomPochette), { color: couleurs.orSurEmeraude }]}>
+                    {s.arabe}
+                  </Text>
+                </View>
+              )}
               {/* Planche : titre et récitateur à gauche, marque-page à droite (favori du verset en cours). */}
-              <View style={[styles.titreLigne, { marginTop: espace.espace6 }]}>
+              <View style={[styles.titreLigne, { marginTop: texteTresGrand ? 0 : espace.espace6 }]}>
                 <View style={styles.titres}>
                   <Text maxFontSizeMultiplier={echelleMax.grand} style={[typographie.titre1, { color: couleurs.encre }]}>
                     {s.nom}
@@ -195,14 +200,16 @@ export default function LecteurPleinEcran() {
                     {recitateur(idRecitateur)?.nom}
                   </Text>
                 </View>
-                <IconButton
-                  icone="bookmark"
-                  actif={favoris.includes(cleVerset(position.sourate, position.verset))}
-                  label={t(favoris.includes(cleVerset(position.sourate, position.verset)) ? 'lire.favoriRetirer' : 'lire.favoriAjouter')}
-                  onPress={() => {
-                    if (basculerFavori(position.sourate, position.verset)) afficher({ texte: t('lire.favoriAjoute'), icone: 'check' });
-                  }}
-                />
+                {texteTresGrand ? null : (
+                  <IconButton
+                    icone="bookmark"
+                    actif={favoris.includes(cleVerset(position.sourate, position.verset))}
+                    label={t(favoris.includes(cleVerset(position.sourate, position.verset)) ? 'lire.favoriRetirer' : 'lire.favoriAjouter')}
+                    onPress={() => {
+                      if (basculerFavori(position.sourate, position.verset)) afficher({ texte: t('lire.favoriAjoute'), icone: 'check' });
+                    }}
+                  />
+                )}
               </View>
 
               {erreur ? (
@@ -260,8 +267,8 @@ export default function LecteurPleinEcran() {
                 style={({ pressed }) => [
                   styles.principal,
                   {
-                    width: 72,
-                    height: 72,
+                    width: 64,
+                    height: 64,
                     borderRadius: rayon.rayonPastille,
                     backgroundColor: couleurs.emeraudeAplat,
                     opacity: pressed ? 0.85 : 1,
@@ -297,7 +304,8 @@ export default function LecteurPleinEcran() {
                 <Text
                   accessibilityLanguage="ar"
                   maxFontSizeMultiplier={echelleMax.grand}
-                  style={[typographie.coran, ligne(styles.versetCourant), styles.arabe, { color: couleurs.encre }]}>
+                  // Marge de côté : les voyelles et ligatures dépassent de la boîte du texte et seraient rognées à grande taille.
+                  style={[typographie.coran, ligne(styles.versetCourant), styles.arabe, { color: couleurs.encre, paddingHorizontal: espace.espace1 }]}>
                   {texte}
                 </Text>
               ) : null}
@@ -310,7 +318,7 @@ export default function LecteurPleinEcran() {
                   <Text
                     accessibilityLanguage="ar"
                     maxFontSizeMultiplier={echelleMax.grand}
-                    style={[typographie.arabe, styles.arabe, { color: couleurs.encre3 }]}>
+                    style={[typographie.arabe, styles.arabe, { color: couleurs.encre3, paddingHorizontal: espace.espace1 }]}>
                     {apres}
                   </Text>
                 </>
@@ -414,7 +422,7 @@ const styles = StyleSheet.create({
   entete: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   surtitre: { letterSpacing: 0.7, textTransform: 'uppercase' },
   pochette: { alignItems: 'center', justifyContent: 'center' },
-  nomPochette: { fontFamily: 'Amiri_700Bold', fontSize: 58, lineHeight: 80, includeFontPadding: false, textAlignVertical: 'center' },
+  nomPochette: { fontFamily: 'Amiri_700Bold', fontSize: 56, lineHeight: 78, includeFontPadding: false, textAlignVertical: 'center' },
   titreLigne: { alignSelf: 'stretch', flexDirection: 'row', alignItems: 'flex-start' },
   titres: { flex: 1, alignItems: 'flex-start' },
   centreScroll: { alignItems: 'center', flexGrow: 1, justifyContent: 'flex-start' },

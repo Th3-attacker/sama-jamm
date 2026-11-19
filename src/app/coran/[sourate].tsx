@@ -1,3 +1,4 @@
+import * as Clipboard from 'expo-clipboard';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -23,7 +24,10 @@ import { PageMushaf } from '@/features/lire/PageMushaf';
 import { cleJour } from '@/lib/dates';
 import { ecouter, ecouterPage, useLecteur } from '@/features/ecouter/lecteur';
 import { SondeBarre } from '@/features/ecouter/SondeBarre';
+import { MenuVerset } from '@/features/lire/MenuVerset';
 import { PartageVerset, type VersetAPartager } from '@/features/lire/PartageVerset';
+import { texteACopier } from '@/features/lire/texteVerset';
+import { vibrerLeger } from '@/lib/haptique';
 import { translitSansBalises } from '@/features/lire/reperes';
 import { ReglagesLecture } from '@/features/lire/ReglagesLecture';
 import { useSens } from '@/i18n/useSens';
@@ -134,6 +138,8 @@ function LectureSourate({
   const { afficher } = useToast();
 
   const [aPartager, setAPartager] = useState<VersetAPartager | null>(null);
+  // Menu d'un verset (appui long).
+  const [menuVerset, setMenuVerset] = useState<VersetAPartager | null>(null);
   const [reglagesOuverts, setReglagesOuverts] = useState(false);
   const chiffresArabes = useReglages((st) => st.chiffresArabes);
   /** Verset en haut de l'écran : celui sur lequel agit la barre d'outils du bas. */
@@ -293,6 +299,27 @@ function LectureSourate({
       clearTimeout(limite);
     };
   }, [tailleArabe.fontSize, modePage, essayerDeSePlacer, finirRecalage]);
+  // Appui long sur un verset : vibration légère, puis le menu (écouter, favori, copier, partager une image).
+  const ouvrirMenuVerset = (v: { n: number; texte: string }) => {
+    vibrerLeger();
+    setMenuVerset({
+      sourate: s.n,
+      nomSourate: s.nom,
+      n: v.n,
+      texte: v.texte,
+      translit: translitSansBalises(translitDe(s.n)[v.n - 1] ?? '') || undefined,
+    });
+  };
+  const copierVerset = async (v: VersetAPartager) => {
+    try {
+      // La translittération n'est copiée que si elle est activée dans les réglages de lecture.
+      await Clipboard.setStringAsync(texteACopier(v, translitActive));
+      afficher({ texte: t('partage.copie'), icone: 'check' });
+    } catch (erreur: unknown) {
+      console.error('Verset non copié', erreur);
+      afficher({ texte: t('etats.erreurTexte'), icone: 'alert' });
+    }
+  };
   // Suivi de la récitation en lecture verset par verset (le mode page a le sien) : quand le verset récité sort de
   // l'écran, la liste le ramène vers le haut, sauf pendant la pause qui suit un geste du lecteur.
   const allerAuVerset = useCallback(() => {
@@ -526,7 +553,10 @@ function LectureSourate({
                     : `۞ ${t(`lire.quartsHizb.${repere.quart}`, { n: repere.hizb })}`}
                 </Text>
               ) : null}
-            <View
+            <Pressable
+              // L'appui long ouvre le menu ; l'action est aussi offerte aux lecteurs d'écran (sur le texte du verset).
+              accessible={false}
+              onLongPress={() => ouvrirMenuVerset(item)}
               style={[
                 styles.verset,
                 // Planche : chaque verset est une carte de 12 de rayon, 12 / 8 de marge, sans filet.
@@ -548,6 +578,8 @@ function LectureSourate({
               <View style={styles.textes}>
                 <Text
                   accessibilityLanguage="ar"
+                  accessibilityActions={[{ name: 'menuVerset', label: t('lire.menuVerset') }]}
+                  onAccessibilityAction={() => ouvrirMenuVerset(item)}
                   maxFontSizeMultiplier={echelleMax.grand}
                   style={[
                     typographie.coran,
@@ -569,7 +601,7 @@ function LectureSourate({
                   </Text>
                 ) : null}
               </View>
-            </View>
+            </Pressable>
             </View>
             );
           }}
@@ -703,6 +735,19 @@ function LectureSourate({
         </View>
       ) : null}
       <PartageVerset verset={aPartager} onFermer={() => setAPartager(null)} />
+      <MenuVerset
+        verset={menuVerset}
+        favori={menuVerset ? favoris.includes(cleVerset(s.n, menuVerset.n)) : false}
+        onFermer={() => setMenuVerset(null)}
+        onEcouter={() => {
+          if (!menuVerset) return;
+          ecouter({ sourate: s.n, verset: menuVerset.n });
+          router.navigate('/lecteur');
+        }}
+        onFavori={() => menuVerset && basculerFavori(menuVerset.n)}
+        onCopier={() => menuVerset && copierVerset(menuVerset)}
+        onPartager={() => setAPartager(menuVerset)}
+      />
       <ReglagesLecture ouvert={reglagesOuverts} onFermer={() => setReglagesOuverts(false)} />
     </View>
   );
