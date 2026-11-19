@@ -26,7 +26,7 @@ export function ListeCategories() {
   const total = categories().reduce((somme, c) => somme + invocationsDe(c.id).length, 0);
   return (
     <View style={{ paddingTop: espace.espace3, gap: espace.espace3 }}>
-      <ListGroup titre={`${t('invocations.moments')} · ${categories().length}`}>
+      <ListGroup titre={t('invocations.moments')}>
         {categories().map((c) => (
           <ListItem
             key={c.id}
