@@ -83,7 +83,8 @@ function Lecture({ inv, categorie, liste }: { inv: Invocation; categorie: Catego
   const aller = (i: Invocation | undefined) => {
     if (i) router.setParams({ invocation: i.id });
   };
-  const sourceTexte = `${inv.source} · ${t('invocations.fois', { count: inv.repetitions })}`;
+  // « · 3 fois » seulement quand il y a plusieurs répétitions ; une seule : la source seule (planche).
+  const sourceTexte = inv.repetitions > 1 ? `${inv.source} · ${t('invocations.fois', { count: inv.repetitions })}` : inv.source;
   const nomCategorie = t(`invocations.categories.${categorie}`);
   // Partage en texte : titre, arabe, sens (sauf Coran) et source.
   const partager = () => {
@@ -96,12 +97,15 @@ function Lecture({ inv, categorie, liste }: { inv: Invocation; categorie: Catego
       <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
         <TopBar retour titre={nomCategorie} />
         <View style={[styles.fin, { padding: espace.espace6, gap: espace.espace4 }]}>
-          <Icon name="check-circle" size={56} color={couleurs.emeraude} />
-          <Text accessibilityRole="header" maxFontSizeMultiplier={echelleMax.grand} style={[typographie.titre1, styles.texteFin, { color: couleurs.emeraude }]}>
-            {t('invocations.terminee')}
+          {/* Planche « Terminé » : coche sur fond doux, message, total du jour. */}
+          <View style={[styles.cocheFin, { backgroundColor: couleurs.emeraudeDoux }]}>
+            <Icon name="check" size={40} color={couleurs.succes} />
+          </View>
+          <Text accessibilityRole="header" maxFontSizeMultiplier={echelleMax.grand} style={[typographie.titre3, styles.texteFin, { color: couleurs.encre }]}>
+            {t('invocations.termineeMoment', { moment: nomCategorie })}
           </Text>
           <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.texteFin, { color: couleurs.encre2 }]}>
-            {t('invocations.termineeMoment', { moment: nomCategorie })}
+            {t('invocations.progressionJour', { n: liste.length, total: liste.length })}
           </Text>
           <Button pleineLargeur onPress={() => router.back()}>
             {t('invocations.retourInvocations')}
@@ -127,18 +131,15 @@ function Lecture({ inv, categorie, liste }: { inv: Invocation; categorie: Catego
           </View>
         }
       />
-      <ScrollView contentContainerStyle={{ paddingHorizontal: espace.espace6, paddingBottom: espace.espace6, gap: espace.espace4 }}>
-        {/* Une barre par invocation : faite en émeraude, en cours en or. */}
-        <View accessible accessibilityRole="progressbar" accessibilityLabel={nomCategorie} accessibilityValue={{ text: t('invocations.progression', { n: index + 1, total: liste.length }) }} style={[styles.segments, { gap: espace.espace1 }]}>
-          {liste.map((i, k) => (
-            <View
-              key={i.id}
-              style={[
-                styles.segment,
-                { backgroundColor: k === index ? couleurs.or : (comptes[i.id] ?? 0) >= i.repetitions ? couleurs.emeraudeAplat : couleurs.ligneForte },
-              ]}
-            />
-          ))}
+      <ScrollView contentContainerStyle={{ paddingHorizontal: espace.espace5, paddingTop: espace.espace4, paddingBottom: espace.espace6, gap: espace.espace4 }}>
+        {/* Barre continue (25 segments de 4 seraient illisibles) : remplie jusqu'à l'invocation en cours, en or. */}
+        <View
+          accessible
+          accessibilityRole="progressbar"
+          accessibilityLabel={nomCategorie}
+          accessibilityValue={{ min: 0, max: liste.length, now: index + 1, text: t('invocations.progression', { n: index + 1, total: liste.length }) }}
+          style={[styles.piste, { backgroundColor: couleurs.ligneForte }]}>
+          <View style={[styles.remplie, { backgroundColor: couleurs.or, width: `${((index + 1) / liste.length) * 100}%` }]} />
         </View>
         <CarteInvocation
           invocation={inv}
@@ -150,6 +151,7 @@ function Lecture({ inv, categorie, liste }: { inv: Invocation; categorie: Catego
       </ScrollView>
       <BarreCompteur
         titre={inv.titre}
+        libelle={inv.repetitions === 1 ? t('invocations.marquerLue') : undefined}
         n={n}
         total={inv.repetitions}
         onCompter={compter}
@@ -169,6 +171,7 @@ const styles = StyleSheet.create({
   compteCentre: { fontSize: tailles.t14, lineHeight: interlignes.l20 },
   fin: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   texteFin: { textAlign: 'center' },
-  segments: { flexDirection: 'row' },
-  segment: { flex: 1, height: 4, borderRadius: 2 },
+  piste: { height: 4, borderRadius: 2, overflow: 'hidden' },
+  remplie: { height: 4, borderRadius: 2 },
+  cocheFin: { width: 80, height: 80, borderRadius: 40, alignItems: 'center', justifyContent: 'center' },
 });

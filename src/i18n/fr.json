@@ -600,12 +600,12 @@
     "compteur": "{{n}} / {{total}}",
     "progressionJour": "{{n}} sur {{total}} aujourd’hui",
     "compterBouton": "Compter · {{n}} / {{total}}",
+    "marquerLue": "Marquer comme lue",
     "precedente": "Invocation précédente",
     "suivante": "Invocation suivante",
     "termineeMoment": "Vous avez terminé les invocations : {{moment}}.",
     "retourInvocations": "Retour aux invocations",
     "compterAide": "Touchez pour compter",
-    "terminee": "Terminé",
     "categories": {
       "morning": "Adhkar du matin",
       "evening": "Adhkar du soir",

@@ -600,12 +600,12 @@
     "compteur": "{{n}} / {{total}}",
     "progressionJour": "{{n}} of {{total}} today",
     "compterBouton": "Count · {{n}} / {{total}}",
+    "marquerLue": "Mark as done",
     "precedente": "Previous supplication",
     "suivante": "Next supplication",
     "termineeMoment": "You have finished the supplications: {{moment}}.",
     "retourInvocations": "Back to supplications",
     "compterAide": "Tap to count",
-    "terminee": "Done",
     "categories": {
       "morning": "Morning adhkar",
       "evening": "Evening adhkar",
