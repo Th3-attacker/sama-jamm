@@ -13,8 +13,10 @@ import {
   retirerMembre,
   signalerMembre,
   useKhatm,
+  type DepartCreateur,
   type Membre,
 } from '@/features/khatm/depot';
+import { QuitterCreateur } from '@/features/khatm/QuitterCreateur';
 import { resumeKhatm, vuePart, type VuePart } from '@/features/khatm/logique';
 import { copierCode, inviter } from '@/features/khatm/partager';
 import { reperes } from '@/features/lire/coran';
@@ -49,6 +51,7 @@ export default function EcranKhatm() {
   const rappelHeure = useReglages((s) => s.khatmRappelHeure);
   const [message, setMessage] = useState<string | null>(null);
   const [feuilleInviter, setFeuilleInviter] = useState(false);
+  const [feuilleQuitter, setFeuilleQuitter] = useState(false);
   const [codeCopie, setCodeCopie] = useState(false);
   const retourCopie = useRef<ReturnType<typeof setTimeout>>(undefined);
   useEffect(() => () => clearTimeout(retourCopie.current), []);
@@ -77,6 +80,30 @@ export default function EcranKhatm() {
   }
   const { khatm, parts, membres } = etat;
   const suisCreateur = moi !== null && khatm.createur === moi;
+
+  // Les autres membres, avec les juz qu'ils ont pris : les candidats à la place de créateur.
+  const autres = membres
+    .filter((m) => m.user_id !== moi)
+    .map((m) => {
+      const pris = parts.filter((p) => p.user_id === m.user_id).map((p) => p.juz);
+      return {
+        id: m.user_id,
+        label: m.prenom ?? t('khatm.membreAnonyme'),
+        description: pris.length > 0 ? t('lire.juz', { n: pris.join(', ') }) : t('khatm.aucunJuzPris'),
+      };
+    });
+
+  const quitter = (depart: DepartCreateur) =>
+    quitterKhatm(khatm.id, depart)
+      .then(() => {
+        setFeuilleQuitter(false);
+        router.back();
+      })
+      .catch((e: unknown) => {
+        console.warn('Khatm non quitté', e);
+        setFeuilleQuitter(false);
+        setMessage(t('etats.erreurTexte'));
+      });
 
   const signaler = (cible: Membre) =>
     Alert.alert(t('khatm.signalerTitre'), t('khatm.signalerTexte'), [
@@ -195,6 +222,7 @@ export default function EcranKhatm() {
           />
         </ListGroup>
       </BottomSheet>
+      <QuitterCreateur ouvert={feuilleQuitter} autres={autres} onFermer={() => setFeuilleQuitter(false)} onConfirmer={quitter} />
       <ScrollView
         contentContainerStyle={{
           paddingHorizontal: espace.espace6,
@@ -338,20 +366,13 @@ export default function EcranKhatm() {
           variant="discret"
           pleineLargeur
           onPress={() =>
-            Alert.alert(t('khatm.quitterTitre'), t('khatm.quitterTexte'), [
-              { text: t('commun.annuler'), style: 'cancel' },
-              {
-                text: t('khatm.quitter'),
-                style: 'destructive',
-                onPress: () =>
-                  quitterKhatm(khatm.id)
-                    .then(() => router.back())
-                    .catch((e: unknown) => {
-                      console.warn('Khatm non quitté', e);
-                      setMessage(t('etats.erreurTexte'));
-                    }),
-              },
-            ])
+            // Créateur : il transmet le rôle ou ferme le khatm (seul, il le ferme et le supprime) ; un membre confirme.
+            suisCreateur
+              ? setFeuilleQuitter(true)
+              : Alert.alert(t('khatm.quitterTitre'), t('khatm.quitterTexte'), [
+                  { text: t('commun.annuler'), style: 'cancel' },
+                  { text: t('khatm.quitter'), style: 'destructive', onPress: () => void quitter({}) },
+                ])
           }>
           {t('khatm.quitter')}
         </Button>

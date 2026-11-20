@@ -43,7 +43,7 @@ order by 1;
 -- noter_tentative_code : connecte_peut = false (usage interne seulement).
 
 select p.prosrc like '%pg_advisory_xact_lock%' as verrou_par_personne,
-       p.prosrc like '%>= 30%' as limite_30,
+       p.prosrc like '%>= 10%' as limite_10,
        p.prosrc like '%trop de tentatives, réessayez plus tard%' as message_quota
 from pg_proc p join pg_namespace n on n.oid = p.pronamespace
 where n.nspname = 'public' and p.proname = 'noter_tentative_code';
@@ -69,3 +69,15 @@ order by 1;
 -- exclusions_utilisees = true ; anon_peut = false.
 
 -- 7. Fournisseurs de connexion : à contrôler dans le tableau de bord (Authentication > Providers), pas en SQL.
+
+-- 8. Départ du créateur et khatm fermé (migration 014).
+select p.proname as fonction, pg_get_function_identity_arguments(p.oid) as arguments,
+       p.prosecdef as security_definer,
+       has_function_privilege('anon', p.oid, 'execute') as anon_peut,
+       has_function_privilege('authenticated', p.oid, 'execute') as connecte_peut
+from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+where n.nspname = 'public' and p.proname = 'quitter_khatm';
+-- Attendu : UNE ligne (l'ancienne quitter_khatm(uuid) est supprimée), arguments « p_khatm uuid, p_nouveau_createur uuid, p_fermer boolean »,
+-- security_definer = true, anon_peut = false, connecte_peut = true.
+-- Parcours à jouer sur deux comptes de test : créateur avec un autre membre sans choix (refusé), avec p_nouveau_createur (le rôle passe),
+-- avec p_fermer (etat = 'termine', aperçu vide, rejoindre renvoie null, prendre_juz renvoie false) ; créateur seul (le khatm est supprimé).

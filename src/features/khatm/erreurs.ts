@@ -1,6 +1,6 @@
 // Lecture des erreurs renvoyées par les fonctions serveur du khatm. Pur : testable sans Supabase.
 
-/** Message exact levé par `noter_tentative_code` (migration 010) au-delà de 30 essais de code par heure. */
+/** Message exact levé par `noter_tentative_code` (migration 010) au-delà de 10 essais de code par heure. */
 export const MESSAGE_TROP_DE_TENTATIVES = 'trop de tentatives, réessayez plus tard';
 
 /**

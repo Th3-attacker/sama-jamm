@@ -62,7 +62,7 @@ export async function apercuKhatm(code: string): Promise<Apercu | null> {
 
 /**
  * Identifiant du khatm rejoint, ou null si le code n'existe plus (le serveur renvoie null depuis 010).
- * Au-delà de 30 essais de code par heure, l'erreur levée est reconnue par `estTropDeTentatives`.
+ * Au-delà de 10 essais de code par heure, l'erreur levée est reconnue par `estTropDeTentatives`.
  */
 export async function rejoindreKhatm(code: string): Promise<string | null> {
   const { data, error } = await supabase.rpc('rejoindre_khatm', { p_code: code });
@@ -87,8 +87,19 @@ export const prendreJuz = (khatm: string, juz: number) => action('prendre_juz', 
 export const rendreJuz = (khatm: string, juz: number) => action('rendre_juz', khatm, juz);
 export const marquerJuzLu = (khatm: string, juz: number) => action('marquer_juz_lu', khatm, juz);
 
-export async function quitterKhatm(khatm: string): Promise<void> {
-  const { error } = await supabase.rpc('quitter_khatm', { p_khatm: khatm });
+/** Choix du créateur qui quitte un khatm où il reste d'autres membres (migration 014). Un simple membre n'en a pas. */
+export type DepartCreateur = { nouveauCreateur?: string; fermer?: boolean };
+
+/**
+ * Quitter un khatm. Créateur seul : le serveur ferme et supprime le khatm. Créateur avec d'autres membres : il faut
+ * `nouveauCreateur` (un autre membre) ou `fermer`, sinon le serveur refuse.
+ */
+export async function quitterKhatm(khatm: string, depart: DepartCreateur = {}): Promise<void> {
+  const { error } = await supabase.rpc('quitter_khatm', {
+    p_khatm: khatm,
+    ...(depart.nouveauCreateur ? { p_nouveau_createur: depart.nouveauCreateur } : {}),
+    ...(depart.fermer ? { p_fermer: true } : {}),
+  });
   if (error) throw error;
   void actualiserKhatmsEnCours();
 }

@@ -1,4 +1,4 @@
--- Limite aussi les essais de code de `rejoindre_khatm` : 30 tentatives par heure et par personne, au total.
+-- Limite aussi les essais de code de `rejoindre_khatm` : 10 tentatives par heure (décision du propriétaire, 20 nov 2026) et par personne, au total.
 -- Avant cette migration, seul `apercu_khatm` (007) était limité : on pouvait essayer des codes en boucle par
 -- `rejoindre_khatm` et entrer dans des khatms inconnus. À exécuter une fois, après 009_conception_nov_2026.sql
 -- (SQL Editor > New query > Run). Additive : ne supprime ni ne renomme rien.
@@ -6,8 +6,8 @@
 --
 -- Compteur commun : la table public.apercus_khatm (créée par 007) sert désormais aux deux fonctions et compte
 -- en fait des « tentatives de code ». Elle garde son nom pour ne rien casser de 007 ni des droits en place.
--- Le parcours normal (aperçu de l'invitation, puis adhésion) coûte 2 tentatives : 15 jonctions légitimes par
--- heure restent possibles, ce qui suffit largement.
+-- Le parcours normal (aperçu de l'invitation, puis adhésion) coûte 2 tentatives : 5 jonctions légitimes par
+-- heure restent possibles, ce qui suffit pour un usage normal.
 --
 -- Un code inconnu ne lève plus d'exception dans `rejoindre_khatm` : la fonction renvoie null. Une exception
 -- annulerait la transaction, donc aussi la tentative notée, et les échecs ne compteraient jamais.
@@ -15,7 +15,7 @@
 -- Hors périmètre (signalé, non traité ici) : 009 annonce que `rejoindre_khatm` devra lire `khatms.etat` et
 -- `khatms.rejoindre_par_lien`. Cette version ne les lit pas encore ; elle fonctionne que 009 soit jouée ou non.
 
--- Note une tentative de code pour la personne connectée, ou refuse au-delà de 30 par heure.
+-- Note une tentative de code pour la personne connectée, ou refuse au-delà de 10 par heure.
 -- Un verrou de transaction par personne sérialise ses appels : des appels parallèles ne peuvent pas lire tous
 -- le même compte puis dépasser la limite ensemble. Le verrou est rendu à la fin de la transaction de l'appel.
 create or replace function public.noter_tentative_code()
@@ -32,7 +32,7 @@ begin
 
   delete from public.apercus_khatm where user_id = auth.uid() and quand < now() - interval '1 day';
   if (select count(*) from public.apercus_khatm
-        where user_id = auth.uid() and quand > now() - interval '1 hour') >= 30 then
+        where user_id = auth.uid() and quand > now() - interval '1 hour') >= 10 then
     raise exception 'trop de tentatives, réessayez plus tard' using errcode = 'P0001';
   end if;
   insert into public.apercus_khatm (user_id) values (auth.uid());
