@@ -85,8 +85,9 @@ export function TopBar({
       style={{
         paddingTop: insets.top,
         paddingHorizontal: enracine ? espace.espace5 : espace.espace2,
-        // Règle d'en-tête : 16 exactement entre la barre et le premier bloc de l'écran.
-        paddingBottom: enracine ? espace.espace4 : 0,
+        // Règle d'en-tête : 16 exactement entre la barre et le premier bloc de l'écran, pour les écrans racine comme
+        // pour ceux à flèche de retour. Sans fond (au-dessus d'une image ou du lecteur) : pas d'espace ajouté.
+        paddingBottom: enracine || !transparent ? espace.espace4 : 0,
         backgroundColor: transparent ? 'transparent' : couleurs.fond,
       }}>
       <View style={[styles.rangee, { gap: espace.espace1 }]}>

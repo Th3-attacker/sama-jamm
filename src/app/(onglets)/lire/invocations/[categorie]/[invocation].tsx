@@ -131,7 +131,7 @@ function Lecture({ inv, categorie, liste }: { inv: Invocation; categorie: Catego
           </View>
         }
       />
-      <ScrollView contentContainerStyle={{ paddingHorizontal: espace.espace5, paddingTop: espace.espace4, paddingBottom: espace.espace6, gap: espace.espace4 }}>
+      <ScrollView contentContainerStyle={{ paddingHorizontal: espace.espace5, paddingBottom: espace.espace6, gap: espace.espace4 }}>
         {/* Barre continue (25 segments de 4 seraient illisibles) : remplie jusqu'à l'invocation en cours, en or. */}
         <View
           accessible
