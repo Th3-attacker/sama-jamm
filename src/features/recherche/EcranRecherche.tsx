@@ -1,7 +1,8 @@
 import { router } from 'expo-router';
-import { useDeferredValue, useEffect, useMemo, useState } from 'react';
+import { useCallback, useDeferredValue, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, Pressable, SectionList, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Keyboard, Pressable, SectionList, StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { contientArabe } from '@/features/recherche/normaliser';
 import { CarteSourate } from '@/features/lire/CarteSourate';
@@ -30,12 +31,20 @@ export type EcranRechercheProps = {
    * `onglet` : onglet Recherche d'iPhone, le champ est celui du système (`Stack.SearchBar`), pas de « Fermer ».
    */
   mode: 'modale' | 'onglet';
+  /** Onglet iPhone : ferme aussi le clavier du champ du système, que `Keyboard.dismiss()` ne rejoint pas. */
+  onFermerClavier?: () => void;
 };
 
 /** Contenu de la recherche (filtres, sourates, versets, états vides), partagé par la modale et l'onglet iPhone. */
-export function EcranRecherche({ requete, onRequete, mode }: EcranRechercheProps) {
+export function EcranRecherche({ requete, onRequete, mode, onFermerClavier }: EcranRechercheProps) {
   const { t, i18n } = useTranslation();
   const { couleurs, espace, rayon, typographie, ligne } = useTheme();
+  const insets = useSafeAreaInsets();
+  // Toucher le vide ou faire défiler les résultats ferme le clavier.
+  const fermerClavier = useCallback(() => {
+    Keyboard.dismiss();
+    onFermerClavier?.();
+  }, [onFermerClavier]);
   const [filtre, setFiltre] = useState<Filtre>('tout');
   // La frappe reste fluide : la recherche suit avec un léger retard.
   const requeteDiffree = useDeferredValue(requete);
@@ -73,11 +82,15 @@ export function EcranRecherche({ requete, onRequete, mode }: EcranRechercheProps
 
   return (
     <View style={[styles.ecran, { backgroundColor: couleurs.fond }]}>
-      {/* Modale : champ de recherche et « Fermer ». L'onglet iPhone a le champ du système dans sa barre. */}
-      {mode === 'modale' ? (
-        // Planche : titre « Recherche » en haut. TopBar gère la zone de sécurité du haut comme les autres écrans.
-        <TopBar grand titre={t('recherche.titre')} />
-      ) : null}
+      {/* Planche : titre « Recherche » en haut, fixe avec les filtres, au même niveau que Prière, Lire et Accueil (display 40/44). */}
+      <TopBar
+        gauche={
+          <Text accessibilityRole="header" maxFontSizeMultiplier={echelleMax.grand} style={[typographie.display, { color: couleurs.emeraude }]}>
+            {t('recherche.titre')}
+          </Text>
+        }
+      />
+      {/* Modale : champ de recherche et « Fermer ». L'onglet iPhone a le champ du système, en bas. */}
       {mode === 'modale' ? (
         <View style={[styles.entete, { paddingHorizontal: espace.espace5, gap: espace.espace2 }]}>
           <View style={styles.champ}>
@@ -90,7 +103,7 @@ export function EcranRecherche({ requete, onRequete, mode }: EcranRechercheProps
           </Pressable>
         </View>
       ) : null}
-      <View style={[styles.filtres, { paddingHorizontal: espace.espace5, paddingTop: espace.espace4, paddingBottom: espace.espace3, gap: espace.espace2 }]}>
+      <View style={[styles.filtres, { paddingHorizontal: espace.espace5, paddingTop: mode === 'onglet' ? 0 : espace.espace4, paddingBottom: espace.espace3, gap: espace.espace2 }]}>
         {FILTRES.map((f) => (
           <Chip key={f} compacte selectionne={filtre === f} onPress={() => setFiltre(f)}>
             {f === 'tout' ? t('recherche.tout') : t(`lire.${f}`)}
@@ -98,30 +111,37 @@ export function EcranRecherche({ requete, onRequete, mode }: EcranRechercheProps
         ))}
       </View>
 
-      {filtre === 'invocations' ? (
-        <EmptyState
-          icone="search"
-          lang="fr"
-          titre={t(`lire.${filtre}`)}
-          texte={t('lire.invocationsAVenir')}
-        />
-      ) : enAttente ? (
-        <ActivityIndicator
-          accessibilityLabel={t('recherche.titre')}
-          color={couleurs.emeraude}
-          style={{ marginTop: espace.espace6 }}
-        />
-      ) : aucun ? (
-        <EmptyState
-          icone="search"
-          titre={t('recherche.aucun', { terme: requeteDiffree.trim() })}
-          lang="fr"
-          texte={t('recherche.aucunTexte')}
-        />
+      {filtre === 'invocations' || enAttente || aucun ? (
+        // Zone sans liste : un toucher dans le vide ferme le clavier. Pas un élément d'accessibilité en plus.
+        <Pressable accessible={false} style={styles.zoneVide} onPress={fermerClavier}>
+          {filtre === 'invocations' ? (
+            <EmptyState
+              icone="search"
+              lang="fr"
+              titre={t(`lire.${filtre}`)}
+              texte={t('lire.invocationsAVenir')}
+            />
+          ) : enAttente ? (
+            <ActivityIndicator
+              accessibilityLabel={t('recherche.titre')}
+              color={couleurs.emeraude}
+              style={{ marginTop: espace.espace6 }}
+            />
+          ) : (
+            <EmptyState
+              icone="search"
+              titre={t('recherche.aucun', { terme: requeteDiffree.trim() })}
+              lang="fr"
+              texte={t('recherche.aucunTexte')}
+            />
+          )}
+        </Pressable>
       ) : (
         <SectionList
           sections={sections}
           keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="on-drag"
+          onScrollBeginDrag={fermerClavier}
           keyExtractor={(ligne) => ('versets' in ligne ? `s${ligne.n}` : `v${ligne.sourate}:${ligne.verset}`)}
           stickySectionHeadersEnabled={false}
           // Onglet iPhone : le système décale la liste sous la barre d'onglets en verre et le champ du bas.
@@ -183,7 +203,11 @@ export function EcranRecherche({ requete, onRequete, mode }: EcranRechercheProps
             )
           }
           // Planche : 20 de marge de chaque côté, comme les filtres et l'en-tête.
-          contentContainerStyle={{ paddingHorizontal: espace.espace5, paddingBottom: espace.espace8 }}
+          // Onglet iPhone : le champ du système flotte en bas (planche : 56 de haut) ; la fin de la liste passe au-dessus.
+          contentContainerStyle={{
+            paddingHorizontal: espace.espace5,
+            paddingBottom: mode === 'onglet' ? espace.espace16 + insets.bottom : espace.espace8,
+          }}
         />
       )}
     </View>
@@ -196,6 +220,7 @@ const styles = StyleSheet.create({
   // minWidth 0 : le champ rétrécit au lieu de pousser « Fermer » hors de l'écran (texte agrandi).
   champ: { flex: 1, minWidth: 0 },
   filtres: { flexDirection: 'row', flexWrap: 'wrap' },
+  zoneVide: { flex: 1 },
   fermer: { flexShrink: 0, fontSize: tailles.t16, lineHeight: interlignes.l24, paddingHorizontal: espace.espace2 },
   aide: { fontSize: tailles.t14, lineHeight: interlignes.l20 },
   titreSection: { textTransform: 'uppercase', letterSpacing: 0.84 },
