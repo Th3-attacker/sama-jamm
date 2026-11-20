@@ -21,7 +21,7 @@ export default function Invitation() {
   const code = lireCode(useParametre('code'));
   const connecte = useSession((s) => s.session !== null);
   const [apercu, setApercu] = useState<Apercu | null | 'chargement'>('chargement');
-  /** `quota` : plus de 30 essais de code dans l'heure (limite du serveur). */
+  /** `quota` : plus de 10 essais de code dans l'heure (limite du serveur). */
   const [erreur, setErreur] = useState<'aucune' | 'generique' | 'quota'>('aucune');
   /** Adhésion en cours : bloque le double appui (chaque appui consomme une tentative côté serveur). */
   const [envoi, setEnvoi] = useState(false);
