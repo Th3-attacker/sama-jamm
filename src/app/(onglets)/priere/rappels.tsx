@@ -20,7 +20,7 @@ import { Switch } from '@/ui/Switch';
 import { TopBar } from '@/ui/TopBar';
 import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
-import { interlignes, tailles } from '@/theme/tokens.generated';
+import { interlignes, tailles, miseEnPage } from '@/theme/tokens.generated';
 export default function AppelEtRappels() {
   const { t } = useTranslation();
   const { couleurs, espace, rayon, typographie, ligne } = useTheme();
@@ -247,5 +247,5 @@ const styles = StyleSheet.create({
   local: { fontSize: tailles.t14 },
   son: { flexDirection: 'row', alignItems: 'center' },
   sonTexte: { fontSize: tailles.t14, lineHeight: interlignes.l20, flexShrink: 1 },
-  methode: { flexDirection: 'row', alignItems: 'center', minHeight: 56, borderWidth: 1 },
+  methode: { flexDirection: 'row', alignItems: 'center', minHeight: miseEnPage.ligneListe, borderWidth: 1 },
 });
