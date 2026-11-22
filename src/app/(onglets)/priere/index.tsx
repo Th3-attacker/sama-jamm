@@ -165,10 +165,10 @@ export default function Priere() {
                   ]}>
                   <Icon name={x.icone} size={24} color={couleurs.emeraude} />
                   <View style={styles.tuileTextes}>
-                    <Text numberOfLines={1} maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, ligne(styles.tuileTitre), { color: couleurs.encre }]}>
+                    <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, ligne(styles.tuileTitre), { color: couleurs.encre }]}>
                       {x.titre}
                     </Text>
-                    <Text numberOfLines={2} maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre3 }]}>
+                    <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre3 }]}>
                       {x.sous}
                     </Text>
                   </View>

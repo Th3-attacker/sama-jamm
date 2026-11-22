@@ -535,6 +535,7 @@
     "khatmQuotidienTexte": "A few verses are enough, at your own pace."
   },
   "qibla": {
+    "numeroEtape": "{{n}}.",
     "schemaDroite": "The qibla is {{degres}} degrees to the right of north",
     "schemaGauche": "The qibla is {{degres}} degrees to the left of north",
     "titre": "Qibla",

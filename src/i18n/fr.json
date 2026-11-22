@@ -535,6 +535,7 @@
     "khatmQuotidienTexte": "Quelques versets suffisent, à votre rythme."
   },
   "qibla": {
+    "numeroEtape": "{{n}}.",
     "schemaDroite": "La qibla est à {{degres}} degrés à droite du nord",
     "schemaGauche": "La qibla est à {{degres}} degrés à gauche du nord",
     "titre": "Qibla",
