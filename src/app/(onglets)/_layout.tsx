@@ -135,7 +135,8 @@ export default function OngletsLayout() {
             position: 'absolute',
             left: 0,
             right: 0,
-            bottom: decalageBandeau,
+            // Carte flottante : 8 au-dessus de la barre (écart déjà compté par la pile du bas).
+            bottom: decalageBandeau + miseEnPage.ecartCouches,
           }}
         >
           <MiniLecteur flottant />
