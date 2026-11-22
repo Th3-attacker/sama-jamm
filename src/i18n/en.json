@@ -103,6 +103,8 @@
     "alarmesTitre": "The exact time",
     "alarmesTexte": "Without permission for exact alarms, Android may delay the call to prayer by a few minutes.",
     "ouvrirReglages": "Open phone settings",
+    "notificationsRefuseesTitre": "Notifications are off",
+    "notificationsRefuseesTexte": "Without permission, the call to prayer will not sound. You can turn it on in the phone settings.",
     "avant": {
       "position": {
         "titreFeuille": "Before the location request",
@@ -533,6 +535,7 @@
     "khatmQuotidienTexte": "A few verses are enough, at your own pace."
   },
   "qibla": {
+    "numeroEtape": "{{n}}.",
     "schemaDroite": "The qibla is {{degres}} degrees to the right of north",
     "schemaGauche": "The qibla is {{degres}} degrees to the left of north",
     "titre": "Qibla",
@@ -592,6 +595,8 @@
     "confirmerZeroTexte": "You are at {{n}}.",
     "objectif": "Goal",
     "formuleLibre": "Free phrase",
+    "formule": "Phrase",
+    "formuleEtObjectif": "Phrase and goal",
     "sansObjectif": "No goal",
     "libre": "Free",
     "commencer": "Start",

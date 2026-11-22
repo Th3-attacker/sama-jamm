@@ -3,6 +3,7 @@ import { ComponentRef, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { BandeauNotifications } from '@/features/autorisation/BandeauNotifications';
 import { ChoixVille } from '@/features/priere/ChoixVille';
 import { FeuilleLieu, UtiliserMaPosition } from '@/features/priere/FeuilleLieu';
 import { calculerHoraires, prochainePriere } from '@/features/priere/horaires';
@@ -77,6 +78,8 @@ export default function Priere() {
       />
       <ScrollView ref={defilement} contentContainerStyle={{ ...colonne, paddingBottom: espace.espace8 + marge, gap: espace.espace6 }}>
 
+        {/* Page 06 : refus des notifications, bandeau avec le chemin vers les réglages du téléphone. */}
+        <BandeauNotifications actif={prieres.some((p) => rappels[p])} />
         {!lieu || !donnees ? (
           <>
             <Banner ton="erreur" titre={t('priere.positionRefusee')}>
@@ -162,10 +165,10 @@ export default function Priere() {
                   ]}>
                   <Icon name={x.icone} size={24} color={couleurs.emeraude} />
                   <View style={styles.tuileTextes}>
-                    <Text numberOfLines={1} maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, ligne(styles.tuileTitre), { color: couleurs.encre }]}>
+                    <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, ligne(styles.tuileTitre), { color: couleurs.encre }]}>
                       {x.titre}
                     </Text>
-                    <Text numberOfLines={2} maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre3 }]}>
+                    <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre3 }]}>
                       {x.sous}
                     </Text>
                   </View>

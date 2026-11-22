@@ -103,6 +103,8 @@
     "alarmesTitre": "L’heure exacte",
     "alarmesTexte": "Sans l’autorisation des alarmes exactes, Android peut retarder l’appel de quelques minutes.",
     "ouvrirReglages": "Ouvrir les réglages du téléphone",
+    "notificationsRefuseesTitre": "Notifications désactivées",
+    "notificationsRefuseesTexte": "Sans l’autorisation, l’appel à la prière ne sonnera pas. Vous pouvez l’activer dans les réglages du téléphone.",
     "avant": {
       "position": {
         "titreFeuille": "Avant la demande de position",
@@ -533,6 +535,7 @@
     "khatmQuotidienTexte": "Quelques versets suffisent, à votre rythme."
   },
   "qibla": {
+    "numeroEtape": "{{n}}.",
     "schemaDroite": "La qibla est à {{degres}} degrés à droite du nord",
     "schemaGauche": "La qibla est à {{degres}} degrés à gauche du nord",
     "titre": "Qibla",
@@ -592,6 +595,8 @@
     "confirmerZeroTexte": "Vous en êtes à {{n}}.",
     "objectif": "Objectif",
     "formuleLibre": "Formule libre",
+    "formule": "Formule",
+    "formuleEtObjectif": "Formule et objectif",
     "sansObjectif": "Sans objectif",
     "libre": "Libre",
     "commencer": "Commencer",

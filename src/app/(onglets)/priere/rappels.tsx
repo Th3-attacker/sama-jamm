@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Linking, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { BandeauNotifications } from '@/features/autorisation/BandeauNotifications';
 import { calculerHoraires } from '@/features/priere/horaires';
 import { useOptionsCalcul } from '@/features/priere/useOptionsCalcul';
 import { fuseauDuLieu } from '@/features/priere/villes';
@@ -19,7 +20,7 @@ import { Switch } from '@/ui/Switch';
 import { TopBar } from '@/ui/TopBar';
 import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
-import { interlignes, tailles } from '@/theme/tokens.generated';
+import { interlignes, tailles, miseEnPage } from '@/theme/tokens.generated';
 export default function AppelEtRappels() {
   const { t } = useTranslation();
   const { couleurs, espace, rayon, typographie, ligne } = useTheme();
@@ -106,6 +107,7 @@ export default function AppelEtRappels() {
         <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.translitteration, ligne(styles.phrase), { color: couleurs.encre2 }]}>
           {t('priere.rappelsSousTitre')}
         </Text>
+        <BandeauNotifications />
         {/* Une seule carte : une ligne par prière, le réglage du son s'ouvre en touchant la ligne. */}
         <View style={[styles.carte, { backgroundColor: couleurs.surface, borderColor: couleurs.ligne, borderRadius: rayon.rayonCarte }]}>
           {prieres.map((p, i) => {
@@ -245,5 +247,5 @@ const styles = StyleSheet.create({
   local: { fontSize: tailles.t14 },
   son: { flexDirection: 'row', alignItems: 'center' },
   sonTexte: { fontSize: tailles.t14, lineHeight: interlignes.l20, flexShrink: 1 },
-  methode: { flexDirection: 'row', alignItems: 'center', minHeight: 56, borderWidth: 1 },
+  methode: { flexDirection: 'row', alignItems: 'center', minHeight: miseEnPage.ligneListe, borderWidth: 1 },
 });

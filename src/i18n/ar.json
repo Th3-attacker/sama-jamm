@@ -107,6 +107,8 @@
     "alarmesTitre": "الوقت الدقيق",
     "alarmesTexte": "دون إذن المنبّهات الدقيقة، قد يؤخر أندرويد الأذان بضع دقائق.",
     "ouvrirReglages": "فتح إعدادات الهاتف",
+    "notificationsRefuseesTitre": "الإشعارات معطّلة",
+    "notificationsRefuseesTexte": "من دون الإذن لن يصلك نداء الصلاة. يمكنك تفعيله من إعدادات الهاتف.",
     "avant": {
       "position": {
         "titreFeuille": "قبل طلب الموقع",
@@ -565,6 +567,7 @@
     "khatmQuotidienTexte": "ولو بآيات قليلة، على مهلك."
   },
   "qibla": {
+    "numeroEtape": "{{n}}.",
     "schemaDroite": "القبلة: {{degres}}° إلى يمين الشمال",
     "schemaGauche": "القبلة: {{degres}}° إلى يسار الشمال",
     "titre": "القبلة",
@@ -624,6 +627,8 @@
     "confirmerZeroTexte": "وصلت إلى {{n}}.",
     "objectif": "الهدف",
     "formuleLibre": "ذكر حرّ",
+    "formule": "الذكر",
+    "formuleEtObjectif": "الذكر والهدف",
     "sansObjectif": "بدون هدف",
     "libre": "حرّ",
     "commencer": "ابدأ",

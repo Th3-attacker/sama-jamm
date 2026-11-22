@@ -101,12 +101,20 @@ export default function Qibla() {
               />
             </View>
             <View style={{ gap: espace.espace2 }}>
-              <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, { color: couleurs.encre }]}>
-                {`1. ${t('qibla.etapeNord')}`}
-              </Text>
-              <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, { color: couleurs.encre }]}>
-                {`2. ${t(`qibla.etapeTourner.${rotation.sens}`, { part: t(`qibla.parts.${rotation.part}`), degres: rotation.angle })}`}
-              </Text>
+              {[
+                t('qibla.etapeNord'),
+                t(`qibla.etapeTourner.${rotation.sens}`, { part: t(`qibla.parts.${rotation.part}`), degres: rotation.angle }),
+              ].map((texte, i) => (
+                // Le numéro et la phrase sont deux textes : en arabe le numéro reste à droite, sans coller de chiffres latins au texte RTL.
+                <View key={i} style={[styles.etape, { gap: espace.espace2 }]}>
+                  <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, { color: couleurs.encre }]}>
+                    {t('qibla.numeroEtape', { n: i + 1 })}
+                  </Text>
+                  <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.etapeTexte, { color: couleurs.encre }]}>
+                    {texte}
+                  </Text>
+                </View>
+              ))}
             </View>
           </>
         ) : (
@@ -145,6 +153,8 @@ const styles = StyleSheet.create({
   directionTexte: { fontSize: tailles.t18, lineHeight: interlignes.l24, textAlign: 'center' },
   schema: { alignSelf: 'center' },
   trouvee: { textAlign: 'center' },
+  etape: { flexDirection: 'row', alignItems: 'flex-start' },
+  etapeTexte: { flex: 1 },
   ecran: { flex: 1 },
   conseil: { flexDirection: 'row', alignItems: 'flex-start' },
   iconeConseil: { marginTop: 1 },

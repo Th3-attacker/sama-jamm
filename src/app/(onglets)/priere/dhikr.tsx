@@ -11,8 +11,8 @@ import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { BottomSheet } from '@/ui/BottomSheet';
 import { Button } from '@/ui/Button';
-import { Chip } from '@/ui/Chip';
 import { Dialog } from '@/ui/Dialog';
+import { RadioGroup } from '@/ui/RadioGroup';
 import { SegmentedControl } from '@/ui/SegmentedControl';
 import { TasbihCounter } from '@/ui/TasbihCounter';
 import { TopBar } from '@/ui/TopBar';
@@ -75,17 +75,6 @@ export default function Dhikr() {
         actions={[{ icone: 'reset', texte: t('dhikr.remettreAZero'), libelle: true, label: t('dhikr.remettreAZero'), desactive: compte === 0, onPress: zero }]}
       />
       <ScrollView contentContainerStyle={{ paddingHorizontal: espace.espace6, paddingBottom: espace.espace8 + marge, gap: espace.espace4, alignItems: 'center' }}>
-        <View style={[styles.puces, { gap: espace.espace2 }]}>
-          {formules.map((f) => (
-            <Chip key={f.id} compacte selectionne={f.id === formuleId} onPress={() => choisirFormule(f.id)}>
-              {f.translitteration}
-            </Chip>
-          ))}
-          <Chip compacte selectionne={formuleId === FORMULE_LIBRE} onPress={() => choisirFormule(FORMULE_LIBRE)}>
-            {t('dhikr.formuleLibre')}
-          </Chip>
-        </View>
-
         {formule ? (
           <View style={[styles.formule, { gap: espace.espace2, marginTop: espace.espace3 }]}>
             <Text accessibilityLanguage="ar" maxFontSizeMultiplier={echelleMax.courant} style={[typographie.arabe, ligne(styles.arabe), { color: couleurs.encre }]}>
@@ -118,14 +107,23 @@ export default function Dhikr() {
 
         <View style={styles.actions}>
           <Button variant="discret" icone="target" onPress={() => setFeuille(true)}>
-            {objectif ? `${t('dhikr.objectif')} : ${objectif}` : t('dhikr.sansObjectif')}
+            {`${formule ? formule.translitteration : t('dhikr.formuleLibre')} · ${objectif ? `${t('dhikr.objectif')} : ${objectif}` : t('dhikr.sansObjectif')}`}
           </Button>
         </View>
         <View style={{ alignSelf: 'stretch' }}>{versetDhikr ? <VersetRubrique verset={versetDhikr} /> : null}</View>
       </ScrollView>
 
-      {/* Feuille de l'objectif : les formules se choisissent déjà par les puces de la page. */}
-      <BottomSheet ouvert={feuille} titre={t('dhikr.objectif')} onFermer={() => setFeuille(false)}>
+      {/* Planche « DhikrObjectif » : la formule et l'objectif se choisissent dans la même feuille. */}
+      <BottomSheet ouvert={feuille} titre={t('dhikr.formuleEtObjectif')} onFermer={() => setFeuille(false)}>
+        <RadioGroup
+          label={t('dhikr.formule')}
+          options={[
+            ...formules.map((f) => ({ id: f.id, label: f.translitteration })),
+            { id: FORMULE_LIBRE, label: t('dhikr.formuleLibre') },
+          ]}
+          valeur={formuleId}
+          onChange={choisirFormule}
+        />
         <SegmentedControl
           label={t('dhikr.objectif')}
           options={[
@@ -135,6 +133,11 @@ export default function Dhikr() {
           valeur={objectif === null ? LIBRE : String(objectif)}
           onChange={(id) => definirObjectif(id === LIBRE ? null : Number(id))}
         />
+        {formule ? (
+          <Text accessibilityLanguage="ar" maxFontSizeMultiplier={echelleMax.courant} style={[typographie.arabe, ligne(styles.arabe), { color: couleurs.encre }]}>
+            {formule.arabe}
+          </Text>
+        ) : null}
         <Button variant="principal" pleineLargeur onPress={() => setFeuille(false)}>
           {t('dhikr.commencer')}
         </Button>
@@ -160,7 +163,6 @@ const styles = StyleSheet.create({
   ecran: { flex: 1 },
   formule: { alignItems: 'center' },
   arabe: { fontSize: tailles.t34, lineHeight: interlignes.l64, textAlign: 'center', writingDirection: 'rtl' },
-  puces: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center' },
   translitteration: { fontSize: tailles.t16, lineHeight: interlignes.l24, textAlign: 'center' },
   fini: { alignItems: 'center' },
   aide: { fontSize: tailles.t14, lineHeight: interlignes.l20, textAlign: 'center' },
