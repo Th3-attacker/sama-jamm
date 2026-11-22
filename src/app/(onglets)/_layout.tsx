@@ -138,7 +138,7 @@ export default function OngletsLayout() {
             bottom: decalageBandeau,
           }}
         >
-          <MiniLecteur />
+          <MiniLecteur flottant />
         </View>
       ) : null}
     </View>

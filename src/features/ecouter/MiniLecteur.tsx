@@ -29,9 +29,9 @@ export function MiniLecteurAccessoire() {
  * Barre au-dessus des onglets pendant une écoute : sourate et verset, lecture ou pause, arrêt.
  * `natif` : dans l'accessoire iOS 26, le système donne la taille et le fond (verre) ; la barre ne mesure rien.
  */
-export function MiniLecteur({ natif = false, compact = false }: { natif?: boolean; compact?: boolean }) {
+export function MiniLecteur({ natif = false, compact = false, flottant = false }: { natif?: boolean; compact?: boolean; flottant?: boolean }) {
   const { t } = useTranslation();
-  const { couleurs, espace, typographie } = useTheme();
+  const { couleurs, espace, typographie, rayon, ombres } = useTheme();
   const position = useLecteur((s) => s.position);
   const enLecture = useLecteur((s) => s.enLecture);
   const idRecitateur = useLecteur((s) => s.recitateur);
@@ -65,7 +65,20 @@ export function MiniLecteur({ natif = false, compact = false }: { natif?: boolea
         styles.barre,
         natif
           ? { flex: 1, paddingHorizontal: espace.espace4 }
-          : { backgroundColor: couleurs.surface, borderTopColor: couleurs.ligne, borderTopWidth: StyleSheet.hairlineWidth, paddingHorizontal: espace.espace4 },
+          : flottant
+            ? // Planche « Mini-lecteur A » : carte flottante arrondie au-dessus de la barre d'onglets (Android, iOS avant 26).
+              [
+                {
+                  backgroundColor: couleurs.surface,
+                  borderRadius: rayon.rayonFeuille,
+                  marginHorizontal: espace.espace4,
+                  paddingHorizontal: espace.espace4,
+                },
+                ombres.ombre1 !== 'none'
+                  ? { boxShadow: ombres.ombre1 }
+                  : { borderWidth: StyleSheet.hairlineWidth, borderColor: couleurs.ligne },
+              ]
+            : { backgroundColor: couleurs.surface, borderTopColor: couleurs.ligne, borderTopWidth: StyleSheet.hairlineWidth, paddingHorizontal: espace.espace4 },
       ]}>
       {compact ? null : <Logo taille={28} />}
       <Pressable
