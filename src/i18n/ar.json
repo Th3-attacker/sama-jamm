@@ -626,6 +626,8 @@
     "confirmerZeroTexte": "وصلت إلى {{n}}.",
     "objectif": "الهدف",
     "formuleLibre": "ذكر حرّ",
+    "formule": "الذكر",
+    "formuleEtObjectif": "الذكر والهدف",
     "sansObjectif": "بدون هدف",
     "libre": "حرّ",
     "commencer": "ابدأ",

@@ -594,6 +594,8 @@
     "confirmerZeroTexte": "You are at {{n}}.",
     "objectif": "Goal",
     "formuleLibre": "Free phrase",
+    "formule": "Phrase",
+    "formuleEtObjectif": "Phrase and goal",
     "sansObjectif": "No goal",
     "libre": "Free",
     "commencer": "Start",

@@ -594,6 +594,8 @@
     "confirmerZeroTexte": "Vous en êtes à {{n}}.",
     "objectif": "Objectif",
     "formuleLibre": "Formule libre",
+    "formule": "Formule",
+    "formuleEtObjectif": "Formule et objectif",
     "sansObjectif": "Sans objectif",
     "libre": "Libre",
     "commencer": "Commencer",
