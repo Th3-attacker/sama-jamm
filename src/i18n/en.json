@@ -103,6 +103,8 @@
     "alarmesTitre": "The exact time",
     "alarmesTexte": "Without permission for exact alarms, Android may delay the call to prayer by a few minutes.",
     "ouvrirReglages": "Open phone settings",
+    "notificationsRefuseesTitre": "Notifications are off",
+    "notificationsRefuseesTexte": "Without permission, the call to prayer will not sound. You can turn it on in the phone settings.",
     "avant": {
       "position": {
         "titreFeuille": "Before the location request",

@@ -107,6 +107,8 @@
     "alarmesTitre": "الوقت الدقيق",
     "alarmesTexte": "دون إذن المنبّهات الدقيقة، قد يؤخر أندرويد الأذان بضع دقائق.",
     "ouvrirReglages": "فتح إعدادات الهاتف",
+    "notificationsRefuseesTitre": "الإشعارات معطّلة",
+    "notificationsRefuseesTexte": "من دون الإذن لن يصلك نداء الصلاة. يمكنك تفعيله من إعدادات الهاتف.",
     "avant": {
       "position": {
         "titreFeuille": "قبل طلب الموقع",

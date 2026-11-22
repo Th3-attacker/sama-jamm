@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Linking, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { BandeauNotifications } from '@/features/autorisation/BandeauNotifications';
 import { calculerHoraires } from '@/features/priere/horaires';
 import { useOptionsCalcul } from '@/features/priere/useOptionsCalcul';
 import { fuseauDuLieu } from '@/features/priere/villes';
@@ -106,6 +107,7 @@ export default function AppelEtRappels() {
         <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.translitteration, ligne(styles.phrase), { color: couleurs.encre2 }]}>
           {t('priere.rappelsSousTitre')}
         </Text>
+        <BandeauNotifications />
         {/* Une seule carte : une ligne par prière, le réglage du son s'ouvre en touchant la ligne. */}
         <View style={[styles.carte, { backgroundColor: couleurs.surface, borderColor: couleurs.ligne, borderRadius: rayon.rayonCarte }]}>
           {prieres.map((p, i) => {

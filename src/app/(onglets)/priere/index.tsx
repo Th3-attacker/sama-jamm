@@ -3,6 +3,7 @@ import { ComponentRef, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { BandeauNotifications } from '@/features/autorisation/BandeauNotifications';
 import { ChoixVille } from '@/features/priere/ChoixVille';
 import { FeuilleLieu, UtiliserMaPosition } from '@/features/priere/FeuilleLieu';
 import { calculerHoraires, prochainePriere } from '@/features/priere/horaires';
@@ -77,6 +78,8 @@ export default function Priere() {
       />
       <ScrollView ref={defilement} contentContainerStyle={{ ...colonne, paddingBottom: espace.espace8 + marge, gap: espace.espace6 }}>
 
+        {/* Page 06 : refus des notifications, bandeau avec le chemin vers les réglages du téléphone. */}
+        <BandeauNotifications actif={prieres.some((p) => rappels[p])} />
         {!lieu || !donnees ? (
           <>
             <Banner ton="erreur" titre={t('priere.positionRefusee')}>
