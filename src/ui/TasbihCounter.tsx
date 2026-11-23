@@ -33,6 +33,11 @@ export function TasbihCounter({ compte, objectif, onCompter }: TasbihCounterProp
       accessibilityRole="button"
       accessibilityLabel={libelle}
       accessibilityHint={fini ? t('dhikr.objectifAtteint') : undefined}
+      // Planche « MajAccVoiceOver » : l'ajustement (+1) sans viser le cercle, par l'action « Incrémenter » de VoiceOver et de TalkBack.
+      accessibilityActions={[{ name: 'increment', label: t('dhikr.ajouterUn') }]}
+      onAccessibilityAction={(e) => {
+        if (e.nativeEvent.actionName === 'increment') onCompter();
+      }}
       onPress={onCompter}
       style={({ pressed }) => [
         styles.grain,

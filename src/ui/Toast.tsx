@@ -15,6 +15,8 @@ export type ToastProps = {
   icone?: IconName;
   /** Une action au plus, souvent « Annuler ». */
   action?: Action;
+  /** Durée d'affichage en ms ; par défaut 4 s, 8 s avec une action. */
+  duree?: number;
 };
 
 type ContexteToast = { afficher: (toast: ToastProps) => void };
@@ -41,7 +43,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!courant) return;
-    const minuterie = setTimeout(() => setCourant(null), courant.action ? DUREE_AVEC_ACTION : DUREE);
+    const minuterie = setTimeout(() => setCourant(null), courant.duree ?? (courant.action ? DUREE_AVEC_ACTION : DUREE));
     return () => clearTimeout(minuterie);
   }, [courant]);
 
