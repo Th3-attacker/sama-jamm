@@ -31,6 +31,8 @@ export default function AppelEtRappels() {
   const definirSon = useReglages((s) => s.definirSon);
   const [ouverte, setOuverte] = useState<NomPriere | null>(null);
   const [alarmesRefusees, setAlarmesRefusees] = useState(false);
+  const activiteDirecte = useReglages((s) => s.activiteDirecte);
+  const definirActiviteDirecte = useReglages((s) => s.definirActiviteDirecte);
   const khatmRappel = useReglages((s) => s.khatmRappel);
   const khatmHeure = useReglages((s) => s.khatmRappelHeure);
   const khatmEnCours = useReglages((s) => s.khatmEnCours);
@@ -167,6 +169,22 @@ export default function AppelEtRappels() {
             <Icon name="chevron-right" size={14} color={couleurs.encre3} />
           </Pressable>
         </View>
+        {/* Activité en direct (iPhone) : écran verrouillé et Dynamic Island, 30 minutes avant la prière. */}
+        {Platform.OS === 'ios' ? (
+          <View style={[styles.carte, { backgroundColor: couleurs.surface, borderColor: couleurs.ligne, borderRadius: rayon.rayonCarte }]}>
+            <View style={[styles.ligne, { gap: espace.espace3, paddingVertical: espace.espace3, paddingHorizontal: espace.espace4 }]}>
+              <View style={[styles.textes, { gap: espace.espace1 }]}>
+                <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, typographie.libelle, { color: couleurs.encre }]}>
+                  {t('priere.activiteDirecteTitre')}
+                </Text>
+                <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, ligne(styles.sonTexte), { color: couleurs.encre2 }]}>
+                  {t('priere.activiteDirecteAide')}
+                </Text>
+              </View>
+              <Switch label={t('priere.activiteDirecteTitre')} active={activiteDirecte} onChange={definirActiviteDirecte} />
+            </View>
+          </View>
+        ) : null}
         {khatmRefuse ? (
           <Banner ton="info" titre={t('khatm.rappelRefuseTitre')} action={{ label: t('autorisations.ouvrirReglages'), onPress: () => void Linking.openSettings() }}>
             {t('khatm.rappelRefuseTexte')}

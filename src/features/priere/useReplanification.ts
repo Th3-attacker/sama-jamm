@@ -9,6 +9,7 @@ import { actualiserKhatmsEnCours } from '@/features/khatm/enCours';
 import { useLecture } from '@/stores/lecture';
 import { useReglages } from '@/stores/reglages';
 
+import { synchroniserActivite } from '@/features/horsapp/activite';
 import { actualiserPosition } from './suiviPosition';
 import { creerCanaux, enregistrerTacheQuotidienne, replanifier, URL_PRIERE, URL_ZAKAT } from './notifications';
 // Notification reçue app ouverte : bannière et son du canal (l'adhan sonne aussi quand l'app est ouverte).
@@ -24,9 +25,11 @@ function lancer() {
   replanifierRappelQuotidien().catch((erreur: unknown) => {
     console.error('Rappel quotidien du khatm impossible à programmer', erreur);
   });
-  replanifier().catch((erreur: unknown) => {
-    console.error('Programmation des notifications impossible', erreur);
-  });
+  replanifier()
+    .then(() => synchroniserActivite())
+    .catch((erreur: unknown) => {
+      console.error('Programmation des notifications impossible', erreur);
+    });
 }
 
 /**
@@ -58,6 +61,7 @@ export function useReplanification(): void {
         s.ecoleAsr !== avant.ecoleAsr ||
         s.ajustements !== avant.ajustements ||
         s.langue !== avant.langue ||
+        s.activiteDirecte !== avant.activiteDirecte ||
         s.khatmRappel !== avant.khatmRappel ||
         s.khatmRappelHeure !== avant.khatmRappelHeure ||
         s.khatmEnCours !== avant.khatmEnCours;
