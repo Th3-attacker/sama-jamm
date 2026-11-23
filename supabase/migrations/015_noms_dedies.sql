@@ -1,6 +1,6 @@
 -- Noms dédiés : un nom de proche décédé, proposé depuis l'app, relu à la main, puis publié sur le site (page 16 du canevas).
--- NON APPLIQUÉE. À exécuter une seule fois, après 014_quitter_createur_khatm.sql (SQL Editor > New query > Run), et
--- seulement avec l'accord explicite du propriétaire, après un essai dans une transaction annulée. Faire une sauvegarde avant.
+-- APPLIQUÉE en production le 23 novembre 2026 (version 20261123110307) avec l'accord explicite du propriétaire, après un essai
+-- dans une transaction annulée. À exécuter une seule fois, après 014_quitter_createur_khatm.sql.
 -- Additive : ne supprime ni ne renomme rien.
 --
 -- Décisions du propriétaire (23 nov 2026) : seule une personne connectée avec un compte (et donc tout membre d'un khatm)
