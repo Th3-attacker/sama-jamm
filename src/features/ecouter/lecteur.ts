@@ -187,7 +187,7 @@ function surStatut(statut: AudioPlaylistStatus): void {
   useLecteur.setState({
     enLecture: statut.playing,
     chargement: statut.isBuffering,
-    temps: Math.floor(statut.currentTime) || 0,
+    temps: Math.round(statut.currentTime * 10) / 10 || 0,
   });
   // iOS ne signale pas l'erreur : un chargement qui n'aboutit pas vaut aussi échec réseau.
   if (statut.playing || !lectureDemandee) {
