@@ -92,6 +92,11 @@ export default function RootLayout() {
             name="reglages-lecture"
             options={{ presentation: 'formSheet', sheetAllowedDetents: [0.55, 1], sheetGrabberVisible: true }}
           />
+          {/* Écoute (iOS) : même feuille native, ouverte par le bouton Minuterie du lecteur. */}
+          <Stack.Screen
+            name="ecoute-reglages"
+            options={{ presentation: 'formSheet', sheetAllowedDetents: [0.55, 1], sheetGrabberVisible: true }}
+          />
         </Stack>
       </ToastProvider>
       {demarrage ? <DemarrageAnime onFin={finDemarrage} /> : null}

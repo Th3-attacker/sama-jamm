@@ -395,6 +395,17 @@ export function ecouter(p: Position, idRecitateur?: string): void {
   lire(meme ? null : { mode: 'sourate', sourate: p.sourate, recitateur: r, pistes }, p.verset - 1);
 }
 
+/**
+ * Change de récitateur. En écoute par sourate, la lecture reprend au début du verset en cours avec le nouveau
+ * récitateur ; en écoute par page ou sans lecture, le choix vaut pour la prochaine écoute.
+ */
+export function changerRecitateur(id: string): void {
+  if (!recitateur(id)) return;
+  const { position, page } = useLecteur.getState();
+  if (position && page === null && enFile?.mode === 'sourate') ecouter(position, id);
+  else useLecteur.setState({ recitateur: id });
+}
+
 /** Écoute page par page depuis le premier verset de `page`, d'une sourate à l'autre, jusqu'à la fin du mushaf. */
 export function ecouterPage(page: number): void {
   if (!Number.isInteger(page) || page < 1 || page > nombreDePages) return;
