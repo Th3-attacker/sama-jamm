@@ -472,6 +472,8 @@
     "cinqPrieres": "The five prayers",
     "activiteDirecteTitre": "Live Activity",
     "activiteDirecteAide": "On the Lock Screen and the Dynamic Island, 30 minutes before prayer, if the app is open then.",
+    "compteTitre": "Countdown",
+    "compteAide": "Ongoing “Next prayer” notification, 30 minutes before, if the app is open then.",
     "prochaine": "Next prayer",
     "titre": "Prayer",
     "noms": {

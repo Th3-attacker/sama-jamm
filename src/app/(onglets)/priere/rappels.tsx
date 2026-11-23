@@ -33,6 +33,8 @@ export default function AppelEtRappels() {
   const [alarmesRefusees, setAlarmesRefusees] = useState(false);
   const activiteDirecte = useReglages((s) => s.activiteDirecte);
   const definirActiviteDirecte = useReglages((s) => s.definirActiviteDirecte);
+  const compteNotification = useReglages((s) => s.compteNotification);
+  const definirCompteNotification = useReglages((s) => s.definirCompteNotification);
   const khatmRappel = useReglages((s) => s.khatmRappel);
   const khatmHeure = useReglages((s) => s.khatmRappelHeure);
   const khatmEnCours = useReglages((s) => s.khatmEnCours);
@@ -182,6 +184,22 @@ export default function AppelEtRappels() {
                 </Text>
               </View>
               <Switch label={t('priere.activiteDirecteTitre')} active={activiteDirecte} onChange={definirActiviteDirecte} />
+            </View>
+          </View>
+        ) : null}
+        {/* Compte à rebours (Android) : notification persistante 30 minutes avant la prière, désactivée par défaut. */}
+        {Platform.OS === 'android' ? (
+          <View style={[styles.carte, { backgroundColor: couleurs.surface, borderColor: couleurs.ligne, borderRadius: rayon.rayonCarte }]}>
+            <View style={[styles.ligne, { gap: espace.espace3, paddingVertical: espace.espace3, paddingHorizontal: espace.espace4 }]}>
+              <View style={[styles.textes, { gap: espace.espace1 }]}>
+                <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, typographie.libelle, { color: couleurs.encre }]}>
+                  {t('priere.compteTitre')}
+                </Text>
+                <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, ligne(styles.sonTexte), { color: couleurs.encre2 }]}>
+                  {t('priere.compteAide')}
+                </Text>
+              </View>
+              <Switch label={t('priere.compteTitre')} active={compteNotification} onChange={definirCompteNotification} />
             </View>
           </View>
         ) : null}
