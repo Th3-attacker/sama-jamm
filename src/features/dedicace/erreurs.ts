@@ -4,7 +4,7 @@
 /** Message exact levé par `dedier_nom` au-delà de 5 noms par jour ou de 20 par personne. */
 export const MESSAGE_TROP_DE_NOMS = 'trop de noms, réessayez plus tard';
 
-export type IssueDedicace = 'ok' | 'trop' | 'invalide' | 'hors-ligne' | 'erreur';
+export type IssueDedicace = 'ok' | 'trop' | 'invalide' | 'connexion' | 'hors-ligne' | 'erreur';
 
 function champ(erreur: unknown, nom: string): unknown {
   return typeof erreur === 'object' && erreur !== null && nom in erreur ? (erreur as Record<string, unknown>)[nom] : undefined;
@@ -17,6 +17,8 @@ export function classerErreurDedicace(erreur: unknown): Exclude<IssueDedicace, '
   const texte = typeof message === 'string' ? message.trim() : '';
   if (code === 'P0001' && texte === MESSAGE_TROP_DE_NOMS) return 'trop';
   if (code === 'P0001' && (texte === 'nom invalide' || texte === 'formule invalide')) return 'invalide';
+  // Réservé aux comptes : pas de session, ou session anonyme (« connexion requise », migration 015).
+  if (code === 'P0001' && (texte === 'non connecté' || texte === 'connexion requise')) return 'connexion';
   // Pas de réseau : `fetch` échoue avant toute réponse du serveur (pas de code SQL).
   if (code === undefined && /network|fetch|internet|connexion|offline|timeout/i.test(texte)) return 'hors-ligne';
   const nom = champ(erreur, 'name');

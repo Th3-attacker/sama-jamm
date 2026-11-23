@@ -156,7 +156,12 @@
       "masculin": "رحمه الله",
       "feminin": "رحمها الله"
     },
+    "connexion": {
+      "texte": "To dedicate a name, please sign in: this prevents mass submissions and lets us remove a name if needed.",
+      "bouton": "Sign in"
+    },
     "problemes": {
+      "connexion": "Sign in to dedicate a name.",
       "hors-ligne": "No connection. Your name is kept: try again when you are online.",
       "invalide": "This name cannot be published. Write the first and last name, without digits or symbols.",
       "trop": "You have already submitted several names. Try again tomorrow, God willing.",

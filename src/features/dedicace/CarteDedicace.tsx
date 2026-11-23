@@ -2,10 +2,12 @@
 // d'apparaître sur le site. Trois états : saisie, « Merci » après l'envoi, et un message calme quand l'envoi échoue
 // (hors ligne : le nom reste dans le champ, le bouton reste actif). Rien n'est écrit dans les journaux.
 import { useState } from 'react';
+import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Linking, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { URL_NOMS_DEDIES } from '@/constants/liens';
+import { useSession } from '@/features/compte/compte';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { Button } from '@/ui/Button';
@@ -25,6 +27,8 @@ export function CarteDedicace() {
   const [nom, setNom] = useState('');
   const [formule, setFormule] = useState<Formule>('masculin');
   const [phase, setPhase] = useState<Phase>({ etape: 'saisie' });
+  const session = useSession((s) => s.session);
+  const sessionPrete = useSession((s) => s.pret);
   const [probleme, setProbleme] = useState<Exclude<IssueDedicace, 'ok'> | null>(null);
 
   const dedier = async () => {
@@ -87,6 +91,25 @@ export function CarteDedicace() {
         <Button variant="secondaire" pleineLargeur onPress={() => setPhase({ etape: 'saisie' })}>
           {t('dedicace.autre')}
         </Button>
+      </View>
+    );
+  }
+
+  // Réservé aux comptes : sans session, on propose de se connecter au lieu du champ.
+  if (sessionPrete && !session) {
+    return (
+      <View style={carte}>
+        {etiquette}
+        <Text accessibilityRole="header" maxFontSizeMultiplier={echelleMax.grand} style={[typographie.titre2, { color: couleurs.encre }]}>
+          {t('dedicace.titre')}
+        </Text>
+        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, ligne(styles.aide), { color: couleurs.encre2 }]}>
+          {t('dedicace.connexion.texte')}
+        </Text>
+        <Button variant="principal" pleineLargeur onPress={() => router.push('/plus/connexion')}>
+          {t('dedicace.connexion.bouton')}
+        </Button>
+        {lien}
       </View>
     );
   }

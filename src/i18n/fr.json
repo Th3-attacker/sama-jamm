@@ -156,7 +156,12 @@
       "masculin": "رحمه الله",
       "feminin": "رحمها الله"
     },
+    "connexion": {
+      "texte": "Pour dédier un nom, connectez-vous : cela évite les envois en masse et permet de retirer un nom si besoin.",
+      "bouton": "Se connecter"
+    },
     "problemes": {
+      "connexion": "Connectez-vous pour dédier un nom.",
       "hors-ligne": "Pas de connexion. Votre nom est gardé : réessayez quand vous serez en ligne.",
       "invalide": "Ce nom ne peut pas être publié. Écrivez le prénom et le nom, sans chiffres ni symboles.",
       "trop": "Vous avez déjà proposé plusieurs noms. Réessayez demain, si Dieu le veut.",

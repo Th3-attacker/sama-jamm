@@ -3,12 +3,12 @@
 -- seulement avec l'accord explicite du propriétaire, après un essai dans une transaction annulée. Faire une sauvegarde avant.
 -- Additive : ne supprime ni ne renomme rien.
 --
--- Décisions du propriétaire (23 nov 2026) : n'importe qui peut dédier un nom, sans compte (connexion anonyme de Supabase :
--- à activer dans Authentication > Providers > Anonymous, réglage de production à part) ; nom complet en texte libre ;
--- relecture à la main dans le SQL Editor (aucune interface) ; l'auteur est enregistré, jamais exposé, et son lien
--- est effacé avec son compte ; signalement d'un nom depuis le site.
+-- Décisions du propriétaire (23 nov 2026) : seule une personne connectée avec un compte (et donc tout membre d'un khatm)
+-- peut dédier un nom ; une session anonyme de Supabase est refusée, même si elle était activée un jour ; nom complet en
+-- texte libre ; relecture à la main dans le SQL Editor (aucune interface) ; l'auteur est enregistré, jamais exposé, et
+-- son lien est effacé avec son compte ; signalement d'un nom depuis le site.
 --
--- Sécurité : RLS activée sans aucune règle pour les clients. Écriture seulement par `dedier_nom` (connecté, anonyme compris).
+-- Sécurité : RLS activée sans aucune règle pour les clients. Écriture seulement par `dedier_nom` (compte connecté, session anonyme refusée).
 -- Lecture publique seulement par `noms_dedies_publics` : noms validés, sans auteur, date arrondie au jour.
 -- Un nom n'apparaît qu'après avoir été passé à 'valide' à la main : le client ne peut jamais choisir l'état.
 --
@@ -65,6 +65,8 @@ declare
   v_id uuid;
 begin
   if auth.uid() is null then raise exception 'non connecté'; end if;
+  -- Réservé aux comptes : une session anonyme (claim `is_anonymous` du jeton) est refusée.
+  if coalesce((auth.jwt() ->> 'is_anonymous')::boolean, false) then raise exception 'connexion requise'; end if;
 
   -- Un verrou par personne : des appels parallèles ne peuvent pas dépasser la limite ensemble.
   perform pg_catalog.pg_advisory_xact_lock(pg_catalog.hashtext('nom_dedie:' || auth.uid()::text));
