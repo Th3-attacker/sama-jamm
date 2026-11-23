@@ -17,10 +17,7 @@ import { ReglagesEcoute } from '@/features/ecouter/ReglagesEcoute';
 import { recitateur } from '@/features/ecouter/recitateurs';
 import { sourateTelechargee, telechargerSourate, useTelechargements, WifiRequis } from '@/features/ecouter/telechargements';
 import { reperes, sourate, versetsDe } from '@/features/lire/coran';
-import { ECHELONS_TAILLE } from '@/features/lire/BarreTaille';
 import { cleVerset, useFavoris } from '@/stores/favoris';
-import { useReglages } from '@/stores/reglages';
-import { borneTaille } from '@/stores/tailleMigration';
 import { AnneauProgression } from '@/ui/AnneauProgression';
 import { pourcentage } from '@/ui/anneau';
 import { BarreLecteur } from '@/features/ecouter/BarreLecteur';
@@ -83,9 +80,6 @@ function BoutonCommande({
   );
 }
 
-/** Échelon de taille du texte par défaut (voir `stores/reglages`) : la taille de la planche. */
-const ECHELON_DEFAUT = 1;
-
 export default function LecteurPleinEcran() {
   const { t } = useTranslation();
   const { afficher } = useToast();
@@ -122,15 +116,6 @@ export default function LecteurPleinEcran() {
   const arabes = position ? versetsDe(position.sourate) : [];
   const texte = position ? arabes[position.verset - 1] : undefined;
   const apres = position ? arabes[position.verset] : undefined;
-  // Taille du texte (feuille « Écoute » et « Lecture ») : la taille de la planche au réglage par défaut, proportionnelle ensuite.
-  const echelonTaille = useReglages((st) => st.tailleLecture);
-  const ratioTaille = (ECHELONS_TAILLE[borneTaille(echelonTaille)] ?? 1) / (ECHELONS_TAILLE[ECHELON_DEFAUT] ?? 1);
-  const tailleVerset = { fontSize: tailles.t34 * ratioTaille, lineHeight: interlignes.l64 * ratioTaille };
-  const tailleSuite = {
-    fontSize: (typographie.arabe.fontSize ?? tailles.t28) * ratioTaille,
-    lineHeight: (typographie.arabe.lineHeight ?? interlignes.l56) * ratioTaille,
-  };
-
   // Pochette : 240 (planche), plus petite sur un écran bas ; masquée avec le favori quand le texte système est très
   // agrandi (planche « texte à 200 % »), pour laisser la place au titre et au verset.
   const COTE_POCHETTE = height < 700 ? 170 : 240;
@@ -313,7 +298,7 @@ export default function LecteurPleinEcran() {
                   accessibilityLanguage="ar"
                   maxFontSizeMultiplier={echelleMax.grand}
                   // Marge de côté : les voyelles et ligatures dépassent de la boîte du texte et seraient rognées à grande taille.
-                  style={[typographie.coran, ligne(styles.versetCourant), tailleVerset, styles.arabe, { color: couleurs.encre, paddingHorizontal: espace.espace1 }]}>
+                  style={[typographie.coran, ligne(styles.versetCourant), styles.arabe, { color: couleurs.encre, paddingHorizontal: espace.espace1 }]}>
                   {texte}
                 </Text>
               ) : null}
@@ -326,7 +311,7 @@ export default function LecteurPleinEcran() {
                   <Text
                     accessibilityLanguage="ar"
                     maxFontSizeMultiplier={echelleMax.grand}
-                    style={[typographie.arabe, tailleSuite, styles.arabe, { color: couleurs.encre3, paddingHorizontal: espace.espace1 }]}>
+                    style={[typographie.arabe, styles.arabe, { color: couleurs.encre3, paddingHorizontal: espace.espace1 }]}>
                     {apres}
                   </Text>
                 </>
