@@ -3,12 +3,11 @@
 export type ModeBibliotheque = 'lire' | 'ecouter';
 export type OngletBibliotheque = 'coran' | 'recitateurs' | 'invocations';
 
-const ONGLETS: Record<ModeBibliotheque, readonly OngletBibliotheque[]> = {
-  lire: ['coran', 'invocations'],
-  ecouter: ['coran', 'recitateurs'],
-};
-
-/** Onglet à afficher après un changement de mode : le même s'il existe dans ce mode, sinon le Coran. */
+/**
+ * Onglet à afficher après un changement de mode. Écouter s'ouvre toujours sur les récitants ; Lire garde son onglet
+ * (Coran ou Invocations), et revient au Coran si on y arrive depuis les récitants.
+ */
 export function ongletPourMode(mode: ModeBibliotheque, onglet: OngletBibliotheque): OngletBibliotheque {
-  return ONGLETS[mode].includes(onglet) ? onglet : 'coran';
+  if (mode === 'ecouter') return 'recitateurs';
+  return onglet === 'recitateurs' ? 'coran' : onglet;
 }
