@@ -67,7 +67,7 @@ export default function Favoris() {
           }
           ListEmptyComponent={
             <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, { color: couleurs.encre3 }]}>
-              {t('favoris.chantsAVenir')}
+              {t('favoris.aucunFavori')}
             </Text>
           }
           ItemSeparatorComponent={() => <View style={{ height: espace.espace2 }} />}

@@ -134,7 +134,7 @@ export default function Lire() {
             {premierKhatm ? (
               <Pressable
                 accessibilityRole="button"
-                accessibilityLabel={`${premierKhatm.nom}, ${t('lire.khatmLus', { lus: premierKhatm.lus })}`}
+                accessibilityLabel={`${premierKhatm.nom}, ${t('lire.khatmLus', { lus: premierKhatm.lus, count: premierKhatm.lus })}`}
                 onPress={() => router.push({ pathname: '/plus/khatm/[id]', params: { id: premierKhatm.id } })}
                 style={[styles.lienKhatm, { gap: espace.espace2 }]}>
                 <Icon name="users" size={16} color={couleurs.orTexte} />

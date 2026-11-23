@@ -222,10 +222,6 @@
     "finSourate": "Fin de la sourate",
     "souratesuivante": "Sourate suivante",
     "souratePrecedente": "Sourate précédente",
-    "chant": "Chant",
-    "vers_one": "{{count}} vers",
-    "vers_other": "{{count}} vers",
-    "auteur": "Auteur",
     "invocationsSousTitre": "Pour chaque moment de la journée.",
     "compterRepetition": "Touchez pour compter",
     "repetitions": "{{n}} / {{total}}",
@@ -673,7 +669,7 @@
   },
   "recherche": {
     "titre": "Recherche",
-    "placeholder": "Un mot, un verset, un chant",
+    "placeholder": "Un mot, un verset, une invocation",
     "aide": "En français, en wolof, en arabe ou en translittération, même sans connexion.",
     "resultats_one": "{{count}} résultat",
     "resultats_other": "{{count}} résultats",
@@ -693,7 +689,7 @@
     "videTexte": "Rien ici pour l’instant. Touchez le signet d’un verset ou d’une invocation pour le retrouver ici, même hors ligne.",
     "ouvrirBibliotheque": "Ouvrir la bibliothèque",
     "filtrer": "Filtrer",
-    "chantsAVenir": "Les invocations arrivent bientôt."
+    "aucunFavori": "Aucun favori pour l’instant"
   },
   "partage": {
     "titre": "Partager",
@@ -1222,16 +1218,16 @@
     "taux": "1 {{de}} = ? {{vers}}",
     "intro": "Choisissez la monnaie de votre budget, ou ajoutez la vôtre.",
     "personnelle": "Devise personnalisée",
-    "note": "Un carnet de budget garde une seule devise. En changer convertit les montants déjà saisis avec le taux que vous indiquez ; vous pouvez aussi ouvrir un nouveau carnet, sans conversion.",
+    "note": "Un budget garde une seule devise. En changer convertit les montants déjà saisis avec le taux que vous indiquez ; vous pouvez aussi ouvrir un nouveau budget, sans conversion.",
     "changer": "Convertir et changer",
     "changee": "Budget passé en {{devise}}",
     "tauxInvalide": "Indiquez un taux positif, avec 6 décimales au plus.",
     "conversionNote": "Tous les montants du budget seront convertis et arrondis à l’unité la plus proche : les totaux peuvent varier très légèrement.",
-    "nouveauCarnet": "Ouvrir un nouveau carnet",
-    "nouveauTitre": "Ouvrir un nouveau carnet ?",
-    "nouveauTexte": "Un carnet neuf en {{devise}} reprend vos enveloppes, à zéro. Votre carnet actuel reste enregistré sur ce téléphone, sans conversion, mais il ne s’affiche plus.",
-    "nouveauConfirmer": "Ouvrir le carnet",
-    "nouveauFait": "Nouveau carnet en {{devise}}"
+    "nouveauCarnet": "Ouvrir un nouveau budget",
+    "nouveauTitre": "Ouvrir un nouveau budget ?",
+    "nouveauTexte": "Un budget neuf en {{devise}} reprend vos enveloppes, à zéro. Votre budget actuel reste enregistré sur ce téléphone, sans conversion, mais il ne s’affiche plus.",
+    "nouveauConfirmer": "Ouvrir le budget",
+    "nouveauFait": "Nouveau budget en {{devise}}"
   },
   "etats": {
     "horsLigne": "Hors ligne",
