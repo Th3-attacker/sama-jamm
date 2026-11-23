@@ -60,6 +60,8 @@ type Donnees = {
   /** Montants du budget remplacés par « ••• » à l'ouverture de l'app. */
   masquerMontants: boolean;
   /** Rappel quotidien du khatm : désactivé par défaut, une seule notification pour tous les khatms. */
+  /** Activité en direct de la prochaine prière (iPhone) : écran verrouillé et Dynamic Island, 30 minutes avant. */
+  activiteDirecte: boolean;
   khatmRappel: boolean;
   khatmRappelHeure: HeureRappelKhatm;
   /** Dernier nombre connu de khatms avec un juz non lu (null : inconnu). Gardé pour décider hors ligne. */
@@ -84,6 +86,7 @@ type Actions = {
   definirWifiSeulement: (actif: boolean) => void;
   definirVerrouBudget: (actif: boolean) => void;
   definirMasquerMontants: (actif: boolean) => void;
+  definirActiviteDirecte: (actif: boolean) => void;
   definirKhatmRappel: (actif: boolean) => void;
   definirKhatmRappelHeure: (heure: HeureRappelKhatm) => void;
   definirKhatmEnCours: (nombre: number | null) => void;
@@ -111,6 +114,7 @@ const parDefaut: Donnees = {
   chiffresArabes: false,
   verrouBudget: false,
   masquerMontants: false,
+  activiteDirecte: true,
   khatmRappel: false,
   khatmRappelHeure: 20,
   khatmEnCours: null,
@@ -143,6 +147,7 @@ export const useReglages = create<Donnees & Actions>()(
       definirChiffresArabes: (chiffresArabes) => set({ chiffresArabes }),
       definirVerrouBudget: (verrouBudget) => set({ verrouBudget }),
       definirMasquerMontants: (masquerMontants) => set({ masquerMontants }),
+      definirActiviteDirecte: (activiteDirecte) => set({ activiteDirecte }),
       definirKhatmRappel: (khatmRappel) => set({ khatmRappel }),
       definirKhatmRappelHeure: (khatmRappelHeure) => set({ khatmRappelHeure }),
       definirKhatmEnCours: (khatmEnCours) => set({ khatmEnCours }),
@@ -190,6 +195,7 @@ export const useReglages = create<Donnees & Actions>()(
         tailleLecture: s.tailleLecture,
         translitLecture: s.translitLecture,
         chiffresArabes: s.chiffresArabes,
+        activiteDirecte: s.activiteDirecte,
         khatmRappel: s.khatmRappel,
         khatmRappelHeure: s.khatmRappelHeure,
         khatmEnCours: s.khatmEnCours,
