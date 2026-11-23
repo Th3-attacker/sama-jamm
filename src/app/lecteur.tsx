@@ -1,29 +1,19 @@
 import { router } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
+import { Platform, Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import {
   arreter,
   basculer,
-  definirMinuterie,
-  definirRepetitionVerset,
-  definirRepeterSourate,
-  definirVitesse,
   changerSourate,
   recommencer,
   useLecteur,
-  VITESSES,
 } from '@/features/ecouter/lecteur';
-import {
-  DUREES_MINUTERIE,
-  formatReste,
-  minuterieDans,
-  REPETITIONS_VERSET,
-  resteMinuterie,
-} from '@/features/ecouter/minuterie';
+import { formatReste, resteMinuterie } from '@/features/ecouter/minuterie';
 import { VERSETS_PAR_SOURATE } from '@/features/ecouter/dureesDonnees';
+import { ReglagesEcoute } from '@/features/ecouter/ReglagesEcoute';
 import { recitateur } from '@/features/ecouter/recitateurs';
 import { sourateTelechargee, telechargerSourate, useTelechargements, WifiRequis } from '@/features/ecouter/telechargements';
 import { reperes, sourate, versetsDe } from '@/features/lire/coran';
@@ -34,18 +24,12 @@ import { BarreLecteur } from '@/features/ecouter/BarreLecteur';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { Banner } from '@/ui/Banner';
-import { BottomSheet } from '@/ui/BottomSheet';
-import { Button } from '@/ui/Button';
-import { Chip } from '@/ui/Chip';
 import { Icon } from '@/ui/Icon';
 import { IconButton } from '@/ui/IconButton';
 import type { IconName } from '@/ui/types';
 import { useToast } from '@/ui/Toast';
-import { SegmentedControl } from '@/ui/SegmentedControl';
-import { Slider } from '@/ui/Slider';
 
 import { interlignes, tailles } from '@/theme/tokens.generated';
-type Repetition = 'non' | 'verset' | 'sourate';
 
 /** Lecteur du Coran : anneau de progression, verset récité avec ses voisins, commandes ; réglages dans la feuille « Écoute ». */
 /** Bouton de la rangée de commandes : icône et légende dessous, 64 de large, grisé quand il est indisponible. */
@@ -105,7 +89,6 @@ export default function LecteurPleinEcran() {
   const position = useLecteur((s) => s.position ?? s.derniere);
   const enLecture = useLecteur((s) => s.enLecture);
   const erreur = useLecteur((s) => s.erreur);
-  const vitesse = useLecteur((s) => s.vitesse);
   const favoris = useFavoris((st) => st.versets);
   const basculerFavori = useFavoris((st) => st.basculer);
   const page = useLecteur((s) => s.page);
@@ -119,11 +102,7 @@ export default function LecteurPleinEcran() {
     [versionTelechargements, position, idRecitateur],
   );
   const minuterie = useLecteur((s) => s.minuterie);
-  const repetitionVerset = useLecteur((s) => s.repetitionVerset);
-  const repeterSourate = useLecteur((s) => s.repeterSourate);
   const [feuille, setFeuille] = useState(false);
-  // Durée choisie dans la feuille, pour la surligner pendant que le temps restant s'écoule.
-  const [dureeChoisie, setDureeChoisie] = useState<number | null>(null);
   // Le temps restant de la minuterie se redessine chaque seconde.
   const [maintenant, setMaintenant] = useState(() => Date.now());
   useEffect(() => {
@@ -137,23 +116,13 @@ export default function LecteurPleinEcran() {
   const arabes = position ? versetsDe(position.sourate) : [];
   const texte = position ? arabes[position.verset - 1] : undefined;
   const apres = position ? arabes[position.verset] : undefined;
-
   // Pochette : 240 (planche), plus petite sur un écran bas ; masquée avec le favori quand le texte système est très
   // agrandi (planche « texte à 200 % »), pour laisser la place au titre et au verset.
   const COTE_POCHETTE = height < 700 ? 170 : 240;
   const texteTresGrand = fontScale >= 1.5;
-  const repetition: Repetition = repeterSourate ? 'sourate' : repetitionVerset === 1 ? 'non' : 'verset';
-  const choisirRepetition = (r: Repetition) => {
-    if (r === 'non') {
-      definirRepetitionVerset(1);
-      definirRepeterSourate(false);
-    } else if (r === 'verset') {
-      definirRepeterSourate(false);
-      if (repetitionVerset === 1) definirRepetitionVerset(3);
-    } else {
-      definirRepetitionVerset(1);
-      definirRepeterSourate(true);
-    }
+  const ouvrirEcoute = () => {
+    if (Platform.OS === 'ios') router.push('/ecoute-reglages');
+    else setFeuille(true);
   };
 
   const etiquetteMinuterie =
@@ -315,7 +284,7 @@ export default function LecteurPleinEcran() {
                 legende={t('ecouter.minuterie')}
                 couleur={reste !== null || minuterie.type === 'finSourate' ? couleurs.emeraude : couleurs.encre}
                 pastille={reste !== null || minuterie.type === 'finSourate'}
-                onPress={() => setFeuille(true)}
+                onPress={ouvrirEcoute}
               />
             </View>
 
@@ -356,87 +325,18 @@ export default function LecteurPleinEcran() {
           </View>
         )}
 
-        <BottomSheet ouvert={feuille} titre={t('ecouter.titreFeuille')} onFermer={() => setFeuille(false)}>
-          <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, { color: couleurs.encre }]}>
-            {t('ecouter.arreterLaLecture')}
-          </Text>
-          <View style={[styles.puces, { gap: espace.espace2 }]}>
-            <Chip
-              selectionne={minuterie.type === 'aucune'}
-              onPress={() => {
-                setDureeChoisie(null);
-                definirMinuterie({ type: 'aucune' });
-              }}>
-              {t('ecouter.minuterieOff')}
-            </Chip>
-            {DUREES_MINUTERIE.map((m) => (
-              <Chip
-                key={m}
-                selectionne={minuterie.type === 'duree' && dureeChoisie === m}
-                onPress={() => {
-                  setDureeChoisie(m);
-                  definirMinuterie(minuterieDans(m, Date.now()));
-                }}>
-                {t('ecouter.minutes', { count: m })}
-              </Chip>
-            ))}
-            <Chip
-              selectionne={minuterie.type === 'finSourate'}
-              onPress={() => {
-                setDureeChoisie(null);
-                definirMinuterie({ type: 'finSourate' });
-              }}>
-              {t('ecouter.minuterieFinSourate')}
-            </Chip>
-          </View>
-          <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, ligne(styles.resumeMinuterie), { color: couleurs.encre3 }]}>
-            {reste !== null
-              ? t('ecouter.minuterieArret', { duree: formatReste(reste) })
-              : minuterie.type === 'finSourate'
-                ? t('ecouter.minuterieResumeFinSourate')
-                : t('ecouter.minuterieResumeAucune')}
-          </Text>
-          <SegmentedControl
-            label={t('ecouter.repeter')}
-            options={[
-              { id: 'non', label: t('ecouter.repetitionNon') },
-              { id: 'verset', label: t('ecouter.repeterVerset') },
-              ...(page === null ? [{ id: 'sourate', label: t('ecouter.repeterSourate') }] : []),
-            ]}
-            valeur={repetition}
-            onChange={(id) => {
-              if (id === 'non' || id === 'verset' || id === 'sourate') choisirRepetition(id);
-            }}
-          />
-          {repetition === 'verset' ? (
-            <View style={[styles.puces, { gap: espace.espace2 }]}>
-              {REPETITIONS_VERSET.filter((n) => n !== 1).map((n) => (
-                <Chip key={n} selectionne={repetitionVerset === n} onPress={() => definirRepetitionVerset(n)}>
-                  {n === 0 ? t('ecouter.sansFin') : t('ecouter.fois', { count: n })}
-                </Chip>
-              ))}
-            </View>
-          ) : null}
-          <Slider
-            label={t('ecouter.vitesse')}
-            min={VITESSES[0]}
-            max={VITESSES[VITESSES.length - 1] ?? 1.5}
-            pas={0.25}
-            valeur={vitesse}
-            onChange={definirVitesse}
-            format={(v) => `${String(v).replace('.', ',')} ×`}
-          />
-          <Button
-            variant="discret"
-            pleineLargeur
-            onPress={() => {
+        {/* iOS : feuille native `ecoute-reglages` (ouverte au toucher de Minuterie) ; Android : feuille maison. */}
+        {Platform.OS === 'ios' ? null : (
+          <ReglagesEcoute
+            ouvert={feuille}
+            onFermer={() => setFeuille(false)}
+            onArreter={() => {
               setFeuille(false);
               arreter();
               router.back();
-            }}>
-            {t('ecouter.arreter')}
-          </Button>
-        </BottomSheet>
+            }}
+          />
+        )}
       </View>
   );
 }
