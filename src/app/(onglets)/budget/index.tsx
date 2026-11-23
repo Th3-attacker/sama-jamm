@@ -201,7 +201,7 @@ export default function Budget() {
         <View style={{ gap: espace.espace2 }}>
           <View
             accessible
-            accessibilityLabel={`${t('budget.repartitionMois')} : ${t('budget.depense')} ${f(mois.depense)}, ${t('budget.epargne')} ${f(mois.misDeCote)}, ${t('budget.resteLegende')} ${f(reste)}`}
+            accessibilityLabel={`${t('budget.repartitionMois')} : ${t('budget.depense')} ${f(mois.depense)}, ${t('budget.epargne')} ${f(mois.misDeCote)}, ${t('budget.resteLegende')} ${f(Math.max(0, reste))}`}
             style={[styles.barre, { backgroundColor: couleurs.surfaceCreux }]}>
             <View style={{ width: largeur(mois.depense), backgroundColor: couleurs.emeraudeAplat }} />
             <View style={{ width: largeur(mois.misDeCote), backgroundColor: couleurs.or }} />
@@ -210,7 +210,8 @@ export default function Budget() {
             {[
               [t('budget.depense'), mois.depense, couleurs.emeraudeAplat, null],
               [t('budget.epargne'), mois.misDeCote, couleurs.or, null],
-              [t('budget.resteLegende'), reste, couleurs.surfaceCreux, couleurs.ligneForte],
+              // Reste négatif : la légende affiche 0, le dépassement est dit par la carte du haut (spec 08).
+              [t('budget.resteLegende'), Math.max(0, reste), couleurs.surfaceCreux, couleurs.ligneForte],
             ].map(([libelle, montant, fond, bord]) => (
               <View key={String(libelle)} style={[styles.legendeItem, { gap: espace.espace1 }]}>
                 <View
