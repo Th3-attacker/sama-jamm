@@ -28,14 +28,8 @@
     "saluerTrad": "هل أنت في سلام؟",
     "appel": "Waxtu julli jot na.",
     "appelTrad": "حان وقت الصلاة.",
-    "regularite": "Ndank-ndank mooy jàpp golo ci ñaay.",
-    "regulariteTrad": "قليل دائم خير من كثير منقطع.",
     "entraide": "Benn loxo du tàccu.",
     "entraideTrad": "يد واحدة لا تصفّق.",
-    "partage": "Nit nittay garabam.",
-    "partageTrad": "الإنسان دواء الإنسان.",
-    "effort": "Ku bëgg lem, ñemeel yamb.",
-    "effortTrad": "من أراد العسل صبر على لسع النحل.",
     "gratitude": "Sant Yàlla.",
     "gratitudeTrad": "الحمد لله.",
     "reposTrad": "تصبح على خير.",
@@ -148,6 +142,36 @@
       "aDemander": "لم يُطلب بعد"
     }
   },
+  "dedicace": {
+    "etiquette": "لأحبّتنا الراحلين",
+    "titre": "اسمٌ ودعاء",
+    "texte": "سيُضاف الاسم إلى قائمة الأسماء المُهداة على موقعنا.",
+    "champ": "اسم الفقيد أو الفقيدة",
+    "placeholder": "الاسم الكامل",
+    "dedier": "إهداء",
+    "formule": "الصيغة",
+    "homme": "رجل",
+    "femme": "امرأة",
+    "voir": "عرض الأسماء المُهداة",
+    "merci": "شكرًا",
+    "merciTexte": "اسم {{nom}} ظاهر الآن على موقعنا.",
+    "autre": "إضافة اسم آخر",
+    "invocation": {
+      "masculin": "رحمه الله",
+      "feminin": "رحمها الله"
+    },
+    "connexion": {
+      "texte": "لإهداء اسم، سجّل الدخول: هذا يمنع الإرسال الجماعي ويسمح بسحب اسم عند الحاجة.",
+      "bouton": "تسجيل الدخول"
+    },
+    "problemes": {
+      "connexion": "سجّل الدخول لإهداء اسم.",
+      "hors-ligne": "لا يوجد اتصال. اسمك محفوظ، أعد المحاولة عند عودة الاتصال.",
+      "invalide": "لا يمكن نشر هذا الاسم. اكتب الاسم الكامل دون أرقام أو رموز.",
+      "trop": "لقد أرسلت عدة أسماء. أعد المحاولة غدًا إن شاء الله.",
+      "erreur": "تعذّر إرسال الاسم. أعد المحاولة بعد قليل."
+    }
+  },
   "accueil": {
     "plusEnCours": "{{plus}}، {{enCours}}",
     "date": "{{jour}} · {{hegirien}}",
@@ -160,7 +184,6 @@
     "reprendre": "متابعة {{titre}}",
     "versetSur": "الآية {{n}} من {{total}}",
     "premierJour": "ابدأ بالفاتحة",
-    "sagesse": "Wax ju rafet",
     "reprendreLibelle": "متابعة",
     "budgetTitre": "ميزانية الشهر",
     "budgetPrive": "على هذا الهاتف",

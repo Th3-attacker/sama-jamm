@@ -28,14 +28,8 @@
     "saluerTrad": "Are you at peace?",
     "appel": "Waxtu julli jot na.",
     "appelTrad": "The time for prayer has come.",
-    "regularite": "Ndank-ndank mooy jàpp golo ci ñaay.",
-    "regulariteTrad": "A little each day is better than one big effort in a single day.",
     "entraide": "Benn loxo du tàccu.",
     "entraideTrad": "One hand cannot clap.",
-    "partage": "Nit nittay garabam.",
-    "partageTrad": "A person is the remedy of a person.",
-    "effort": "Ku bëgg lem, ñemeel yamb.",
-    "effortTrad": "Whoever wants honey must face the bees.",
     "gratitude": "Sant Yàlla.",
     "gratitudeTrad": "Give thanks to God.",
     "reposTrad": "Spend the night in peace.",
@@ -144,6 +138,36 @@
       "aDemander": "Not asked yet"
     }
   },
+  "dedicace": {
+    "etiquette": "For a loved one who has passed",
+    "titre": "A name, a prayer",
+    "texte": "Their name will join the list of dedicated names on our website.",
+    "champ": "Name of the person",
+    "placeholder": "Full name",
+    "dedier": "Dedicate",
+    "formule": "Form",
+    "homme": "A man",
+    "femme": "A woman",
+    "voir": "See dedicated names",
+    "merci": "Thank you",
+    "merciTexte": "{{nom}}’s name is now visible on our website.",
+    "autre": "Add another name",
+    "invocation": {
+      "masculin": "رحمه الله",
+      "feminin": "رحمها الله"
+    },
+    "connexion": {
+      "texte": "To dedicate a name, please sign in: this prevents mass submissions and lets us remove a name if needed.",
+      "bouton": "Sign in"
+    },
+    "problemes": {
+      "connexion": "Sign in to dedicate a name.",
+      "hors-ligne": "No connection. Your name is kept: try again when you are online.",
+      "invalide": "This name cannot be published. Write the first and last name, without digits or symbols.",
+      "trop": "You have already submitted several names. Try again tomorrow, God willing.",
+      "erreur": "The name could not be sent. Please try again in a moment."
+    }
+  },
   "accueil": {
     "plusEnCours": "{{plus}}, {{enCours}}",
     "date": "{{jour}} · {{hegirien}}",
@@ -156,7 +180,6 @@
     "reprendre": "Resume {{titre}}",
     "versetSur": "Verse {{n}} of {{total}}",
     "premierJour": "Start with Al-Fatiha",
-    "sagesse": "Wax ju rafet",
     "reprendreLibelle": "Resume",
     "budgetTitre": "This month’s budget",
     "budgetPrive": "On this phone",

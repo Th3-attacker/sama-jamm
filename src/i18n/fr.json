@@ -28,14 +28,8 @@
     "saluerTrad": "Êtes-vous en paix ?",
     "appel": "Waxtu julli jot na.",
     "appelTrad": "L’heure de la prière est arrivée.",
-    "regularite": "Ndank-ndank mooy jàpp golo ci ñaay.",
-    "regulariteTrad": "Un peu chaque jour vaut mieux qu’un grand effort d’un seul jour.",
     "entraide": "Benn loxo du tàccu.",
     "entraideTrad": "Une seule main ne peut pas applaudir.",
-    "partage": "Nit nittay garabam.",
-    "partageTrad": "L’homme est le remède de l’homme.",
-    "effort": "Ku bëgg lem, ñemeel yamb.",
-    "effortTrad": "Qui veut le miel affronte les abeilles.",
     "gratitude": "Sant Yàlla.",
     "gratitudeTrad": "Rendez grâce à Dieu.",
     "reposTrad": "Passez la nuit en paix.",
@@ -144,6 +138,36 @@
       "aDemander": "Pas encore demandée"
     }
   },
+  "dedicace": {
+    "etiquette": "Pour un proche décédé",
+    "titre": "Un nom, une invocation",
+    "texte": "Son nom rejoindra la liste des noms dédiés, visible sur notre site.",
+    "champ": "Nom du proche",
+    "placeholder": "Prénom et nom",
+    "dedier": "Dédier",
+    "formule": "Formule",
+    "homme": "Un homme",
+    "femme": "Une femme",
+    "voir": "Voir les noms dédiés",
+    "merci": "Merci",
+    "merciTexte": "Le nom de {{nom}} est maintenant visible sur notre site.",
+    "autre": "Ajouter un autre nom",
+    "invocation": {
+      "masculin": "رحمه الله",
+      "feminin": "رحمها الله"
+    },
+    "connexion": {
+      "texte": "Pour dédier un nom, connectez-vous : cela évite les envois en masse et permet de retirer un nom si besoin.",
+      "bouton": "Se connecter"
+    },
+    "problemes": {
+      "connexion": "Connectez-vous pour dédier un nom.",
+      "hors-ligne": "Pas de connexion. Votre nom est gardé : réessayez quand vous serez en ligne.",
+      "invalide": "Ce nom ne peut pas être publié. Écrivez le prénom et le nom, sans chiffres ni symboles.",
+      "trop": "Vous avez déjà proposé plusieurs noms. Réessayez demain, si Dieu le veut.",
+      "erreur": "Le nom n’a pas pu être envoyé. Réessayez dans un instant."
+    }
+  },
   "accueil": {
     "plusEnCours": "{{plus}}, {{enCours}}",
     "date": "{{jour}} · {{hegirien}}",
@@ -156,7 +180,6 @@
     "reprendre": "Reprendre {{titre}}",
     "versetSur": "Verset {{n}} sur {{total}}",
     "premierJour": "Commencer par Al-Fâtiha",
-    "sagesse": "Wax ju rafet",
     "reprendreLibelle": "Reprendre",
     "budgetTitre": "Budget du mois",
     "budgetPrive": "Sur ce téléphone",

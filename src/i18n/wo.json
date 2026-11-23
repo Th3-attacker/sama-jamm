@@ -27,14 +27,8 @@
     "saluerTrad": "Êtes-vous en paix ?",
     "appel": "Waxtu julli jot na.",
     "appelTrad": "L'heure de la prière est arrivée.",
-    "regularite": "Ndank-ndank mooy jàpp golo ci ñaay.",
-    "regulariteTrad": "Un peu chaque jour vaut mieux qu'un grand effort d'un seul jour.",
     "entraide": "Benn loxo du tàccu.",
     "entraideTrad": "Une seule main ne peut pas applaudir.",
-    "partage": "Nit nittay garabam.",
-    "partageTrad": "L'homme est le remède de l'homme.",
-    "effort": "Ku bëgg lem, ñemeel yamb.",
-    "effortTrad": "Qui veut le miel affronte les abeilles.",
     "gratitude": "Sant Yàlla.",
     "gratitudeTrad": "Rendez grâce à Dieu.",
     "reposTrad": "Passez la nuit en paix.",
@@ -67,9 +61,6 @@
   "bienvenue": {
     "langueTitre": "Dalal ak jàmm.",
     "rappelsTitre": "Waxtu julli jot na."
-  },
-  "accueil": {
-    "sagesse": "Wax ju rafet"
   },
   "menuPlus": {
     "rechercher": "Seet",

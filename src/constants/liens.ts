@@ -7,6 +7,8 @@ export const URL_SUPPRIMER_COMPTE = `${SITE}/supprimer-compte`;
 export const URL_VERSION = `${SITE}/version.json`;
 export const URL_CONDITIONS = `${SITE}/conditions`;
 export const URL_AIDE = `${SITE}/aide`;
+/** Page des noms dédiés (page 16). Adresse provisoire : la route du site n'existe pas encore (lot E). */
+export const URL_NOMS_DEDIES = `${SITE}/noms-dedies`;
 export const URL_STORE_ANDROID = 'https://play.google.com/store/apps/details?id=com.samajamm.app';
 /** À renseigner quand l'app existe sur l'App Store (https://apps.apple.com/app/id…). */
 export const URL_STORE_IOS: string | null = null;
