@@ -316,6 +316,7 @@
     "intentionAide": "Visible to all participants.",
     "echeanceAide": "Optional. A reminder is sent two days before.",
     "dateInvalide": "Date in the format dd/mm/yyyy.",
+    "datePassee": "Choose today or a future date.",
     "lienNote": "The invitation and its code can be sent by WhatsApp, SMS or any other app. An account is needed to read together.",
     "objectif": "Goal: {{date}}",
     "resumeComplet": "{{lus}} of 30 juz read · {{enCours}} in progress{{dont}} · free: {{libres}}",

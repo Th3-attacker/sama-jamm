@@ -2,7 +2,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { lienInvitation, lireCode, resumeKhatm, saisieCodeKhatm, vuePart, type Part } from './logique.ts';
+import { echeanceAcceptee, lienInvitation, lireCode, resumeKhatm, saisieCodeKhatm, vuePart, type Part } from './logique.ts';
 
 const parts: Part[] = Array.from({ length: 30 }, (_, i) => ({
   juz: i + 1,
@@ -35,4 +35,12 @@ test('saisieCodeKhatm : majuscules, caractères permis, 8 au plus', () => {
   assert.equal(saisieCodeKhatm('ab-cd 23 45 99'), 'ABCD2345');
   assert.equal(saisieCodeKhatm('ab01cd'), 'ABCD');
   assert.equal(saisieCodeKhatm('samajamm://khatm/abcd2345'), 'ABCD2345');
+});
+
+test("échéance d'un khatm : pas de date, aujourd'hui ou plus tard acceptés ; une date passée refusée", () => {
+  assert.equal(echeanceAcceptee(null, '2026-11-23'), true);
+  assert.equal(echeanceAcceptee('2026-11-23', '2026-11-23'), true);
+  assert.equal(echeanceAcceptee('2027-03-01', '2026-11-23'), true);
+  assert.equal(echeanceAcceptee('2026-11-22', '2026-11-23'), false);
+  assert.equal(echeanceAcceptee('2025-12-31', '2026-11-23'), false);
 });

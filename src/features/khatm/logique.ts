@@ -50,3 +50,11 @@ export function saisieCodeKhatm(saisie: string): string {
   const brut = saisie.includes('/') ? (saisie.trim().split('/').pop() ?? '') : saisie;
   return brut.toUpperCase().replace(/[^A-Z2-9]/g, '').slice(0, LONGUEUR_CODE_KHATM);
 }
+
+/**
+ * Une date de fin de khatm doit être aujourd'hui ou plus tard (jours « aaaa-mm-jj », comparés comme du texte).
+ * Pas de date : accepté, l'échéance est facultative.
+ */
+export function echeanceAcceptee(echeance: string | null, aujourdhui: string): boolean {
+  return echeance === null || echeance >= aujourdhui;
+}

@@ -5,7 +5,9 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { lireSaisieDate } from '@/features/budget/dettes';
 import { creerKhatm } from '@/features/khatm/depot';
+import { echeanceAcceptee } from '@/features/khatm/logique';
 import { inviter } from '@/features/khatm/partager';
+import { cleJour } from '@/lib/dates';
 import { supabase } from '@/services/supabase/client';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
@@ -34,9 +36,12 @@ export default function NouveauKhatm() {
   const nomOk = nomFinal.length <= 60;
   const jour = echeance.trim() === '' ? null : lireSaisieDate(echeance);
   const dateOk = echeance.trim() === '' || jour !== null;
+  const aujourdhui = cleJour(new Date());
+  // Une date de fin passée est refusée à la création (le calendrier la grise, la saisie à la main est contrôlée ici).
+  const datePassee = jour !== null && !echeanceAcceptee(jour, aujourdhui);
 
   const creer = async () => {
-    if (!nomOk || !dateOk || envoi) return;
+    if (!nomOk || !dateOk || datePassee || envoi) return;
     setEnvoi(true);
     setErreur(false);
     try {
@@ -91,7 +96,8 @@ export default function NouveauKhatm() {
             onChange={setEcheance}
             placeholder={t('dettes.datePlaceholder')}
             aide={t('khatm.echeanceAide')}
-            erreur={dateOk ? undefined : t('khatm.dateInvalide')}
+            minimum={aujourdhui}
+            erreur={dateOk ? (datePassee ? t('khatm.datePassee') : undefined) : t('khatm.dateInvalide')}
           />
           <ListGroup titre={t('khatm.participants')}>
             <ListItem icone="users" titre={t('khatm.rejoindreLien')} sousTitre={t('khatm.rejoindreLienAide')} />
@@ -100,7 +106,7 @@ export default function NouveauKhatm() {
           {erreur ? <Banner ton="erreur">{t('etats.erreurTexte')}</Banner> : null}
           {/* Pied de page collé en bas quand le contenu est court. */}
           <View style={[styles.pied, { gap: espace.espace2 }]}>
-            <Button icone="share" pleineLargeur disabled={!nomOk || !dateOk || envoi} onPress={creer}>
+            <Button icone="share" pleineLargeur disabled={!nomOk || !dateOk || datePassee || envoi} onPress={creer}>
               {t('khatm.creer')}
             </Button>
             <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, styles.note, { color: couleurs.encre3 }]}>

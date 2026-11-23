@@ -316,6 +316,7 @@
     "intentionAide": "Visible par tous les participants.",
     "echeanceAide": "Facultatif. Un rappel vous est envoyé deux jours avant.",
     "dateInvalide": "Date au format jj/mm/aaaa.",
+    "datePassee": "Choisissez aujourd’hui ou une date à venir.",
     "lienNote": "L’invitation et son code s’envoient par WhatsApp, SMS ou toute autre app. Un compte est nécessaire pour lire à plusieurs.",
     "objectif": "Objectif : {{date}}",
     "resumeComplet": "{{lus}} juz lus sur 30 · {{enCours}} en cours{{dont}} · libres : {{libres}}",

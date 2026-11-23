@@ -21,6 +21,8 @@ export type CalendrierDateProps = {
   /** Texte d'aide sous le champ, remplacé par l'erreur s'il y en a une (comme TextField). */
   aide?: string;
   erreur?: string;
+  /** Premier jour qu'on peut choisir (« aaaa-mm-jj ») : les jours d'avant sont grisés. Sans valeur, tous les jours. */
+  minimum?: string;
 };
 
 type Mois = { annee: number; mois: number };
@@ -35,7 +37,7 @@ function versTexte(date: Date): string {
 }
 
 /** Champ de date : affiche la date choisie et ouvre un calendrier mensuel dans une feuille du bas. Semaine du lundi. */
-export function CalendrierDate({ label, valeur, onChange, placeholder, aide, erreur }: CalendrierDateProps) {
+export function CalendrierDate({ label, valeur, onChange, placeholder, aide, erreur, minimum }: CalendrierDateProps) {
   const { t, i18n } = useTranslation();
   const { couleurs, espace, rayon, cible, typographie } = useTheme();
   const langue = i18n.language;
@@ -74,7 +76,15 @@ export function CalendrierDate({ label, valeur, onChange, placeholder, aide, err
       return { annee: d.getFullYear(), mois: d.getMonth() };
     });
 
+  // Jour « aaaa-mm-jj » d'une case du mois affiché, comparé à `minimum` (même forme, donc comme du texte).
+  const cleCase = (numero: number) =>
+    `${vue.annee}-${String(vue.mois + 1).padStart(2, '0')}-${String(numero).padStart(2, '0')}`;
+  const avantMinimum = (numero: number) => minimum !== undefined && cleCase(numero) < minimum;
+  // Pas de mois précédent à montrer quand le mois affiché est celui du minimum (ou avant).
+  const sansMoisPrecedent = minimum !== undefined && cleCase(1) <= minimum.slice(0, 8) + '01';
+
   const choisir = (numero: number) => {
+    if (avantMinimum(numero)) return;
     onChange(versTexte(new Date(vue.annee, vue.mois, numero)));
     setOuvert(false);
   };
@@ -135,9 +145,14 @@ export function CalendrierDate({ label, valeur, onChange, placeholder, aide, err
           <Pressable
             accessibilityRole="button"
             accessibilityLabel={t('commun.moisPrecedent')}
+            accessibilityState={{ disabled: sansMoisPrecedent }}
+            disabled={sansMoisPrecedent}
             onPress={() => decaler(-1)}
             hitSlop={8}
-            style={[styles.fleche, { minHeight: cible.cibleAndroid, minWidth: cible.cibleAndroid }]}>
+            style={[
+              styles.fleche,
+              { minHeight: cible.cibleAndroid, minWidth: cible.cibleAndroid, opacity: sansMoisPrecedent ? 0.4 : 1 },
+            ]}>
             <Icon name="arrow-left" color={couleurs.encre} size={20} />
           </Pressable>
           <Text
@@ -169,12 +184,14 @@ export function CalendrierDate({ label, valeur, onChange, placeholder, aide, err
             {ligne.map((numero, k) => {
               if (numero === null) return <View key={k} style={styles.cellule} />;
               const choisi = estChoisi(numero);
+              const bloque = avantMinimum(numero);
               return (
                 <Pressable
                   key={k}
                   accessibilityRole="button"
                   accessibilityLabel={formatLong.format(new Date(vue.annee, vue.mois, numero))}
-                  accessibilityState={{ selected: choisi }}
+                  accessibilityState={{ selected: choisi, disabled: bloque }}
+                  disabled={bloque}
                   onPress={() => choisir(numero)}
                   style={[
                     styles.cellule,
@@ -185,6 +202,7 @@ export function CalendrierDate({ label, valeur, onChange, placeholder, aide, err
                       backgroundColor: choisi ? couleurs.emeraudeAplat : 'transparent',
                       borderWidth: estAujourdhui(numero) && !choisi ? 1 : 0,
                       borderColor: couleurs.emeraude,
+                      opacity: bloque ? 0.35 : 1,
                     },
                   ]}>
                   <Text
