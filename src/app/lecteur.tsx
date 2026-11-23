@@ -12,8 +12,8 @@ import {
   definirRepetitionVerset,
   definirRepeterSourate,
   definirVitesse,
-  precedent,
-  suivant,
+  changerSourate,
+  recommencer,
   useLecteur,
   VITESSES,
 } from '@/features/ecouter/lecteur';
@@ -24,7 +24,7 @@ import {
   REPETITIONS_VERSET,
   resteMinuterie,
 } from '@/features/ecouter/minuterie';
-import { decalerTemps, tempsSourate } from '@/features/ecouter/durees';
+import { tempsSourate } from '@/features/ecouter/durees';
 import { dureesDe, VERSETS_PAR_SOURATE } from '@/features/ecouter/dureesDonnees';
 import { recitateur } from '@/features/ecouter/recitateurs';
 import { sourateTelechargee, telechargerSourate, useTelechargements, WifiRequis } from '@/features/ecouter/telechargements';
@@ -42,6 +42,7 @@ import { Button } from '@/ui/Button';
 import { Chip } from '@/ui/Chip';
 import { Icon } from '@/ui/Icon';
 import { IconButton } from '@/ui/IconButton';
+import type { IconName } from '@/ui/types';
 import { useToast } from '@/ui/Toast';
 import { SegmentedControl } from '@/ui/SegmentedControl';
 import { Slider } from '@/ui/Slider';
@@ -50,12 +51,25 @@ import { interlignes, tailles } from '@/theme/tokens.generated';
 type Repetition = 'non' | 'verset' | 'sourate';
 
 /** Lecteur du Coran : anneau de progression, verset récité avec ses voisins, commandes ; réglages dans la feuille « Écoute ». */
-/** Saut dans la sourate, en secondes (planche « Lecteur » : ± 10 s). */
-const SAUT = 10;
-
-/** Bouton « reculer » ou « avancer » de 10 secondes : icône circulaire et légende dessous, jamais retournée en arabe. */
-function BoutonSaut({ sens, label, legende, desactive, onPress }: { sens: 'avant' | 'arriere'; label: string; legende: string; desactive: boolean; onPress: () => void }) {
-  const { couleurs, cible, espace, typographie, ligne } = useTheme();
+/** Bouton de la rangée de commandes : icône et légende dessous, 64 de large, grisé quand il est indisponible. */
+function BoutonCommande({
+  icone,
+  label,
+  legende,
+  couleur,
+  desactive = false,
+  onPress,
+  pastille = false,
+}: {
+  icone: IconName;
+  label: string;
+  legende: string;
+  couleur: string;
+  desactive?: boolean;
+  onPress: () => void;
+  pastille?: boolean;
+}) {
+  const { couleurs, cible, espace, rayon, typographie, ligne } = useTheme();
   return (
     <Pressable
       accessibilityRole="button"
@@ -65,15 +79,20 @@ function BoutonSaut({ sens, label, legende, desactive, onPress }: { sens: 'avant
       hitSlop={4}
       onPress={onPress}
       style={({ pressed }) => ({
-        minWidth: cible.cibleIos,
+        width: 64,
         minHeight: cible.cibleIos,
         alignItems: 'center',
         justifyContent: 'center',
         gap: espace.espace1 / 2,
         opacity: desactive ? 0.4 : pressed ? 0.7 : 1,
       })}>
-      <Icon name={sens === 'avant' ? 'seek-forward' : 'seek-back'} size={24} color={couleurs.encre} />
-      <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, ligne({}), { color: couleurs.encre2 }]}>
+      <View>
+        <Icon name={icone} size={26} color={couleur} />
+        {pastille ? (
+          <View pointerEvents="none" style={[styles.pointMinuterie, { backgroundColor: couleurs.or, borderRadius: rayon.rayonPastille }]} />
+        ) : null}
+      </View>
+      <Text numberOfLines={1} maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, ligne({}), { color: couleurs.encre2 }]}>
         {legende}
       </Text>
     </Pressable>
@@ -133,14 +152,6 @@ export default function LecteurPleinEcran() {
     () => (position ? tempsSourate(dureesDe(idRecitateur), VERSETS_PAR_SOURATE, position.sourate, position.verset, tempsPiste) : null),
     [idRecitateur, position, tempsPiste],
   );
-
-  // Planche « Lecteur » : reculer ou avancer de 10 secondes dans la sourate. Seulement en écoute par sourate, dont les
-  // durées des versets sont connues : en mode page ou sans durées, les deux boutons sont désactivés.
-  const sautPossible = temps !== null && page === null;
-  const sauter = (delta: number) => {
-    if (temps === null || page !== null) return;
-    chercherSourate(decalerTemps(temps.ecoule, temps.total, delta));
-  };
 
   const repetition: Repetition = repeterSourate ? 'sourate' : repetitionVerset === 1 ? 'non' : 'verset';
   const choisirRepetition = (r: Repetition) => {
@@ -290,8 +301,21 @@ export default function LecteurPleinEcran() {
               </View>
 
             <View style={[styles.commandes, { marginTop: espace.espace3 }]}>
-              <BoutonSaut sens="arriere" label={t('ecouter.reculer10')} legende={t('ecouter.moins10')} desactive={!sautPossible} onPress={() => sauter(-SAUT)} />
-              <IconButton icone="skip-back" label={t('ecouter.precedent')} taille={26} couleur={couleurs.encre} onPress={precedent} />
+              <BoutonCommande
+                icone="reset"
+                label={t('ecouter.recommencer')}
+                legende={t('ecouter.repeter')}
+                couleur={couleurs.encre}
+                onPress={recommencer}
+              />
+              <BoutonCommande
+                icone="skip-back"
+                label={t('ecouter.souratePrecedente')}
+                legende={t('ecouter.precedenteLegende')}
+                couleur={couleurs.encre}
+                desactive={position.sourate <= 1}
+                onPress={() => changerSourate(-1)}
+              />
               <Pressable
                 accessibilityRole="button"
                 accessibilityLabel={enLecture ? t('commun.pause') : t('commun.ecouter')}
@@ -299,8 +323,8 @@ export default function LecteurPleinEcran() {
                 style={({ pressed }) => [
                   styles.principal,
                   {
-                    width: 64,
-                    height: 64,
+                    width: 72,
+                    height: 72,
                     borderRadius: rayon.rayonPastille,
                     backgroundColor: couleurs.emeraudeAplat,
                     opacity: pressed ? 0.85 : 1,
@@ -309,33 +333,25 @@ export default function LecteurPleinEcran() {
                 {chargement && !enLecture ? (
                   <ActivityIndicator color={couleurs.surEmeraude} />
                 ) : (
-                  <Icon name={enLecture ? 'pause' : 'play'} size={28} color={couleurs.surEmeraude} />
+                  <Icon name={enLecture ? 'pause' : 'play'} size={30} color={couleurs.surEmeraude} />
                 )}
               </Pressable>
-              <IconButton icone="skip-forward" label={t('ecouter.suivant')} taille={26} couleur={couleurs.encre} onPress={suivant} />
-              <BoutonSaut sens="avant" label={t('ecouter.avancer10')} legende={t('ecouter.plus10')} desactive={!sautPossible} onPress={() => sauter(SAUT)} />
-            </View>
-            {/* Seconde rangée, plus petite : Répéter et Minuterie (la rangée à 7 boutons ne tenait pas). */}
-            <View style={[styles.secondaires, { gap: espace.espace8 }]}>
-              <IconButton
-                icone="reset"
-                label={t('ecouter.repeterLeVerset')}
-                taille={24}
-                couleur={repetition === 'non' ? couleurs.encre2 : couleurs.emeraude}
+              <BoutonCommande
+                icone="skip-forward"
+                label={t('ecouter.sourateSuivante')}
+                legende={t('ecouter.suivanteLegende')}
+                couleur={couleurs.encre}
+                desactive={position.sourate >= VERSETS_PAR_SOURATE.length}
+                onPress={() => changerSourate(1)}
+              />
+              <BoutonCommande
+                icone="moon"
+                label={etiquetteMinuterie}
+                legende={t('ecouter.minuterie')}
+                couleur={reste !== null || minuterie.type === 'finSourate' ? couleurs.emeraude : couleurs.encre}
+                pastille={reste !== null || minuterie.type === 'finSourate'}
                 onPress={() => setFeuille(true)}
               />
-              <View>
-                <IconButton
-                  icone="moon"
-                  label={etiquetteMinuterie}
-                  taille={24}
-                  couleur={reste !== null || minuterie.type === 'finSourate' ? couleurs.emeraude : couleurs.encre2}
-                  onPress={() => setFeuille(true)}
-                />
-                {reste !== null || minuterie.type === 'finSourate' ? (
-                  <View pointerEvents="none" style={[styles.pointMinuterie, { backgroundColor: couleurs.or, borderRadius: rayon.rayonPastille }]} />
-                ) : null}
-              </View>
             </View>
 
               {/* Planche « Lecteur défilé » : sous les commandes, le verset en cours puis la suite. */}
@@ -477,7 +493,6 @@ const styles = StyleSheet.create({
   resumeMinuterie: { fontSize: tailles.t14, lineHeight: interlignes.l20 },
   arabe: { textAlign: 'center', writingDirection: 'rtl', alignSelf: 'stretch' },
   commandes: { alignSelf: 'stretch', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  secondaires: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center' },
   principal: { alignItems: 'center', justifyContent: 'center' },
   puces: { flexDirection: 'row', flexWrap: 'wrap' },
 });

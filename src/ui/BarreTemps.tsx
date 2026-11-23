@@ -6,6 +6,9 @@ import { useTheme } from '@/theme/useTheme';
 
 import { partEcoulee, tempsAuPoint } from './barreTemps';
 
+/** Largeur de la bulle d'heure, assez pour « 1:32:05 ». */
+const BULLE = 80;
+
 export type BarreTempsProps = {
   /** Lu par les lecteurs d'écran. */
   label: string;
@@ -38,6 +41,26 @@ export function BarreTemps({ label, temps, duree, onChercher, format, pas = 15, 
 
   return (
     <View style={{ gap: espace.espace1 }}>
+      {/* Bulle d'heure au-dessus du doigt pendant le glissement ; la lecture ne bouge qu'au relâchement. */}
+      {glisse !== null && largeur > 0 ? (
+        <View pointerEvents="none" style={{ height: 0 }}>
+          <View
+            style={[
+              styles.bulle,
+              {
+                backgroundColor: couleurs.encre,
+                borderRadius: rayon.rayonPastille,
+                paddingHorizontal: espace.espace3,
+                left: Math.min(Math.max(0, part * largeur - BULLE / 2), Math.max(0, largeur - BULLE)),
+                width: BULLE,
+              },
+            ]}>
+            <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, { color: couleurs.fond, textAlign: 'center' }]}>
+              {format(glisse)}
+            </Text>
+          </View>
+        </View>
+      ) : null}
       <View
         accessible
         accessibilityRole="adjustable"
@@ -99,5 +122,6 @@ const styles = StyleSheet.create({
   zone: { justifyContent: 'center' },
   piste: { overflow: 'hidden' },
   pouce: { position: 'absolute' },
+  bulle: { position: 'absolute', bottom: 4, paddingVertical: 4 },
   temps: { flexDirection: 'row', justifyContent: 'space-between' },
 });
