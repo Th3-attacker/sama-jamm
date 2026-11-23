@@ -46,7 +46,7 @@ export default function Lire() {
   type Onglet = OngletBibliotheque;
   const ouverture = (r: string | undefined): Onglet => (r === 'recitateurs' || r === 'invocations' ? r : 'coran');
   const [onglet, setOnglet] = useState<Onglet>(ouverture(rubrique));
-  // Un onglet qui n'existe pas dans l'autre mode (Récitateurs en Lire, Invocations en Écouter) revient au Coran.
+  // Écouter s'ouvre sur les récitants ; Lire garde son onglet, ou revient au Coran depuis les récitants.
   const changerMode = (m: ModeLire) => {
     setMode(m);
     setOnglet((o) => ongletPourMode(m, o));
@@ -95,8 +95,8 @@ export default function Lire() {
           <SegmentedControl
             label={t('lire.bibliotheque')}
             options={[
-              { id: 'coran', label: t('lire.coran') },
               { id: 'recitateurs', label: t('ecouter.recitateurs') },
+              { id: 'coran', label: t('lire.coran') },
             ]}
             valeur={onglet === 'invocations' ? 'coran' : onglet}
             onChange={(id) => setOnglet(ouverture(id))}
