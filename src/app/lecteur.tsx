@@ -1,13 +1,12 @@
 import { router } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import {
   arreter,
   basculer,
-  chercherSourate,
   definirMinuterie,
   definirRepetitionVerset,
   definirRepeterSourate,
@@ -24,16 +23,14 @@ import {
   REPETITIONS_VERSET,
   resteMinuterie,
 } from '@/features/ecouter/minuterie';
-import { tempsSourate } from '@/features/ecouter/durees';
-import { dureesDe, VERSETS_PAR_SOURATE } from '@/features/ecouter/dureesDonnees';
+import { VERSETS_PAR_SOURATE } from '@/features/ecouter/dureesDonnees';
 import { recitateur } from '@/features/ecouter/recitateurs';
 import { sourateTelechargee, telechargerSourate, useTelechargements, WifiRequis } from '@/features/ecouter/telechargements';
 import { reperes, sourate, versetsDe } from '@/features/lire/coran';
 import { cleVerset, useFavoris } from '@/stores/favoris';
-import { formatTemps } from '@/features/ecouter/temps';
 import { AnneauProgression } from '@/ui/AnneauProgression';
 import { pourcentage } from '@/ui/anneau';
-import { BarreTemps } from '@/ui/BarreTemps';
+import { BarreLecteur } from '@/features/ecouter/BarreLecteur';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { Banner } from '@/ui/Banner';
@@ -107,12 +104,10 @@ export default function LecteurPleinEcran() {
   const { height, fontScale } = useWindowDimensions();
   const position = useLecteur((s) => s.position ?? s.derniere);
   const enLecture = useLecteur((s) => s.enLecture);
-  const chargement = useLecteur((s) => s.chargement);
   const erreur = useLecteur((s) => s.erreur);
   const vitesse = useLecteur((s) => s.vitesse);
   const favoris = useFavoris((st) => st.versets);
   const basculerFavori = useFavoris((st) => st.basculer);
-  const tempsPiste = useLecteur((s) => (s.position ? s.temps : 0));
   const page = useLecteur((s) => s.page);
   const idRecitateur = useLecteur((s) => s.recitateur);
   const versionTelechargements = useTelechargements((s) => s.version);
@@ -147,12 +142,6 @@ export default function LecteurPleinEcran() {
   // agrandi (planche « texte à 200 % »), pour laisser la place au titre et au verset.
   const COTE_POCHETTE = height < 700 ? 170 : 240;
   const texteTresGrand = fontScale >= 1.5;
-  // Temps de la sourate d'après la durée des versets du récitateur ; sans durées, on garde « Verset N sur M ».
-  const temps = useMemo(
-    () => (position ? tempsSourate(dureesDe(idRecitateur), VERSETS_PAR_SOURATE, position.sourate, position.verset, tempsPiste) : null),
-    [idRecitateur, position, tempsPiste],
-  );
-
   const repetition: Repetition = repeterSourate ? 'sourate' : repetitionVerset === 1 ? 'non' : 'verset';
   const choisirRepetition = (r: Repetition) => {
     if (r === 'non') {
@@ -277,27 +266,7 @@ export default function LecteurPleinEcran() {
               ) : null}
 
               <View style={[styles.blocBarre, { marginTop: espace.espace3 }]}>
-                {temps ? (
-                  // Glissable en écoute par sourate ; en écoute page par page, la barre s'affiche sans se déplacer.
-                  <BarreTemps
-                    label={t('ecouter.positionSourate')}
-                    temps={temps.ecoule}
-                    duree={temps.total}
-                    onChercher={page === null ? chercherSourate : undefined}
-                    format={formatTemps}
-                    pas={15}
-                    restant
-                  />
-                ) : (
-                  // Sans durées : « Verset N sur M » comme avant.
-                  <Text
-                    maxFontSizeMultiplier={echelleMax.courant}
-                    style={[typographie.legende, styles.centre, { color: couleurs.encre3 }]}>
-                    {page !== null
-                      ? `${t('lire.pageN', { n: page })} · ${t('ecouter.versetSur', { n: position.verset, total: s.versets })}`
-                      : t('ecouter.versetSur', { n: position.verset, total: s.versets })}
-                  </Text>
-                )}
+                <BarreLecteur />
               </View>
 
             <View style={[styles.commandes, { marginTop: espace.espace3 }]}>
@@ -330,11 +299,7 @@ export default function LecteurPleinEcran() {
                     opacity: pressed ? 0.85 : 1,
                   },
                 ]}>
-                {chargement && !enLecture ? (
-                  <ActivityIndicator color={couleurs.surEmeraude} />
-                ) : (
-                  <Icon name={enLecture ? 'pause' : 'play'} size={30} color={couleurs.surEmeraude} />
-                )}
+                <Icon name={enLecture ? 'pause' : 'play'} size={30} color={couleurs.surEmeraude} />
               </Pressable>
               <BoutonCommande
                 icone="skip-forward"
