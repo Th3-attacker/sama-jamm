@@ -3,7 +3,7 @@ import { ComponentRef, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import { proverbeDuJour } from '@/features/accueil/sagesse';
+import { CarteDedicace } from '@/features/dedicace/CarteDedicace';
 import { useSession } from '@/features/compte/compte';
 import { calculerHoraires, prochainePriere } from '@/features/priere/horaires';
 import { useOptionsCalcul } from '@/features/priere/useOptionsCalcul';
@@ -33,7 +33,7 @@ export default function Accueil() {
   const defilement = useRef<ComponentRef<typeof ScrollView>>(null);
   useScrollToTop(defilement);
   const { t, i18n } = useTranslation();
-  const { couleurs, espace, rayon, typographie, latin, ligne } = useTheme();
+  const { couleurs, espace, typographie, latin, ligne } = useTheme();
   const marge = useMargeBasse();
   const { styleColonne: colonne, largeur } = useLayout();
   const miniVisible = useMiniLecteurVisible();
@@ -73,7 +73,6 @@ export default function Accueil() {
   const khatmsEnCours = useReglages((s) => s.khatmEnCours);
   const badgePlus = connecte && khatmsEnCours !== null && khatmsEnCours > 0;
   const jour = formatJour(maintenant, i18n.language);
-  const sagesse = proverbeDuJour(maintenant);
   const hegirien = formatHegirien(maintenant, i18n.language);
 
   return (
@@ -139,31 +138,8 @@ export default function Accueil() {
         {/* Écoute reprise : seulement quand le mini-lecteur est rangé (plafond de la pile) ou absent. */}
         {bandeEcoute ? <BandeEcoute /> : null}
 
-        {/* Wax ju rafet : un proverbe wolof par jour, avec sa traduction. */}
-        <View
-          accessible
-          style={{
-            gap: espace.espace1,
-            padding: espace.espace4,
-            // Planche : rayon 20, comme les quatre cartes.
-            borderRadius: rayon.rayonFeuille,
-            backgroundColor: couleurs.orDoux,
-          }}>
-          <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, ligne(styles.etiquette), { color: couleurs.orTexte }]}>
-            {t('accueil.sagesse')}
-          </Text>
-          <Text
-            accessibilityLanguage="wo"
-            maxFontSizeMultiplier={echelleMax.courant}
-            style={[latin.titre2, { color: couleurs.encre, writingDirection: 'ltr' }]}>
-            {t(`formules.${sagesse}`)}
-          </Text>
-          <Text
-            maxFontSizeMultiplier={echelleMax.courant}
-            style={[typographie.translitteration, ligne(styles.italique), { color: couleurs.encre2 }]}>
-            {t(`formules.${sagesse}Trad`)}
-          </Text>
-        </View>
+        {/* Page 16 : un nom, une invocation. Remplace le proverbe « Wax ju rafet » (décision du propriétaire, 23 nov 2026). */}
+        <CarteDedicace />
       </ScrollView>
       <SondeBarre />
     </View>
@@ -172,9 +148,6 @@ export default function Accueil() {
 
 const styles = StyleSheet.create({
   ecran: { flex: 1 },
-  // Planche : date et traduction du proverbe en italique 15/22, hors échelle : ramenées à 14/20.
+  // Planche : date en italique 15/22, hors échelle : ramenée à 14/20.
   italique: { fontSize: tailles.t14, lineHeight: interlignes.l20 },
-  // Planche : « WAX JU RAFET » en 13, majuscules : ramené à 12/16 ; interlettrage 0,06 em comme les autres
-  // étiquettes en majuscules de l'app (la planche dit 0,12 em, noté dans ECARTS.md).
-  etiquette: { fontSize: tailles.t12, lineHeight: interlignes.l16, textTransform: 'uppercase', letterSpacing: 0.72 },
 });
