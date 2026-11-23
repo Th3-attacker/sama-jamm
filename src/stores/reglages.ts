@@ -62,6 +62,8 @@ type Donnees = {
   /** Rappel quotidien du khatm : désactivé par défaut, une seule notification pour tous les khatms. */
   /** Activité en direct de la prochaine prière (iPhone) : écran verrouillé et Dynamic Island, 30 minutes avant. */
   activiteDirecte: boolean;
+  /** Notification persistante « Prochaine prière » (Android), 30 minutes avant. Désactivée par défaut. */
+  compteNotification: boolean;
   khatmRappel: boolean;
   khatmRappelHeure: HeureRappelKhatm;
   /** Dernier nombre connu de khatms avec un juz non lu (null : inconnu). Gardé pour décider hors ligne. */
@@ -87,6 +89,7 @@ type Actions = {
   definirVerrouBudget: (actif: boolean) => void;
   definirMasquerMontants: (actif: boolean) => void;
   definirActiviteDirecte: (actif: boolean) => void;
+  definirCompteNotification: (actif: boolean) => void;
   definirKhatmRappel: (actif: boolean) => void;
   definirKhatmRappelHeure: (heure: HeureRappelKhatm) => void;
   definirKhatmEnCours: (nombre: number | null) => void;
@@ -115,6 +118,7 @@ const parDefaut: Donnees = {
   verrouBudget: false,
   masquerMontants: false,
   activiteDirecte: true,
+  compteNotification: false,
   khatmRappel: false,
   khatmRappelHeure: 20,
   khatmEnCours: null,
@@ -148,6 +152,7 @@ export const useReglages = create<Donnees & Actions>()(
       definirVerrouBudget: (verrouBudget) => set({ verrouBudget }),
       definirMasquerMontants: (masquerMontants) => set({ masquerMontants }),
       definirActiviteDirecte: (activiteDirecte) => set({ activiteDirecte }),
+      definirCompteNotification: (compteNotification) => set({ compteNotification }),
       definirKhatmRappel: (khatmRappel) => set({ khatmRappel }),
       definirKhatmRappelHeure: (khatmRappelHeure) => set({ khatmRappelHeure }),
       definirKhatmEnCours: (khatmEnCours) => set({ khatmEnCours }),
@@ -196,6 +201,7 @@ export const useReglages = create<Donnees & Actions>()(
         translitLecture: s.translitLecture,
         chiffresArabes: s.chiffresArabes,
         activiteDirecte: s.activiteDirecte,
+        compteNotification: s.compteNotification,
         khatmRappel: s.khatmRappel,
         khatmRappelHeure: s.khatmRappelHeure,
         khatmEnCours: s.khatmEnCours,

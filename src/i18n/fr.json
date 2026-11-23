@@ -472,6 +472,8 @@
     "cinqPrieres": "Les cinq prières",
     "activiteDirecteTitre": "Activité en direct",
     "activiteDirecteAide": "Sur l’écran verrouillé et la Dynamic Island, 30 minutes avant la prière, si l’app est ouverte à ce moment.",
+    "compteTitre": "Compte à rebours",
+    "compteAide": "Notification persistante « Prochaine prière », 30 minutes avant, si l’app est ouverte à ce moment.",
     "prochaine": "Prochaine prière",
     "titre": "Prière",
     "noms": {
