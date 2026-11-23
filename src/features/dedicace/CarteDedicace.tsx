@@ -159,7 +159,7 @@ export function CarteDedicace() {
         </Button>
       </View>
       {/* Le choix et le lien partagent une ligne quand la largeur le permet (la carte reste basse). */}
-      <View style={[styles.choix, { gap: espace.espace2 }]}>
+      <View style={[styles.choix, { gap: espace.espace2, marginTop: espace.espace2 }]}>
         <View style={styles.segment}>
           <SegmentedControl
             label={t('dedicace.formule')}
