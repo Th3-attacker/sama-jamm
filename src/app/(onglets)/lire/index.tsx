@@ -22,7 +22,7 @@ import { useTheme } from '@/theme/useTheme';
 import { Icon } from '@/ui/Icon';
 import { SegmentedControl } from '@/ui/SegmentedControl';
 import { TopBar } from '@/ui/TopBar';
-import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
+import { ACCESSOIRE_NATIF, useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 import { ListeRecitateurs } from '@/features/ecouter/ListeRecitateurs';
 
 import { espace, interlignes, rayon, tailles } from '@/theme/tokens.generated';
@@ -74,7 +74,8 @@ export default function Lire() {
             {t('lire.titre')}
           </Text>
         }
-        actions={[{ icone: 'search', label: t('menuPlus.rechercher'), onPress: () => router.push('/plus/recherche') }]}
+        // iOS 26 et plus : la recherche est déjà dans la barre d'onglets, pas de loupe en double.
+        actions={ACCESSOIRE_NATIF ? undefined : [{ icone: 'search', label: t('menuPlus.rechercher'), onPress: () => router.push('/plus/recherche') }]}
       />
 
       {/* Barre fixe : l'interrupteur Lire | Écouter, et Coran | Invocations tant qu'on est sur Lire. */}

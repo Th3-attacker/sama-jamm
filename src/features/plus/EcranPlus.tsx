@@ -14,7 +14,7 @@ import { useTheme } from '@/theme/useTheme';
 import { Icon } from '@/ui/Icon';
 import { TopBar } from '@/ui/TopBar';
 import type { IconName } from '@/ui/types';
-import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
+import { ACCESSOIRE_NATIF, useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 import { SondeBarre } from '@/features/ecouter/SondeBarre';
 
 import { espace, interlignes, rayon, tailles } from '@/theme/tokens.generated';
@@ -75,7 +75,8 @@ export function EcranPlus({ empile = false }: EcranPlusProps) {
             </Text>
           </View>
         }
-        actions={[{ icone: 'search', label: t('menuPlus.rechercher'), onPress: () => router.push('/plus/recherche') }]}
+        // iOS 26 et plus : la recherche est déjà dans la barre d'onglets, pas de loupe en double.
+        actions={ACCESSOIRE_NATIF ? undefined : [{ icone: 'search', label: t('menuPlus.rechercher'), onPress: () => router.push('/plus/recherche') }]}
       />
       <ScrollView
         ref={defilement}
