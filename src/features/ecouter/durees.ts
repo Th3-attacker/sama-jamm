@@ -54,3 +54,9 @@ export function versetAuTemps(
   }
   return null;
 }
+
+/** Temps visé après un saut de `delta` secondes (négatif : reculer), borné entre le début et la fin de la sourate. */
+export function decalerTemps(ecoule: number, total: number, delta: number): number {
+  if (!Number.isFinite(ecoule) || !Number.isFinite(total) || !Number.isFinite(delta)) return 0;
+  return Math.min(Math.max(0, total), Math.max(0, ecoule + delta));
+}

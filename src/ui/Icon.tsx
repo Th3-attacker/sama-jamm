@@ -1,7 +1,7 @@
 import {
   ArrowDown, ArrowLeft, ArrowUp, Bell, BookOpen, Bookmark, Calendar, Car, Check, ChevronDown, ChevronRight, Clock,
   CircleCheck, CloudOff, Compass, Copy, Delete, Download, Ellipsis, Eye, EyeOff, Globe, Headphones, Heart, House, Info, LayoutGrid, List, Lock, MapPin,
-  Minus, Moon, Pause, Pencil, Play, Plus, Repeat, RotateCcw, Scale, Search, Share2, ShoppingCart, SkipBack,
+  Minus, Moon, Pause, Pencil, Play, Plus, Repeat, RotateCcw, RotateCw, Scale, Search, Share2, ShoppingCart, SkipBack,
   SkipForward, Settings, SlidersHorizontal, Sun, Target, Trash2, TriangleAlert, Type, User, Users, Wallet, X, Zap,
   type LucideIcon,
 } from 'lucide-react-native';
@@ -21,6 +21,8 @@ const LUCIDE: Record<Exclude<IconName, 'kaaba'>, LucideIcon> = {
   user: User, users: Users, lock: Lock,
   calendar: Calendar, target: Target, heart: Heart, balance: Scale, list: List, type: Type, bolt: Zap, car: Car,
   cart: ShoppingCart, copy: Copy, eye: Eye, 'eye-off': EyeOff,
+  // Saut de 10 secondes dans la lecture : jamais retournées en arabe (icônes audio).
+  'seek-back': RotateCcw, 'seek-forward': RotateCw,
 };
 
 // Icônes de direction : retournées en interface arabe. Jamais les icônes audio.

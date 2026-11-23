@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import { tempsSourate, versetAuTemps } from './durees.ts';
+import { decalerTemps, tempsSourate, versetAuTemps } from './durees.ts';
 
 // Deux sourates : 3 versets puis 2 versets. Durées en dixièmes de seconde.
 const VERSETS = [3, 2];
@@ -41,4 +41,17 @@ test('versetAuTemps : temps hors limites ramené au début ou à la fin, null sa
   assert.deepEqual(versetAuTemps(D, VERSETS, 1, 999), { verset: 3, dansVerset: 30 });
   assert.equal(versetAuTemps(undefined, VERSETS, 1, 3), null);
   assert.equal(versetAuTemps(D, VERSETS, 3, 3), null);
+});
+
+test('saut de 10 secondes : borné entre le début et la fin de la sourate', () => {
+  assert.equal(decalerTemps(30, 120, 10), 40);
+  assert.equal(decalerTemps(30, 120, -10), 20);
+  assert.equal(decalerTemps(4, 120, -10), 0);
+  assert.equal(decalerTemps(115, 120, 10), 120);
+  assert.equal(decalerTemps(0, 0, 10), 0);
+});
+
+test('saut : valeurs invalides ramenées au début', () => {
+  assert.equal(decalerTemps(Number.NaN, 120, 10), 0);
+  assert.equal(decalerTemps(30, Number.NaN, 10), 0);
 });
