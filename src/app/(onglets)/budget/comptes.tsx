@@ -235,7 +235,7 @@ export default function Comptes() {
           valeur={nom}
           onChange={setNom}
           maxLength={NOM_ENVELOPPE_MAX}
-          placeholder="Wave"
+          placeholder={t('budget.compteExemple')}
           erreur={nom !== '' && !nomValide ? t('budget.nomInvalide') : undefined}
         />
         <SegmentedControl

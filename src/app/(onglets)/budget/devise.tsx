@@ -11,6 +11,7 @@ import type { Devise } from '@/lib/montant';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { Banner } from '@/ui/Banner';
+import { Icon } from '@/ui/Icon';
 import { BottomSheet } from '@/ui/BottomSheet';
 import { Button } from '@/ui/Button';
 import { Dialog } from '@/ui/Dialog';
@@ -157,9 +158,10 @@ export default function EcranDevise() {
             setFeuille({ mode: 'ajout' });
           }}
           android_ripple={{ color: couleurs.emeraudeDoux }}
-          style={[styles.ajout, { borderRadius: rayon.rayonCarte, borderColor: couleurs.ligneForte }]}>
+          style={[styles.ajout, { gap: espace.espace2, borderRadius: rayon.rayonCarte, borderColor: couleurs.ligneForte }]}>
+          <Icon name="plus" size={18} color={couleurs.emeraude} />
           <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.gras, { color: couleurs.emeraude }]}>
-            {`+ ${t('devise.ajouterMa')}`}
+            {t('devise.ajouterMa')}
           </Text>
         </Pressable>
         <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, ligne(styles.detail), { color: couleurs.encre2 }]}>
@@ -216,7 +218,7 @@ export default function EcranDevise() {
 const styles = StyleSheet.create({
   ecran: { flex: 1 },
   carte: { flexDirection: 'row', alignItems: 'center', minHeight: 64 },
-  ajout: { height: 48, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderStyle: 'dashed' },
+  ajout: { height: 48, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderStyle: 'dashed' },
   rond: { width: 20, height: 20, borderRadius: rayon.rayonPastille },
   textes: { flex: 1 },
   gras: { fontFamily: 'SourceSans3_600SemiBold' },
