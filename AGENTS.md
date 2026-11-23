@@ -74,7 +74,7 @@ Un écart trouvé entre deux sources, ou entre une source et le code, se note da
 - Composants : noms et props du design system (`components/index.d.ts`), en français. Lire le thème par `useTheme()`.
 - Composants natifs React Native uniquement (`View`, `Text`, `Pressable`, `FlatList`…). Jamais d'éléments HTML ni d'API DOM.
 - Textes : clés de `i18n/fr.json` et `i18n/ar.json`, jamais de chaîne d'interface en dur. Une clé retirée du design system est retirée du code et des deux fichiers de langue.
-- Arabe et sens de lecture : `marginStart` / `marginEnd`, jamais `left` / `right` ; `writingDirection: 'rtl'` sur le texte arabe ; flèches retournées en RTL, icônes audio jamais.
+- Arabe et sens de lecture : `marginStart` / `marginEnd`, jamais `left` / `right` ; `writingDirection: 'rtl'` sur le texte arabe ; flèches retournées en RTL, icônes audio jamais, sauf Précédente et Suivante du lecteur (`skip-back`, `skip-forward`), dont la rangée s'inverse en arabe (décision du 23 novembre 2026).
 - Accessibilité : chaque élément touchable a un `accessibilityLabel` (les `aria-label` des planches donnent le texte) et au moins 44 × 44 pt.
 - Gestion des erreurs : pas de `catch` vide, pas d'échec transformé en succès, messages compréhensibles sans détail interne, aucune donnée personnelle ni secret dans les journaux. Chercher la cause réelle plutôt qu'un correctif temporaire.
 - Sécurité : aucun secret dans le code ; seule la clé publique de Supabase est dans l'app (jamais `service_role`) ; RLS vérifiée sur chaque table exposée ; les valeurs envoyées par le client ne sont jamais crues sans validation côté serveur.
