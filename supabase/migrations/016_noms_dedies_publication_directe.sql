@@ -1,6 +1,6 @@
 -- Noms dédiés : publication directe (décision du propriétaire, 23 nov 2026, variante 1).
--- NON APPLIQUÉE. À exécuter une seule fois, après 015_noms_dedies.sql (SQL Editor > New query > Run), et seulement avec
--- l'accord explicite du propriétaire, après un essai dans une transaction annulée.
+-- APPLIQUÉE en production le 23 novembre 2026 avec l'accord explicite du propriétaire (« Appliquer 016 »), après un essai dans
+-- une transaction annulée. À exécuter une seule fois, après 015_noms_dedies.sql.
 --
 -- Avant : un nom proposé restait 'en_attente' jusqu'à une relecture à la main. Désormais, un nom proposé par un compte
 -- connecté est enregistré tout de suite à l'état 'valide' : il apparaît sur le site sans délai. Le contrôle passe après coup :
