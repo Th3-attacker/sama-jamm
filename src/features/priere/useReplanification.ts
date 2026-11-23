@@ -9,6 +9,7 @@ import { actualiserKhatmsEnCours } from '@/features/khatm/enCours';
 import { useLecture } from '@/stores/lecture';
 import { useReglages } from '@/stores/reglages';
 
+import { actualiserPosition } from './suiviPosition';
 import { creerCanaux, enregistrerTacheQuotidienne, replanifier, URL_PRIERE, URL_ZAKAT } from './notifications';
 // Notification reçue app ouverte : bannière et son du canal (l'adhan sonne aussi quand l'app est ouverte).
 // Notification reçue app ouverte : bannière sans son, l'utilisateur est déjà là.
@@ -74,9 +75,12 @@ export function useReplanification(): void {
     const desabonnerLecture = useLecture.subscribe((s, avant) => {
       if (s.position !== avant.position) majReprendre();
     });
+    void actualiserPosition();
     const premierPlan = AppState.addEventListener('change', (etat) => {
       if (etat === 'active') {
         differer();
+        // Voyage : si le téléphone a bougé de plus de 25 km, les horaires suivent (changement de lieu = replanification).
+        void actualiserPosition();
         // Un juz lu ou un khatm quitté ailleurs ne doit pas laisser un rappel périmé.
         actualiserKhatmsEnCours().catch((erreur: unknown) => console.warn('Khatms en cours inaccessibles', erreur));
       }

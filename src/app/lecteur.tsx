@@ -1,19 +1,18 @@
 import { router } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import {
   arreter,
   basculer,
-  chercherSourate,
   definirMinuterie,
   definirRepetitionVerset,
   definirRepeterSourate,
   definirVitesse,
-  precedent,
-  suivant,
+  changerSourate,
+  recommencer,
   useLecteur,
   VITESSES,
 } from '@/features/ecouter/lecteur';
@@ -24,16 +23,14 @@ import {
   REPETITIONS_VERSET,
   resteMinuterie,
 } from '@/features/ecouter/minuterie';
-import { tempsSourate } from '@/features/ecouter/durees';
-import { dureesDe, VERSETS_PAR_SOURATE } from '@/features/ecouter/dureesDonnees';
+import { VERSETS_PAR_SOURATE } from '@/features/ecouter/dureesDonnees';
 import { recitateur } from '@/features/ecouter/recitateurs';
 import { sourateTelechargee, telechargerSourate, useTelechargements, WifiRequis } from '@/features/ecouter/telechargements';
 import { reperes, sourate, versetsDe } from '@/features/lire/coran';
 import { cleVerset, useFavoris } from '@/stores/favoris';
-import { formatTemps } from '@/features/ecouter/temps';
 import { AnneauProgression } from '@/ui/AnneauProgression';
 import { pourcentage } from '@/ui/anneau';
-import { BarreTemps } from '@/ui/BarreTemps';
+import { BarreLecteur } from '@/features/ecouter/BarreLecteur';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { Banner } from '@/ui/Banner';
@@ -42,6 +39,7 @@ import { Button } from '@/ui/Button';
 import { Chip } from '@/ui/Chip';
 import { Icon } from '@/ui/Icon';
 import { IconButton } from '@/ui/IconButton';
+import type { IconName } from '@/ui/types';
 import { useToast } from '@/ui/Toast';
 import { SegmentedControl } from '@/ui/SegmentedControl';
 import { Slider } from '@/ui/Slider';
@@ -50,6 +48,54 @@ import { interlignes, tailles } from '@/theme/tokens.generated';
 type Repetition = 'non' | 'verset' | 'sourate';
 
 /** Lecteur du Coran : anneau de progression, verset récité avec ses voisins, commandes ; réglages dans la feuille « Écoute ». */
+/** Bouton de la rangée de commandes : icône et légende dessous, 64 de large, grisé quand il est indisponible. */
+function BoutonCommande({
+  icone,
+  label,
+  legende,
+  couleur,
+  desactive = false,
+  onPress,
+  pastille = false,
+}: {
+  icone: IconName;
+  label: string;
+  legende: string;
+  couleur: string;
+  desactive?: boolean;
+  onPress: () => void;
+  pastille?: boolean;
+}) {
+  const { couleurs, cible, espace, rayon, typographie, ligne } = useTheme();
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      accessibilityState={{ disabled: desactive }}
+      disabled={desactive}
+      hitSlop={4}
+      onPress={onPress}
+      style={({ pressed }) => ({
+        width: 64,
+        minHeight: cible.cibleIos,
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: espace.espace1 / 2,
+        opacity: desactive ? 0.4 : pressed ? 0.7 : 1,
+      })}>
+      <View>
+        <Icon name={icone} size={26} color={couleur} />
+        {pastille ? (
+          <View pointerEvents="none" style={[styles.pointMinuterie, { backgroundColor: couleurs.or, borderRadius: rayon.rayonPastille }]} />
+        ) : null}
+      </View>
+      <Text numberOfLines={1} maxFontSizeMultiplier={echelleMax.courant} style={[typographie.legende, ligne({}), { color: couleurs.encre2 }]}>
+        {legende}
+      </Text>
+    </Pressable>
+  );
+}
+
 export default function LecteurPleinEcran() {
   const { t } = useTranslation();
   const { afficher } = useToast();
@@ -58,12 +104,10 @@ export default function LecteurPleinEcran() {
   const { height, fontScale } = useWindowDimensions();
   const position = useLecteur((s) => s.position ?? s.derniere);
   const enLecture = useLecteur((s) => s.enLecture);
-  const chargement = useLecteur((s) => s.chargement);
   const erreur = useLecteur((s) => s.erreur);
   const vitesse = useLecteur((s) => s.vitesse);
   const favoris = useFavoris((st) => st.versets);
   const basculerFavori = useFavoris((st) => st.basculer);
-  const tempsPiste = useLecteur((s) => (s.position ? s.temps : 0));
   const page = useLecteur((s) => s.page);
   const idRecitateur = useLecteur((s) => s.recitateur);
   const versionTelechargements = useTelechargements((s) => s.version);
@@ -98,12 +142,6 @@ export default function LecteurPleinEcran() {
   // agrandi (planche « texte à 200 % »), pour laisser la place au titre et au verset.
   const COTE_POCHETTE = height < 700 ? 170 : 240;
   const texteTresGrand = fontScale >= 1.5;
-  // Temps de la sourate d'après la durée des versets du récitateur ; sans durées, on garde « Verset N sur M ».
-  const temps = useMemo(
-    () => (position ? tempsSourate(dureesDe(idRecitateur), VERSETS_PAR_SOURATE, position.sourate, position.verset, tempsPiste) : null),
-    [idRecitateur, position, tempsPiste],
-  );
-
   const repetition: Repetition = repeterSourate ? 'sourate' : repetitionVerset === 1 ? 'non' : 'verset';
   const choisirRepetition = (r: Repetition) => {
     if (r === 'non') {
@@ -228,38 +266,25 @@ export default function LecteurPleinEcran() {
               ) : null}
 
               <View style={[styles.blocBarre, { marginTop: espace.espace3 }]}>
-                {temps ? (
-                  // Glissable en écoute par sourate ; en écoute page par page, la barre s'affiche sans se déplacer.
-                  <BarreTemps
-                    label={t('ecouter.positionSourate')}
-                    temps={temps.ecoule}
-                    duree={temps.total}
-                    onChercher={page === null ? chercherSourate : undefined}
-                    format={formatTemps}
-                    pas={15}
-                    restant
-                  />
-                ) : (
-                  // Sans durées : « Verset N sur M » comme avant.
-                  <Text
-                    maxFontSizeMultiplier={echelleMax.courant}
-                    style={[typographie.legende, styles.centre, { color: couleurs.encre3 }]}>
-                    {page !== null
-                      ? `${t('lire.pageN', { n: page })} · ${t('ecouter.versetSur', { n: position.verset, total: s.versets })}`
-                      : t('ecouter.versetSur', { n: position.verset, total: s.versets })}
-                  </Text>
-                )}
+                <BarreLecteur />
               </View>
 
             <View style={[styles.commandes, { marginTop: espace.espace3 }]}>
-              <IconButton
+              <BoutonCommande
                 icone="reset"
-                label={t('ecouter.repeterLeVerset')}
-                taille={24}
-                couleur={repetition === 'non' ? couleurs.encre2 : couleurs.emeraude}
-                onPress={() => setFeuille(true)}
+                label={t('ecouter.recommencer')}
+                legende={t('ecouter.repeter')}
+                couleur={couleurs.encre}
+                onPress={recommencer}
               />
-              <IconButton icone="skip-back" label={t('ecouter.precedent')} taille={26} couleur={couleurs.encre} onPress={precedent} />
+              <BoutonCommande
+                icone="skip-back"
+                label={t('ecouter.souratePrecedente')}
+                legende={t('ecouter.precedenteLegende')}
+                couleur={couleurs.encre}
+                desactive={position.sourate <= 1}
+                onPress={() => changerSourate(-1)}
+              />
               <Pressable
                 accessibilityRole="button"
                 accessibilityLabel={enLecture ? t('commun.pause') : t('commun.ecouter')}
@@ -267,32 +292,31 @@ export default function LecteurPleinEcran() {
                 style={({ pressed }) => [
                   styles.principal,
                   {
-                    width: 64,
-                    height: 64,
+                    width: 72,
+                    height: 72,
                     borderRadius: rayon.rayonPastille,
                     backgroundColor: couleurs.emeraudeAplat,
                     opacity: pressed ? 0.85 : 1,
                   },
                 ]}>
-                {chargement && !enLecture ? (
-                  <ActivityIndicator color={couleurs.surEmeraude} />
-                ) : (
-                  <Icon name={enLecture ? 'pause' : 'play'} size={28} color={couleurs.surEmeraude} />
-                )}
+                <Icon name={enLecture ? 'pause' : 'play'} size={30} color={couleurs.surEmeraude} />
               </Pressable>
-              <IconButton icone="skip-forward" label={t('ecouter.suivant')} taille={26} couleur={couleurs.encre} onPress={suivant} />
-              <View>
-                <IconButton
-                  icone="moon"
-                  label={etiquetteMinuterie}
-                  taille={24}
-                  couleur={reste !== null || minuterie.type === 'finSourate' ? couleurs.emeraude : couleurs.encre2}
-                  onPress={() => setFeuille(true)}
-                />
-                {reste !== null || minuterie.type === 'finSourate' ? (
-                  <View pointerEvents="none" style={[styles.pointMinuterie, { backgroundColor: couleurs.or, borderRadius: rayon.rayonPastille }]} />
-                ) : null}
-              </View>
+              <BoutonCommande
+                icone="skip-forward"
+                label={t('ecouter.sourateSuivante')}
+                legende={t('ecouter.suivanteLegende')}
+                couleur={couleurs.encre}
+                desactive={position.sourate >= VERSETS_PAR_SOURATE.length}
+                onPress={() => changerSourate(1)}
+              />
+              <BoutonCommande
+                icone="moon"
+                label={etiquetteMinuterie}
+                legende={t('ecouter.minuterie')}
+                couleur={reste !== null || minuterie.type === 'finSourate' ? couleurs.emeraude : couleurs.encre}
+                pastille={reste !== null || minuterie.type === 'finSourate'}
+                onPress={() => setFeuille(true)}
+              />
             </View>
 
               {/* Planche « Lecteur défilé » : sous les commandes, le verset en cours puis la suite. */}

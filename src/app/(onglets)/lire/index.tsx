@@ -22,7 +22,7 @@ import { useTheme } from '@/theme/useTheme';
 import { Icon } from '@/ui/Icon';
 import { SegmentedControl } from '@/ui/SegmentedControl';
 import { TopBar } from '@/ui/TopBar';
-import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
+import { ACCESSOIRE_NATIF, useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 import { ListeRecitateurs } from '@/features/ecouter/ListeRecitateurs';
 
 import { espace, interlignes, rayon, tailles } from '@/theme/tokens.generated';
@@ -46,7 +46,7 @@ export default function Lire() {
   type Onglet = OngletBibliotheque;
   const ouverture = (r: string | undefined): Onglet => (r === 'recitateurs' || r === 'invocations' ? r : 'coran');
   const [onglet, setOnglet] = useState<Onglet>(ouverture(rubrique));
-  // Un onglet qui n'existe pas dans l'autre mode (Récitateurs en Lire, Invocations en Écouter) revient au Coran.
+  // Écouter s'ouvre sur les récitants ; Lire garde son onglet, ou revient au Coran depuis les récitants.
   const changerMode = (m: ModeLire) => {
     setMode(m);
     setOnglet((o) => ongletPourMode(m, o));
@@ -74,7 +74,8 @@ export default function Lire() {
             {t('lire.titre')}
           </Text>
         }
-        actions={[{ icone: 'search', label: t('menuPlus.rechercher'), onPress: () => router.push('/plus/recherche') }]}
+        // iOS 26 et plus : la recherche est déjà dans la barre d'onglets, pas de loupe en double.
+        actions={ACCESSOIRE_NATIF ? undefined : [{ icone: 'search', label: t('menuPlus.rechercher'), onPress: () => router.push('/plus/recherche') }]}
       />
 
       {/* Barre fixe : l'interrupteur Lire | Écouter, et Coran | Invocations tant qu'on est sur Lire. */}
@@ -95,8 +96,8 @@ export default function Lire() {
           <SegmentedControl
             label={t('lire.bibliotheque')}
             options={[
-              { id: 'coran', label: t('lire.coran') },
               { id: 'recitateurs', label: t('ecouter.recitateurs') },
+              { id: 'coran', label: t('lire.coran') },
             ]}
             valeur={onglet === 'invocations' ? 'coran' : onglet}
             onChange={(id) => setOnglet(ouverture(id))}

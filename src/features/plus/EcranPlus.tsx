@@ -14,7 +14,7 @@ import { useTheme } from '@/theme/useTheme';
 import { Icon } from '@/ui/Icon';
 import { TopBar } from '@/ui/TopBar';
 import type { IconName } from '@/ui/types';
-import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
+import { ACCESSOIRE_NATIF, useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 import { SondeBarre } from '@/features/ecouter/SondeBarre';
 
 import { espace, interlignes, rayon, tailles } from '@/theme/tokens.generated';
@@ -26,6 +26,7 @@ const TUILES = [
   { id: 'khatm', titre: 'menuPlus.khatm', sous: 'menuPlus.tuiles.khatm', icone: 'users', href: '/plus/khatms' },
   { id: 'dhikr', titre: 'menuPlus.dhikr', sous: 'menuPlus.tuiles.dhikr', icone: 'target', href: '/priere/dhikr' },
   { id: 'qibla', titre: 'menuPlus.qibla', sous: 'menuPlus.tuiles.qibla', icone: 'compass', href: '/priere/qibla' },
+  { id: 'telechargements', titre: 'menuPlus.telechargements', sous: 'menuPlus.tuiles.telechargements', icone: 'download', href: '/plus/telechargements' },
   { id: 'invocations', titre: 'menuPlus.invocations', sous: 'menuPlus.tuiles.invocations', icone: 'moon', href: { pathname: '/lire', params: { rubrique: 'invocations' } } },
   { id: 'zakat', titre: 'menuPlus.zakat', sous: 'menuPlus.tuiles.zakat', icone: 'balance', href: '/budget/zakat' },
 ] as const satisfies readonly Tuile[];
@@ -38,7 +39,7 @@ export type EcranPlusProps = {
   empile?: boolean;
 };
 
-/** Écran Plus : cinq raccourcis, puis Favoris, Téléchargements, Compte, Réglages et À propos. */
+/** Écran Plus : six raccourcis (dont Téléchargements, planche `PlusHub`), puis Favoris, Téléchargements, Compte, Réglages et À propos. */
 export function EcranPlus({ empile = false }: EcranPlusProps) {
   const defilement = useRef<ComponentRef<typeof ScrollView>>(null);
   useScrollToTop(defilement);
@@ -74,7 +75,8 @@ export function EcranPlus({ empile = false }: EcranPlusProps) {
             </Text>
           </View>
         }
-        actions={[{ icone: 'search', label: t('menuPlus.rechercher'), onPress: () => router.push('/plus/recherche') }]}
+        // iOS 26 et plus : la recherche est déjà dans la barre d'onglets, pas de loupe en double.
+        actions={ACCESSOIRE_NATIF ? undefined : [{ icone: 'search', label: t('menuPlus.rechercher'), onPress: () => router.push('/plus/recherche') }]}
       />
       <ScrollView
         ref={defilement}

@@ -21,6 +21,7 @@ const LUCIDE: Record<Exclude<IconName, 'kaaba'>, LucideIcon> = {
   user: User, users: Users, lock: Lock,
   calendar: Calendar, target: Target, heart: Heart, balance: Scale, list: List, type: Type, bolt: Zap, car: Car,
   cart: ShoppingCart, copy: Copy, eye: Eye, 'eye-off': EyeOff,
+  // Saut de 10 secondes dans la lecture : jamais retournées en arabe (icônes audio).
 };
 
 // Icônes de direction : retournées en interface arabe. Jamais les icônes audio.
