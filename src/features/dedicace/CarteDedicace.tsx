@@ -68,14 +68,15 @@ export function CarteDedicace() {
     </Text>
   );
 
-  // Planche : carte `or-doux`, rayon 20, comme les quatre cartes de l'Accueil.
-  const carte = { gap: espace.espace2, padding: espace.espace4, borderRadius: rayon.rayonFeuille, backgroundColor: couleurs.orDoux };
+  // Planche : carte `or-doux`, rayon 20, comme les quatre cartes de l'Accueil. Compacte à la demande du propriétaire
+  // (titre 18/24, marge de 12, espaces de 4) : voir ECARTS.md.
+  const carte = { gap: espace.espace1, padding: espace.espace3, borderRadius: rayon.rayonFeuille, backgroundColor: couleurs.orDoux };
 
   if (phase.etape === 'merci') {
     return (
       <View style={carte}>
         {etiquette}
-        <Text accessibilityRole="header" maxFontSizeMultiplier={echelleMax.grand} style={[typographie.titre2, { color: couleurs.encre }]}>
+        <Text accessibilityRole="header" maxFontSizeMultiplier={echelleMax.grand} style={[typographie.titre3, { color: couleurs.encre }]}>
           {t('dedicace.merci')}
         </Text>
         <Text maxFontSizeMultiplier={echelleMax.courant} accessibilityLiveRegion="polite" style={[typographie.corps, ligne(styles.texte), { color: couleurs.encre }]}>
@@ -100,7 +101,7 @@ export function CarteDedicace() {
     return (
       <View style={carte}>
         {etiquette}
-        <Text accessibilityRole="header" maxFontSizeMultiplier={echelleMax.grand} style={[typographie.titre2, { color: couleurs.encre }]}>
+        <Text accessibilityRole="header" maxFontSizeMultiplier={echelleMax.grand} style={[typographie.titre3, { color: couleurs.encre }]}>
           {t('dedicace.titre')}
         </Text>
         <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, ligne(styles.aide), { color: couleurs.encre2 }]}>
@@ -120,7 +121,7 @@ export function CarteDedicace() {
   return (
     <View style={carte}>
       {etiquette}
-      <Text accessibilityRole="header" maxFontSizeMultiplier={echelleMax.grand} style={[typographie.titre2, { color: couleurs.encre }]}>
+      <Text accessibilityRole="header" maxFontSizeMultiplier={echelleMax.grand} style={[typographie.titre3, { color: couleurs.encre }]}>
         {t('dedicace.titre')}
       </Text>
       <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, ligne(styles.aide), { color: couleurs.encre2 }]}>
@@ -157,21 +158,26 @@ export function CarteDedicace() {
           {t('dedicace.dedier')}
         </Button>
       </View>
-      <SegmentedControl
-        label={t('dedicace.formule')}
-        options={[
-          { id: 'masculin', label: t('dedicace.homme') },
-          { id: 'feminin', label: t('dedicace.femme') },
-        ]}
-        valeur={formule}
-        onChange={(id) => setFormule(id === 'feminin' ? 'feminin' : 'masculin')}
-      />
+      {/* Le choix et le lien partagent une ligne quand la largeur le permet (la carte reste basse). */}
+      <View style={[styles.choix, { gap: espace.espace2 }]}>
+        <View style={styles.segment}>
+          <SegmentedControl
+            label={t('dedicace.formule')}
+            options={[
+              { id: 'masculin', label: t('dedicace.homme') },
+              { id: 'feminin', label: t('dedicace.femme') },
+            ]}
+            valeur={formule}
+            onChange={(id) => setFormule(id === 'feminin' ? 'feminin' : 'masculin')}
+          />
+        </View>
+        {lien}
+      </View>
       {message ? (
         <Text accessibilityLiveRegion="polite" maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, ligne(styles.aide), { color: couleurs.encre2 }]}>
           {message}
         </Text>
       ) : null}
-      {lien}
     </View>
   );
 }
@@ -181,6 +187,8 @@ const styles = StyleSheet.create({
   etiquette: { fontSize: tailles.t12, lineHeight: interlignes.l16, textTransform: 'uppercase', letterSpacing: 0.72 },
   texte: { fontSize: tailles.t16, lineHeight: interlignes.l24 },
   aide: { fontSize: tailles.t14, lineHeight: interlignes.l20 },
+  choix: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center' },
+  segment: { flexGrow: 1, flexBasis: 200 },
   saisie: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center' },
   champ: { flexGrow: 1, flexBasis: 160, borderWidth: 1 },
   // Planche : 24/32, hors échelle arabe (22, 28, 34) : ramené à 28/40.
