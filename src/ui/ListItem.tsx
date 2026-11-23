@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import type { AccessibilityActionEvent, AccessibilityActionInfo } from 'react-native';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import type { Couleurs } from '@/theme/tokens.generated';
@@ -33,6 +34,9 @@ export type ListItemProps = {
   danger?: boolean;
   /** Absent quand la ligne porte un Switch : c'est l'interrupteur qui agit. */
   onPress?: () => void;
+  /** Actions proposées aux lecteurs d'écran (menu d'actions), par ex. quand la ligne se balaie. */
+  actionsAccessibilite?: readonly AccessibilityActionInfo[];
+  onActionAccessibilite?: (e: AccessibilityActionEvent) => void;
 };
 
 function pastille(ton: Ton, c: Couleurs) {
@@ -54,6 +58,8 @@ export function ListItem({
   fin,
   danger = false,
   onPress,
+  actionsAccessibilite,
+  onActionAccessibilite,
 }: ListItemProps) {
   const { couleurs, espace, rayon, typographie, ligne } = useTheme();
   const finEffective = fin ?? (onPress ? 'chevron' : undefined);
@@ -101,10 +107,12 @@ export function ListItem({
   const style = [styles.ligne, { gap: espace.espace3, paddingHorizontal: espace.espace4, paddingVertical: espace.espace2 }];
 
   if (!onPress) return <View style={style}>{contenu}</View>;
+  const actionsA11y = actionsAccessibilite ? { accessibilityActions: [...actionsAccessibilite], onAccessibilityAction: onActionAccessibilite } : null;
 
   return (
     <Pressable
       accessibilityRole="button"
+      {...actionsA11y}
       accessibilityState={finEffective === 'coche' ? { selected: true } : undefined}
       android_ripple={{ color: couleurs.emeraudeDoux }}
       onPress={onPress}
