@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { useFormatMontant } from '@/features/budget/verrou';
-import { depenseDuJour, joursRestants, pasArrondi } from '@/features/budget/cycle';
+import { depenseDuJour, joursRestants, pasArrondi, SEUIL_PRESQUE_PLEIN } from '@/features/budget/cycle';
 import { NOM_ENVELOPPE_MAX } from '@/features/budget/depot';
 import { iconeEnveloppe } from '@/features/budget/enveloppesDeDepart';
 import { EcranBudgetIncomplet } from '@/features/budget/EcranBudgetIncomplet';
@@ -156,6 +156,8 @@ export default function EcranEnveloppe() {
               tonDetail={reste < 0 ? 'erreur' : 'normal'}
             />
             <ProgressBar
+              // Comme la carte d'enveloppe : émeraude, puis alerte dès 85 %, puis encre à partir de 100 % (jamais de rouge pour une dépense).
+              ton={e.plafond > 0 && e.depense >= e.plafond ? 'encre' : e.plafond > 0 && e.depense / e.plafond >= SEUIL_PRESQUE_PLEIN ? 'alerte' : e.plafond === 0 && e.depense > 0 ? 'encre' : 'emeraude'}
               valeur={e.plafond > 0 ? e.depense / e.plafond : e.depense > 0 ? 2 : 0}
               label={t('budget.utilise')}
               detail={`${e.plafond > 0 ? Math.round((e.depense / e.plafond) * 100) : e.depense > 0 ? 100 : 0} %`}

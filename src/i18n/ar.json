@@ -941,6 +941,9 @@
       "parEnveloppe": "حسب الظرف"
     },
     "historiqueVide": "أضف أول مصروف لترى سجلك هنا.",
+    "historiqueFiltreVide": "لا شيء في هذه الفئة خلال هذه الدورة.",
+    "compteExemple": "Wave",
+    "aucuneEnveloppeAjout": "لا توجد مظاريف في هذه الدورة. أنشئ واحدًا من شاشة الميزانية.",
     "parJour": "حوالي {{montant}} يوميًا حتى الراتب، للبقاء داخل الظرف.",
     "modifierPlafond": "تعديل السقف",
     "paieTitre": "يوم الراتب",

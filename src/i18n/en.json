@@ -893,6 +893,9 @@
       "parEnveloppe": "By envelope"
     },
     "historiqueVide": "Add your first expense to see your history here.",
+    "historiqueFiltreVide": "Nothing in this category for this cycle.",
+    "compteExemple": "Wave",
+    "aucuneEnveloppeAjout": "No envelope for this cycle. Create one from the Budget screen.",
     "parJour": "About {{montant}} per day until payday, to stay within the envelope.",
     "modifierPlafond": "Edit the limit",
     "paieTitre": "Payday",

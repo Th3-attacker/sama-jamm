@@ -81,10 +81,10 @@ const styles = StyleSheet.create({
   ecran: { flex: 1, justifyContent: 'center' },
   centre: { alignItems: 'center' },
   marque: { width: TAILLE_ETOILE, height: TAILLE_ETOILE, alignItems: 'center', justifyContent: 'center' },
-  // Pastille cadenas posée sur le coin bas droit de l'étoile.
+  // Pastille cadenas posée sur le coin bas de l'étoile, côté fin de ligne (droite en français, gauche en arabe).
   cadenas: {
     position: 'absolute',
-    right: -6,
+    end: -6,
     bottom: -6,
     width: 36,
     height: 36,

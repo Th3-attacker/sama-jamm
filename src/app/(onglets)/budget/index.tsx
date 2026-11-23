@@ -135,15 +135,21 @@ export default function Budget() {
             <Text accessibilityRole="header" {...surTexte} style={[typographie.display, { color: couleurs.emeraude }]}>
               {t('budget.titre')}
             </Text>
-            <Text {...surTexte} style={[corps14, { color: couleurs.encre3 }]}>
-              {`${sousTitre} · `}
-              <Text
-                accessibilityRole="link"
-                onPress={() => router.push('/budget/devise')}
-                style={{ fontFamily: typographie.libelle.fontFamily, color: couleurs.emeraude }}>
-                {devise.symbole}
+            <View style={styles.sousTitre}>
+              <Text {...surTexte} style={[corps14, { color: couleurs.encre3 }]}>
+                {`${sousTitre} · `}
               </Text>
-            </Text>
+              {/* Seule entrée vers le choix de la devise : la zone d'appui est élargie à 44 pt sans changer la mise en page. */}
+              <Pressable
+                accessibilityRole="link"
+                accessibilityLabel={`${t('devise.titre')} : ${devise.symbole}`}
+                hitSlop={{ top: espace.espace3, bottom: espace.espace3, left: espace.espace3, right: espace.espace3 }}
+                onPress={() => router.push('/budget/devise')}>
+                <Text {...surTexte} style={[corps14, { fontFamily: typographie.libelle.fontFamily, color: couleurs.emeraude }]}>
+                  {devise.symbole}
+                </Text>
+              </Pressable>
+            </View>
           </View>
           <View
             style={[
@@ -195,7 +201,7 @@ export default function Budget() {
         <View style={{ gap: espace.espace2 }}>
           <View
             accessible
-            accessibilityLabel={`${t('budget.repartitionMois')} : ${t('budget.depense')} ${f(mois.depense)}, ${t('budget.epargne')} ${f(mois.misDeCote)}, ${t('budget.resteLegende')} ${f(reste)}`}
+            accessibilityLabel={`${t('budget.repartitionMois')} : ${t('budget.depense')} ${f(mois.depense)}, ${t('budget.epargne')} ${f(mois.misDeCote)}, ${t('budget.resteLegende')} ${f(Math.max(0, reste))}`}
             style={[styles.barre, { backgroundColor: couleurs.surfaceCreux }]}>
             <View style={{ width: largeur(mois.depense), backgroundColor: couleurs.emeraudeAplat }} />
             <View style={{ width: largeur(mois.misDeCote), backgroundColor: couleurs.or }} />
@@ -204,7 +210,8 @@ export default function Budget() {
             {[
               [t('budget.depense'), mois.depense, couleurs.emeraudeAplat, null],
               [t('budget.epargne'), mois.misDeCote, couleurs.or, null],
-              [t('budget.resteLegende'), reste, couleurs.surfaceCreux, couleurs.ligneForte],
+              // Reste négatif : la légende affiche 0, le dépassement est dit par la carte du haut (spec 08).
+              [t('budget.resteLegende'), Math.max(0, reste), couleurs.surfaceCreux, couleurs.ligneForte],
             ].map(([libelle, montant, fond, bord]) => (
               <View key={String(libelle)} style={[styles.legendeItem, { gap: espace.espace1 }]}>
                 <View
@@ -407,6 +414,7 @@ const styles = StyleSheet.create({
   ecran: { flex: 1 },
   entete: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   enteteTexte: { flex: 1 },
+  sousTitre: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center' },
   pastille: { flexDirection: 'row', alignItems: 'center', height: 32, borderRadius: rayon.rayonPastille },
   gras: { fontFamily: 'SourceSans3_600SemiBold' },
   barre: { flexDirection: 'row', height: 12, borderRadius: rayon.rayonPastille, overflow: 'hidden' },

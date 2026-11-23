@@ -893,6 +893,9 @@
       "parEnveloppe": "Par enveloppe"
     },
     "historiqueVide": "Ajoutez votre première dépense pour voir votre historique ici.",
+    "historiqueFiltreVide": "Rien dans cette catégorie pour ce cycle.",
+    "compteExemple": "Wave",
+    "aucuneEnveloppeAjout": "Aucune enveloppe pour ce cycle. Créez-en une depuis l’écran Budget.",
     "parJour": "Environ {{montant}} par jour jusqu’à la paie, pour rester dans l’enveloppe.",
     "modifierPlafond": "Modifier le plafond",
     "paieTitre": "Jour de paie",

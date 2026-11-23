@@ -5,7 +5,7 @@ import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 
 import { rayon } from '@/theme/tokens.generated';
-export type TonProgression = 'emeraude' | 'or' | 'alerte' | 'erreur';
+export type TonProgression = 'emeraude' | 'or' | 'alerte' | 'erreur' | 'encre';
 
 export type ProgressBarProps = {
   /** 0 à 1 ; au-delà de 1, la barre est pleine et passe en `erreur`. */
@@ -25,6 +25,7 @@ function couleur(ton: TonProgression, c: Couleurs): string {
   if (ton === 'or') return c.or;
   if (ton === 'alerte') return c.alerte;
   if (ton === 'erreur') return c.erreur;
+  if (ton === 'encre') return c.encre2;
   return c.emeraudeAplat;
 }
 
@@ -32,7 +33,8 @@ function couleur(ton: TonProgression, c: Couleurs): string {
 export function ProgressBar({ valeur, label, detail, ton = 'emeraude', fine = false, detailCorps = false }: ProgressBarProps) {
   const { couleurs, espace, typographie } = useTheme();
   const borne = Number.isFinite(valeur) ? Math.max(0, valeur) : 0;
-  const tonEffectif = borne > 1 ? 'erreur' : ton;
+  // Au-delà de 1 la barre passe en `erreur`, sauf si l'appelant a choisi l'encre (une dépense ne s'affiche jamais en rouge).
+  const tonEffectif = borne > 1 && ton !== 'encre' ? 'erreur' : ton;
   const hauteur = fine ? 4 : 8;
 
   return (

@@ -152,6 +152,7 @@ function ContenuAjout() {
           ) : null}
         </View>
 
+        {donnees.mois.enveloppes.length === 0 ? <Banner ton="info">{t('budget.aucuneEnveloppeAjout')}</Banner> : null}
         <View accessibilityRole="radiogroup" accessibilityLabel={t('budget.enveloppe')} style={[styles.puces, { gap: espace.espace2 }]}>
           {donnees.mois.enveloppes.map((e) => (
             <Chip key={e.id} compacte selectionne={e.id === choix?.id} onPress={() => setEnveloppeId(e.id)}>

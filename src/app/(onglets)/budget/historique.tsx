@@ -93,7 +93,7 @@ export default function Historique() {
           </View>
         }
         ListEmptyComponent={
-          <EmptyState icone="list" titre={t('formules.serenite')} texte={t('budget.historiqueVide')} />
+          <EmptyState icone="list" titre={t('formules.serenite')} texte={filtre === 'tout' ? t('budget.historiqueVide') : t('budget.historiqueFiltreVide')} />
         }
         renderSectionHeader={({ section }) => (
           <View style={[styles.jour, { paddingTop: espace.espace4, paddingBottom: espace.espace2, paddingHorizontal: espace.espace1 }]}>

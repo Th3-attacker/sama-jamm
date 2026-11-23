@@ -219,7 +219,7 @@ export default function JourDePaie() {
             <Text
               accessibilityLiveRegion="polite"
               maxFontSizeMultiplier={echelleMax.courant}
-              style={[typographie.titre3, { color: restant < 0 ? couleurs.erreur : couleurs.alerte, fontVariant: ['tabular-nums'] }]}>
+              style={[typographie.titre3, { color: restant < 0 ? couleurs.erreur : restant === 0 ? couleurs.encre : couleurs.alerte, fontVariant: ['tabular-nums'] }]}>
               {f(restant)}
             </Text>
           </View>
