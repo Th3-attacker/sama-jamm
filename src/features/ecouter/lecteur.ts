@@ -187,7 +187,7 @@ function surStatut(statut: AudioPlaylistStatus): void {
   useLecteur.setState({
     enLecture: statut.playing,
     chargement: statut.isBuffering,
-    temps: Math.floor(statut.currentTime) || 0,
+    temps: Math.round(statut.currentTime * 10) / 10 || 0,
   });
   // iOS ne signale pas l'erreur : un chargement qui n'aboutit pas vaut aussi échec réseau.
   if (statut.playing || !lectureDemandee) {
@@ -409,7 +409,29 @@ export function chercherSourate(secondes: number): void {
   if (!position || enFile?.mode !== 'sourate') return;
   const cible = versetAuTemps(dureesDe(idRecitateur), VERSETS, position.sourate, secondes);
   if (!cible) return;
+  // Même verset et liste saine : on se place dans le fichier déjà chargé, sans le recharger (le saut est immédiat).
+  if (!listeCassee && liste && cible.verset - 1 === indexCourant) {
+    liste.seekTo(cible.dansVerset).catch((erreur: unknown) => console.warn('Position non placée', erreur));
+    return;
+  }
   lire(null, cible.verset - 1, cible.dansVerset);
+}
+
+/** Reprend depuis le début : la sourate en cours, ou la page en cours en écoute page par page. */
+export function recommencer(): void {
+  const { position, page } = useLecteur.getState();
+  if (!position) return;
+  if (page !== null) ecouterPage(page);
+  else ecouter({ sourate: position.sourate, verset: 1 });
+}
+
+/** Sourate d'après (+1) ou d'avant (−1), lue depuis son premier verset. Sans effet aux bornes (1 et 114). */
+export function changerSourate(sens: 1 | -1): void {
+  const { position } = useLecteur.getState();
+  if (!position) return;
+  const cible = position.sourate + sens;
+  if (cible < 1 || cible > VERSETS.length) return;
+  ecouter({ sourate: cible, verset: 1 });
 }
 
 /** Lecture ou pause ; reprend au dernier verset si rien n'est chargé. */
