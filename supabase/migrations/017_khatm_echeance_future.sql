@@ -1,6 +1,6 @@
 -- Khatm : l'échéance ne peut pas être dans le passé (décision du propriétaire, 23 nov 2026).
--- NON APPLIQUÉE : écrite dans le dépôt seulement. À essayer dans une transaction annulée, puis à appliquer avec l'accord
--- explicite du propriétaire, après 016_noms_dedies_publication_directe.sql.
+-- APPLIQUÉE en production le 23 novembre 2026 avec l'accord explicite du propriétaire (« Applique la migration 017 »),
+-- après un essai dans une transaction annulée. À exécuter une seule fois, après 016_noms_dedies_publication_directe.sql.
 --
 -- L'écran refuse déjà une date passée ; ce contrôle protège la base d'un client modifié. Un jour de tolérance : la base
 -- compte en UTC, un téléphone en retard sur l'UTC peut encore être « hier » pour elle. Les khatms existants ne bougent pas.
