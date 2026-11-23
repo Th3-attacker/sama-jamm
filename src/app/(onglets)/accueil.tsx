@@ -3,6 +3,7 @@ import { ComponentRef, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { EvitementClavier } from '@/ui/EvitementClavier';
 import { CarteDedicace } from '@/features/dedicace/CarteDedicace';
 import { useSession } from '@/features/compte/compte';
 import { calculerHoraires, prochainePriere } from '@/features/priere/horaires';
@@ -110,7 +111,11 @@ export default function Accueil() {
             : { icone: 'search', label: t('menuPlus.rechercher'), onPress: () => router.push('/plus/recherche') },
         ]}
       />
+      {/* La carte de dédicace est en bas : sans cela, le clavier recouvre son champ (Android ici, iPhone par le ScrollView). */}
+      <EvitementClavier style={styles.ecran} androidSeulement>
       <ScrollView ref={defilement}
+        keyboardShouldPersistTaps="handled"
+        automaticallyAdjustKeyboardInsets
         contentContainerStyle={{
           ...colonne,
           paddingBottom: espace.espace8 + marge,
@@ -141,6 +146,7 @@ export default function Accueil() {
         {/* Page 16 : un nom, une invocation. Remplace le proverbe « Wax ju rafet » (décision du propriétaire, 23 nov 2026). */}
         <CarteDedicace />
       </ScrollView>
+      </EvitementClavier>
       <SondeBarre />
     </View>
   );
