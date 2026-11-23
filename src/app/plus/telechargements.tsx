@@ -1,9 +1,11 @@
 import { Paths } from 'expo-file-system';
+import { router } from 'expo-router';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { recitateur } from '@/features/ecouter/recitateurs';
+import { ecouter } from '@/features/ecouter/lecteur';
 import { listeTelechargements, supprimerSourate, useTelechargements } from '@/features/ecouter/telechargements';
 import { sourate } from '@/features/lire/coran';
 import { echelleMax } from '@/theme/typographie';
@@ -44,6 +46,12 @@ export default function Telechargements() {
   const liste = useMemo(() => (version >= 0 ? listeTelechargements() : []), [version]);
   const total = liste.reduce((n, x) => n + x.octets, 0);
   const libre = useMemo(() => (version >= 0 ? espaceLibre() : null), [version]);
+
+  // Planche `Telechargements` : toucher une sourate déjà téléchargée l'ouvre dans le lecteur, depuis les fichiers du téléphone.
+  const ouvrir = (idRecitateur: string, n: number) => {
+    ecouter({ sourate: n, verset: 1 }, idRecitateur);
+    router.navigate('/lecteur');
+  };
 
   const supprimer = (idRecitateur: string, n: number) => {
     Alert.alert(t('telechargements.supprimerTitre'), t('telechargements.supprimerNote'), [
@@ -122,23 +130,27 @@ export default function Telechargements() {
             <ListGroup titre={t('telechargements.surTelephone')}>
               {liste.map((x) => {
                 const s = sourate(x.sourate);
+                const nom = s?.nom ?? String(x.sourate);
+                // La ligne s'ouvre ; la corbeille est un bouton frère, séparé : elle n'ouvre rien.
                 return (
-                  <ListItem
-                    key={`${x.recitateur}:${x.sourate}`}
-                    icone="headphones"
-                    titre={s?.nom ?? String(x.sourate)}
-                    sousTitre={`${recitateur(x.recitateur)?.nom ?? x.recitateur} · ${t('telechargements.versets', {
-                      n: x.versets,
-                      total: s?.versets ?? x.versets,
-                    })} · ${enMo(x.octets)}`}
-                    droite={
-                      <IconButton
-                        icone="trash"
-                        label={t('commun.supprimer')}
-                        onPress={() => supprimer(x.recitateur, x.sourate)}
+                  <View key={`${x.recitateur}:${x.sourate}`} style={styles.ligne}>
+                    <View style={styles.texteLigne}>
+                      <ListItem
+                        icone="headphones"
+                        titre={nom}
+                        sousTitre={`${recitateur(x.recitateur)?.nom ?? x.recitateur} · ${t('telechargements.versets', {
+                          n: x.versets,
+                          total: s?.versets ?? x.versets,
+                        })} · ${enMo(x.octets)}`}
+                        onPress={() => ouvrir(x.recitateur, x.sourate)}
                       />
-                    }
-                  />
+                    </View>
+                    <IconButton
+                      icone="trash"
+                      label={`${t('commun.supprimer')} ${nom}`}
+                      onPress={() => supprimer(x.recitateur, x.sourate)}
+                    />
+                  </View>
                 );
               })}
             </ListGroup>
@@ -158,4 +170,6 @@ const styles = StyleSheet.create({
   carte: { borderWidth: 1 },
   wifi: { flexDirection: 'row', alignItems: 'center', borderTopWidth: 1 },
   wifiTexte: { flex: 1 },
+  ligne: { flexDirection: 'row', alignItems: 'center' },
+  texteLigne: { flex: 1, minWidth: 0 },
 });
