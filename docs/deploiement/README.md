@@ -15,6 +15,7 @@ Brouillons rédigés d'après le code (version 1.0.0). Tout ce qui est marqué *
 | `notes-revue-apple.md` | Notes pour la revue Apple |
 | `visuels-captures.md` | Icônes, captures et visuels attendus |
 | `checklist-soumission.md` | Ce qui manque avant de soumettre |
+| `mise-a-jour-1.1.0.md` | Guide de la mise à jour 1.1.0 : sécurité, serveur, Apple, Android, retour arrière |
 
 ## À fournir par toi
 
