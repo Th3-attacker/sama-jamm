@@ -64,7 +64,7 @@ export default function Rappels() {
         {/* Aperçu de la notification, avec une heure d'exemple. */}
         <View
           accessible
-          accessibilityLabel={`${t('bienvenue.apercuNotification')} : ${t('formules.appel')} · Asr`}
+          accessibilityLabel={`${t('bienvenue.apercuNotification')} : ${t('formules.appel')} · ${t('priere.noms.asr')}`}
           style={[
             styles.notification,
             {
@@ -89,7 +89,7 @@ export default function Rappels() {
               accessibilityLanguage="wo"
               maxFontSizeMultiplier={echelleMax.courant}
               style={[latin.titre3, ligne(styles.notificationTitre), { color: couleurs.encre }]}>
-              {`${t('formules.appel').replace(/\.$/, '')} · Asr`}
+              {`${t('formules.appel').replace(/\.$/, '')} · ${t('priere.noms.asr')}`}
             </Text>
             <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, ligne(styles.notificationDetail), { color: couleurs.encre2 }]}>
               {t('bienvenue.heureExemple', { heure: '16:35' })}

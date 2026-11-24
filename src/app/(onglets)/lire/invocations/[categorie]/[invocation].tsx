@@ -5,6 +5,7 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { estCategorie, invocationsDe, type CategorieId, type Invocation } from '@/features/invocations/donnees';
 import { BarreCompteur } from '@/features/invocations/BarreCompteur';
+import { titreInvocation } from '@/features/invocations/titre';
 import { BarreEcoute } from '@/features/invocations/BarreEcoute';
 import { CarteInvocation } from '@/features/invocations/CarteInvocation';
 import { PartageVerset, type InvocationAPartager } from '@/features/lire/PartageVerset';
@@ -153,7 +154,7 @@ function Lecture({ inv, categorie, liste }: { inv: Invocation; categorie: Catego
       </ScrollView>
       <PartageVerset verset={aPartager} onFermer={() => setAPartager(null)} />
       <BarreCompteur
-        titre={inv.titre}
+        titre={titreInvocation(inv.titre, (n) => t('invocations.numero', { n }))}
         libelle={inv.repetitions === 1 ? t('invocations.marquerLue') : undefined}
         n={n}
         total={inv.repetitions}

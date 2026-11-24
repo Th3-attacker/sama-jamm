@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { categories, estCategorie, invocationsDe, type CategorieId } from '@/features/invocations/donnees';
+import { titreInvocation } from '@/features/invocations/titre';
 import { useParametre } from '@/hooks/useParametre';
 import { cleJour } from '@/lib/dates';
 import { useComptesDuJour } from '@/stores/invocationsJour';
@@ -123,7 +124,7 @@ function Moment({ categorie }: { categorie: CategorieId }) {
                 )}
                 <View style={styles.textes}>
                   <Text numberOfLines={2} maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, ligne(styles.titreLigne), { color: couleurs.encre }]}>
-                    {inv.titre}
+                    {titreInvocation(inv.titre, (n) => t('invocations.numero', { n }))}
                   </Text>
                   <Text numberOfLines={1} maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, ligne(styles.compte), { color: couleurs.encre3 }]}>
                     {inv.source}

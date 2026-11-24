@@ -107,7 +107,7 @@ export default function Dhikr() {
 
         <View style={styles.actions}>
           <Button variant="discret" icone="target" onPress={() => setFeuille(true)}>
-            {`${formule ? formule.translitteration : t('dhikr.formuleLibre')} · ${objectif ? `${t('dhikr.objectif')} : ${objectif}` : t('dhikr.sansObjectif')}`}
+            {`${formule ? formule.translitteration : t('dhikr.formuleLibre')} · ${objectif ? t('dhikr.objectifValeur', { n: objectif }) : t('dhikr.sansObjectif')}`}
           </Button>
         </View>
         <View style={{ alignSelf: 'stretch' }}>{versetDhikr ? <VersetRubrique verset={versetDhikr} /> : null}</View>

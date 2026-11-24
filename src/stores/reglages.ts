@@ -1,7 +1,7 @@
 // Réglages de l'utilisateur, gardés sur le téléphone (SQLite, clé-valeur). Rien n'est envoyé.
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
-import { migrerSonsAnciens } from './sonsMigration';
+import { appliquerSonsAnciens } from './sonsMigration';
 import { retirerTraduction } from './traductionMigration';
 import { limiterTaille, borneTaille } from './tailleMigration';
 import { retirerVeille } from './veilleMigration';
@@ -172,7 +172,7 @@ export const useReglages = create<Donnees & Actions>()(
         if (version < 6) {
           if (migre.langue === 'wo') migre.langue = 'fr';
         }
-        if (version < 7) migre.sons = migrerSonsAnciens(migre.sons);
+        if (version < 7) appliquerSonsAnciens(migre);
         // v7 → v8 : le Coran est en arabe seul ; la traduction et le choix d'affichage enregistrés sont effacés.
         if (version < 8) retirerTraduction(migre);
         // v8 → v9 : plus de Veille ; le thème « veille » enregistré passe à « nuit », ses réglages sont effacés.

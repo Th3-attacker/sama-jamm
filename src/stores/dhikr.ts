@@ -2,7 +2,7 @@
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
-import { prochainCompte } from '@/features/dhikr/compteur';
+import { nettoyerDhikr, prochainCompte } from '@/features/dhikr/compteur';
 
 import { stockage } from './stockage';
 
@@ -43,6 +43,11 @@ export const useDhikr = create<Donnees & Actions>()(
       version: 1,
       storage: createJSONStorage(() => stockage),
       partialize: ({ formule, comptes, objectifs }) => ({ formule, comptes, objectifs }),
+      // Le stockage peut être corrompu : seules les valeurs valides sont reprises.
+      merge: (enregistre, actuel) => ({
+        ...actuel,
+        ...nettoyerDhikr(enregistre, { formule: actuel.formule, comptes: actuel.comptes, objectifs: actuel.objectifs }),
+      }),
       onRehydrateStorage: () => (_etat, erreur) => {
         if (erreur) console.error('Compteur de dhikr illisible : remis à zéro', erreur);
       },

@@ -626,6 +626,7 @@
     "confirmerZeroTitre": "Remettre le compteur à zéro ?",
     "confirmerZeroTexte": "Vous en êtes à {{n}}.",
     "objectif": "Objectif",
+    "objectifValeur": "Objectif : {{n}}",
     "formuleLibre": "Formule libre",
     "formule": "Formule",
     "formuleEtObjectif": "Formule et objectif",
@@ -636,6 +637,7 @@
     "sousTitre": "Compteur"
   },
   "invocations": {
+    "numero": "Invocation {{n}}",
     "sousTitre": "Pour chaque moment de la journée.",
     "moments": "Moments",
     "progression": "{{n}} sur {{total}}",

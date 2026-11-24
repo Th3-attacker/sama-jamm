@@ -21,6 +21,22 @@ function lire(jour: Jour): { annee: number; mois: number; jour: number } {
   return { annee, mois, jour: j };
 }
 
+/** Le texte est-il un jour « aaaa-mm-jj » réel ? Sert à relire une date enregistrée sans planter si elle est corrompue. */
+export function estJour(valeur: unknown): valeur is Jour {
+  if (typeof valeur !== 'string') return false;
+  try {
+    lire(valeur);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/** Le jour s'il est valide, sinon `null` (jamais d'exception). */
+export function jourOuNull(valeur: unknown): Jour | null {
+  return estJour(valeur) ? valeur : null;
+}
+
 function ecrire(annee: number, mois: number, jour: number): Jour {
   return `${String(annee).padStart(4, '0')}-${deux(mois)}-${deux(jour)}`;
 }

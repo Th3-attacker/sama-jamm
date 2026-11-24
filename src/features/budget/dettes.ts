@@ -1,5 +1,6 @@
 // Dettes entre proches (section 17 du design) : calculs purs, sans base ni React.
 // Les montants sont des entiers dans la plus petite unité de la devise du carnet ; aucun intérêt n'est calculé.
+import { versChiffresLatins } from '../../lib/chiffres.ts';
 import { ecartJours, joursDansMois, type Jour } from './cycle.ts';
 
 /** « prete » : on me doit ; « emprunte » : je dois. */
@@ -41,7 +42,7 @@ const SAISIE_DATE = /^\s*(\d{1,2})\s*[/.-]\s*(\d{1,2})\s*[/.-]\s*(\d{4})\s*$/;
 
 /** Date tapée « jj/mm/aaaa » (aussi « j/m/aaaa », « jj.mm.aaaa ») en jour « aaaa-mm-jj » ; null si elle n'existe pas. */
 export function lireSaisieDate(saisie: string): Jour | null {
-  const m = SAISIE_DATE.exec(saisie);
+  const m = SAISIE_DATE.exec(versChiffresLatins(saisie));
   if (!m) return null;
   const jour = Number(m[1]);
   const mois = Number(m[2]);
@@ -57,7 +58,7 @@ export function lireSaisieDate(saisie: string): Jour | null {
  * « 30112026 » → « 30/11/2026 ».
  */
 export function masqueDate(saisie: string): string {
-  const chiffres = saisie.replace(/\D/g, '').slice(0, 8);
+  const chiffres = versChiffresLatins(saisie).replace(/\D/g, '').slice(0, 8);
   if (chiffres.length <= 2) return chiffres;
   if (chiffres.length <= 4) return `${chiffres.slice(0, 2)}/${chiffres.slice(2)}`;
   return `${chiffres.slice(0, 2)}/${chiffres.slice(2, 4)}/${chiffres.slice(4)}`;

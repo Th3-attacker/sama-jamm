@@ -1,7 +1,8 @@
 // Zakat indicative (section Budget du foyer du design) : calculs purs, sans base ni React.
 // Méthode à faire valider par le référent religieux du projet avant publication. Les montants sont des entiers
 // dans la plus petite unité de la devise ; les poids sont en milligrammes ; aucun cours n'est lu sur le réseau.
-import { ajouterJours, ecartJours, type Jour } from './cycle.ts';
+import { versChiffresLatins } from '../../lib/chiffres.ts';
+import { ajouterJours, ecartJours, jourOuNull, type Jour } from './cycle.ts';
 
 export type BaseNisab = 'or' | 'argent';
 export const BASES_NISAB: readonly BaseNisab[] = ['argent', 'or'];
@@ -14,7 +15,11 @@ export const COURS_ANCIEN_JOURS = 30;
 
 /** Valeur d'un poids de métal au prix du gramme (milligrammes × prix / 1000, arrondi). */
 export function valeurMetal(milligrammes: number, prixDuGramme: number): number {
-  return Math.round((milligrammes * prixDuGramme) / 1000);
+  if (!Number.isFinite(milligrammes) || !Number.isFinite(prixDuGramme) || milligrammes <= 0 || prixDuGramme <= 0) return 0;
+  // Produit en entiers exacts (BigInt) : en flottant il pourrait dépasser 2^53 aux valeurs extrêmes.
+  const produit = BigInt(Math.trunc(milligrammes)) * BigInt(Math.trunc(prixDuGramme));
+  const arrondi = (produit + 500n) / 1000n;
+  return arrondi > BigInt(Number.MAX_SAFE_INTEGER) ? Number.MAX_SAFE_INTEGER : Number(arrondi);
 }
 
 /** Seuil en monnaie ; null tant que le prix du gramme du métal choisi n'est pas saisi. */
@@ -49,9 +54,11 @@ export function baseDeCalcul(c: Composition): number {
 
 /** Début de l'année lunaire à garder : posé le jour où la base atteint le nisab, effacé si elle repasse dessous. */
 export function debutHawlSuivi(debut: Jour | null, atteint: boolean | null, aujourdhui: Jour): Jour | null {
-  if (atteint === null) return debut;
+  // Un début enregistré illisible est traité comme absent : l'année lunaire repart d'aujourd'hui.
+  const debutValide = jourOuNull(debut);
+  if (atteint === null) return debutValide;
   if (!atteint) return null;
-  return debut ?? aujourdhui;
+  return debutValide ?? aujourdhui;
 }
 
 export type EtatZakat =
@@ -61,8 +68,9 @@ export type EtatZakat =
   /** Au-dessus du nisab : la zakat sera due à l'échéance (ou l'est déjà si `joursRestants` ≤ 0). */
   | { type: 'due'; base: number; nisab: number; montant: number; echeance: Jour; joursRestants: number };
 
-export function etatZakat(base: number, nisab: number | null, debutHawl: Jour | null, aujourdhui: Jour): EtatZakat {
+export function etatZakat(base: number, nisab: number | null, debutHawlBrut: Jour | null, aujourdhui: Jour): EtatZakat {
   if (nisab === null) return { type: 'sansCours', base };
+  const debutHawl = jourOuNull(debutHawlBrut);
   if (base < nisab || debutHawl === null) return { type: 'sousNisab', base, nisab };
   const echeance = ajouterJours(debutHawl, JOURS_HAWL);
   return {
@@ -77,7 +85,7 @@ export function etatZakat(base: number, nisab: number | null, debutHawl: Jour | 
 
 /** Poids tapé en grammes (« 48 », « 48,5 », « 0.25 ») en milligrammes ; null si illisible ou nul. */
 export function grammesVersMg(saisie: string): number | null {
-  const m = /^\s*(\d{1,7})(?:[.,](\d{1,3}))?\s*$/.exec(saisie);
+  const m = /^\s*(\d{1,7})(?:[.,](\d{1,3}))?\s*$/.exec(versChiffresLatins(saisie));
   if (!m) return null;
   const mg = Number(m[1]) * 1000 + Number((m[2] ?? '').padEnd(3, '0') || '0');
   return mg > 0 ? mg : null;
@@ -94,5 +102,6 @@ export function mgVersGrammes(mg: number): string {
 
 /** Le prix du gramme date-t-il de plus de 30 jours ? */
 export function coursAncien(majLe: Jour | null, aujourdhui: Jour): boolean {
-  return majLe === null || ecartJours(majLe, aujourdhui) > COURS_ANCIEN_JOURS;
+  const maj = jourOuNull(majLe);
+  return maj === null || ecartJours(maj, aujourdhui) > COURS_ANCIEN_JOURS;
 }

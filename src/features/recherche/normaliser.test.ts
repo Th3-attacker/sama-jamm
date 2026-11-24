@@ -34,3 +34,8 @@ test('détection de l’arabe', () => {
   assert.equal(contientArabe('kahf 18'), false);
   assert.equal(contientArabe('Al-Kahf الكهف'), true);
 });
+
+test('latin : chiffres arabes orientaux lus comme 0-9', () => {
+  assert.equal(normaliserLatin('٢٥٥'), '255');
+  assert.equal(normaliserLatin('Baqara ٢'), 'baqara 2');
+});

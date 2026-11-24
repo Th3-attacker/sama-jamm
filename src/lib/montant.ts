@@ -1,6 +1,8 @@
 // Argent : toujours des entiers dans la plus petite unité de la devise (section Budget du foyer du design).
 // Aucun calcul en virgule flottante sur un montant : `versPrincipal` ne sert qu'à l'affichage.
 
+import { versChiffresLatins } from './chiffres.ts';
+
 export type Devise = {
   /** Code court : « XOF », « MRU », ou celui d'une devise personnelle. */
   code: string;
@@ -49,7 +51,7 @@ const MOINS = '−';
  * (pas de décimale pour le F CFA), ou plus de 10¹² unités.
  */
 export function versMinimes(saisie: string, devise: Devise): number | null {
-  const propre = saisie.replace(/[\s  ]/g, '').replace(',', '.');
+  const propre = versChiffresLatins(saisie).replace(/[\s  ]/g, '').replace(',', '.');
   const m = /^(\d+)(?:\.(\d+))?$/.exec(propre);
   if (!m) return null;
   const entier = m[1] ?? '';

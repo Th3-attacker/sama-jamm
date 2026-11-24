@@ -1,5 +1,7 @@
 // Normalisation des textes pour la recherche (section Lecture et audio du design).
 
+import { versChiffresLatins } from '../../lib/chiffres.ts';
+
 // Voyelles et signes de récitation, tatwil et petits signes coraniques.
 const SIGNES_ARABES = /[ؐ-ًؚ-ٰٟۖ-ۭـ࣓-ࣿ]/g;
 const LETTRES_ARABES = /[ء-يٱ]/;
@@ -22,7 +24,7 @@ export function normaliserArabe(texte: string): string {
 
 /** Français, wolof, noms : sans accents ni casse (« ë » → « e », « ñ » → « n »), ponctuation en espaces. */
 export function normaliserLatin(texte: string): string {
-  return texte
+  return versChiffresLatins(texte)
     .normalize('NFD')
     .replace(/[̀-ͯ]/g, '')
     .toLowerCase()

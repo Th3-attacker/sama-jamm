@@ -626,6 +626,7 @@
     "confirmerZeroTitre": "Reset the counter to zero?",
     "confirmerZeroTexte": "You are at {{n}}.",
     "objectif": "Goal",
+    "objectifValeur": "Goal: {{n}}",
     "formuleLibre": "Free phrase",
     "formule": "Phrase",
     "formuleEtObjectif": "Phrase and goal",
@@ -636,6 +637,7 @@
     "sousTitre": "Counter"
   },
   "invocations": {
+    "numero": "Dua {{n}}",
     "sousTitre": "For every moment of the day.",
     "moments": "Moments",
     "progression": "{{n}} of {{total}}",

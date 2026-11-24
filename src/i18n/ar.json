@@ -659,6 +659,7 @@
     "confirmerZeroTitre": "إعادة العدّاد إلى الصفر؟",
     "confirmerZeroTexte": "وصلت إلى {{n}}.",
     "objectif": "الهدف",
+    "objectifValeur": "الهدف: {{n}}",
     "formuleLibre": "ذكر حرّ",
     "formule": "الذكر",
     "formuleEtObjectif": "الذكر والهدف",
@@ -669,6 +670,7 @@
     "sousTitre": "العدّاد"
   },
   "invocations": {
+    "numero": "ذكر {{n}}",
     "sousTitre": "لكل وقت من أوقات اليوم.",
     "moments": "أوقات الأذكار",
     "progression": "{{n}} من {{total}}",
