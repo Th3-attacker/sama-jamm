@@ -3,6 +3,7 @@ import { AccessibilityInfo, Platform, Pressable, StyleSheet, Text, View } from '
 import Animated, { FadeInDown, FadeOut } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { useMouvementReduit } from '@/hooks/useMouvementReduit';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 
@@ -10,7 +11,7 @@ import { Icon } from './Icon';
 import type { Action, IconName } from './types';
 
 export type ToastProps = {
-  /** Deux lignes au plus. */
+  /** Message court ; il passe à la ligne sans être coupé. */
   texte: string;
   icone?: IconName;
   /** Une action au plus, souvent « Annuler ». */
@@ -59,6 +60,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
 
 function Toast({ texte, icone, action, onFin }: ToastProps & { onFin: () => void }) {
   const insets = useSafeAreaInsets();
+  const reduit = useMouvementReduit();
   const { couleurs, espace, rayon, cible, typographie } = useTheme();
   // Posé 8 px au-dessus de la barre d'onglets (hauteur de TabBar : cible + marges).
   const bas = Math.max(insets.bottom, espace.espace2) + cible.cibleAndroid + espace.espace2 * 2 + espace.espace2;
@@ -66,8 +68,8 @@ function Toast({ texte, icone, action, onFin }: ToastProps & { onFin: () => void
   return (
     <View pointerEvents="box-none" style={[StyleSheet.absoluteFill, styles.zone, { paddingBottom: bas, paddingHorizontal: espace.espace5 }]}>
       <Animated.View
-        entering={FadeInDown.duration(250)}
-        exiting={FadeOut.duration(200)}
+        entering={reduit ? undefined : FadeInDown.duration(250)}
+        exiting={reduit ? undefined : FadeOut.duration(200)}
         accessibilityLiveRegion="polite"
         style={[
           styles.toast,

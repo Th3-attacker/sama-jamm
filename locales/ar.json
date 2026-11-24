@@ -1,0 +1,6 @@
+{
+  "ios": {
+    "NSLocationWhenInUseUsageDescription": "لحساب مواقيت الصلاة واتجاه القبلة على هذا الهاتف.",
+    "NSFaceIDUsageDescription": "لفتح ميزانيتك بتقنية Face ID. لا يغادر شيء هذا الهاتف."
+  }
+}

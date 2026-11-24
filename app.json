@@ -13,6 +13,10 @@
     "icon": "./assets/images/icon.png",
     "scheme": "samajamm",
     "userInterfaceStyle": "automatic",
+    "locales": {
+      "ar": "./locales/ar.json",
+      "en": "./locales/en.json"
+    },
     "ios": {
       "bundleIdentifier": "com.samajamm.app",
       "buildNumber": "1",
@@ -20,7 +24,8 @@
       "usesAppleSignIn": true,
       "infoPlist": {
         "CFBundleDisplayName": "Sama Jàmm",
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "CFBundleAllowMixedLocalizations": true
       },
       "entitlements": {
         "com.apple.developer.usernotifications.time-sensitive": true

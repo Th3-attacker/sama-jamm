@@ -4,6 +4,8 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Animated, I18nManager, PanResponder, type PanResponderInstance, Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { useMouvementReduit } from '@/hooks/useMouvementReduit';
+import { dureeAnimation } from '@/lib/animation';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 
@@ -34,6 +36,7 @@ export function LigneBalayable({ actions, children }: LigneBalayableProps) {
   const sens = I18nManager.isRTL ? 1 : -1;
   const largeurActions = LARGEUR_ACTION * actions.length;
   const [x] = useState(() => new Animated.Value(0));
+  const reduit = useMouvementReduit();
   const [largeur, setLargeur] = useState(0);
   const [ouverte, setOuverte] = useState(false);
   // Le geste lit toujours les valeurs courantes, sans recréer le PanResponder.
@@ -43,7 +46,7 @@ export function LigneBalayable({ actions, children }: LigneBalayableProps) {
   });
 
   const placer = (vers: number, fin?: () => void) =>
-    Animated.timing(x, { toValue: vers, duration: 180, useNativeDriver: true }).start(fin);
+    Animated.timing(x, { toValue: vers, duration: dureeAnimation(180, reduit), useNativeDriver: true }).start(fin);
 
   const fermer = () => {
     setOuverte(false);

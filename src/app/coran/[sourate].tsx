@@ -21,6 +21,8 @@ import {
   versetsNumerotes,
 } from '@/features/lire/coran';
 import { PageMushaf } from '@/features/lire/PageMushaf';
+import { useMouvementReduit } from '@/hooks/useMouvementReduit';
+import { dureeAnimation } from '@/lib/animation';
 import { cleJour } from '@/lib/dates';
 import { ecouter, ecouterPage, useLecteur } from '@/features/ecouter/lecteur';
 import { SondeBarre } from '@/features/ecouter/SondeBarre';
@@ -241,16 +243,17 @@ function LectureSourate({
   // Chargement visible : il couvre la liste dès la première image, puis s'efface en fondu quand elle est prête.
   const [chargement, setChargement] = useState(!(modeInitial === 'page' || versetInitial <= 1));
   const [fondu] = useState(() => new Animated.Value(1));
+  const mouvementReduit = useMouvementReduit();
   const [debutChargement] = useState(() => Date.now());
   useEffect(() => {
     if (!pret) return;
     // Visible au moins DUREE_MIN_MS, puis fondu : même un positionnement très rapide laisse voir le chargement.
     const attente = setTimeout(
-      () => Animated.timing(fondu, { toValue: 0, duration: 180, useNativeDriver: true }).start(() => setChargement(false)),
+      () => Animated.timing(fondu, { toValue: 0, duration: dureeAnimation(180, mouvementReduit), useNativeDriver: true }).start(() => setChargement(false)),
       resteAvantMasquage(Date.now() - debutChargement),
     );
     return () => clearTimeout(attente);
-  }, [pret, fondu, debutChargement]);
+  }, [pret, fondu, debutChargement, mouvementReduit]);
   // Fin du recalage : le verset retrouvé redevient le verset courant (l'en-tête et le Juz le suivent).
   const finirRecalage = useCallback(() => {
     const cible = cibleRecalage.current;

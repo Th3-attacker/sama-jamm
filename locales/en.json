@@ -1,0 +1,6 @@
+{
+  "ios": {
+    "NSLocationWhenInUseUsageDescription": "To calculate your prayer times and the qibla direction on this phone.",
+    "NSFaceIDUsageDescription": "To unlock your budget with Face ID. Nothing leaves this phone."
+  }
+}

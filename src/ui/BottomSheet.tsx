@@ -15,6 +15,8 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { useMouvementReduit } from '@/hooks/useMouvementReduit';
+import { dureeAnimation } from '@/lib/animation';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 
@@ -64,6 +66,7 @@ export function BottomSheet({ ouvert, titre, onFermer, children }: BottomSheetPr
   const { couleurs, espace, rayon, typographie } = useTheme();
   const clavier = useHauteurClavier();
   const sens = useSens();
+  const reduit = useMouvementReduit();
   // La fenêtre reste montée le temps de l'animation de fermeture.
   const [monte, setMonte] = useState(ouvert);
   const [progres] = useState(() => new Animated.Value(ouvert ? 1 : 0));
@@ -74,7 +77,7 @@ export function BottomSheet({ ouvert, titre, onFermer, children }: BottomSheetPr
   useEffect(() => {
     const anim = Animated.timing(progres, {
       toValue: ouvert ? 1 : 0,
-      duration: DUREE,
+      duration: dureeAnimation(DUREE, reduit),
       easing: Easing.out(Easing.cubic),
       useNativeDriver: true,
     });
@@ -82,7 +85,7 @@ export function BottomSheet({ ouvert, titre, onFermer, children }: BottomSheetPr
       if (finished && !ouvert) setMonte(false);
     });
     return () => anim.stop();
-  }, [ouvert, progres]);
+  }, [ouvert, progres, reduit]);
 
   if (!monte) return null;
 
