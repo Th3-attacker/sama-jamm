@@ -74,7 +74,7 @@ function Toast({ texte, icone, action, onFin }: ToastProps & { onFin: () => void
           { backgroundColor: couleurs.inverse, borderRadius: rayon.rayonCarte, padding: espace.espace3, gap: espace.espace3 },
         ]}>
         {icone ? <Icon name={icone} size={20} color={couleurs.surInverse} /> : null}
-        <Text numberOfLines={2} maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.texte, { color: couleurs.surInverse }]}>
+        <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.corps, styles.texte, { color: couleurs.surInverse }]}>
           {texte}
         </Text>
         {action ? (

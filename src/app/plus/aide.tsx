@@ -70,7 +70,7 @@ export default function Aide() {
 
         {EMAIL_CONTACT ? (
           <View style={{ gap: espace.espace2 }}>
-            <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, { color: couleurs.or }]}>
+            <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, { color: couleurs.orTexte }]}>
               {t('aide.ecrire')}
             </Text>
             <Text selectable maxFontSizeMultiplier={echelleMax.courant} style={[latin.titre3, { color: couleurs.encre }]}>
@@ -86,7 +86,7 @@ export default function Aide() {
         ) : null}
 
         <View style={{ gap: espace.espace3 }}>
-          <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, { color: couleurs.or }]}>
+          <Text maxFontSizeMultiplier={echelleMax.courant} style={[typographie.libelle, { color: couleurs.orTexte }]}>
             {t('aide.signaler')}
           </Text>
           <View accessibilityRole="radiogroup" accessibilityLabel={t('aide.typeProbleme')} style={[styles.puces, { gap: espace.espace2 }]}>

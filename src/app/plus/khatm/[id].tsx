@@ -251,7 +251,6 @@ export default function EcranKhatm() {
           <View style={[styles.ligneCarte, { gap: espace.espace3 }]}>
             <Text
               accessibilityRole="header"
-              numberOfLines={2}
               maxFontSizeMultiplier={echelleMax.courant}
               style={[typographie.corps, styles.nom, { color: couleurs.encre }]}>
               {khatm.nom}
@@ -335,7 +334,7 @@ export default function EcranKhatm() {
             const estBloque = bloques.includes(m.user_id);
             return (
               <View key={m.user_id} style={[styles.ligneMembre, { gap: espace.espace2 }]}>
-                <Text style={[typographie.corps, styles.nomMembre, { color: couleurs.encre }]} numberOfLines={1}>
+                <Text style={[typographie.corps, styles.nomMembre, { color: couleurs.encre }]}>
                   {estMoi ? t('khatm.moi') : estBloque ? t('khatm.membreMasque') : (m.prenom ?? t('khatm.membreAnonyme'))}
                 </Text>
                 {!estMoi ? (

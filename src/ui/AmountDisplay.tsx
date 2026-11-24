@@ -44,7 +44,8 @@ export function AmountDisplay({
   const { couleurs, typographie, nom, ligne } = useTheme();
   const formatMontant = useFormatMontant();
   const encre = surEmeraude ? couleurs.surEmeraude : couleurs.encre;
-  const secondaire = surEmeraude ? couleurs.surEmeraude2 : couleurs.encre2;
+  // La nuit, surEmeraude2 n'atteint pas 4,5:1 sur l'aplat vert : on garde surEmeraude pour ces petits textes (AGENTS.md §3).
+  const secondaire = surEmeraude ? (nom === 'jour' ? couleurs.surEmeraude2 : couleurs.surEmeraude) : couleurs.encre2;
   const couleurDetail =
     tonDetail === 'erreur' ? couleurs.erreur : tonDetail === 'alerte' ? couleurs.alerte : secondaire;
   // Hauteur réservée à la ligne du montant : elle ne change pas quand les chiffres se réduisent pendant la saisie,
@@ -62,7 +63,7 @@ export function AmountDisplay({
           maxFontSizeMultiplier={ECHELLE_CHIFFRES}
           style={
             surEmeraude
-              ? [typographie.legende, styles.libelleCarte, { color: nom === 'jour' ? couleurs.accentInverse : couleurs.surEmeraude2 }]
+              ? [typographie.legende, styles.libelleCarte, { color: nom === 'jour' ? couleurs.accentInverse : couleurs.surEmeraude }]
               : [typographie.libelle, { color: secondaire }]
           }>
           {surEmeraude ? libelle.toLocaleUpperCase() : libelle}

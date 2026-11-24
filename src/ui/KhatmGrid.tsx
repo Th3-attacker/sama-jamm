@@ -33,7 +33,7 @@ export function KhatmGrid({ juz, onChoisir, legende, libelleJuz }: KhatmGridProp
       case 'lu':
         return { fond: couleurs.emeraudeDoux, texte: couleurs.surEmeraudeDoux, bord: couleurs.emeraudeDoux, anneau: 1 };
       case 'en-cours':
-        return { fond: couleurs.orDoux, texte: couleurs.orTexte, bord: couleurs.or, anneau: 1 };
+        return { fond: couleurs.orDoux, texte: couleurs.orTexte, bord: couleurs.orTexte, anneau: 1 };
       case 'vous':
         return { fond: couleurs.emeraudeAplat, texte: couleurs.surEmeraude, bord: couleurs.emeraude, anneau: 2 };
       case 'libre':
@@ -72,6 +72,7 @@ export function KhatmGrid({ juz, onChoisir, legende, libelleJuz }: KhatmGridProp
                 {j.n}
               </Text>
               {j.etat === 'lu' ? <Icon name="check" size={12} color={s.texte} /> : null}
+              {j.etat === 'en-cours' ? <Icon name="clock" size={12} color={s.texte} /> : null}
             </Pressable>
           );
         })}
