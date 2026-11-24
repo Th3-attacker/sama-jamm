@@ -64,7 +64,7 @@
       "dhikr": "عدّاد وأهداف",
       "qibla": "اتجاه الكعبة",
       "telechargements": "للاستماع دون اتصال",
-      "invocations": "الصباح والمساء والسفر",
+      "invocations": "الصباح والمساء والنوم",
       "zakat": "تقدير بنسبة 2.5٪"
     },
     "dhikr": "التسبيح",
@@ -715,8 +715,8 @@
   },
   "recherche": {
     "titre": "بحث",
-    "placeholder": "كلمة، آية، دعاء",
-    "aide": "بالفرنسية أو الولوفية أو العربية أو بالنقحرة، حتى دون اتصال.",
+    "placeholder": "كلمة، آية، سورة",
+    "aide": "بالعربية أو بالنقحرة أو باسم السورة، حتى دون اتصال.",
     "resultats_zero": "لا نتائج",
     "resultats_one": "نتيجة واحدة",
     "resultats_two": "نتيجتان",
@@ -832,7 +832,7 @@
     "signalerEntete": "Sama Jàmm · الأخطاء الأخيرة",
     "aucuneErreur": "لا توجد أخطاء مسجّلة.",
     "sourceTanzil": "النقحرة والأجزاء والأحزاب والسجدات: مشروع تنزيل (tanzil.net)، رخصة CC BY 3.0، دون تعديل.",
-    "sourceInvocations": "الأذكار: UmmahAPI (ummahapi.com)، مع ذكر المصدر ورقمه لكل ذكر. النص العربي والنقحرة من المصدر؛ العناوين والمعاني بالفرنسية أُعدّت لتطبيق Sama Jàmm. نصوص القرآن تبقى بالعربية وحدها.",
+    "sourceInvocations": "الأذكار: حصن المسلم (hisnmuslim.com)، بالعربية وحدها، مع ذكر الباب ورقمه لكل ذكر. نصوص القرآن تبقى بالعربية وحدها.",
     "sourceRecitations": "التلاوات: alquran.cloud (Islamic Network)، بإذن القرّاء أو ورثتهم للنشر المجاني غير التجاري.",
     "version": "Sama Jàmm · الإصدار {{version}}",
     "confidentialite": "سياسة الخصوصية",
@@ -845,7 +845,7 @@
       },
       "invocations": {
         "titre": "الأذكار",
-        "resume": "UmmahAPI · كتب الحديث المذكورة"
+        "resume": "حصن المسلم · hisnmuslim.com"
       },
       "recitations": {
         "titre": "التلاوات والأذان",

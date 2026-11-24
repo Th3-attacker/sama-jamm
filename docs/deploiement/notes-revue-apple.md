@@ -17,4 +17,4 @@ Application gratuite sans publicité. Utilisable sans compte ; la connexion (App
 ## Points d'attention revue (Guidelines)
 - Connexion Google proposée avec Connexion avec Apple : conforme (4.8) ; à vérifier sur appareil.
 - Suppression de compte in-app : présente (5.1.1(v)).
-- Contenu religieux : citations et traductions sourcées dans À propos.
+- Contenu religieux : sources citées dans À propos ; le Coran reste en arabe seul, sans traduction.

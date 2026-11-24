@@ -18,7 +18,7 @@ Tailles à confirmer sur les consoles au moment de l'envoi (elles évoluent). É
 - Textes : nom 30, description courte 80, longue 4000 ; email de support obligatoire.
 
 ## Écrans conseillés (même ordre sur les deux stores)
-1. Accueil. 2. Lecture du Coran (arabe + français). 3. Horaires de prière. 4. Qibla. 5. Dhikr / invocations. 6. Budget (données fictives). 7. Khatm collectif. 8. Mode sombre ou arabe (RTL).
+1. Accueil. 2. Lecture du Coran (arabe seul). 3. Horaires de prière. 4. Qibla. 5. Dhikr / invocations. 6. Budget (données fictives). 7. Khatm collectif. 8. Mode sombre ou arabe (RTL).
 
 ## Règles
 - Données fictives dans le budget, prénoms fictifs dans le khatm.

@@ -60,7 +60,7 @@
       "dhikr": "Counter and goals",
       "qibla": "Direction of the Kaaba",
       "telechargements": "To listen offline",
-      "invocations": "Morning, evening, travel",
+      "invocations": "Morning, evening, sleep",
       "zakat": "Estimate at 2.5%"
     },
     "dhikr": "Dhikr",
@@ -163,7 +163,7 @@
     },
     "problemes": {
       "connexion": "Sign in to dedicate a name.",
-      "hors-ligne": "No connection. Your name is kept: try again when you are online.",
+      "hors-ligne": "No connection. The name is kept: try again when you are online.",
       "invalide": "This name cannot be published. Write the first and last name, without digits or symbols.",
       "trop": "You have already submitted several names. Try again tomorrow, God willing.",
       "erreur": "The name could not be sent. Please try again in a moment."
@@ -670,8 +670,8 @@
   },
   "recherche": {
     "titre": "Search",
-    "placeholder": "A word, a verse, a dua",
-    "aide": "In French, Wolof, Arabic or transliteration, even without a connection.",
+    "placeholder": "A word, a verse, a surah",
+    "aide": "In Arabic, transliteration or by surah name, even without a connection.",
     "resultats_one": "{{count}} result",
     "resultats_other": "{{count}} results",
     "aucun": "No results for “{{terme}}”",
@@ -783,7 +783,7 @@
     "signalerEntete": "Sama Jàmm · recent errors",
     "aucuneErreur": "No errors recorded.",
     "sourceTanzil": "Transliteration, juz, hizb and prostrations: Tanzil Project (tanzil.net), CC BY 3.0 license, reproduced without modification.",
-    "sourceInvocations": "Duas: UmmahAPI (ummahapi.com), with the collection and number cited for each dua. Arabic and transliteration from the source; titles and meanings in French, written for Sama Jàmm. Quran texts stay in Arabic only.",
+    "sourceInvocations": "Duas: Hisn al-Muslim (hisnmuslim.com), in Arabic only, with the chapter and number cited for each dua. Quran texts stay in Arabic only.",
     "sourceRecitations": "Recitations: alquran.cloud (Islamic Network), authorized by the reciters or their rights holders for free, non-commercial distribution.",
     "version": "Sama Jàmm · version {{version}}",
     "confidentialite": "Privacy policy",
@@ -800,7 +800,7 @@
       },
       "invocations": {
         "titre": "Duas",
-        "resume": "UmmahAPI · cited hadith collections"
+        "resume": "Hisn al-Muslim · hisnmuslim.com"
       },
       "polices": {
         "titre": "Fonts",
@@ -876,7 +876,7 @@
     "reste": "{{montant}} left",
     "sur": "of {{montant}}",
     "depasse": "Over by {{montant}}",
-    "regle": "Set for this cycle",
+    "regle": "Paid for this cycle",
     "presquePlein": "Almost reached",
     "enveloppesDefaut": {
       "quotidien": "Daily spending",

@@ -9,7 +9,7 @@ Limites : Apple (nom 30, sous-titre 30, mots-clés 100, description 4000) ; Goog
 - **Description longue** :
 Sama Jàmm est une app gratuite, sans publicité, pour lire, écouter, prier et tenir le budget du foyer.
 
-• Lire le Coran en arabe (édition uthmani) avec traduction française, repères de juz et de hizb, partage de versets.
+• Lire le Coran en arabe (édition uthmani, sans traduction), repères de juz et de hizb, partage de versets.
 • Écouter des récitations.
 • Horaires de prière, rappels et appel à la prière (adhan), direction de la qibla.
 • Dhikr et invocations : compteur, moments de la journée, La citadelle du musulman.

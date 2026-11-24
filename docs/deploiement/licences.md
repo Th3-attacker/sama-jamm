@@ -8,7 +8,7 @@ Source dans l'app : Plus › À propos › Sources. Les mentions in-app et ce fi
 | Texte du Coran (uthmani) | alquran.cloud (api.alquran.cloud) | Reproduit sans modification, affiché en arabe seul |
 | Translittération, juz, hizb, prosternations | Tanzil Project (tanzil.net) | CC BY 3.0 : attribution affichée dans l'app et sur le site, reproduit sans modification |
 | Récitations audio (13 récitateurs) | alquran.cloud / Islamic Network (cdn.islamic.network) | Écoute en ligne, gratuite |
-| Invocations | UmmahAPI (ummahapi.com), recueil et numéro cités pour chaque invocation | Titres et sens en français établis pour Sama Jàmm |
+| Invocations | Hisn al-Muslim (hisnmuslim.com), arabe seul, chapitre et numéro cités pour chaque invocation | Aucun sens ni translittération. Licence de la source à confirmer |
 | Appels à la prière (adhan) | Deux enregistrements fournis par l'éditeur : `adhan_fajr.mp3` (Fajr) et `adhan_makkah.mp3` (Dhuhr à Isha), avec des extraits courts et des extraits WAV de 30 s au plus pour iOS | Fournis par l'éditeur |
 
 ## Polices (SIL Open Font License 1.1, paquets @expo-google-fonts sous MIT)

@@ -32,7 +32,7 @@ EXTERNAL SERVICES
 - Sign in with Apple and Google sign-in: optional authentication
 - alquran.cloud / Islamic Network: Quran text and verse-by-verse recitation audio
 - Tanzil Project: transliteration and Quran markers (CC BY 3.0)
-- UmmahAPI: invocations
+- Hisn al-Muslim (hisnmuslim.com): invocations, Arabic only
 - Expo / EAS: build and app updates
 Prayer times are computed on the device with the open-source adhan library. Location is used on the device only and is never sent anywhere.
 

@@ -60,7 +60,7 @@
       "dhikr": "Compteur et objectifs",
       "qibla": "Direction de la Kaaba",
       "telechargements": "Pour écouter sans réseau",
-      "invocations": "Matin, soir, voyage",
+      "invocations": "Matin, soir, sommeil",
       "zakat": "Estimation à 2,5 %"
     },
     "dhikr": "Dhikr",
@@ -163,7 +163,7 @@
     },
     "problemes": {
       "connexion": "Connectez-vous pour dédier un nom.",
-      "hors-ligne": "Pas de connexion. Votre nom est gardé : réessayez quand vous serez en ligne.",
+      "hors-ligne": "Pas de connexion. Le nom est gardé : réessayez quand vous serez en ligne.",
       "invalide": "Ce nom ne peut pas être publié. Écrivez le prénom et le nom, sans chiffres ni symboles.",
       "trop": "Vous avez déjà proposé plusieurs noms. Réessayez demain, si Dieu le veut.",
       "erreur": "Le nom n’a pas pu être envoyé. Réessayez dans un instant."
@@ -670,8 +670,8 @@
   },
   "recherche": {
     "titre": "Recherche",
-    "placeholder": "Un mot, un verset, une invocation",
-    "aide": "En français, en wolof, en arabe ou en translittération, même sans connexion.",
+    "placeholder": "Un mot, un verset, une sourate",
+    "aide": "En arabe, en translittération ou par nom de sourate, même sans connexion.",
     "resultats_one": "{{count}} résultat",
     "resultats_other": "{{count}} résultats",
     "aucun": "Aucun résultat pour « {{terme}} »",
@@ -783,7 +783,7 @@
     "signalerEntete": "Sama Jàmm · erreurs récentes",
     "aucuneErreur": "Aucune erreur enregistrée.",
     "sourceTanzil": "Translittération, juz, hizb et prosternations : Tanzil Project (tanzil.net), licence CC BY 3.0, reproduits sans modification.",
-    "sourceInvocations": "Invocations : UmmahAPI (ummahapi.com), avec le recueil et le numéro cités pour chaque invocation. Arabe et translittération de la source ; titres et sens en français établis pour Sama Jàmm. Les textes du Coran restent en arabe seul.",
+    "sourceInvocations": "Invocations : Hisn al-Muslim (hisnmuslim.com), en arabe seul, avec le chapitre et le numéro cités pour chaque invocation. Les textes du Coran restent en arabe seul.",
     "sourceRecitations": "Récitations : alquran.cloud (Islamic Network), autorisées par les récitateurs ou leurs ayants droit pour une diffusion gratuite et non commerciale.",
     "version": "Sama Jàmm · version {{version}}",
     "confidentialite": "Politique de confidentialité",
@@ -800,7 +800,7 @@
       },
       "invocations": {
         "titre": "Invocations",
-        "resume": "UmmahAPI · recueils de hadiths cités"
+        "resume": "Hisn al-Muslim · hisnmuslim.com"
       },
       "polices": {
         "titre": "Polices",
