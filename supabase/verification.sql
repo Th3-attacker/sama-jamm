@@ -81,3 +81,44 @@ where n.nspname = 'public' and p.proname = 'quitter_khatm';
 -- security_definer = true, anon_peut = false, connecte_peut = true.
 -- Parcours à jouer sur deux comptes de test : créateur avec un autre membre sans choix (refusé), avec p_nouveau_createur (le rôle passe),
 -- avec p_fermer (etat = 'termine', aperçu vide, rejoindre renvoie null, prendre_juz renvoie false) ; créateur seul (le khatm est supprimé).
+
+-- 9. Noms dédiés (migrations 015 et 016) et créations de khatm (migration 018).
+select c.relname as table_, c.relrowsecurity as rls_active,
+       has_table_privilege('authenticated', c.oid, 'select') as connecte_lit,
+       has_table_privilege('anon', c.oid, 'select') as anon_lit,
+       (select count(*) from pg_policies q where q.schemaname = 'public' and q.tablename = c.relname) as regles
+from pg_class c join pg_namespace n on n.oid = c.relnamespace
+where n.nspname = 'public' and c.relname in ('noms_dedies', 'noms_dedies_essais', 'creations_khatm')
+order by 1;
+-- Attendu : 3 lignes (creations_khatm absente tant que la 018 n'est pas appliquée), rls_active = true,
+-- connecte_lit = false, anon_lit = false, regles = 0.
+
+select p.proname as fonction, p.prosecdef as security_definer,
+       coalesce(array_to_string(p.proconfig, ','), '') like '%search_path=""%' as search_path_vide,
+       has_function_privilege('anon', p.oid, 'execute') as anon_peut,
+       has_function_privilege('authenticated', p.oid, 'execute') as connecte_peut
+from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+where n.nspname = 'public' and p.proname in ('noter_creation_khatm', 'creer_khatm', 'signaler_membre', 'marquer_juz_lu')
+order by 1;
+-- Attendu (après la 018) : 4 lignes, security_definer et search_path_vide = true ; anon_peut = false ;
+-- connecte_peut = false pour noter_creation_khatm (usage interne), true pour les trois autres.
+
+select p.prosrc like '%pg_advisory_xact_lock%' as verrou,
+       p.prosrc like '%>= 10%' as limite_10,
+       p.prosrc like '%trop de khatms créés%' as message_quota
+from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+where n.nspname = 'public' and p.proname = 'noter_creation_khatm';
+-- Attendu : 1 ligne, trois fois true.
+
+-- creer_khatm : l'échéance passée est refusée (017) et la limite de création est appelée (018).
+select p.prosrc like '%échéance passée%' as echeance_controlee,
+       p.prosrc like '%noter_creation_khatm%' as quota_appele
+from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+where n.nspname = 'public' and p.proname = 'creer_khatm';
+-- Attendu : echeance_controlee = true (017) ; quota_appele = true seulement après la 018.
+
+-- marquer_juz_lu : pose etat = 'termine' quand les 30 juz sont lus (018).
+select p.prosrc like '%termine%' as termine_pose
+from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+where n.nspname = 'public' and p.proname = 'marquer_juz_lu';
+-- Attendu : true seulement après la 018.

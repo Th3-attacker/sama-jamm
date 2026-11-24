@@ -3,7 +3,7 @@
 --   * s'il est seul, quitter ferme et supprime le khatm.
 -- Un khatm fermé (`etat = 'termine'`) ne peut plus être rejoint ni voir un juz pris.
 -- À exécuter une fois, après 011_exclusions_khatm.sql et 013_retrait_membre_createur_membre.sql (SQL Editor > New query > Run).
--- NON APPLIQUÉE : à essayer sur une base de test avant la production.
+-- APPLIQUÉE en production le 20 novembre 2026 (version 20261120123209, vérifiée le 24 novembre dans la liste des migrations).
 -- Retour arrière : rejouer quitter_khatm de 002 (après `drop function public.quitter_khatm(uuid, uuid, boolean)`),
 -- apercu_khatm et rejoindre_khatm de 011, prendre_juz de 002. La colonne `etat` peut rester : elle est identique à celle de 009.
 --
