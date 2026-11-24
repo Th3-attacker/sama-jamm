@@ -52,8 +52,10 @@ Rédigé le 24 novembre 2026 d'après `eas.json`, `app.json`, `checklist-soumiss
 
 | Étape | Comment | Point d'attention |
 | --- | --- | --- |
-| Numéro de version interne | Les builds Android se font hors EAS : monter `versionCode` à la main, **strictement au-dessus** du dernier AAB envoyé | Notes du 16 nov : release `1 (1.0.2)`, `versionCode` 1 (**À VÉRIFIER** dans la Play Console). `android.versionCode` n'est pas encore posé dans `app.json`. |
-| Build signé | AAB signé avec la clé `SAMA-JAM` | Sauvegarder la clé avant. |
+| Numéro de version interne | Décision du propriétaire (24 nov) : les builds Android reprennent sur **EAS**. `eas build -p android --profile production` (`autoIncrement`, `appVersionSource: remote`) : ne pas poser `android.versionCode` dans `app.json`. | Le compteur EAS est à 4 (production 1.0.1, builds 3 et 4, lus le 24 nov) : le prochain sera **5**. La Play Console a le `versionCode` 1 (notes du 16 nov, **À VÉRIFIER**). Il doit être strictement plus bas que 5, sinon corriger le compteur EAS avant de builder. |
+| Clé de signature | **Avant le premier build EAS à envoyer** : `eas credentials -p android`, relever l'empreinte SHA-1 du keystore stocké chez EAS, la comparer à la clé d'envoi (upload key) affichée dans la Play Console › Intégrité de l'appli | La 1.0.2 de Play a été construite sur une autre machine avec la clé `SAMA-JAM`. Si EAS signe avec une autre clé, Google refuse l'envoi. Dans ce cas : importer `SAMA-JAM` dans EAS ou demander à Google une réinitialisation de la clé d'envoi. |
+| Envoi à Google | `eas submit -p android` exige `google-service-account.json` à la racine (ignoré par Git). Notes du 20 nov : aucune clé de compte de service n'est enregistrée sur Expo. | Sans elle, envoyer l'AAB à la main dans la Play Console. Le compte développeur est celui d'un ami. |
+| Sauvegarde | Copie hors ligne du keystore `SAMA-JAM` et des identifiants EAS | Perdre la clé bloque les mises à jour. |
 | Alarmes exactes | Déclaration de `SCHEDULE_EXACT_ALARM` dans la Play Console, avec la justification (appel à la prière à l'heure) | Prévoir un repli si l'utilisateur refuse. |
 | Audio en arrière-plan | Le manifeste déclare `FOREGROUND_SERVICE_MEDIA_PLAYBACK` : remplir la déclaration de service de premier plan | |
 | Data safety | Inchangée : **À VÉRIFIER** | |
@@ -65,7 +67,7 @@ Rédigé le 24 novembre 2026 d'après `eas.json`, `app.json`, `checklist-soumiss
 
 | Cas | Action |
 | --- | --- |
-| Défaut grave pendant le déploiement Android | Arrêter le déploiement, corriger, republier avec un `versionCode` plus haut (un numéro plus bas est refusé). |
+| Défaut grave pendant le déploiement Android | Arrêter le déploiement, corriger, republier avec un `versionCode` plus haut (EAS incrémente seul ; un numéro plus bas est refusé). |
 | Défaut grave pendant le déploiement iOS | Mettre en pause le déploiement progressif, envoyer un nouveau build, demander une revue accélérée. |
 | Problème côté base | Rejouer les anciennes fonctions listées dans l'en-tête de la 018. |
 
