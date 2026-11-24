@@ -4,11 +4,10 @@ import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { lireSaisieDate } from '@/features/budget/dettes';
-import { creerKhatm } from '@/features/khatm/depot';
+import { codeDuKhatm, creerKhatm } from '@/features/khatm/depot';
 import { echeanceAcceptee } from '@/features/khatm/logique';
 import { inviter } from '@/features/khatm/partager';
 import { cleJour } from '@/lib/dates';
-import { supabase } from '@/services/supabase/client';
 import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { Banner } from '@/ui/Banner';
@@ -44,18 +43,24 @@ export default function NouveauKhatm() {
     if (!nomOk || !dateOk || datePassee || envoi) return;
     setEnvoi(true);
     setErreur(false);
+    let id: string;
     try {
-      const id = await creerKhatm(nomFinal, intention.trim() || null, jour);
-      const { data } = await supabase.from('khatms').select('code').eq('id', id).single();
-      const code: unknown = data?.code;
-      if (typeof code === 'string') await inviter(nomFinal, intention.trim() || null, code);
-      router.replace({ pathname: '/plus/khatm/[id]', params: { id } });
+      id = await creerKhatm(nomFinal, intention.trim() || null, jour);
     } catch (e: unknown) {
       console.warn('Khatm non créé', e);
       setErreur(true);
-    } finally {
       setEnvoi(false);
+      return;
     }
+    // Le khatm existe : l'invitation est un plus. Si elle échoue (code illisible, feuille de partage fermée), on ouvre
+    // quand même le khatm, où le code se copie et se partage, sans en créer un second.
+    try {
+      await inviter(nomFinal, intention.trim() || null, await codeDuKhatm(id));
+    } catch (e: unknown) {
+      console.warn('Invitation non partagée', e);
+    }
+    setEnvoi(false);
+    router.replace({ pathname: '/plus/khatm/[id]', params: { id } });
   };
 
   return (

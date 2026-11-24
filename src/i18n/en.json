@@ -273,6 +273,8 @@
   "khatm": {
     "titre": "Group khatm",
     "introuvable": "This khatm no longer exists, or you are no longer a member.",
+    "termineTitre": "Khatm complete",
+    "termineTexte": "All 30 juz have been read. May Allah accept it from you.",
     "progression": "{{lus}} of 30 juz read",
     "resume": "{{lus}} read · {{enCours}} in progress · {{libres}} free",
     "lu": "read",

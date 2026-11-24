@@ -17,7 +17,7 @@ import {
   type Membre,
 } from '@/features/khatm/depot';
 import { QuitterCreateur } from '@/features/khatm/QuitterCreateur';
-import { resumeKhatm, vuePart, type VuePart } from '@/features/khatm/logique';
+import { estTermine, resumeKhatm, vuePart, type VuePart } from '@/features/khatm/logique';
 import { copierCode, inviter } from '@/features/khatm/partager';
 import { reperes } from '@/features/lire/coran';
 import { useParametre } from '@/hooks/useParametre';
@@ -279,6 +279,12 @@ export default function EcranKhatm() {
             })}
           />
         </View>
+
+        {estTermine(resume) ? (
+          <Banner ton="succes" titre={t('khatm.termineTitre')}>
+            {t('khatm.termineTexte')}
+          </Banner>
+        ) : null}
 
         {/* Grille des 30 juz : toucher un juz libre pour le prendre. */}
         <KhatmGrid

@@ -53,6 +53,15 @@ export async function creerKhatm(nom: string, intention: string | null, echeance
   return String(data);
 }
 
+/** Code d'invitation d'un khatm que je viens de créer ; lève une erreur si la lecture échoue. */
+export async function codeDuKhatm(id: string): Promise<string> {
+  const { data, error } = await supabase.from('khatms').select('code').eq('id', id).single();
+  if (error) throw error;
+  const code: unknown = data?.code;
+  if (typeof code !== 'string') throw new Error('Code de khatm absent');
+  return code;
+}
+
 export async function apercuKhatm(code: string): Promise<Apercu | null> {
   const { data, error } = await supabase.rpc('apercu_khatm', { p_code: code });
   if (error) throw error;

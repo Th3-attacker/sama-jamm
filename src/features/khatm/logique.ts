@@ -32,6 +32,11 @@ export function resumeKhatm(parts: readonly Part[], moi: string | null): Resume 
   return { lus, enCours, libres: NB_JUZ - lus - enCours, monJuz, dontLeVotre: monJuz !== null };
 }
 
+/** Les 30 juz sont lus : le khatm est complet. */
+export function estTermine(r: Pick<Resume, 'lus'>): boolean {
+  return r.lus >= NB_JUZ;
+}
+
 /** Lien ouvert par l'app (schéma samajamm) : samajamm://khatm/ABCD2345. */
 export const lienInvitation = (code: string) => `samajamm://khatm/${code}`;
 
