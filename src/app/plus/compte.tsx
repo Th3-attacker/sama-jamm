@@ -10,9 +10,9 @@ import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { Banner } from '@/ui/Banner';
 import { Button } from '@/ui/Button';
+import { Dialog } from '@/ui/Dialog';
 import { ListGroup } from '@/ui/ListGroup';
 import { ListItem } from '@/ui/ListItem';
-import { Switch } from '@/ui/Switch';
 import { TextField } from '@/ui/TextField';
 import { useToast } from '@/ui/Toast';
 import { TopBar } from '@/ui/TopBar';
@@ -26,6 +26,7 @@ export default function Compte() {
   const pret = useSession((s) => s.pret);
   const [prenom, setPrenom] = useState('');
   const [erreur, setErreur] = useState(false);
+  const [confirmation, setConfirmation] = useState(false);
   const nbFavoris = useFavoris((s) => s.versets.length);
 
   // Sans session : la connexion à la place.
@@ -55,6 +56,7 @@ export default function Compte() {
   };
 
   const deconnecter = async () => {
+    setConfirmation(false);
     try {
       await seDeconnecter();
       router.back();
@@ -99,24 +101,21 @@ export default function Compte() {
             icone="bookmark"
             titre={t('menuPlus.favoris')}
             sousTitre={t('compte.synchroFavorisAide', { n: nbFavoris })}
-            droite={<Switch active={false} disabled onChange={() => undefined} label={t('menuPlus.favoris')} />}
           />
           <ListItem
             icone="settings"
             titre={t('menuPlus.reglages')}
             sousTitre={t('compte.synchroReglagesAide')}
-            droite={<Switch active={false} disabled onChange={() => undefined} label={t('menuPlus.reglages')} />}
           />
           <ListItem
             icone="users"
             titre={t('compte.khatms')}
             sousTitre={t('compte.synchroKhatmAide')}
-            droite={<Switch active={false} disabled onChange={() => undefined} label={t('compte.khatms')} />}
           />
         </ListGroup>
         {erreur ? <Banner ton="erreur">{t('etats.erreurTexte')}</Banner> : null}
         <View style={{ gap: espace.espace1 }}>
-          <Button variant="secondaire" pleineLargeur onPress={deconnecter}>
+          <Button variant="secondaire" pleineLargeur onPress={() => setConfirmation(true)}>
             {t('compte.deconnexion')}
           </Button>
           <Pressable
@@ -132,6 +131,15 @@ export default function Compte() {
           {t('connexion.budgetReste')}
         </Text>
       </ScrollView>
+      <Dialog
+        ouvert={confirmation}
+        titre={t('compte.deconnexionTitre')}
+        confirmer={t('compte.deconnexion')}
+        annuler={t('compte.deconnexionGarder')}
+        onConfirmer={() => void deconnecter()}
+        onAnnuler={() => setConfirmation(false)}>
+        {t('compte.deconnexionTexte')}
+      </Dialog>
     </View>
   );
 }
