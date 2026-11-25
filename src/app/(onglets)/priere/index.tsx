@@ -27,6 +27,7 @@ import { versetRubrique } from '@/features/rubriques/versetsRubriques';
 import { useMargeBasse } from '@/features/ecouter/placeMiniLecteur';
 
 import { interlignes, tailles } from '@/theme/tokens.generated';
+import { nomLocalPriere, nomPriere } from '@/features/priere/nomPriere';
 const JOURS_SEMAINE = 7;
 
 // Verset du Coran de la rubrique : données embarquées, lues une fois.
@@ -114,7 +115,7 @@ export default function Priere() {
                 avant=""
                 a=""
                 prieres={prieres.map((p) => ({
-                  nom: t(`priere.noms.${p}`),
+                  nom: nomPriere(t, p, donnees.h[p]),
                   heure: formatHeure(donnees.h[p], fuseau),
                   minutes: minutesDuJour(donnees.h[p], fuseau),
                   etat: donnees.h[p] <= maintenant ? 'passee' : p === donnees.suivante.nom ? 'prochaine' : 'a-venir',
@@ -127,13 +128,13 @@ export default function Priere() {
                 const prochaine = p === donnees.suivante.nom && donnees.h[p] > maintenant;
                 return {
                   id: p,
-                  nom: t(`priere.noms.${p}`),
-                  nomLocal: t(`priere.nomsLocaux.${p}`),
-                  nomArabe: tAr(`priere.noms.${p}`),
+                  nom: nomPriere(t, p, donnees.h[p]),
+                  nomLocal: nomLocalPriere(t, p, donnees.h[p]),
+                  nomArabe: nomPriere(tAr, p, donnees.h[p]),
                   heure: formatHeure(donnees.h[p], fuseau),
                   etat: donnees.h[p] <= maintenant ? 'passee' : prochaine ? 'prochaine' : 'a-venir',
                   appelActif: rappels[p],
-                  libelleAppel: t('priere.notificationDe', { priere: t(`priere.noms.${p}`) }),
+                  libelleAppel: t('priere.notificationDe', { priere: nomPriere(t, p, donnees.h[p]) }),
                 };
               })}
               onBasculerAppel={(id) => {

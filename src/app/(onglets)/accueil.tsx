@@ -27,6 +27,7 @@ import { enEcoute as ecouteEnCours, useLecteur } from '@/features/ecouter/lecteu
 import { SondeBarre } from '@/features/ecouter/SondeBarre';
 
 import { interlignes, tailles } from '@/theme/tokens.generated';
+import { nomPriere } from '@/features/priere/nomPriere';
 /** Un grain par jour du mois ; `lus` : clés de jour « 2026-10-29 » où une lecture a eu lieu. */
 
 export default function Accueil() {
@@ -51,7 +52,7 @@ export default function Accueil() {
     const h = calculerHoraires(lieu, maintenant, options);
     const suivante = prochainePriere(lieu, maintenant, options);
     const liste: PriereArc[] = prieres.map((p) => ({
-      nom: t(`priere.noms.${p}`),
+      nom: nomPriere(t, p, h[p]),
       heure: formatHeure(h[p], fuseau),
       minutes: minutesDuJour(h[p], fuseau),
       etat: h[p] <= maintenant ? 'passee' : p === suivante.nom ? 'prochaine' : 'a-venir',
@@ -62,7 +63,7 @@ export default function Accueil() {
       lever: minutesDuJour(h.lever, fuseau),
       coucher: minutesDuJour(h.coucher, fuseau),
       dans: formatDuree((suivante.heure.getTime() - maintenant.getTime()) / 60_000),
-      nom: t(`priere.noms.${suivante.nom}`),
+      nom: nomPriere(t, suivante.nom, suivante.heure),
       heure: formatHeure(suivante.heure, fuseau),
     };
   }, [lieu, maintenant, options, t]);
@@ -134,7 +135,7 @@ export default function Accueil() {
               action={{ label: t('bienvenue.positionVille'), onPress: () => router.push('/position') }}>
               {t('accueil.villeTexte')}
             </Banner>
-            <CarteHeros sansVille prieres={prieres.map((p) => ({ nom: t(`priere.noms.${p}`), heure: '--:--', minutes: 0, etat: 'a-venir' }))} />
+            <CarteHeros sansVille prieres={prieres.map((p) => ({ nom: nomPriere(t, p, maintenant), heure: '--:--', minutes: 0, etat: 'a-venir' }))} />
           </View>
         )}
 

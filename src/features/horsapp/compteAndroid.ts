@@ -12,6 +12,7 @@ import { formatHeure } from '@/lib/dates';
 import { useReglages } from '@/stores/reglages';
 
 import { activiteAttendue } from './fenetreActivite';
+import { nomPriere } from '@/features/priere/nomPriere';
 
 const ID = 'compte-priere';
 const URL_PRIERE = 'samajamm://priere';
@@ -47,7 +48,7 @@ export async function synchroniserCompte(): Promise<void> {
       return;
     }
     const t = i18n.t.bind(i18n);
-    const priere = `${t(`priere.noms.${prochaine.nom}`)} ${formatHeure(prochaine.heure, fuseauDuLieu(lieu))}`;
+    const priere = `${nomPriere(t, prochaine.nom, prochaine.heure)} ${formatHeure(prochaine.heure, fuseauDuLieu(lieu))}`;
     const ville = lieu.type === 'ville' ? lieu.nom : t('priere.maPosition');
     const props = { titre: t('priere.prochaine'), priere, ville };
     // Le système la retire tout seul à l'heure de la prière.

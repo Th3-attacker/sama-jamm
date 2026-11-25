@@ -12,6 +12,7 @@ import { formatHeure } from '@/lib/dates';
 import { useReglages } from '@/stores/reglages';
 
 import { activiteAttendue } from './fenetreActivite';
+import { nomPriere } from '@/features/priere/nomPriere';
 
 const URL_PRIERE = 'samajamm://priere';
 
@@ -49,7 +50,7 @@ export async function synchroniserActivite(): Promise<void> {
     const t = i18n.t.bind(i18n);
     const props = {
       titre: t('priere.prochaine'),
-      nom: t(`priere.noms.${prochaine.nom}`),
+      nom: nomPriere(t, prochaine.nom, prochaine.heure),
       heure: formatHeure(prochaine.heure, fuseauDuLieu(lieu)),
       ville: lieu.type === 'ville' ? lieu.nom : t('priere.maPosition'),
     };

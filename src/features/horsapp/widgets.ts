@@ -12,6 +12,7 @@ import i18n from '@/i18n';
 import { formatHeure } from '@/lib/dates';
 import { useLecture } from '@/stores/lecture';
 import { useReglages, type NomPriere } from '@/stores/reglages';
+import { nomPriere } from '@/features/priere/nomPriere';
 
 type Widgets = {
   CinqPrieres: (typeof import('@/widgets/CinqPrieres'))['default'];
@@ -76,7 +77,7 @@ export async function mettreAJourWidgets(): Promise<void> {
     const prochaine = prochainePriere(lieu, instant, options);
     prochaines.push({
       date: instant,
-      props: { titre, nom: t(`priere.noms.${prochaine.nom}`), heure: formatHeure(prochaine.heure, fuseau) },
+      props: { titre, nom: nomPriere(t, prochaine.nom, prochaine.heure), heure: formatHeure(prochaine.heure, fuseau) },
     });
     // Les cinq heures du jour de la prochaine prière, avec elle en évidence.
     const horaires = calculerHoraires(lieu, prochaine.heure, options);
@@ -84,7 +85,7 @@ export async function mettreAJourWidgets(): Promise<void> {
       date: instant,
       props: {
         titre: t('priere.cinqPrieres'),
-        lignes: ORDRE.map((nom) => ({ nom: t(`priere.noms.${nom}`), heure: formatHeure(horaires[nom], fuseau), prochaine: nom === prochaine.nom })),
+        lignes: ORDRE.map((nom) => ({ nom: nomPriere(t, nom, horaires[nom]), heure: formatHeure(horaires[nom], fuseau), prochaine: nom === prochaine.nom })),
       },
     });
     // L'entrée suivante prend effet une seconde après l'heure de cette prière.

@@ -479,6 +479,8 @@
       "fajr": "Fajr",
       "sunrise": "Sunrise",
       "dhuhr": "Dhuhr",
+    "nomJumua": "Jumu’ah",
+    "nomLocalJumua": "Àjjuma",
       "asr": "Asr",
       "maghrib": "Maghrib",
       "isha": "Isha"

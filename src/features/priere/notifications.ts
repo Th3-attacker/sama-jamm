@@ -17,6 +17,7 @@ import { construireFenetre, dateRelance, type Planifiee } from './fenetre';
 import { mettreAJourWidgets } from '@/features/horsapp/widgets';
 
 import { fuseauDuLieu } from './villes';
+import { nomPriere } from './nomPriere';
 
 export const URL_PRIERE = 'samajamm://priere';
 /** Rappel de zakat (programmé par features/budget/rappelZakat). */
@@ -138,7 +139,7 @@ export async function creerCanaux(): Promise<void> {
 
 function contenu(n: Planifiee): Notifications.NotificationContentInput {
   const t = i18n.t.bind(i18n);
-  const priere = t(`priere.noms.${n.priere}`);
+  const priere = nomPriere(t, n.priere, n.date);
   const avecSon = n.son === 'complet' || n.son === 'court' || n.son === 'doux';
   if (n.type === 'rappel') {
     return {

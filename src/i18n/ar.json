@@ -512,6 +512,8 @@
       "fajr": "الفجر",
       "sunrise": "الشروق",
       "dhuhr": "الظهر",
+    "nomJumua": "الجمعة",
+    "nomLocalJumua": "Àjjuma",
       "asr": "العصر",
       "maghrib": "المغرب",
       "isha": "العشاء"
