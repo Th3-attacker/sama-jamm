@@ -1,0 +1,10 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["US4UK93AT3.com.samajamm.app"],
+        "components": [{ "/": "/khatm/*" }]
+      }
+    ]
+  }
+}

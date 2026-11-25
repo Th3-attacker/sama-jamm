@@ -40,6 +40,12 @@ export function estTermine(r: Pick<Resume, 'lus'>): boolean {
 /** Lien ouvert par l'app (schéma samajamm) : samajamm://khatm/ABCD2345. */
 export const lienInvitation = (code: string) => `samajamm://khatm/${code}`;
 
+/** Domaine du site : les liens https://<domaine>/khatm/CODE ouvrent l'app (iOS : domaine associé ; Android : filtre d'intention). */
+export const DOMAINE_SITE = 'sama-jamm-site.vercel.app';
+
+/** Lien partagé dans l'invitation : cliquable dans WhatsApp et les SMS, ouvre l'app ou la page du site. */
+export const lienWebInvitation = (code: string) => `https://${DOMAINE_SITE}/khatm/${code}`;
+
 /** Code d'un lien collé ou saisi à la main (espaces et minuscules acceptés), ou null. */
 export function lireCode(saisie: string): string | null {
   const brut = saisie.trim().split('/').pop() ?? '';

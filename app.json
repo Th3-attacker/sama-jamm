@@ -30,6 +30,7 @@
       "entitlements": {
         "com.apple.developer.usernotifications.time-sensitive": true
       },
+      "associatedDomains": ["applinks:sama-jamm-site.vercel.app"],
       "icon": {
         "light": "./assets/images/icon.png",
         "dark": "./assets/images/icon-sombre.png",
@@ -52,7 +53,15 @@
         "android.permission.WRITE_EXTERNAL_STORAGE",
         "android.permission.SYSTEM_ALERT_WINDOW"
       ],
-      "allowBackup": false
+      "allowBackup": false,
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [{ "scheme": "https", "host": "sama-jamm-site.vercel.app", "pathPrefix": "/khatm" }],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
+      ]
     },
     "plugins": [
       "expo-router",

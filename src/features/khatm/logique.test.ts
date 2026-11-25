@@ -2,7 +2,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { echeanceAcceptee, lienInvitation, lireCode, resumeKhatm, saisieCodeKhatm, vuePart, type Part } from './logique.ts';
+import { echeanceAcceptee, lienInvitation, lienWebInvitation, lireCode, resumeKhatm, saisieCodeKhatm, vuePart, type Part } from './logique.ts';
 
 const parts: Part[] = Array.from({ length: 30 }, (_, i) => ({
   juz: i + 1,
@@ -24,6 +24,7 @@ test('vue d’un juz', () => {
 
 test('lien et code d’invitation', () => {
   assert.equal(lienInvitation('ABCD2345'), 'samajamm://khatm/ABCD2345');
+  assert.equal(lienWebInvitation('ABCD2345'), 'https://sama-jamm-site.vercel.app/khatm/ABCD2345');
   assert.equal(lireCode('samajamm://khatm/ABCD2345'), 'ABCD2345');
   assert.equal(lireCode(' abcd-2345 '), 'ABCD2345');
   assert.equal(lireCode('ABC'), null);

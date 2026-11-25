@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Invitation au khatm · Sama Jàmm</title>
+  <style>
+    body { margin: 0; font-family: system-ui, sans-serif; background: #f7f3ea; color: #1b2b25; display: grid; place-items: center; min-height: 100vh; }
+    main { max-width: 420px; padding: 24px; text-align: center; }
+    h1 { font-size: 24px; line-height: 30px; margin: 0 0 12px; }
+    p { font-size: 16px; line-height: 24px; margin: 0 0 16px; }
+    .code { font-size: 30px; letter-spacing: 4px; font-weight: 700; margin: 16px 0; user-select: all; }
+    a.bouton, button { display: block; width: 100%; box-sizing: border-box; min-height: 48px; margin: 8px 0; padding: 12px; border-radius: 12px; border: 0; background: #1f5f4a; color: #fff; font-size: 16px; text-decoration: none; cursor: pointer; }
+    button.second { background: transparent; color: #1f5f4a; border: 1px solid #1f5f4a; }
+  </style>
+</head>
+<body>
+<main>
+  <h1>Vous êtes invité(e) à un khatm</h1>
+  <p>Ouvrez Sama Jàmm pour rejoindre : chacun lit un juz, et le Coran s’achève ensemble.</p>
+  <div class="code" id="code" hidden></div>
+  <a class="bouton" id="ouvrir" href="#" hidden>Ouvrir dans l’app</a>
+  <button class="second" id="copier" hidden>Copier le code</button>
+  <a class="bouton" href="https://apps.apple.com/app/id6834012757">Télécharger pour iPhone</a>
+  <!-- Android : à activer après la publication sur Google Play.
+  <a class="bouton" href="https://play.google.com/store/apps/details?id=com.samajamm.app">Télécharger pour Android</a>
+  -->
+  <p id="invalide" hidden>Ce lien n’est pas valide. Demandez un nouveau lien à la personne qui vous invite.</p>
+</main>
+<script>
+  var code = (location.pathname.split('/').pop() || '').toUpperCase();
+  if (/^[A-Z2-9]{8}$/.test(code)) {
+    var c = document.getElementById('code'); c.textContent = code; c.hidden = false;
+    var o = document.getElementById('ouvrir'); o.href = 'samajamm://khatm/' + code; o.hidden = false;
+    var b = document.getElementById('copier'); b.hidden = false;
+    b.onclick = function () {
+      if (navigator.clipboard) navigator.clipboard.writeText(code).then(function () { b.textContent = 'Code copié'; });
+    };
+  } else {
+    document.getElementById('invalide').hidden = false;
+  }
+</script>
+</body>
+</html>
