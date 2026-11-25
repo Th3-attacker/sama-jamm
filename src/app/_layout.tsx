@@ -6,7 +6,7 @@ import * as Notifications from 'expo-notifications';
 import * as SplashScreen from 'expo-splash-screen';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { AppState, Modal, View } from 'react-native';
+import { Modal, View } from 'react-native';
 
 import { useReplanification } from '@/features/priere/useReplanification';
 import { useSurveillanceVerrou } from '@/features/budget/verrou';
@@ -44,7 +44,7 @@ export default function RootLayout() {
   useReplanification();
   useSurveillanceVerrou();
   const miseAJour = useMiseAJour();
-  // À chaque ouverture à froid, et à chaque retour de l'arrière-plan : l'état vit avec la racine, pas sur le disque.
+  // À chaque ouverture à froid seulement : l'état vit avec la racine, pas sur le disque.
   // Ouverte depuis une notification : pas d'animation, on va droit à l'écran visé.
   const [demarrage, setDemarrage] = useState(() => Notifications.getLastNotificationResponse() === null);
   const finDemarrage = useCallback(() => setDemarrage(false), []);
@@ -60,19 +60,10 @@ export default function RootLayout() {
   }, [pret]);
 
   useEffect(() => {
-    // Retour de l'arrière-plan : l'animation se rejoue par-dessus l'écran en cours, sans le changer. Les passages par
-    // « inactive » (centre de contrôle, bandeau de notification, appel) ne comptent pas.
-    let avant = AppState.currentState;
-    const surEtat = AppState.addEventListener('change', (etat) => {
-      if (etat === 'active' && avant === 'background') setDemarrage(true);
-      avant = etat;
-    });
     // Retour provoqué par un toucher sur une notification : on va droit à l'écran visé, sans animation.
+    // Le démarrage animé ne se joue qu'à l'ouverture à froid, jamais au retour de l'arrière-plan.
     const surNotification = Notifications.addNotificationResponseReceivedListener(() => setDemarrage(false));
-    return () => {
-      surEtat.remove();
-      surNotification.remove();
-    };
+    return () => surNotification.remove();
   }, []);
 
   if (!pret) return null;
