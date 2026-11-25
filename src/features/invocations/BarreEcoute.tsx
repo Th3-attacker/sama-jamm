@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { mettreEnPause, useLecteur } from '@/features/ecouter/lecteur';
 import { formatTemps } from '@/features/ecouter/temps';
 import { cible, espace as espaces, interlignes, rayon as rayons, tailles } from '@/theme/tokens.generated';
 import { echelleMax } from '@/theme/typographie';
@@ -31,6 +32,12 @@ export function BarreEcoute({ idInvocation }: Props) {
   const [demande, setDemande] = useState(false);
   // Chargement : de l'appui jusqu'à ce que le fichier soit prêt dans le lecteur.
   const enChargement = demande && !statut.isLoaded;
+  const coranEnLecture = useLecteur((s) => s.enLecture);
+
+  // Le Coran démarre pendant l'invocation : l'invocation se met en pause.
+  useEffect(() => {
+    if (coranEnLecture && lecteur.playing) lecteur.pause();
+  }, [coranEnLecture, lecteur]);
 
   useEffect(() => {
     if (!enChargement) return undefined;
@@ -68,6 +75,8 @@ export function BarreEcoute({ idInvocation }: Props) {
     } else if (statut.duration > 0 && statut.currentTime >= statut.duration - 0.1) {
       await lecteur.seekTo(0);
     }
+    // Une seule voix à la fois : le Coran se met en pause pendant l'invocation.
+    mettreEnPause();
     lecteur.play();
   };
 

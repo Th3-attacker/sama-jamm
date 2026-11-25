@@ -456,6 +456,11 @@ export function basculer(): void {
   }
 }
 
+/** Met l'écoute du Coran en pause si elle joue (la position reste) ; sans effet sinon. */
+export function mettreEnPause(): void {
+  if (useLecteur.getState().enLecture) basculer();
+}
+
 export function suivant(): void {
   if (!enEcoute(useLecteur.getState())) return;
   if (listeCassee) return lire(null, indexCourant + 1);
