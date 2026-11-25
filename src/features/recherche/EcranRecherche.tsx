@@ -4,6 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Keyboard, Pressable, SectionList, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { categories, invocations, type Invocation } from '@/features/invocations/donnees';
+import { chercherInvocations } from '@/features/recherche/invocations';
 import { contientArabe } from '@/features/recherche/normaliser';
 import { CarteSourate } from '@/features/lire/CarteSourate';
 import { CarteVerset } from '@/features/lire/CarteVerset';
@@ -14,11 +16,12 @@ import { echelleMax } from '@/theme/typographie';
 import { useTheme } from '@/theme/useTheme';
 import { Chip } from '@/ui/Chip';
 import { EmptyState } from '@/ui/EmptyState';
+import { ListItem } from '@/ui/ListItem';
 import { SearchField } from '@/ui/SearchField';
 import { TopBar } from '@/ui/TopBar';
 
 import { espace, interlignes, tailles } from '@/theme/tokens.generated';
-type Ligne = Sourate | ResultatVerset;
+type Ligne = Sourate | ResultatVerset | Invocation;
 type Filtre = 'tout' | 'coran' | 'invocations';
 const FILTRES: Filtre[] = ['tout', 'coran', 'invocations'];
 
@@ -67,16 +70,28 @@ export function EcranRecherche({ requete, onRequete, mode, onFermerClavier }: Ec
     };
   }, [pret]);
   const resultats = useMemo(() => (pret ? rechercher(requeteDiffree) : VIDE), [pret, requeteDiffree]);
+  const trouvees = useMemo(() => chercherInvocations(invocations(), requeteDiffree), [requeteDiffree]);
   const enAttente = !pret && requeteDiffree.trim().length > 0;
   const recherche = requeteDiffree.trim().length > 0;
-  const aucun = pret && recherche && resultats.sourates.length === 0 && resultats.versets.length === 0;
+  const surCoran = filtre !== 'invocations';
+  const surInvocations = filtre !== 'coran';
+  const aucun =
+    pret &&
+    recherche &&
+    (!surCoran || (resultats.sourates.length === 0 && resultats.versets.length === 0)) &&
+    (!surInvocations || trouvees.length === 0);
 
   const sections: { cle: string; titre: string; data: Ligne[] }[] = [
-    { cle: 'sourates', titre: t('recherche.sourates'), data: resultats.sourates },
+    { cle: 'sourates', titre: t('recherche.sourates'), data: surCoran ? resultats.sourates : [] },
     {
       cle: 'versets',
       titre: `${t('recherche.versets')} · ${t('recherche.resultats', { count: resultats.totalVersets })}`,
-      data: resultats.versets,
+      data: surCoran ? resultats.versets : [],
+    },
+    {
+      cle: 'invocations',
+      titre: `${t('lire.invocations')} · ${t('recherche.resultats', { count: trouvees.length })}`,
+      data: surInvocations ? trouvees : [],
     },
   ].filter((s) => s.data.length > 0);
 
@@ -111,17 +126,10 @@ export function EcranRecherche({ requete, onRequete, mode, onFermerClavier }: Ec
         ))}
       </View>
 
-      {filtre === 'invocations' || enAttente || aucun ? (
+      {(enAttente && surCoran) || aucun ? (
         // Zone sans liste : un toucher dans le vide ferme le clavier. Pas un élément d'accessibilité en plus.
         <Pressable accessible={false} style={styles.zoneVide} onPress={fermerClavier}>
-          {filtre === 'invocations' ? (
-            <EmptyState
-              icone="search"
-              lang="fr"
-              titre={t(`lire.${filtre}`)}
-              texte={t('lire.invocationsAVenir')}
-            />
-          ) : enAttente ? (
+          {enAttente && surCoran ? (
             <ActivityIndicator
               accessibilityLabel={t('recherche.titre')}
               color={couleurs.emeraude}
@@ -142,7 +150,7 @@ export function EcranRecherche({ requete, onRequete, mode, onFermerClavier }: Ec
           keyboardShouldPersistTaps="handled"
           keyboardDismissMode="on-drag"
           onScrollBeginDrag={fermerClavier}
-          keyExtractor={(ligne) => ('versets' in ligne ? `s${ligne.n}` : `v${ligne.sourate}:${ligne.verset}`)}
+          keyExtractor={(ligne) => ('versets' in ligne ? `s${ligne.n}` : 'categorie' in ligne ? `i${ligne.id}` : `v${ligne.sourate}:${ligne.verset}`)}
           stickySectionHeadersEnabled={false}
           // Onglet iPhone : le système décale la liste sous la barre d'onglets en verre et le champ du bas.
           contentInsetAdjustmentBehavior={mode === 'onglet' ? 'automatic' : undefined}
@@ -179,7 +187,19 @@ export function EcranRecherche({ requete, onRequete, mode, onFermerClavier }: Ec
             </Text>
           )}
           renderItem={({ item }) =>
-            'versets' in item ? (
+            'categorie' in item ? (
+              <ListItem
+                icone="moon"
+                titre={item.titre}
+                sousTitre={categories().find((c) => c.id === item.categorie)?.nom}
+                onPress={() =>
+                  router.push({
+                    pathname: '/lire/invocations/[categorie]/[invocation]',
+                    params: { categorie: item.categorie, invocation: item.id },
+                  })
+                }
+              />
+            ) : 'versets' in item ? (
               <CarteSourate
                 plat
                 sourate={item}
